@@ -1,0 +1,31 @@
+{
+ "schema": "oracle.msl.closer.witness.v1",
+ "id": "fmz-erdos170-campaign-001-R007-L1",
+ "pipeline": "WITNESS_FINITE",
+ "witness": {
+  "N": 10,
+  "F_N": 6,
+  "A": [
+   0,
+   1,
+   2,
+   6,
+   9,
+   10
+  ]
+ },
+ "verifier_sha256": "02be69c062efbe0d97bbcacc691b484ae23f0cccd657e33ef37fa1fa010ac4ae",
+ "verifier_source": "# Verifier for F(10)=6. No imports, no I/O, exact integer arithmetic.\n# Entry point: verify(witness) — raises on any failed check, returns True on PASS.\n# Witness hardcoded below; the harness may also call verify(w) with its own dict.\n\ndef covers(A, N):\n    D = set()\n    for a in A:\n        for b in A:\n            D.add(a - b)\n    for d in range(0, N + 1):\n        if d not in D:\n            return False\n    return True\n\ndef verify(witness):\n    N = witness['N']\n    F = witness['F_N']\n    A = witness['A']\n    if N != 10:\n        raise ValueError('N must be 10')\n    if F != 6:\n        raise ValueError('F_N must be 6')\n    if not isinstance(A, list) or len(A) != F:\n        raise ValueError('A must be a list of size F_N=6')\n    if len(set(A)) != len(A):\n        raise ValueError('A must have distinct elements')\n    for x in A:\n        if not isinstance(x, int) or not (0 <= x <= N):\n            raise ValueError('A elements must be ints in [0,N]')\n    if not covers(A, N):\n        raise ValueError('A does not cover {0..N}')\n    # exhaustive minimality: all C(11,5)=462 five-element subsets\n    for a in range(N + 1):\n        for b in range(a + 1, N + 1):\n            for c in range(b + 1, N + 1):\n                for d in range(c + 1, N + 1):\n                    for e in range(d + 1, N + 1):\n                        if covers([a, b, c, d, e], N):\n                            raise ValueError('found 5-element covering subset; F(10) != 6')\n    return True\n\nwitness = {'N': 10, 'F_N': 6, 'A': [0, 1, 2, 6, 9, 10]}\nverify(witness)",
+ "run": {
+  "passed": true,
+  "status": "VERIFIER_PASS",
+  "exit_code": 0,
+  "stdout": "PASS",
+  "detail": "",
+  "seconds": 0.12,
+  "code_sha256": "02be69c062efbe0d97bbcacc691b484ae23f0cccd657e33ef37fa1fa010ac4ae"
+ },
+ "claim": "certifies the exact finite value F(10)=6: witness A={0,1,2,6,9,10} covers {0..10} under A-A, and an exhaustive sweep of all 462 five-element subsets of {0..10} shows none covers; verify(witness) returns True (any violated check raises). Removes the 'F(10) remains uncertified' clause of L1; covers=fragment (the historical meta-claim about packet inspection is not machine-checkable)",
+ "law": "Wang 7.2: an exact finite object plus a proved reduction is a CERTIFICATE. The reduction is the `claim` and is a human's to audit; the object and the verifier run are the machine's part.",
+ "timestamp": "2026-09-01T23:37:36Z"
+}

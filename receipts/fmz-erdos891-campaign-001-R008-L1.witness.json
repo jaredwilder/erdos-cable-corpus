@@ -1,0 +1,25 @@
+{
+ "schema": "oracle.msl.closer.witness.v1",
+ "id": "fmz-erdos891-campaign-001-R008-L1",
+ "pipeline": "WITNESS_FINITE",
+ "witness": {
+  "k_min": 2,
+  "k_max": 16,
+  "n_max": 10000,
+  "s_max": 256
+ },
+ "verifier_sha256": "cb01123442fd7084a4d6bd1f7cdffd9f28a674069569fcf216c9bd69105dc690",
+ "verifier_source": "WITNESS = {'k_min': 2, 'k_max': 16, 'n_max': 10000, 's_max': 256}\n\ndef Omega(m):\n    if m < 1:\n        raise ArithmeticError('Omega undefined for m<1')\n    total = 0\n    d = 2\n    while d * d <= m:\n        while m % d == 0:\n            total += 1\n            m //= d\n        d += 1\n    if m > 1:\n        total += 1\n    return total\n\ndef verify(witness):\n    k_min = int(witness['k_min']); k_max = int(witness['k_max'])\n    n_max = int(witness['n_max']); s_max = int(witness['s_max'])\n    if k_min < 2 or k_max > 16 or n_max < 1 or s_max < 2 or n_max > 100000 or s_max > 100000:\n        raise ArithmeticError('witness out of certified envelope')\n    for k in range(k_min, k_max + 1):\n        base = 2 ** k\n        for s in range(2, s_max + 1):\n            m = base * s\n            if Omega(m) != k + Omega(s):\n                raise ArithmeticError('additivity broken k=%d s=%d' % (k, s))\n            if not (Omega(m) > k):\n                raise ArithmeticError('Omega not > k, k=%d s=%d' % (k, s))\n    for k in range(k_min, k_max + 1):\n        base = 2 ** k\n        for n in range(1, n_max + 1):\n            if n <= 2 * base:\n                t = 2\n            else:\n                t = -((-n) // base)\n                if t < 2:\n                    t = 2\n            m = base * t\n            if not (n <= m):\n                raise ArithmeticError('m<n k=%d n=%d' % (k, n))\n            if not (m < n + 2 ** (k + 1)):\n                raise ArithmeticError('m too far k=%d n=%d m=%d' % (k, n, m))\n            if Omega(m) != k + Omega(t):\n                raise ArithmeticError('interval additivity k=%d n=%d' % (k, n))\n            if not (Omega(m) >= k + 1):\n                raise ArithmeticError('Omega(m) < k+1 k=%d n=%d' % (k, n))\n\nverify(WITNESS)\n# PASS convention: clean exit (code 0). Any failed check RAISES, producing a\n# nonzero exit with the exact failing (k, n, s). No imports, no I/O, no floats,\n# no filesystem, no network, deterministic, exact integer arithmetic, fail-closed.",
+ "run": {
+  "passed": true,
+  "status": "VERIFIER_PASS",
+  "exit_code": 0,
+  "stdout": "PASS",
+  "detail": "",
+  "seconds": 0.59,
+  "code_sha256": "cb01123442fd7084a4d6bd1f7cdffd9f28a674069569fcf216c9bd69105dc690"
+ },
+ "claim": "Fragment certificate for L1: exact integer verification over k in [2,16], n in [1,10000], s in [2,256] that (i) Omega(2^k * s) = k + Omega(s) > k, and (ii) for every n in range the least multiple m = 2^k * t with t >= 2 lies in [n, n + 2^(k+1)) with Omega(m) >= k+1. Entry point verify(witness) raises on any failed check; clean exit = PASS. Covers the lemma's declared verifier scope (k <= 16) — covers=\"fragment\" relative to the full 'all n, all k' quantifiers. Flag retained: L1 uses modulus 2^k, not P_k, so this certificate does not by itself close canonical branch A absent a transfer lemma.",
+ "law": "Wang 7.2: an exact finite object plus a proved reduction is a CERTIFICATE. The reduction is the `claim` and is a human's to audit; the object and the verifier run are the machine's part.",
+ "timestamp": "2026-09-02T00:00:09Z"
+}

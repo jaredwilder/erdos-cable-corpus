@@ -1,0 +1,117 @@
+{
+ "schema": "oracle.msl.closer.witness.v1",
+ "id": "fmz-erdos978-campaign-001-R002-L1",
+ "pipeline": "WITNESS_FINITE",
+ "witness": {
+  "description": "Concrete instance certifying the exact-ℚ behavior claimed by L1: a fixed batch of linear rational claims over ℚ, a malformed input (float literal) and a sign-failing input. The witness is the dict passed to verify(witness); no I/O of any kind.",
+  "claims_batch": [
+   {
+    "id": "c1",
+    "type": "linear_eq",
+    "lhs": [
+     [
+      "2",
+      "3"
+     ],
+     [
+      "-5",
+      "7"
+     ]
+    ],
+    "rhs": [
+     [
+      "-1",
+      "21"
+     ]
+    ]
+   },
+   {
+    "id": "c2",
+    "type": "linear_eq",
+    "lhs": [
+     [
+      "1",
+      "1"
+     ]
+    ],
+    "rhs": [
+     [
+      "3",
+      "10"
+     ]
+    ]
+   },
+   {
+    "id": "c3",
+    "type": "linear_eq",
+    "lhs": [
+     [
+      "-7",
+      "9"
+     ],
+     [
+      "14",
+      "3"
+     ]
+    ],
+    "rhs": [
+     [
+      "35",
+      "9"
+     ]
+    ]
+   }
+  ],
+  "expected": {
+   "c1": true,
+   "c2": false,
+   "c3": true
+  },
+  "malformed_input": {
+   "id": "c4",
+   "type": "linear_eq",
+   "lhs": [
+    [
+     "1",
+     "0.5"
+    ]
+   ],
+   "rhs": [
+    [
+     "1",
+     "2"
+    ]
+   ]
+  },
+  "sign_failing_input": {
+   "id": "c5",
+   "type": "linear_eq",
+   "lhs": [
+    [
+     "0",
+     "1"
+    ]
+   ],
+   "rhs": [
+    [
+     "0",
+     "1"
+    ]
+   ]
+  }
+ },
+ "verifier_sha256": "acdc2fd87330d24de2d3ca18c5449ceee2d6b12c593a713b3e88097771e0a830",
+ "verifier_source": "from fractions import Fraction\n\nclass VerificationError(Exception):\n    pass\n\nclass Abort(Exception):\n    pass\n\ndef ingest_pair(p):\n    if not isinstance(p, list) or len(p) != 2:\n        raise Abort()\n    for tok in p:\n        if not isinstance(tok, str):\n            raise Abort()\n        if not tok.lstrip('-').isdigit():\n            raise Abort()  # rejects '0.5', '1e3', etc.: exact-rational-only ingestion\n    num = int(p[0])\n    den = int(p[1])\n    if den == 0:\n        raise Abort()\n    return Fraction(num, den)\n\ndef ingest_term_list(lst):\n    if not isinstance(lst, list) or len(lst) == 0:\n        raise Abort()\n    acc = Fraction(0)\n    for t in lst:\n        acc += ingest_pair(t)\n    return acc\n\ndef verify_claim(c):\n    if not isinstance(c, dict) or c.get('type') != 'linear_eq':\n        raise Abort()\n    lhs = ingest_term_list(c['lhs'])\n    rhs = ingest_term_list(c['rhs'])\n    if lhs == 0 and rhs == 0:\n        raise Abort()  # trivial 0==0 claim: sign/content failure, fail closed\n    return lhs == rhs\n\ndef verify(witness):\n    \"\"\"RAISES VerificationError on any failed check; returns True on full pass.\"\"\"\n    try:\n        # 1) each batch claim must evaluate exactly as recorded\n        for c in witness['claims_batch']:\n            cid = c['id']\n            if cid not in witness['expected']:\n                raise VerificationError('unmatched claim id: %s' % cid)\n            if verify_claim(c) != witness['expected'][cid]:\n                raise VerificationError('exact-evaluation mismatch on %s' % cid)\n        # 2) malformed input (float literal) must abort, not pass\n        try:\n            verify_claim(witness['malformed_input'])\n            raise VerificationError('malformed input did not abort')\n        except Abort:\n            pass\n        # 3) sign-failing (trivial 0==0) input must abort, not pass\n        try:\n            verify_claim(witness['sign_failing_input'])\n            raise VerificationError('sign-failing input did not abort')\n        except Abort:\n            pass\n    except Abort:\n        raise VerificationError('unexpected abort inside batch phase')\n    return True\n\nWITNESS = {\n    'claims_batch': [\n        {'id': 'c1', 'type': 'linear_eq', 'lhs': [['2', '3'], ['-5', '7']], 'rhs': [['-1', '21']]},\n        {'id': 'c2', 'type': 'linear_eq', 'lhs': [['1', '1']], 'rhs': [['3', '10']]},\n        {'id': 'c3', 'type': 'linear_eq', 'lhs': [['-7', '9'], ['14', '3']], 'rhs': [['35', '9']]}\n    ],\n    'expected': {'c1': True, 'c2': False, 'c3': True},\n    'malformed_input': {'id': 'c4', 'type': 'linear_eq', 'lhs': [['1', '0.5']], 'rhs': [['1', '2']]},\n    'sign_failing_input': {'id': 'c5', 'type': 'linear_eq', 'lhs': [['0', '1']], 'rhs': [['0', '1']]}\n}\n\nassert verify(WITNESS) is True\n",
+ "run": {
+  "passed": true,
+  "status": "VERIFIER_PASS",
+  "exit_code": 0,
+  "stdout": "PASS",
+  "detail": "",
+  "seconds": 0.1,
+  "code_sha256": "acdc2fd87330d24de2d3ca18c5449ceee2d6b12c593a713b3e88097771e0a830"
+ },
+ "claim": "FRAGMENT of L1: verify(witness) raises on any failed check and returns True only when (i) every linear rational claim in the batch holds exactly over Fraction, (ii) the float-literal input aborts at ingestion (no non-ℚ path), and (iii) the trivial 0==0 sign-failing input aborts fail-closed — the behavioral content of L1 instantiated to these inputs; the universal claim over all inputs is not machine-certified here.",
+ "law": "Wang 7.2: an exact finite object plus a proved reduction is a CERTIFICATE. The reduction is the `claim` and is a human's to audit; the object and the verifier run are the machine's part.",
+ "timestamp": "2026-09-01T21:10:47Z"
+}

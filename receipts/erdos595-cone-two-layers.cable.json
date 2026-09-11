@@ -1,0 +1,62 @@
+{
+ "schema": "oracle.msl.cable.v1",
+ "id": "erdos595-cone-two-layers",
+ "spec": {
+  "id": "erdos595-cone-two-layers",
+  "imports": "Mathlib",
+  "definitions": "open SimpleGraph in\ndef IsCUTF {V : Type} (G : SimpleGraph V) : Prop :=\n  \u2203 H : \u2115 \u2192 SimpleGraph V, (\u2200 i, (H i).CliqueFree 3) \u2227 G = \u2a06 i, H i",
+  "hypotheses": [
+   "{V : Type}",
+   "(G : SimpleGraph V)",
+   "(v : V)"
+  ],
+  "conclusion": "(\u2200 a b c : V, a \u2260 v \u2192 b \u2260 v \u2192 c \u2260 v \u2192 G.Adj a b \u2192 G.Adj a c \u2192 G.Adj b c \u2192 False) \u2192 G.CliqueFree 4 \u2227 IsCUTF G",
+  "proof": "by\n  classical\n  intro hT\n  constructor\n  \u00b7 intro t ht\n    obtain \u27e8hcl, hcard\u27e9 := ht\n    obtain \u27e8a, b, c, d, hab, hac, had, hbc, hbd, hcd, hteq\u27e9 := Finset.card_eq_four.mp hcard\n    have ha : a \u2208 t := by rw [hteq]; simp\n    have hb : b \u2208 t := by rw [hteq]; simp\n    have hc : c \u2208 t := by rw [hteq]; simp\n    have hd : d \u2208 t := by rw [hteq]; simp\n    by_cases hav : a = v\n    \u00b7 subst hav\n      exact hT b c d (fun h => hab h.symm) (fun h => hac h.symm) (fun h => had h.symm)\n        (hcl hb hc hbc) (hcl hb hd hbd) (hcl hc hd hcd)\n    \u00b7 by_cases hbv : b = v\n      \u00b7 subst hbv\n        exact hT a c d hav (fun h => hbc h.symm) (fun h => hbd h.symm)\n          (hcl ha hc hac) (hcl ha hd had) (hcl hc hd hcd)\n      \u00b7 by_cases hcv : c = v\n        \u00b7 subst hcv\n          exact hT a b d hav hbv (fun h => hcd h.symm)\n            (hcl ha hb hab) (hcl ha hd had) (hcl hb hd hbd)\n        \u00b7 exact hT a b c hav hbv hcv (hcl ha hb hab) (hcl ha hc hac) (hcl hb hc hbc)\n  \u00b7 set L0 : SimpleGraph V := SimpleGraph.fromEdgeSet {e | e \u2208 G.edgeSet \u2227 v \u2209 e} with hL0\n    set L1 : SimpleGraph V := SimpleGraph.fromEdgeSet {e | e \u2208 G.edgeSet \u2227 v \u2208 e} with hL1\n    have h0free : L0.CliqueFree 3 := by\n      intro t ht\n      obtain \u27e8hcl, hcard\u27e9 := ht\n      obtain \u27e8a, b, c, hab, hac, hbc, hteq\u27e9 := Finset.card_eq_three.mp hcard\n      have ha : a \u2208 t := by rw [hteq]; simp\n      have hb : b \u2208 t := by rw [hteq]; simp\n      have hc : c \u2208 t := by rw [hteq]; simp\n      have e1 := hcl ha hb hab\n      have e2 := hcl ha hc hac\n      have e3 := hcl hb hc hbc\n      rw [hL0, SimpleGraph.fromEdgeSet_adj] at e1 e2 e3\n      have hav : a \u2260 v := fun h => e1.1.2 (by rw [\u2190 h]; exact Sym2.mem_mk_left a b)\n      have hbv : b \u2260 v := fun h => e1.1.2 (by rw [\u2190 h]; exact Sym2.mem_mk_right a b)\n      have hcv : c \u2260 v := fun h => e2.1.2 (by rw [\u2190 h]; exact Sym2.mem_mk_right a c)\n      exact hT a b c hav hbv hcv e1.1.1 e2.1.1 e3.1.1\n    have h1free : L1.CliqueFree 3 := by\n      intro t ht\n      obtain \u27e8hcl, hcard\u27e9 := ht\n      obtain \u27e8a, b, c, hab, hac, hbc, hteq\u27e9 := Finset.card_eq_three.mp hcard\n      have ha : a \u2208 t := by rw [hteq]; simp\n      have hb : b \u2208 t := by rw [hteq]; simp\n      have hc : c \u2208 t := by rw [hteq]; simp\n      have e1 := hcl ha hb hab\n      have e2 := hcl ha hc hac\n      have e3 := hcl hb hc hbc\n      rw [hL1, SimpleGraph.fromEdgeSet_adj] at e1 e2 e3\n      have m1 : v = a \u2228 v = b := by simpa [Sym2.mem_iff] using e1.1.2\n      have m2 : v = a \u2228 v = c := by simpa [Sym2.mem_iff] using e2.1.2\n      have m3 : v = b \u2228 v = c := by simpa [Sym2.mem_iff] using e3.1.2\n      rcases m1 with rfl | rfl\n      \u00b7 rcases m3 with rfl | rfl\n        \u00b7 exact hab rfl\n        \u00b7 exact hac rfl\n      \u00b7 rcases m2 with rfl | rfl\n        \u00b7 exact hab rfl\n        \u00b7 exact hbc rfl\n    refine \u27e8fun n => Nat.casesOn n L0 (fun _ => L1), ?_, ?_\u27e9\n    \u00b7 rintro (_ | k)\n      \u00b7 exact h0free\n      \u00b7 exact h1free\n    \u00b7 ext a b\n      rw [SimpleGraph.iSup_adj]\n      constructor\n      \u00b7 intro hab\n        by_cases hv : v \u2208 s(a, b)\n        \u00b7 refine \u27e81, ?_\u27e9\n          show L1.Adj a b\n          rw [hL1, SimpleGraph.fromEdgeSet_adj]\n          exact \u27e8\u27e8hab, hv\u27e9, G.ne_of_adj hab\u27e9\n        \u00b7 refine \u27e80, ?_\u27e9\n          show L0.Adj a b\n          rw [hL0, SimpleGraph.fromEdgeSet_adj]\n          exact \u27e8\u27e8hab, hv\u27e9, G.ne_of_adj hab\u27e9\n      \u00b7 rintro \u27e8n, hn\u27e9\n        rcases n with _ | k\n        \u00b7 have : L0.Adj a b := hn\n          rw [hL0, SimpleGraph.fromEdgeSet_adj] at this\n          exact this.1.1\n        \u00b7 have : L1.Adj a b := hn\n          rw [hL1, SimpleGraph.fromEdgeSet_adj] at this\n          exact this.1.1"
+ },
+ "formal_status": "KERNEL_CHECKED",
+ "events": [],
+ "axioms": [
+  "Classical.choice",
+  "Quot.sound",
+  "propext"
+ ],
+ "attempts": [
+  {
+   "tactic": "(supplied proof)",
+   "status": "VERIFIED",
+   "seconds": 97.7,
+   "errors": [],
+   "exitCode": 0,
+   "resource_limit": null
+  }
+ ],
+ "budget_history": [
+  {
+   "tier_seconds": 120.0,
+   "outcome": "KERNEL_CHECKED"
+  }
+ ],
+ "kernel_result": {
+  "status": "VERIFIED",
+  "file": "oracle/frontier_formalizer/cable/theorems/msl_erdos595-cone-two-layers.lean",
+  "backend": "wsl",
+  "project": "/root/erdosfire-bench/proofs",
+  "needsMathlib": true,
+  "exitCode": 0,
+  "seconds": 85.2,
+  "declarations": [
+   {
+    "declaration": "msl_erdos595_cone_two_layers",
+    "clean": true,
+    "axioms": [
+     "propext",
+     "Classical.choice",
+     "Quot.sound"
+    ]
+   }
+  ],
+  "errors": []
+ },
+ "lean_result_block": "LEAN_RESULT erdos595-cone-two-layers\n  FORMAL_STATUS KERNEL_CHECKED\n  FILE oracle/frontier_formalizer/cable/theorems/msl_erdos595-cone-two-layers.lean\n  THEOREMS msl_erdos595_cone_two_layers\n  BACKEND wsl\n  AXIOMS Classical.choice, Quot.sound, propext\n  TACTIC (supplied proof)\n  BUDGET 120s:KERNEL_CHECKED\n  FAILURE NONE",
+ "timestamp": "2026-09-06T10:10:24Z"
+}

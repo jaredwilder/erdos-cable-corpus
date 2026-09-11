@@ -1,0 +1,57 @@
+{
+ "schema": "oracle.msl.closer.witness.v1",
+ "id": "fmz-erdos153-campaign-001-R005-L1-a1r3",
+ "pipeline": "WITNESS_FINITE",
+ "witness": {
+  "instances": [
+   {
+    "k": 2,
+    "A": [
+     0,
+     1
+    ]
+   },
+   {
+    "k": 3,
+    "A": [
+     0,
+     1,
+     3
+    ]
+   },
+   {
+    "k": 4,
+    "A": [
+     0,
+     1,
+     4,
+     6
+    ]
+   },
+   {
+    "k": 5,
+    "A": [
+     0,
+     1,
+     4,
+     9,
+     11
+    ]
+   }
+  ]
+ },
+ "verifier_sha256": "4c4ba9cc4ef3a71b88264f1c3413189d3bbe76d643fcc137fc1c9e70fa6154b3",
+ "verifier_source": "def verify(witness):\n    # Fail-closed verifier for the finite fragment of L1.\n    # No imports, no I/O, no floats, no tolerance bands.\n    # Raises on ANY failed check or malformed input; returns True only if all pass.\n\n    # -- structural checks (fail closed) --\n    if not isinstance(witness, dict):\n        raise ValueError('witness must be a dict')\n    if 'instances' not in witness:\n        raise ValueError(\"witness must contain 'instances'\")\n    instances = witness['instances']\n    if not isinstance(instances, list) or len(instances) != 4:\n        raise ValueError('expected exactly 4 instances')\n    seen_k = []\n    for inst in instances:\n        if not isinstance(inst, dict) or 'k' not in inst or 'A' not in inst:\n            raise ValueError('instance must be a dict with keys k and A')\n        k = inst['k']\n        A = inst['A']\n        if not isinstance(k, int) or isinstance(k, bool):\n            raise ValueError('k must be an int')\n        if not isinstance(A, list):\n            raise ValueError('A must be a list')\n        for a in A:\n            if not isinstance(a, int) or isinstance(a, bool):\n                raise ValueError('entries of A must be ints')\n        if k < 2 or k > 5:\n            raise ValueError('k out of declared scope 2..5')\n        if k in seen_k:\n            raise ValueError('duplicate k')\n        seen_k.append(k)\n    if sorted(seen_k) != [2, 3, 4, 5]:\n        raise ValueError('instances must cover exactly k=2..5')\n\n    # -- mathematical checks, exact integer arithmetic --\n    for inst in instances:\n        k = inst['k']\n        A = inst['A']\n        if len(A) != k:\n            raise ValueError('len(A) != k')\n        # distinctness of A\n        for i in range(k):\n            for j in range(i + 1, k):\n                if A[i] == A[j]:\n                    raise ValueError('A has duplicate entries')\n        # unordered pairs with repetition (i <= j)\n        sums = []\n        for i in range(k):\n            for j in range(i, k):\n                sums.append(A[i] + A[j])\n        expected = k * (k + 1) // 2\n        if len(sums) != expected:\n            raise ValueError('pair count mismatch')\n        # injectivity of the pair->sum map (Sidon, with-repetition convention)\n        for a in range(expected):\n            for b in range(a + 1, expected):\n                if sums[a] == sums[b]:\n                    raise ValueError('pair-sum map not injective')\n        # hence |A+A| = k(k+1)/2 exactly\n        distinct_sums = []\n        for s in sums:\n            if s not in distinct_sums:\n                distinct_sums.append(s)\n        if len(distinct_sums) != expected:\n            raise ValueError('|A+A| != k(k+1)/2')\n    return True",
+ "run": {
+  "passed": true,
+  "status": "VERIFIER_PASS",
+  "exit_code": 0,
+  "stdout": "PASS",
+  "detail": "",
+  "seconds": 0.11,
+  "code_sha256": "4c4ba9cc4ef3a71b88264f1c3413189d3bbe76d643fcc137fc1c9e70fa6154b3"
+ },
+ "claim": "Certifies the finite fragment of L1: for the four embedded Sidon sets with k=2..5, the unordered pair-sum map (i<=j, with repetition) is injective and |A+A|=k(k+1)/2, by exact integer arithmetic in a fail-closed verify(witness) entrypoint that raises on any failed check; the universal 'all k' statement and the asymptotic route thesis are NOT covered.",
+ "law": "Wang 7.2: an exact finite object plus a proved reduction is a CERTIFICATE. The reduction is the `claim` and is a human's to audit; the object and the verifier run are the machine's part.",
+ "timestamp": "2026-09-02T01:20:53Z"
+}

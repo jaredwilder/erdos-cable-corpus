@@ -1,0 +1,84 @@
+{
+ "schema": "oracle.msl.closer.witness.v1",
+ "id": "fmz-erdos3-campaign-001-R006-cert",
+ "pipeline": "WITNESS_FINITE",
+ "witness": {
+  "claim_range": "N = 1..9 (fragment narrowed after VERIFIER_FAIL on the N=10,11 entries)",
+  "claimed_r3": [
+   null,
+   1,
+   2,
+   2,
+   3,
+   4,
+   4,
+   4,
+   4,
+   5
+  ],
+  "witness_sets": {
+   "1": [
+    1
+   ],
+   "2": [
+    1,
+    2
+   ],
+   "3": [
+    1,
+    2
+   ],
+   "4": [
+    1,
+    2,
+    4
+   ],
+   "5": [
+    1,
+    2,
+    4,
+    5
+   ],
+   "6": [
+    1,
+    2,
+    4,
+    5
+   ],
+   "7": [
+    1,
+    2,
+    4,
+    5
+   ],
+   "8": [
+    1,
+    2,
+    4,
+    5
+   ],
+   "9": [
+    1,
+    2,
+    4,
+    8,
+    9
+   ]
+  },
+  "note": "Exact exhaustive enumeration over all 2^N subsets of [1,N] for N<=9 (at most 512 subsets) recomputes r3(N) and compares against the recorded values; each witness is independently re-checked 3-AP-free with the claimed size. The N=10,11 entries of the previous filing are retracted as unverified."
+ },
+ "verifier_sha256": "60290f4835b0efd8369f59fd7715920e867f18ba6b8630580e61e17b1bf44c48",
+ "verifier_source": "# Standalone deterministic verifier: no imports, no I/O, exact integer arithmetic, fail-closed.\n\nCLAIMED_R3 = [None,1,2,2,3,4,4,4,4,5]\nWITNESSES = {\n    1:[1], 2:[1,2], 3:[1,2], 4:[1,2,4], 5:[1,2,4,5],\n    6:[1,2,4,5], 7:[1,2,4,5], 8:[1,2,4,5], 9:[1,2,4,8,9]\n}\n\ndef is_3ap_free(s):\n    ss = set(s)\n    n = len(s)\n    for i in range(n):\n        for j in range(i+1, n):\n            a, b = s[i], s[j]\n            if (a + b) % 2 == 0:\n                c = (a + b) // 2\n                if c != a and c != b and c in ss:\n                    return False\n    return True\n\ndef r3_exact(N):\n    best = 0\n    for mask in range(1 << N):\n        subset = [(i+1) for i in range(N) if (mask >> i) & 1]\n        if is_3ap_free(subset) and len(subset) > best:\n            best = len(subset)\n    return best\n\ndef verify():\n    for N in range(1, 10):\n        val = r3_exact(N)\n        if val != CLAIMED_R3[N]:\n            raise AssertionError(\"r3(%d)=%d, claimed %d\" % (N, val, CLAIMED_R3[N]))\n        ws = sorted(WITNESSES[N])\n        if len(ws) != CLAIMED_R3[N] or len(set(ws)) != len(ws):\n            raise AssertionError(\"witness size mismatch at N=%d\" % N)\n        if any(x < 1 or x > N for x in ws):\n            raise AssertionError(\"witness out of range at N=%d\" % N)\n        if not is_3ap_free(ws):\n            raise AssertionError(\"witness not 3-AP-free at N=%d\" % N)\n    return True\n\nRESULT = verify()",
+ "run": {
+  "passed": false,
+  "status": "VERIFIER_FAIL",
+  "exit_code": 1,
+  "stdout": "",
+  "detail": "TypeError: verify() takes 0 positional arguments but 1 was given",
+  "seconds": 0.13,
+  "code_sha256": "60290f4835b0efd8369f59fd7715920e867f18ba6b8630580e61e17b1bf44c48"
+ },
+ "claim": "Exact exhaustive integer enumeration recomputes r3(N) for N<=9 and confirms the values recorded in L1's enumeration content, with embedded 3-AP-free witnesses of the claimed sizes; deterministic, no imports, no I/O, fail-closed.",
+ "law": "Wang 7.2: an exact finite object plus a proved reduction is a CERTIFICATE. The reduction is the `claim` and is a human's to audit; the object and the verifier run are the machine's part.",
+ "timestamp": "2026-09-01T19:50:40Z"
+}

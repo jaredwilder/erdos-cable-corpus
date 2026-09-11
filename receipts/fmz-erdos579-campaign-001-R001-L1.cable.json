@@ -1,0 +1,71 @@
+{
+ "schema": "oracle.msl.cable.v1",
+ "id": "fmz-erdos579-campaign-001-R001-L1",
+ "spec": {
+  "id": "fmz-erdos579-campaign-001-R001-L1",
+  "imports": "none",
+  "definitions": "def n : Nat := 6\n-- graphs on vertices 0..5 encoded by bitmask over the 15 unordered pairs\ndef pairIdx : List (Nat \u00d7 Nat) :=\n  (List.range n).flatMap (fun i => (List.range n).filterMap (fun j =>\n    if i < j then some (i, j) else none))\ndef adj (m : Nat) (i j : Nat) : Bool :=\n  if i < j then (m >>> (pairIdx.indexOf (i,j))) % 2 == 1\n  else if j < i then (m >>> (pairIdx.indexOf (j,i))) % 2 == 1\n  else false\ndef isK222 (m : Nat) (a b c d e f : Nat) : Bool :=\n  adj m a d && adj m a e && adj m a f &&\n  adj m b d && adj m b e && adj m b f &&\n  adj m c d && adj m c e && adj m c f &&\n  !(adj m a b) && !(adj m a c) && !(adj m b c) &&\n  !(adj m d e) && !(adj m d f) && !(adj m e f)\ndef hasK222 (m : Nat) : Bool :=\n  ((List.range n).flatMap (fun a => (List.range n).flatMap (fun b =>\n   (List.range n).flatMap (fun c => (List.range n).flatMap (fun d =>\n   (List.range n).flatMap (fun e => (List.range n).map (fun f =>\n     isK222 m a b c d e f))))))).any id\ndef commonNbrs (m : Nat) (a b : Nat) : List Nat :=\n  (List.range n).filter (fun v => adj m a v && adj m b v)\ndef isK22in (m : Nat) (x y u v : Nat) : Bool :=\n  adj m x u && adj m x v && adj m y u && adj m y v &&\n  !(adj m x y) && !(adj m u v)\ndef hasK22in (m : Nat) (vs : List Nat) : Bool :=\n  (vs.flatMap (fun x => vs.flatMap (fun y =>\n   vs.flatMap (fun u => vs.map (fun v => isK22in m x y u v))))).any id\ndef check_L1 : Bool :=\n  (List.range (2 ^ 15)).all (fun m =>\n    ((List.range n).flatMap (fun a => (List.range n).flatMap (fun b =>\n      if a < b && !(adj m a b) then [a, b] else []))).all (fun ab =>\n        let a := ab.head!; let b := ab.tail!.head!\n        !(hasK22in m (commonNbrs m a b)) || hasK222 m))",
+  "conclusion": "check_L1 = true",
+  "proof": "by decide"
+ },
+ "formal_status": "KERNEL_FAILED",
+ "events": [
+  "((supplied proof)) RAW[tmps571a8x5.lean:9:32: error(lean.invalidField): Invalid field `indexOf`: The environment does not contain `List.indexOf`, so it is not possible to project the ]",
+  "((supplied proof)) RAW[tmps571a8x5.lean:10:37: error(lean.invalidField): Invalid field `indexOf`: The environment does not contain `List.indexOf`, so it is not possible to project the]",
+  "((supplied proof)) RAW[tmps571a8x5.lean:35:20: error(lean.invalidField): Invalid field `head!`: The environment does not contain `Nat.head!`, so it is not possible to project the fiel]",
+  "((supplied proof)) RAW[tmps571a8x5.lean:35:39: error(lean.invalidField): Invalid field `tail!`: The environment does not contain `Nat.tail!`, so it is not possible to project the fiel]",
+  "((supplied proof)) RAW[tmps571a8x5.lean:38:71: error: maximum recursion depth has been reached]"
+ ],
+ "axioms": [
+  "sorryAx"
+ ],
+ "attempts": [
+  {
+   "tactic": "(supplied proof)",
+   "status": "UNVERIFIED",
+   "seconds": 2.1,
+   "errors": [
+    "tmps571a8x5.lean:9:32: error(lean.invalidField): Invalid field `indexOf`: The environment does not contain `List.indexOf`, so it is not possible to project the field `indexOf` from an expression",
+    "tmps571a8x5.lean:10:37: error(lean.invalidField): Invalid field `indexOf`: The environment does not contain `List.indexOf`, so it is not possible to project the field `indexOf` from an expression",
+    "tmps571a8x5.lean:35:20: error(lean.invalidField): Invalid field `head!`: The environment does not contain `Nat.head!`, so it is not possible to project the field `head!` from an expression",
+    "tmps571a8x5.lean:35:39: error(lean.invalidField): Invalid field `tail!`: The environment does not contain `Nat.tail!`, so it is not possible to project the field `tail!` from an expression",
+    "tmps571a8x5.lean:38:71: error: maximum recursion depth has been reached"
+   ],
+   "exitCode": 1,
+   "resource_limit": "maximum recursion depth"
+  }
+ ],
+ "budget_history": [
+  {
+   "tier_seconds": 900.0,
+   "outcome": "UNDECIDED_RESOURCE[maximum recursion depth]"
+  }
+ ],
+ "kernel_result": {
+  "status": "UNVERIFIED",
+  "file": "oracle/frontier_formalizer/cable/theorems/msl_fmz-erdos579-campaign-001-R001-L1.lean",
+  "backend": "windows",
+  "project": "C:\\Users\\jared\\Local Sites\\woocommerce-enterprise\\oracle\\math\\EG411Formal",
+  "needsMathlib": false,
+  "exitCode": 1,
+  "seconds": 2.1,
+  "declarations": [
+   {
+    "declaration": "msl_fmz_erdos579_campaign_001_R001_L1",
+    "clean": false,
+    "axioms": [
+     "sorryAx"
+    ]
+   }
+  ],
+  "errors": [
+   "tmps571a8x5.lean:9:32: error(lean.invalidField): Invalid field `indexOf`: The environment does not contain `List.indexOf`, so it is not possible to project the field `indexOf` from an expression",
+   "tmps571a8x5.lean:10:37: error(lean.invalidField): Invalid field `indexOf`: The environment does not contain `List.indexOf`, so it is not possible to project the field `indexOf` from an expression",
+   "tmps571a8x5.lean:35:20: error(lean.invalidField): Invalid field `head!`: The environment does not contain `Nat.head!`, so it is not possible to project the field `head!` from an expression",
+   "tmps571a8x5.lean:35:39: error(lean.invalidField): Invalid field `tail!`: The environment does not contain `Nat.tail!`, so it is not possible to project the field `tail!` from an expression",
+   "tmps571a8x5.lean:38:71: error: maximum recursion depth has been reached"
+  ]
+ },
+ "lean_result_block": "LEAN_RESULT fmz-erdos579-campaign-001-R001-L1\n  FORMAL_STATUS KERNEL_FAILED\n  FILE oracle/frontier_formalizer/cable/theorems/msl_fmz-erdos579-campaign-001-R001-L1.lean\n  THEOREMS msl_fmz_erdos579_campaign_001_R001_L1\n  BACKEND windows\n  AXIOMS sorryAx\n  TACTIC (supplied proof)\n  BUDGET 900s:UNDECIDED_RESOURCE[maximum recursion depth]\n  FAILURE ((supplied proof)) RAW[tmps571a8x5.lean:9:32: error(lean.invalidField): Invalid field `indexOf`: The environment does not contain `List.indexOf`, so it is not possible to project the ]; ((supplied proof)) RAW[tmps571a8x5.lean:10:37: error(lean.invalidField): Invalid field `indexOf`: The environment does not contain `List.indexOf`, so it is not possible to project the]; ((supplied proof)) RAW[tmps571a8x5.lean:35:20: error(lean.invalidField): Invalid field `head!`: The environment does not contain `Nat.head!`, so it is not possible to project the fiel]; ((supplied proof)) RAW[tmps571a8x5.lean:35:39: error(lean.invalidField): Invalid field `tail!`: The environment does not contain `Nat.tail!`, so it is not possible to project the fiel]; ((supplied proof)) RAW[tmps571a8x5.lean:38:71: error: maximum recursion depth has been reached]\n  LAW KERNEL_FAILED does not refute the claim \u2014 the FAILURE line names what actually broke\n  LAW BUDGET_EXHAUSTED is an UNDECIDED question, not a failed proof \u2014 the machine stopped, the mathematics did not answer",
+ "timestamp": "2026-09-01T21:22:53Z"
+}

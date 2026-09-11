@@ -1,0 +1,61 @@
+{
+ "schema": "oracle.msl.cable.v1",
+ "id": "erdos595-transversal-ceiling",
+ "spec": {
+  "id": "erdos595-transversal-ceiling",
+  "imports": "Mathlib",
+  "definitions": "open SimpleGraph in\ndef IsProperC {V : Type} (G : SimpleGraph V) {C : Type} (f : V \u2192 C) : Prop :=\n  \u2200 a b : V, G.Adj a b \u2192 f a \u2260 f b\n\nopen SimpleGraph in\ndef IsTransversal {V : Type} (G : SimpleGraph V) (D : Set (Sym2 V)) : Prop :=\n  \u2200 a b c : V, G.Adj a b \u2192 G.Adj a c \u2192 G.Adj b c \u2192\n    s(a, b) \u2208 D \u2228 s(a, c) \u2208 D \u2228 s(b, c) \u2208 D",
+  "hypotheses": [
+   "{V C : Type}",
+   "(G : SimpleGraph V)"
+  ],
+  "conclusion": "(\u2200 D : Set (Sym2 V), IsTransversal G D \u2192 \u2203 f : V \u2192 C, IsProperC (G.deleteEdges D) f) \u2194 (\u2200 H : SimpleGraph V, H \u2264 G \u2192 H.CliqueFree 3 \u2192 \u2203 f : V \u2192 C, IsProperC H f)",
+  "proof": "by\n  classical\n  constructor\n  \u00b7 intro hD H hHle hHfree\n    obtain \u27e8f, hf\u27e9 := hD {e | e \u2208 G.edgeSet \u2227 e \u2209 H.edgeSet} (by\n      intro a b c hab hac hbc\n      by_contra hcon\n      push_neg at hcon\n      obtain \u27e8h1, h2, h3\u27e9 := hcon\n      have m1 : H.Adj a b := by\n        by_contra hx\n        exact h1 \u27e8hab, fun hy => hx hy\u27e9\n      have m2 : H.Adj a c := by\n        by_contra hx\n        exact h2 \u27e8hac, fun hy => hx hy\u27e9\n      have m3 : H.Adj b c := by\n        by_contra hx\n        exact h3 \u27e8hbc, fun hy => hx hy\u27e9\n      exact hHfree {a, b, c} (SimpleGraph.is3Clique_triple_iff.mpr \u27e8m1, m2, m3\u27e9))\n    refine \u27e8f, fun a b hab => hf a b ?_\u27e9\n    rw [SimpleGraph.deleteEdges_adj]\n    exact \u27e8hHle hab, fun hmem => hmem.2 hab\u27e9\n  \u00b7 intro hH D hDtr\n    refine hH (G.deleteEdges D) (SimpleGraph.deleteEdges_le D) ?_\n    intro t ht\n    obtain \u27e8hcl, hcard\u27e9 := ht\n    obtain \u27e8a, b, c, hab, hac, hbc, hteq\u27e9 := Finset.card_eq_three.mp hcard\n    have ha : a \u2208 t := by rw [hteq]; simp\n    have hb : b \u2208 t := by rw [hteq]; simp\n    have hc : c \u2208 t := by rw [hteq]; simp\n    have e1 := hcl ha hb hab\n    have e2 := hcl ha hc hac\n    have e3 := hcl hb hc hbc\n    rw [SimpleGraph.deleteEdges_adj] at e1 e2 e3\n    rcases hDtr a b c e1.1 e2.1 e3.1 with h | h | h\n    \u00b7 exact e1.2 h\n    \u00b7 exact e2.2 h\n    \u00b7 exact e3.2 h"
+ },
+ "formal_status": "KERNEL_CHECKED",
+ "events": [],
+ "axioms": [
+  "Classical.choice",
+  "Quot.sound",
+  "propext"
+ ],
+ "attempts": [
+  {
+   "tactic": "(supplied proof)",
+   "status": "VERIFIED",
+   "seconds": 61.6,
+   "errors": [],
+   "exitCode": 0,
+   "resource_limit": null
+  }
+ ],
+ "budget_history": [
+  {
+   "tier_seconds": 120.0,
+   "outcome": "KERNEL_CHECKED"
+  }
+ ],
+ "kernel_result": {
+  "status": "VERIFIED",
+  "file": "oracle/frontier_formalizer/cable/theorems/msl_erdos595-transversal-ceiling.lean",
+  "backend": "wsl",
+  "project": "/root/erdosfire-bench/proofs",
+  "needsMathlib": true,
+  "exitCode": 0,
+  "seconds": 48.7,
+  "declarations": [
+   {
+    "declaration": "msl_erdos595_transversal_ceiling",
+    "clean": true,
+    "axioms": [
+     "propext",
+     "Classical.choice",
+     "Quot.sound"
+    ]
+   }
+  ],
+  "errors": []
+ },
+ "lean_result_block": "LEAN_RESULT erdos595-transversal-ceiling\n  FORMAL_STATUS KERNEL_CHECKED\n  FILE oracle/frontier_formalizer/cable/theorems/msl_erdos595-transversal-ceiling.lean\n  THEOREMS msl_erdos595_transversal_ceiling\n  BACKEND wsl\n  AXIOMS Classical.choice, Quot.sound, propext\n  TACTIC (supplied proof)\n  BUDGET 120s:KERNEL_CHECKED\n  FAILURE NONE",
+ "timestamp": "2026-09-06T10:48:37Z"
+}

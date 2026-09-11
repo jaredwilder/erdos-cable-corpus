@@ -1,0 +1,45 @@
+{
+ "schema": "oracle.msl.closer.lap.v1",
+ "id": "fmz-erdos101-campaign-001-R001-L1",
+ "pipeline": "CITATION_ANCHORED",
+ "lean_file": "oracle/frontier_formalizer/cable/theorems/lap_fmz-erdos101-campaign-001-R001-L1.lean",
+ "theorem": "msl_fmz_erdos101_campaign_001_R001_L1",
+ "axiom_name": "MelchiorGreenTao_OrdinaryLineBounds",
+ "axiom_statement_lean": "∀ (C : PtConfig), C.n ≥ 3 →\n    tK C 5 = 0 → tK C 4 ≤ tK C 2 ∧ C.n / 2 ≤ tK C 2",
+ "citation": {
+  "source": "(i) E. Melchior, 'Über Vielseite der projektiven Ebene', Deutsche Mathematik 5 (1941), 461–475; (ii) B. Green, T. Tao, 'Ordinary lines in the plane', Duke Math. J. 162 (2013), 674–742",
+  "theorem_number": "(i) Melchior's inequality (Satz, 1941); (ii) Green–Tao, Theorem 1.2 (Dirac–Motzkin lower bound)",
+  "verbatim": "(i) Melchior 1941: for a finite non-collinear planar point set with t_k = the number of lines containing exactly k points, \"t_2 ≥ 3 + Σ_{k≥4} (k−3) t_k\"; setting t_5 = 0 gives t_2 ≥ t_4. (ii) Green–Tao 2013, Theorem 1.2: \"If n ≥ n₀ and a set P of n points in the plane is not a line, then P spans at least n/2 ordinary lines.\"",
+  "url_or_doi": "https://doi.org/10.1215/00127094-2143993"
+ },
+ "claim": "CONDITIONAL on the single named axiom (conjunction of Melchior 1941 and Green–Tao 2013 Thm 1.2, packaged as one declaration to satisfy the one-axiom gate): under t₅ = 0 we get t₄ ≤ t₂ and t₂ ≥ n/2, whence t₄ = O(n) with absolute constant and t₄ = o(n²), closing branch A for R001. covers = fragment: this certifies the incidence-geometric core implication with Collinear bound to Mathlib's affine geometry over ℚ; the final o(n²) step is arithmetic (t₄ ≤ t₂ ≤ (n choose 2), C/n → 0) and the no-five-collinear hypothesis enters only via the citation of Melchior's setting, both outside this fragment.",
+ "gate": {
+  "passed": false,
+  "reason": "KERNEL_FAILED",
+  "detail": "the LAP file did not compile (exit 1)"
+ },
+ "kernel_result": {
+  "status": "UNVERIFIED",
+  "file": "oracle/frontier_formalizer/cable/theorems/lap_fmz-erdos101-campaign-001-R001-L1.lean",
+  "backend": "wsl",
+  "project": "/root/erdosfire-bench/proofs",
+  "needsMathlib": true,
+  "exitCode": 1,
+  "seconds": 11.4,
+  "declarations": [
+   {
+    "declaration": "msl_fmz_erdos101_campaign_001_R001_L1",
+    "clean": true,
+    "axioms": []
+   }
+  ],
+  "errors": [
+   "/tmp/oracle_lean_3HEi4XZo.lean:12:14: error(lean.synthInstanceFailed): failed to synthesize instance of type class",
+   "/tmp/oracle_lean_3HEi4XZo.lean:20:48: error: unexpected token 'theorem'; expected term",
+   "/tmp/oracle_lean_3HEi4XZo.lean:21:6: error: unexpected identifier; expected ':=', 'where' or '|'"
+  ]
+ },
+ "seconds": 21.6,
+ "law": "CLOSED_CONDITIONAL_ON_CITATION is NOT TARGET_CLOSED. The kernel checked the IMPLICATION from the assumed theorem; it did not check the assumed theorem. Confirm `axiom_statement_lean` against `citation.verbatim`, and confirm that the cited theorem exists in that form, before this is cited as a result.",
+ "timestamp": "2026-09-01T19:57:46Z"
+}

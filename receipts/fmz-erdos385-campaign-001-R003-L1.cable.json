@@ -1,0 +1,49 @@
+{
+ "schema": "oracle.msl.cable.v1",
+ "id": "fmz-erdos385-campaign-001-R003-L1",
+ "spec": {
+  "id": "fmz-erdos385-campaign-001-R003-L1",
+  "imports": "none",
+  "definitions": "def isComposite (n : Nat) : Bool :=\n  (List.range n).any (fun d => 1 < d && n % d == 0)\n\n/-- least prime divisor of n, computed by search over d = 2..n (total for n >= 2) -/\ndef leastPrimeDiv (n : Nat) : Nat :=\n  match (List.range (n + 1)).filter (fun d => 1 < d && n % d == 0) with\n  | d :: _ => d\n  | [] => 0\n\n/-- F(n): max of m + leastPrimeDiv(m) over composite m < n; 0 if no such m. -/\ndef Fval (n : Nat) : Nat :=\n  ((List.range n).filter isComposite).foldl\n    (fun acc m => max acc (m + leastPrimeDiv m)) 0\n\n/-- L1 fragment: at n = 5, m = n-1 = 4 is composite and 4 + p(4) = 6 = 5 + 1,\n    so F(5) >= 6 = 5 + 1. -/\ndef checkL1 : Bool :=\n  isComposite 4 && leastPrimeDiv 4 == 2 &&\n  4 + leastPrimeDiv 4 == 5 + 1 && Fval 5 >= 5 + 1",
+  "conclusion": "checkL1 = true",
+  "proof": "by decide"
+ },
+ "formal_status": "KERNEL_CHECKED",
+ "events": [],
+ "axioms": [],
+ "attempts": [
+  {
+   "tactic": "(supplied proof)",
+   "status": "VERIFIED",
+   "seconds": 2.5,
+   "errors": [],
+   "exitCode": 0,
+   "resource_limit": null
+  }
+ ],
+ "budget_history": [
+  {
+   "tier_seconds": 900.0,
+   "outcome": "KERNEL_CHECKED"
+  }
+ ],
+ "kernel_result": {
+  "status": "VERIFIED",
+  "file": "oracle/frontier_formalizer/cable/theorems/msl_fmz-erdos385-campaign-001-R003-L1.lean",
+  "backend": "windows",
+  "project": "C:\\Users\\jared\\Local Sites\\woocommerce-enterprise\\oracle\\math\\EG411Formal",
+  "needsMathlib": false,
+  "exitCode": 0,
+  "seconds": 2.5,
+  "declarations": [
+   {
+    "declaration": "msl_fmz_erdos385_campaign_001_R003_L1",
+    "clean": true,
+    "axioms": []
+   }
+  ],
+  "errors": []
+ },
+ "lean_result_block": "LEAN_RESULT fmz-erdos385-campaign-001-R003-L1\n  FORMAL_STATUS KERNEL_CHECKED\n  FILE oracle/frontier_formalizer/cable/theorems/msl_fmz-erdos385-campaign-001-R003-L1.lean\n  THEOREMS msl_fmz_erdos385_campaign_001_R003_L1\n  BACKEND windows\n  AXIOMS -\n  TACTIC (supplied proof)\n  BUDGET 900s:KERNEL_CHECKED\n  FAILURE NONE",
+ "timestamp": "2026-09-01T20:28:16Z"
+}

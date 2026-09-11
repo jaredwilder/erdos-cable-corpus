@@ -1,0 +1,59 @@
+{
+ "schema": "oracle.msl.cable.v1",
+ "id": "fmz-erdos373-campaign-001-R002-L1",
+ "spec": {
+  "id": "fmz-erdos373-campaign-001-R002-L1",
+  "imports": "none",
+  "definitions": "def parityCheck (n : Nat) : Bool := (n * (n + 1)) % 2 == 0\n\ndef fact : Nat -> Nat\n  | 0 => 1\n  | (n+1) => (n+1) * fact n\n\ndef checkInstance (n : Nat) (as : List Nat) : Bool :=\n  match as with\n  | [] => false\n  | a1 :: rest => (a1 <= n - 1) && rest.all (fun a => a >= 2) && rest.foldl (fun acc a => acc * fact a) (fact a1) == fact n\n\n-- Narrowed fragment: parity on a small decidable range, one exact instance.\ndef fullCheck : Bool :=\n  (List.range 40).all parityCheck\n  && checkInstance 5 [4, 3]",
+  "conclusion": "fullCheck = true",
+  "proof": "by decide"
+ },
+ "formal_status": "KERNEL_FAILED",
+ "events": [
+  "((supplied proof)) REFUTED.DECIDABLE[decide proved the negation \u2014 this one IS a refutation]"
+ ],
+ "axioms": [
+  "sorryAx"
+ ],
+ "attempts": [
+  {
+   "tactic": "(supplied proof)",
+   "status": "UNVERIFIED",
+   "seconds": 7.7,
+   "errors": [
+    "tmpnqnd9ara.lean:19:72: error: Tactic `decide` proved that the proposition"
+   ],
+   "exitCode": 1,
+   "resource_limit": null
+  }
+ ],
+ "budget_history": [
+  {
+   "tier_seconds": 900.0,
+   "outcome": "REFUTED_DECIDABLE"
+  }
+ ],
+ "kernel_result": {
+  "status": "UNVERIFIED",
+  "file": "oracle/frontier_formalizer/cable/theorems/msl_fmz-erdos373-campaign-001-R002-L1.lean",
+  "backend": "windows",
+  "project": "C:\\Users\\jared\\Local Sites\\woocommerce-enterprise\\oracle\\math\\EG411Formal",
+  "needsMathlib": false,
+  "exitCode": 1,
+  "seconds": 7.7,
+  "declarations": [
+   {
+    "declaration": "msl_fmz_erdos373_campaign_001_R002_L1",
+    "clean": false,
+    "axioms": [
+     "sorryAx"
+    ]
+   }
+  ],
+  "errors": [
+   "tmpnqnd9ara.lean:19:72: error: Tactic `decide` proved that the proposition"
+  ]
+ },
+ "lean_result_block": "LEAN_RESULT fmz-erdos373-campaign-001-R002-L1\n  FORMAL_STATUS KERNEL_FAILED\n  FILE oracle/frontier_formalizer/cable/theorems/msl_fmz-erdos373-campaign-001-R002-L1.lean\n  THEOREMS msl_fmz_erdos373_campaign_001_R002_L1\n  BACKEND windows\n  AXIOMS sorryAx\n  TACTIC (supplied proof)\n  BUDGET 900s:REFUTED_DECIDABLE\n  FAILURE ((supplied proof)) REFUTED.DECIDABLE[decide proved the negation \u2014 this one IS a refutation]\n  LAW KERNEL_FAILED does not refute the claim \u2014 the FAILURE line names what actually broke",
+ "timestamp": "2026-09-01T21:43:10Z"
+}

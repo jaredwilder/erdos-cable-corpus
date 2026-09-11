@@ -1,0 +1,81 @@
+{
+ "schema": "oracle.msl.cable.v1",
+ "id": "erdos595-transversal-probe-2026-09-05",
+ "spec": {
+  "id": "erdos595-transversal-probe-2026-09-05",
+  "imports": "Mathlib",
+  "definitions": "namespace Erdos595Probe\n\nvariable {V : Type*}\n\ntheorem support_countable (S : Set (Sym2 V)) (hS : S.Countable) :\n    (\u22c3 e \u2208 S, {v : V | v \u2208 e}).Countable := by\n  refine hS.biUnion fun e _ => ?_\n  induction e using Sym2.ind with\n  | _ a b =>\n    have hab : {v : V | v \u2208 s(a, b)} = {a, b} := by\n      ext v\n      simp [Sym2.mem_iff]\n    rw [hab]\n    exact (Set.toFinite _).countable\n\ntheorem exists_free_triangle (hV : \u00ac (Set.univ : Set V).Countable) (S : Set (Sym2 V))\n    (hS : S.Countable) :\n    \u2203 x y z : V, x \u2260 y \u2227 y \u2260 z \u2227 x \u2260 z \u2227\n      s(x, y) \u2209 S \u2227 s(y, z) \u2209 S \u2227 s(x, z) \u2209 S := by\n  classical\n  set W : Set V := \u22c3 e \u2208 S, {v : V | v \u2208 e} with hW\n  have hWc : W.Countable := support_countable S hS\n  have hinf : (W\u1d9c).Infinite := by\n    by_contra hfin\n    rw [Set.not_infinite] at hfin\n    apply hV\n    have huniv : (Set.univ : Set V) = W \u222a W\u1d9c := (Set.union_compl_self W).symm\n    rw [huniv]\n    exact hWc.union hfin.countable\n  obtain \u27e8T, hTsub, hTcard\u27e9 := hinf.exists_subset_card_eq 3\n  obtain \u27e8x, y, z, hxy, hxz, hyz, hset\u27e9 := Finset.card_eq_three.mp hTcard\n  have hxW : x \u2209 W := by\n    have : x \u2208 W\u1d9c := hTsub (by rw [hset]; simp)\n    exact this\n  have hyW : y \u2209 W := by\n    have : y \u2208 W\u1d9c := hTsub (by rw [hset]; simp)\n    exact this\n  have hzW : z \u2209 W := by\n    have : z \u2208 W\u1d9c := hTsub (by rw [hset]; simp)\n    exact this\n  have key : \u2200 a b : V, a \u2209 W \u2192 s(a, b) \u2209 S := by\n    intro a b ha hmem\n    apply ha\n    rw [hW]\n    exact Set.mem_biUnion hmem (by simp [Sym2.mem_iff])\n  exact \u27e8x, y, z, hxy, hyz, hxz, key x y hxW, key y z hyW, key x z hxW\u27e9\n\nend Erdos595Probe",
+  "hypotheses": [
+   "{V : Type*}",
+   "(hV : \u00ac (Set.univ : Set V).Countable)",
+   "(S : Set (Sym2 V))",
+   "(hS : S.Countable)"
+  ],
+  "conclusion": "\u2203 x y z : V, x \u2260 y \u2227 y \u2260 z \u2227 x \u2260 z \u2227 s(x, y) \u2209 S \u2227 s(y, z) \u2209 S \u2227 s(x, z) \u2209 S",
+  "proof": "by exact Erdos595Probe.exists_free_triangle hV S hS"
+ },
+ "formal_status": "KERNEL_CHECKED",
+ "events": [],
+ "axioms": [
+  "Classical.choice",
+  "Quot.sound",
+  "propext"
+ ],
+ "attempts": [
+  {
+   "tactic": "(supplied proof)",
+   "status": "VERIFIED",
+   "seconds": 48.3,
+   "errors": [],
+   "exitCode": 0,
+   "resource_limit": null
+  }
+ ],
+ "budget_history": [
+  {
+   "tier_seconds": 120.0,
+   "outcome": "KERNEL_CHECKED"
+  }
+ ],
+ "kernel_result": {
+  "status": "VERIFIED",
+  "file": "oracle/frontier_formalizer/cable/theorems/msl_erdos595-transversal-probe-2026-09-05.lean",
+  "backend": "wsl",
+  "project": "/root/erdosfire-bench/proofs",
+  "needsMathlib": true,
+  "exitCode": 0,
+  "seconds": 37.1,
+  "declarations": [
+   {
+    "declaration": "support_countable",
+    "clean": true,
+    "axioms": [
+     "propext",
+     "Classical.choice",
+     "Quot.sound"
+    ]
+   },
+   {
+    "declaration": "exists_free_triangle",
+    "clean": true,
+    "axioms": [
+     "propext",
+     "Classical.choice",
+     "Quot.sound"
+    ]
+   },
+   {
+    "declaration": "msl_erdos595_transversal_probe_2026_09_05",
+    "clean": true,
+    "axioms": [
+     "propext",
+     "Classical.choice",
+     "Quot.sound"
+    ]
+   }
+  ],
+  "errors": []
+ },
+ "lean_result_block": "LEAN_RESULT erdos595-transversal-probe-2026-09-05\n  FORMAL_STATUS KERNEL_CHECKED\n  FILE oracle/frontier_formalizer/cable/theorems/msl_erdos595-transversal-probe-2026-09-05.lean\n  THEOREMS msl_erdos595_transversal_probe_2026_09_05\n  BACKEND wsl\n  AXIOMS Classical.choice, Quot.sound, propext\n  TACTIC (supplied proof)\n  BUDGET 120s:KERNEL_CHECKED\n  FAILURE NONE",
+ "timestamp": "2026-09-05T18:09:04Z"
+}

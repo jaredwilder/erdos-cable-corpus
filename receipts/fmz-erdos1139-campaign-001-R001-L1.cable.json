@@ -1,0 +1,62 @@
+{
+ "schema": "oracle.msl.cable.v1",
+ "id": "fmz-erdos1139-campaign-001-R001-L1",
+ "spec": {
+  "id": "fmz-erdos1139-campaign-001-R001-L1",
+  "imports": "none",
+  "definitions": "namespace R001L1\n\n/-- Exact-mode comparison over exact integers (stand-in for Fraction-exact\ncomparisons): trichotomy holds and `<` exactly matches `\u00ac \u2265`. -/\ndef ExactModeComparison (a b : Nat) : Prop :=\n  (a < b \u2228 a = b \u2228 b < a) \u2227 ((a < b) \u2194 \u00ac(b \u2264 a))\n\n/-- Fail-closed: the checker is total \u2014 every input yields a verdict. -/\ndef FailClosed (checker : Nat \u2192 Nat \u2192 Bool) : Prop :=\n  \u2200 a b : Nat, checker a b = true \u2228 checker a b = false\n\n/-- Deterministic injection tests, all over exact integers:\n  * well-formed exact case passes: 3334/10000 > 1/3  (3334*3 > 10000)\n  * injected tampered case fails:   3333/10000 \u2264 1/3  (3333*3 < 10000)\n  * injected malformed case fails:  \u00ac(2 < 1)\nEach verdict is a decidable Bool so the kernel reduces it by `decide`. -/\ndef L1Statement : Prop :=\n  (\u2200 a b : Nat, ExactModeComparison a b) \u2227\n  FailClosed (fun a b => decide (a \u2264 b)) \u2227\n  (decide (10000 < 3334 * 3) = true) \u2227\n  (decide (10000 < 3333 * 3) = false) \u2227\n  (decide (2 < 1) = false)\n\nend R001L1",
+  "conclusion": "R001L1.L1Statement",
+  "proof": "by\n  refine \u27e8?_, ?_, ?_, ?_, ?_\u27e9\n  \u00b7 intro a b\n    refine \u27e8?_, ?_\u27e9\n    \u00b7 rcases lt_trichotomy a b with h | h | h\n      \u00b7 exact Or.inl h\n      \u00b7 exact Or.inr (Or.inl h)\n      \u00b7 exact Or.inr (Or.inr h)\n    \u00b7 constructor\n      \u00b7 intro h; exact Nat.not_le.mpr h\n      \u00b7 intro h; exact Nat.lt_of_not_le h\n  \u00b7 intro a b\n    cases hb : decide (a \u2264 b) with\n    | true => exact Or.inl hb\n    | false => exact Or.inr hb\n  \u00b7 decide\n  \u00b7 decide\n  \u00b7 decide"
+ },
+ "formal_status": "KERNEL_FAILED",
+ "events": [
+  "((supplied proof)) TYPE.FAIL NEED[lt_trichotomy]",
+  "((supplied proof)) RAW[tmpwh6sl09h.lean:32:36: error: Tactic `rcases` failed: `x\u271d : ?m.23` is not an inductive datatype]"
+ ],
+ "axioms": [
+  "sorryAx"
+ ],
+ "attempts": [
+  {
+   "tactic": "(supplied proof)",
+   "status": "UNVERIFIED",
+   "seconds": 2.4,
+   "errors": [
+    "tmpwh6sl09h.lean:32:13: error(lean.unknownIdentifier): Unknown identifier `lt_trichotomy`",
+    "tmpwh6sl09h.lean:32:36: error: Tactic `rcases` failed: `x\u271d : ?m.23` is not an inductive datatype"
+   ],
+   "exitCode": 1,
+   "resource_limit": null
+  }
+ ],
+ "budget_history": [
+  {
+   "tier_seconds": 900.0,
+   "outcome": "KERNEL_FAILED"
+  }
+ ],
+ "kernel_result": {
+  "status": "UNVERIFIED",
+  "file": "oracle/frontier_formalizer/cable/theorems/msl_fmz-erdos1139-campaign-001-R001-L1.lean",
+  "backend": "windows",
+  "project": "C:\\Users\\jared\\Local Sites\\woocommerce-enterprise\\oracle\\math\\EG411Formal",
+  "needsMathlib": false,
+  "exitCode": 1,
+  "seconds": 2.4,
+  "declarations": [
+   {
+    "declaration": "msl_fmz_erdos1139_campaign_001_R001_L1",
+    "clean": false,
+    "axioms": [
+     "sorryAx"
+    ]
+   }
+  ],
+  "errors": [
+   "tmpwh6sl09h.lean:32:13: error(lean.unknownIdentifier): Unknown identifier `lt_trichotomy`",
+   "tmpwh6sl09h.lean:32:36: error: Tactic `rcases` failed: `x\u271d : ?m.23` is not an inductive datatype"
+  ]
+ },
+ "lean_result_block": "LEAN_RESULT fmz-erdos1139-campaign-001-R001-L1\n  FORMAL_STATUS KERNEL_FAILED\n  FILE oracle/frontier_formalizer/cable/theorems/msl_fmz-erdos1139-campaign-001-R001-L1.lean\n  THEOREMS msl_fmz_erdos1139_campaign_001_R001_L1\n  BACKEND windows\n  AXIOMS sorryAx\n  TACTIC (supplied proof)\n  BUDGET 900s:KERNEL_FAILED\n  FAILURE ((supplied proof)) TYPE.FAIL NEED[lt_trichotomy]; ((supplied proof)) RAW[tmpwh6sl09h.lean:32:36: error: Tactic `rcases` failed: `x\u271d : ?m.23` is not an inductive datatype]\n  LAW KERNEL_FAILED does not refute the claim \u2014 the FAILURE line names what actually broke",
+ "timestamp": "2026-09-01T20:28:25Z"
+}

@@ -1,0 +1,49 @@
+{
+ "schema": "oracle.msl.cable.v1",
+ "id": "probe-hall_marriage",
+ "spec": {
+  "id": "probe-hall_marriage",
+  "imports": "Mathlib",
+  "conclusion": "True",
+  "proof": "by trivial",
+  "definitions": "#check @Finset.all_card_le_biUnion_card_iff_exists_injective"
+ },
+ "formal_status": "KERNEL_CHECKED",
+ "events": [],
+ "axioms": [],
+ "attempts": [
+  {
+   "tactic": "(supplied proof)",
+   "status": "VERIFIED",
+   "seconds": 68.9,
+   "errors": [],
+   "exitCode": 0,
+   "resource_limit": null
+  }
+ ],
+ "budget_history": [
+  {
+   "tier_seconds": 90.0,
+   "outcome": "KERNEL_CHECKED"
+  }
+ ],
+ "kernel_result": {
+  "status": "VERIFIED",
+  "file": "oracle/frontier_formalizer/cable/theorems/msl_probe-hall_marriage.lean",
+  "backend": "wsl",
+  "project": "/root/erdosfire-bench/proofs",
+  "needsMathlib": true,
+  "exitCode": 0,
+  "seconds": 57.0,
+  "declarations": [
+   {
+    "declaration": "msl_probe_hall_marriage",
+    "clean": true,
+    "axioms": []
+   }
+  ],
+  "errors": []
+ },
+ "lean_result_block": "LEAN_RESULT probe-hall_marriage\n  FORMAL_STATUS KERNEL_CHECKED\n  FILE oracle/frontier_formalizer/cable/theorems/msl_probe-hall_marriage.lean\n  THEOREMS msl_probe_hall_marriage\n  BACKEND wsl\n  AXIOMS -\n  TACTIC (supplied proof)\n  BUDGET 90s:KERNEL_CHECKED\n  FAILURE NONE",
+ "timestamp": "2026-09-03T20:42:25Z"
+}

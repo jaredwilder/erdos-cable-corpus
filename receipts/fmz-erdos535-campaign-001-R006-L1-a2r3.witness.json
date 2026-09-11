@@ -1,0 +1,36 @@
+{
+ "schema": "oracle.msl.closer.witness.v1",
+ "id": "fmz-erdos535-campaign-001-R006-L1-a2r3",
+ "pipeline": "WITNESS_FINITE",
+ "witness": {
+  "r": 3,
+  "N_range": [
+   1,
+   7
+  ],
+  "f3_values": [
+   1,
+   2,
+   2,
+   3,
+   3,
+   3,
+   3
+  ],
+  "method": "exhaustive enumeration of all subsets of {1..N}; S feasible iff no 3-subset has all three pairwise gcds equal; f3(N) = max feasible size"
+ },
+ "verifier_sha256": "9b6629531c988a73cab93c2767fb5e622777a02436df2d0ab6c638e67a57c2fc",
+ "verifier_source": "RESULT = False\nVERDICT = \"FAIL\"\n\n\ndef gcd(a: int, b: int) -> int:\n    while b:\n        a, b = b, a % b\n    return a\n\n\ndef feasible(a: int, b: int, c: int) -> bool:\n    g1 = gcd(a, b)\n    g2 = gcd(a, c)\n    g3 = gcd(b, c)\n    return not (g1 == g2 and g2 == g3)\n\n\ndef feasible_set(S) -> bool:\n    n = len(S)\n    for i in range(n):\n        for j in range(i + 1, n):\n            for k in range(j + 1, n):\n                if not feasible(S[i], S[j], S[k]):\n                    return False\n    return True\n\n\ndef subsets(universe, size):\n    n = len(universe)\n    idx = list(range(size))\n    while True:\n        yield [universe[i] for i in idx]\n        i = size - 1\n        while i >= 0 and idx[i] == n - size + i:\n            i -= 1\n        if i < 0:\n            return\n        idx[i] += 1\n        for j in range(i + 1, size):\n            idx[j] = idx[j - 1] + 1\n\n\ndef f3(N: int) -> int:\n    universe = list(range(1, N + 1))\n    for size in range(N, 0, -1):\n        for S in subsets(universe, size):\n            if feasible_set(S):\n                return size\n    return 0\n\n\ndef verify() -> bool:\n    expected = [1, 2, 2, 3, 3, 3, 3]\n    if len(expected) != 7:\n        return False\n    for N in range(1, 8):\n        if f3(N) != expected[N - 1]:\n            return False\n    return True\n\n\nRESULT = verify()\nif RESULT:\n    VERDICT = \"PASS\"\n",
+ "run": {
+  "passed": false,
+  "status": "VERIFIER_FAIL",
+  "exit_code": 1,
+  "stdout": "",
+  "detail": "TypeError: verify() takes 0 positional arguments but 1 was given",
+  "seconds": 0.1,
+  "code_sha256": "9b6629531c988a73cab93c2767fb5e622777a02436df2d0ab6c638e67a57c2fc"
+ },
+ "claim": "Exhaustive exact integer enumeration (own integer Euclid gcd, all subsets of {1..N} for N<=7, fail-closed pure functions, no I/O, no imports, no floats, no assert/raise) certifies f_3(1..7) = 1,2,2,3,3,3,3; strictly finite scope, no asymptotic content.",
+ "law": "Wang 7.2: an exact finite object plus a proved reduction is a CERTIFICATE. The reduction is the `claim` and is a human's to audit; the object and the verifier run are the machine's part.",
+ "timestamp": "2026-09-02T01:49:11Z"
+}

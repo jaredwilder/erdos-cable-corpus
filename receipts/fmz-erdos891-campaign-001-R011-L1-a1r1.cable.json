@@ -1,0 +1,62 @@
+{
+ "schema": "oracle.msl.cable.v1",
+ "id": "fmz-erdos891-campaign-001-R011-L1-a1r1",
+ "spec": {
+  "id": "fmz-erdos891-campaign-001-R011-L1-a1r1",
+  "imports": "none",
+  "definitions": "def omAux : Nat \u2192 Nat \u2192 Nat \u2192 Nat\n  | 0, _, _ => 0\n  | f+1, n, d =>\n    if n \u2264 1 then 0\n    else if d * d > n then 1\n    else if n % d = 0 then 1 + omAux f (n / d) d\n    else omAux f n (d + 1)\n\ndef Omega (n : Nat) : Nat := omAux (2 * n + 8) n 2  -- \u03a9 with multiplicity, exact trial division; fuel 2n+8 always suffices\n\ndef primes8 : List Nat := [2, 3, 5, 7, 11, 13, 17, 19]\ndef prim (k : Nat) : Nat := (primes8.take k).prod  -- p_k# for k \u2264 8\n\ndef windowHasMult (n L M : Nat) : Bool := (M - n % M) % M < L  -- some multiple of M lies in [n, n+L)\n\ndef spacingOK (k : Nat) : Bool :=  -- spacing reduction, checked on ALL residues mod 2^(k+1) (covers every n)\n  let M := 2 ^ (k + 1)\n  let L := prim k\n  (List.range M).all fun r => windowHasMult r L M\n\ndef maxOmegaWin (n w : Nat) : Nat :=\n  (List.range w).foldl (fun acc i => max acc (Omega (n + i))) 0\n\ndef kIneq (k : Nat) : Bool := decide (2 ^ (k + 1) \u2264 prim k)\ndef kOmega (k : Nat) : Bool := decide (Omega (2 ^ (k + 1)) = k + 1)\n\ndef k2enum : Bool :=  -- k = 2: exhaustive exact \u03a9 enumeration of [n, n+6), n = 1..16\n  (List.range 16).all fun j =>\n    let n := j + 1\n    let mx := maxOmegaWin n 6\n    if n \u2264 2 then decide (mx \u2264 2) else decide (mx > 2)\n\ndef k2residues : Bool :=  -- k = 2: periodic mod 8 residue table\n  (List.range 8).all fun r =>\n    if r == 1 || r == 2 then\n      (List.range 6).any fun i => (r + i) % 8 == 4  -- window holds the 4\u00b7odd slot\n    else\n      (List.range 6).any fun i => (r + i) % 8 == 0  -- window holds a multiple of 8\n\ndef checkR011 : Bool :=\n  (List.range 6).all (fun j => kIneq (j + 3) && kOmega (j + 3))\n  && (List.range 6).all (fun j => spacingOK (j + 3))\n  && decide (Omega 8 = 3)\n  && k2enum\n  && k2residues",
+  "conclusion": "checkR011 = true",
+  "proof": "by decide"
+ },
+ "formal_status": "KERNEL_FAILED",
+ "events": [
+  "((supplied proof)) RAW[tmp5a3comtc.lean:14:45: error(lean.invalidField): Invalid field `prod`: The environment does not contain `List.prod`, so it is not possible to project the field]",
+  "((supplied proof)) RAW[tmp5a3comtc.lean:49:77: error: Tactic `decide` failed for proposition]"
+ ],
+ "axioms": [
+  "sorryAx"
+ ],
+ "attempts": [
+  {
+   "tactic": "(supplied proof)",
+   "status": "UNVERIFIED",
+   "seconds": 2.1,
+   "errors": [
+    "tmp5a3comtc.lean:14:45: error(lean.invalidField): Invalid field `prod`: The environment does not contain `List.prod`, so it is not possible to project the field `prod` from an expression",
+    "tmp5a3comtc.lean:49:77: error: Tactic `decide` failed for proposition"
+   ],
+   "exitCode": 1,
+   "resource_limit": null
+  }
+ ],
+ "budget_history": [
+  {
+   "tier_seconds": 900.0,
+   "outcome": "KERNEL_FAILED"
+  }
+ ],
+ "kernel_result": {
+  "status": "UNVERIFIED",
+  "file": "oracle/frontier_formalizer/cable/theorems/msl_fmz-erdos891-campaign-001-R011-L1-a1r1.lean",
+  "backend": "windows",
+  "project": "C:\\Users\\jared\\Local Sites\\woocommerce-enterprise\\oracle\\math\\EG411Formal",
+  "needsMathlib": false,
+  "exitCode": 1,
+  "seconds": 2.1,
+  "declarations": [
+   {
+    "declaration": "msl_fmz_erdos891_campaign_001_R011_L1_a1r1",
+    "clean": false,
+    "axioms": [
+     "sorryAx"
+    ]
+   }
+  ],
+  "errors": [
+   "tmp5a3comtc.lean:14:45: error(lean.invalidField): Invalid field `prod`: The environment does not contain `List.prod`, so it is not possible to project the field `prod` from an expression",
+   "tmp5a3comtc.lean:49:77: error: Tactic `decide` failed for proposition"
+  ]
+ },
+ "lean_result_block": "LEAN_RESULT fmz-erdos891-campaign-001-R011-L1-a1r1\n  FORMAL_STATUS KERNEL_FAILED\n  FILE oracle/frontier_formalizer/cable/theorems/msl_fmz-erdos891-campaign-001-R011-L1-a1r1.lean\n  THEOREMS msl_fmz_erdos891_campaign_001_R011_L1_a1r1\n  BACKEND windows\n  AXIOMS sorryAx\n  TACTIC (supplied proof)\n  BUDGET 900s:KERNEL_FAILED\n  FAILURE ((supplied proof)) RAW[tmp5a3comtc.lean:14:45: error(lean.invalidField): Invalid field `prod`: The environment does not contain `List.prod`, so it is not possible to project the field]; ((supplied proof)) RAW[tmp5a3comtc.lean:49:77: error: Tactic `decide` failed for proposition]\n  LAW KERNEL_FAILED does not refute the claim \u2014 the FAILURE line names what actually broke",
+ "timestamp": "2026-09-02T02:43:36Z"
+}

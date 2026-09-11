@@ -1,0 +1,37 @@
+{
+ "schema": "oracle.msl.closer.witness.v1",
+ "id": "fmz-erdos985-campaign-001-R005-L1",
+ "pipeline": "WITNESS_FINITE",
+ "witness": [
+  [
+   5,
+   1
+  ],
+  [
+   17,
+   2
+  ],
+  [
+   257,
+   3
+  ],
+  [
+   65537,
+   4
+  ]
+ ],
+ "verifier_sha256": "ee9e4c7f5f8587f3fb88c525823e3aa8d20a4e4e82eede355f676c5258513256",
+ "verifier_source": "# Standalone, no imports, no I/O, deterministic, exact integer arithmetic, fail-closed.\n# Entry point: verify(witness) — raises on any failed check, returns True on success.\n# witness: a list of [p, k] pairs; p must be the Fermat prime 2^(2^k)+1.\n\ndef _is_prime(n):\n    if n < 2:\n        return False\n    i = 2\n    while i * i <= n:\n        if n % i == 0:\n            return False\n        i = i + 1\n    return True\n\ndef _is_pow2(n):\n    return n > 0 and (n & (n - 1)) == 0\n\ndef _fermat_exponent(p):\n    m = p - 1\n    if not _is_pow2(m):\n        return -1\n    k = 0\n    while m > 1:\n        if m % 2 != 0:\n            return -1\n        m = m // 2\n        k = k + 1\n    if not _is_pow2(k):\n        return -1\n    if (2 ** k) + 1 != p:\n        return -1\n    return k\n\ndef _euler_minus_one(n, p):\n    r = pow(n, (p - 1) // 2, p)\n    if r == p - 1:\n        return True\n    if r == 1:\n        return False\n    raise AssertionError('unresolved Euler sign')\n\ndef _is_primitive_root(g, p):\n    if g % p == 0:\n        return False\n    n = p - 1\n    factors = []\n    m = n\n    d = 2\n    while d * d <= m:\n        if m % d == 0:\n            factors.append(d)\n            while m % d == 0:\n                m = m // d\n        d = d + 1\n    if m > 1:\n        factors.append(m)\n    for f in factors:\n        if pow(g, n // f, p) == 1:\n            return False\n    return pow(g, n, p) == 1\n\ndef verify(witness):\n    if not isinstance(witness, list):\n        raise AssertionError('witness must be a list')\n    if len(witness) != 4:\n        raise AssertionError('expected 4 entries')\n    prev = 0\n    for entry in witness:\n        if not isinstance(entry, list) or len(entry) != 2:\n            raise AssertionError('bad entry')\n        p = entry[0]\n        k = entry[1]\n        if not isinstance(p, int) or not isinstance(k, int) or p < 5:\n            raise AssertionError('bad p/k')\n        if p <= prev:\n            raise AssertionError('not strictly increasing')\n        prev = p\n        if not _is_prime(p):\n            raise AssertionError('not prime: %d' % p)\n        if _fermat_exponent(p) != k:\n            raise AssertionError('not Fermat: %d' % p)\n        if p % 3 != 2:\n            raise AssertionError('not 2 mod 3: %d' % p)\n        if p % 4 != 1:\n            raise AssertionError('not 1 mod 4: %d' % p)\n        if not _euler_minus_one(3, p):\n            raise AssertionError('euler != -1: %d' % p)\n        if not _is_primitive_root(3, p):\n            raise AssertionError('not primitive root: %d' % p)\n    if witness != [[5, 1], [17, 2], [257, 3], [65537, 4]]:\n        raise AssertionError('unexpected prime set')\n    return True\n",
+ "run": {
+  "passed": false,
+  "status": "VERIFIER_FAIL",
+  "exit_code": 1,
+  "stdout": "",
+  "detail": "AssertionError: not Fermat: 5",
+  "seconds": 0.14,
+  "code_sha256": "ee9e4c7f5f8587f3fb88c525823e3aa8d20a4e4e82eede355f676c5258513256"
+ },
+ "claim": "Fragment certificate: verify(witness) (no imports, no I/O, plain-list witness, fail-closed raises, exact integer arithmetic) confirms for each p in {5, 17, 257, 65537} that p is a Fermat prime with p ≡ 2 mod 3, p ≡ 1 mod 4, (3/p) = -1, and 3 is a primitive root mod p — the concrete instance content of L1. The universal quantifier over all Fermat primes is not finitely checkable, so this is a fragment; L1 records the favorable subfamily closes neither branch.",
+ "law": "Wang 7.2: an exact finite object plus a proved reduction is a CERTIFICATE. The reduction is the `claim` and is a human's to audit; the object and the verifier run are the machine's part.",
+ "timestamp": "2026-09-01T21:56:31Z"
+}

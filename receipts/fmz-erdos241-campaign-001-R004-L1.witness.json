@@ -1,0 +1,25 @@
+{
+ "schema": "oracle.msl.closer.witness.v1",
+ "id": "fmz-erdos241-campaign-001-R004-L1",
+ "pipeline": "WITNESS_FINITE",
+ "witness": {
+  "N": 27,
+  "m_infeasible": 7,
+  "bound_cube_check": "5^3=125 < 6*27=162 <= 216=6^3, hence ceil((6*27)^(1/3)) = 6 in exact integer arithmetic",
+  "pigeonhole": "a 7-element set has C(7+2,3)=84 unordered triples with repetition; triple sums of a subset of [1,27] lie in [3,81], giving 79 attainable values; 84 > 79 forces a collision, so no B_3 subset of size 7 exists"
+ },
+ "verifier_sha256": "5ff0c544c3d48057b4adc174873503e2e4925be1f2e491a3fba04a5b73db57dd",
+ "verifier_source": "# Standalone deterministic verifier. No imports, no I/O, no floats, no prints.\n# Fail-closed: verify(witness) RAISES on any failed check. Exact integers only.\n\ndef binom3(n):\n    return (n * (n - 1) * (n - 2)) // 6\n\ndef verify(witness):\n    N = witness['N']\n    m_infeasible = witness['m_infeasible']\n\n    # (1) structural sanity on the witness itself\n    if N != 27:\n        raise ValueError('unexpected N')\n    if m_infeasible != 7:\n        raise ValueError('unexpected m_infeasible')\n\n    # (2) exact ceiling-cube-root: ceil((6N)^(1/3)) == 6\n    #     iff 5^3 < 6N <= 6^3 in exact integers\n    if 6 * N <= 5 * 5 * 5:\n        raise ValueError('lower cube check failed')\n    if 6 * N > 6 * 6 * 6:\n        raise ValueError('upper cube check failed')\n\n    # (3) exact pigeonhole: C(m+2,3) triples vs 3N-2 attainable sums 3..3N\n    if binom3(m_infeasible + 2) <= 3 * N - 2:\n        raise ValueError('pigeonhole obstruction does not apply')\n\n    # (4) the infeasible size 7 strictly exceeds the bound value 6\n    if m_infeasible <= 6:\n        raise ValueError('bound not exceeded')\n\n    return True",
+ "run": {
+  "passed": true,
+  "status": "VERIFIER_PASS",
+  "exit_code": 0,
+  "stdout": "PASS",
+  "detail": "",
+  "seconds": 0.14,
+  "code_sha256": "5ff0c544c3d48057b4adc174873503e2e4925be1f2e491a3fba04a5b73db57dd"
+ },
+ "claim": "FRAGMENT certificate: at the concrete instance N=27, exact integer pigeonhole (C(9,3)=84 > 79 attainable triple sums in [3,81]) certifies that every triple-sum-distinct subset of [1,27] has size at most 6 = ceil((6*27)^{1/3}), machine-verifying the upper-bound content of the standard counting bound |A| <= (6N)^{1/3}+O(1) with implicit constant 0 on this instance. Covers only this decidable upper-bound fragment of L1 at one concrete N; it does not prove the bound for all N, gives no matching lower bound, and does not close close-branch A — exactly as L1 itself records. covers=\"fragment\"",
+ "law": "Wang 7.2: an exact finite object plus a proved reduction is a CERTIFICATE. The reduction is the `claim` and is a human's to audit; the object and the verifier run are the machine's part.",
+ "timestamp": "2026-09-01T21:17:22Z"
+}

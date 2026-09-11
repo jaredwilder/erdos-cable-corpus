@@ -1,0 +1,25 @@
+{
+ "schema": "oracle.msl.closer.witness.v1",
+ "id": "fmz-erdos413-campaign-001-R006-L1-a3r4",
+ "pipeline": "WITNESS_FINITE",
+ "witness": {
+  "epsilon_num": 1,
+  "epsilon_den": 1,
+  "scope_lo": 2,
+  "scope_hi": 54
+ },
+ "verifier_sha256": "a3db4bac3a720f8de7a93c0b28168f4db1faea7145de6e644cb72811a60254d4",
+ "verifier_source": "def verify(witness):\n    # L1 fragment certificate: pointwise equivalence on [2,54] for eps=1/1.\n    # exact integers only, fail-closed: any mismatch RAISES.\n    if not isinstance(witness, dict):\n        raise ValueError('witness must be a dict')\n    en = witness['epsilon_num']\n    ed = witness['epsilon_den']\n    lo = witness['scope_lo']\n    hi = witness['scope_hi']\n    if en <= 0 or ed <= 0:\n        raise ValueError('epsilon must be positive')\n    if not (isinstance(lo, int) and isinstance(hi, int)) or hi < lo or lo < 2:\n        raise ValueError('bad scope')\n\n    def omega(m):\n        cnt = 0\n        d = 2\n        while d * d <= m:\n            if m % d == 0:\n                cnt += 1\n                while m % d == 0:\n                    m //= d\n            d += 1\n        if m > 1:\n            cnt += 1\n        return cnt\n\n    for n in range(lo, hi + 1):\n        # side A: n in B_epsilon: for all m < n: m + (en/ed)*omega(m) <= n\n        in_B = True\n        for m in range(1, n):\n            if m * ed + en * omega(m) > n * ed:\n                in_B = False\n                break\n        # side B: omega(n-k) <= k/epsilon: omega(n-k)*ed <= k*en for k=1..n-1\n        omega_cond = True\n        for k in range(1, n):\n            if omega(n - k) * ed > k * en:\n                omega_cond = False\n                break\n        if in_B != omega_cond:\n            raise ValueError('L1 equivalence violated at n=%d' % n)\n    return True",
+ "run": {
+  "passed": true,
+  "status": "VERIFIER_PASS",
+  "exit_code": 0,
+  "stdout": "PASS",
+  "detail": "",
+  "seconds": 0.08,
+  "code_sha256": "a3db4bac3a720f8de7a93c0b28168f4db1faea7145de6e644cb72811a60254d4"
+ },
+ "claim": "PASS (verify returns True without raising) establishes: on the exact finite scope [2,54] with epsilon = 1/1, both directions of L1's definitional equivalence hold pointwise — for every n in scope, membership in B_1 coincides exactly with omega(n-k) <= k for all 1 <= k <= n-1, in exact integer arithmetic, fail-closed (any mismatch raises). covers=fragment: infinitude claims are untouched, exactly as L1 scopes them out.",
+ "law": "Wang 7.2: an exact finite object plus a proved reduction is a CERTIFICATE. The reduction is the `claim` and is a human's to audit; the object and the verifier run are the machine's part.",
+ "timestamp": "2026-09-02T02:08:23Z"
+}

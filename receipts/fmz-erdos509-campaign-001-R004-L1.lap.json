@@ -1,0 +1,48 @@
+{
+ "schema": "oracle.msl.closer.lap.v1",
+ "id": "fmz-erdos509-campaign-001-R004-L1",
+ "pipeline": "CITATION_ANCHORED",
+ "lean_file": "oracle/frontier_formalizer/cable/theorems/lap_fmz-erdos509-campaign-001-R004-L1.lean",
+ "theorem": "msl_fmz_erdos509_campaign_001_R004_L1",
+ "axiom_name": "PublishedTheorem_Mathlib_addHaar_sphere",
+ "axiom_statement_lean": "∀ (μ : MeasureTheory.Measure ℂ) [MeasureTheory.IsAddHaarMeasure μ] (c : ℂ) (r : ℝ), r ≠ 0 → μ (Metric.sphere c r) = 0",
+ "citation": {
+  "source": "The mathlib Community, \"The Lean Mathematical Library\", Mathlib4, file Mathlib/MeasureTheory/Measure/Haar/NormedSpace.lean (addHaar_sphere), continuously updated, arXiv:1910.09336",
+  "theorem_number": "MeasureTheory.Measure.addHaar_sphere",
+  "verbatim": "theorem addHaar_sphere (μ : Measure X) [IsAddHaarMeasure μ] {c : X} {r : ℝ} (hr : r ≠ 0) : μ (sphere c r) = 0 — in a finite-dimensional real normed space of dimension at least 2 (here ℂ, finrank 2), the sphere of positive radius is Haar-null; companion Mathlib lemmas used in the derivation: measure_singleton, measure_biUnion_null_iff, Real.volume_closedBall.",
+  "url_or_doi": "https://github.com/leanprover-community/mathlib4"
+ },
+ "claim": "CONDITIONAL on the Mathlib addHaar_sphere theorem: no countable family of circles covers the closed unit disk (the lemniscate of f(z)=z, planar measure π > 0); hence the circle-worded frozen contract is false as written — the countable-union step of lemma L1; the per-circle nullness is anchored to the cited axiom, the covering refutation is derived in the proof.",
+ "gate": {
+  "passed": false,
+  "reason": "KERNEL_FAILED",
+  "detail": "the LAP file did not compile (exit 1)"
+ },
+ "kernel_result": {
+  "status": "UNVERIFIED",
+  "file": "oracle/frontier_formalizer/cable/theorems/lap_fmz-erdos509-campaign-001-R004-L1.lean",
+  "backend": "wsl",
+  "project": "/root/erdosfire-bench/proofs",
+  "needsMathlib": true,
+  "exitCode": 1,
+  "seconds": 80.8,
+  "declarations": [
+   {
+    "declaration": "msl_fmz_erdos509_campaign_001_R004_L1",
+    "clean": true,
+    "axioms": []
+   }
+  ],
+  "errors": [
+   "/tmp/oracle_lean_e0zVqr4v.lean:6:4: error: `Circle` has already been declared",
+   "/tmp/oracle_lean_e0zVqr4v.lean:9:35: error(lean.unknownIdentifier): Unknown identifier `MeasureTheory.IsAddHaarMeasure`",
+   "/tmp/oracle_lean_e0zVqr4v.lean:11:48: error: unexpected token 'theorem'; expected term",
+   "/tmp/oracle_lean_e0zVqr4v.lean:11:148: error: Function expected at",
+   "/tmp/oracle_lean_e0zVqr4v.lean:11:160: error(lean.unknownIdentifier): Unknown identifier `rintro`",
+   "/tmp/oracle_lean_e0zVqr4v.lean:12:0: error: unexpected token 'have'; expected command"
+  ]
+ },
+ "seconds": 84.5,
+ "law": "CLOSED_CONDITIONAL_ON_CITATION is NOT TARGET_CLOSED. The kernel checked the IMPLICATION from the assumed theorem; it did not check the assumed theorem. Confirm `axiom_statement_lean` against `citation.verbatim`, and confirm that the cited theorem exists in that form, before this is cited as a result.",
+ "timestamp": "2026-09-01T23:25:41Z"
+}

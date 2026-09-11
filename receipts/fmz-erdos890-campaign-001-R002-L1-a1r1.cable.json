@@ -1,0 +1,64 @@
+{
+ "schema": "oracle.msl.cable.v1",
+ "id": "fmz-erdos890-campaign-001-R002-L1-a1r1",
+ "spec": {
+  "id": "fmz-erdos890-campaign-001-R002-L1-a1r1",
+  "imports": "none",
+  "definitions": "def distinctPrimeFactors (n : Nat) : List Nat := (List.range (n+1)).filter (fun p => Nat.Prime p && p \u2223 n)\ndef omega (n : Nat) : Nat := (distinctPrimeFactors n).length\ndef pow2 : Nat \u2192 Nat | 0 => 1 | (a+1) => 2 * pow2 a\ndef check_k1 (N : Nat) : Bool := (List.range (N+1)).all (fun a => omega (pow2 a) == 1)",
+  "conclusion": "check_k1 40 = true",
+  "proof": "by decide"
+ },
+ "formal_status": "KERNEL_FAILED",
+ "events": [
+  "((supplied proof)) TYPE.FAIL NEED[Nat.Prime]",
+  "((supplied proof)) RAW[tmp6sr8vmga.lean:8:79: error: Tactic `decide` failed for proposition]"
+ ],
+ "axioms": [
+  "propext",
+  "sorryAx"
+ ],
+ "attempts": [
+  {
+   "tactic": "(supplied proof)",
+   "status": "UNVERIFIED",
+   "seconds": 10.5,
+   "errors": [
+    "tmp6sr8vmga.lean:3:85: error(lean.unknownIdentifier): Unknown constant `Nat.Prime`",
+    "tmp6sr8vmga.lean:8:79: error: Tactic `decide` failed for proposition"
+   ],
+   "exitCode": 1,
+   "resource_limit": null
+  }
+ ],
+ "budget_history": [
+  {
+   "tier_seconds": 900.0,
+   "outcome": "KERNEL_FAILED"
+  }
+ ],
+ "kernel_result": {
+  "status": "UNVERIFIED",
+  "file": "oracle/frontier_formalizer/cable/theorems/msl_fmz-erdos890-campaign-001-R002-L1-a1r1.lean",
+  "backend": "windows",
+  "project": "C:\\Users\\jared\\Local Sites\\woocommerce-enterprise\\oracle\\math\\EG411Formal",
+  "needsMathlib": false,
+  "exitCode": 1,
+  "seconds": 10.5,
+  "declarations": [
+   {
+    "declaration": "msl_fmz_erdos890_campaign_001_R002_L1_a1r1",
+    "clean": false,
+    "axioms": [
+     "propext",
+     "sorryAx"
+    ]
+   }
+  ],
+  "errors": [
+   "tmp6sr8vmga.lean:3:85: error(lean.unknownIdentifier): Unknown constant `Nat.Prime`",
+   "tmp6sr8vmga.lean:8:79: error: Tactic `decide` failed for proposition"
+  ]
+ },
+ "lean_result_block": "LEAN_RESULT fmz-erdos890-campaign-001-R002-L1-a1r1\n  FORMAL_STATUS KERNEL_FAILED\n  FILE oracle/frontier_formalizer/cable/theorems/msl_fmz-erdos890-campaign-001-R002-L1-a1r1.lean\n  THEOREMS msl_fmz_erdos890_campaign_001_R002_L1_a1r1\n  BACKEND windows\n  AXIOMS propext, sorryAx\n  TACTIC (supplied proof)\n  BUDGET 900s:KERNEL_FAILED\n  FAILURE ((supplied proof)) TYPE.FAIL NEED[Nat.Prime]; ((supplied proof)) RAW[tmp6sr8vmga.lean:8:79: error: Tactic `decide` failed for proposition]\n  LAW KERNEL_FAILED does not refute the claim \u2014 the FAILURE line names what actually broke",
+ "timestamp": "2026-09-02T02:28:08Z"
+}

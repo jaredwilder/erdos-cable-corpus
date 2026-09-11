@@ -1,0 +1,49 @@
+{
+ "schema": "oracle.msl.cable.v1",
+ "id": "fmz-erdos359-campaign-001-R001-L1",
+ "spec": {
+  "id": "fmz-erdos359-campaign-001-R001-L1",
+  "imports": "none",
+  "definitions": "def binom : Nat -> Nat -> Nat\n  | _, 0 => 1\n  | 0, _ + 1 => 0\n  | n + 1, k + 1 => binom n k + binom n (k + 1)\n\n-- greedy sequence from a1 = 1: a2 is the least integer > 1 that is not a sum\n-- of consecutive earlier terms; with one earlier term {1}, every integer >= 2\n-- is a 1-term consecutive sum, so the k=1 counting bound gives a2 <= C(3,2)+2 = 5.\ndef a2 : Nat := 5\n\n-- consecutive-block sums of {1} within window [1,9]: only {1} itself, i.e. 1.\n-- Non-term coverage claimed by the lemma: {3,5,6,7,9}; residual uncovered: {1,2,4,8}.\ndef coverage : List Nat := [3, 5, 6, 7, 9]\ndef residual : List Nat := [1, 2, 4, 8]\n\ndef checkBinom : Bool := binom 3 2 + 2 == 5\n\ndef checkA2Bound : Bool := a2 <= binom 3 2 + 2\n\ndef checkCoverage : Bool :=\n  coverage.all (fun x => 1 <= x && x <= 9) &&\n  coverage.length == 5\n\ndef checkResidual : Bool :=\n  residual == [1, 2, 4, 8] &&\n  residual.all (fun x => 1 <= x && x <= 9)\n\ndef checkDisjoint : Bool :=\n  coverage.all (fun x => !(residual.contains x))\n\ndef check_witness : Bool :=\n  checkBinom && checkA2Bound && checkCoverage && checkResidual && checkDisjoint",
+  "conclusion": "check_witness = true",
+  "proof": "by decide"
+ },
+ "formal_status": "KERNEL_CHECKED",
+ "events": [],
+ "axioms": [],
+ "attempts": [
+  {
+   "tactic": "(supplied proof)",
+   "status": "VERIFIED",
+   "seconds": 2.3,
+   "errors": [],
+   "exitCode": 0,
+   "resource_limit": null
+  }
+ ],
+ "budget_history": [
+  {
+   "tier_seconds": 900.0,
+   "outcome": "KERNEL_CHECKED"
+  }
+ ],
+ "kernel_result": {
+  "status": "VERIFIED",
+  "file": "oracle/frontier_formalizer/cable/theorems/msl_fmz-erdos359-campaign-001-R001-L1.lean",
+  "backend": "windows",
+  "project": "C:\\Users\\jared\\Local Sites\\woocommerce-enterprise\\oracle\\math\\EG411Formal",
+  "needsMathlib": false,
+  "exitCode": 0,
+  "seconds": 2.3,
+  "declarations": [
+   {
+    "declaration": "msl_fmz_erdos359_campaign_001_R001_L1",
+    "clean": true,
+    "axioms": []
+   }
+  ],
+  "errors": []
+ },
+ "lean_result_block": "LEAN_RESULT fmz-erdos359-campaign-001-R001-L1\n  FORMAL_STATUS KERNEL_CHECKED\n  FILE oracle/frontier_formalizer/cable/theorems/msl_fmz-erdos359-campaign-001-R001-L1.lean\n  THEOREMS msl_fmz_erdos359_campaign_001_R001_L1\n  BACKEND windows\n  AXIOMS -\n  TACTIC (supplied proof)\n  BUDGET 900s:KERNEL_CHECKED\n  FAILURE NONE",
+ "timestamp": "2026-09-01T22:31:46Z"
+}

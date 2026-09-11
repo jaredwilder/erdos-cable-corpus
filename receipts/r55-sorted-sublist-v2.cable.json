@@ -1,0 +1,90 @@
+{
+ "schema": "oracle.msl.cable.v1",
+ "id": "r55-sorted-sublist-v2",
+ "spec": {
+  "id": "r55-sorted-sublist-v2",
+  "imports": "none",
+  "set_options": [
+   "set_option maxRecDepth 20000"
+  ],
+  "definitions": "/-- The last list fact the floor needs: a sublist of `List.range n` of length five is a\n    strictly increasing five-tuple of elements below n.  Proved, not decided. -/\n\ntheorem sub_range_lt {n : Nat} {K : List Nat} (h : K.Sublist (List.range n)) :\n    \u2200 x \u2208 K, x < n := by\n  intro x hx\n  exact List.mem_range.mp (h.subset hx)\n\ntheorem sub_range_pairwise {n : Nat} {K : List Nat} (h : K.Sublist (List.range n)) :\n    K.Pairwise (\u00b7 < \u00b7) :=\n  List.Pairwise.sublist h List.pairwise_lt_range\n\n/-- a length-five list destructures to five named elements -/\ntheorem len5 {K : List Nat} (h : K.length = 5) :\n    \u2203 a b c d f, K = [a, b, c, d, f] := by\n  match K, h with\n  | [a, b, c, d, f], _ => exact \u27e8a, b, c, d, f, rfl\u27e9\n\n/-- and its pairwise-increasing property becomes the four strict inequalities -/\ntheorem pw5 {a b c d f : Nat} (h : ([a,b,c,d,f] : List Nat).Pairwise (\u00b7 < \u00b7)) :\n    a < b \u2227 b < c \u2227 c < d \u2227 d < f := by\n  simp [List.pairwise_cons] at h\n  omega",
+  "hypotheses": [],
+  "conclusion": "([0,1,2] : List Nat).length = 3",
+  "proof": "by decide"
+ },
+ "formal_status": "KERNEL_CHECKED",
+ "events": [],
+ "axioms": [
+  "Classical.choice",
+  "Quot.sound",
+  "propext"
+ ],
+ "attempts": [
+  {
+   "tactic": "(supplied proof)",
+   "status": "VERIFIED",
+   "seconds": 13.5,
+   "errors": [],
+   "exitCode": 0,
+   "resource_limit": null
+  }
+ ],
+ "budget_history": [
+  {
+   "tier_seconds": 120.0,
+   "outcome": "KERNEL_CHECKED"
+  }
+ ],
+ "kernel_result": {
+  "status": "VERIFIED",
+  "file": "oracle/frontier_formalizer/cable/theorems/msl_r55-sorted-sublist-v2.lean",
+  "backend": "windows",
+  "project": "C:\\Users\\jared\\Local Sites\\woocommerce-enterprise\\oracle\\math\\EG411Formal",
+  "needsMathlib": false,
+  "exitCode": 0,
+  "seconds": 13.5,
+  "declarations": [
+   {
+    "declaration": "sub_range_lt",
+    "clean": true,
+    "axioms": [
+     "propext",
+     "Quot.sound"
+    ]
+   },
+   {
+    "declaration": "sub_range_pairwise",
+    "clean": true,
+    "axioms": [
+     "propext",
+     "Classical.choice",
+     "Quot.sound"
+    ]
+   },
+   {
+    "declaration": "len5",
+    "clean": true,
+    "axioms": [
+     "propext"
+    ]
+   },
+   {
+    "declaration": "pw5",
+    "clean": true,
+    "axioms": [
+     "propext",
+     "Classical.choice",
+     "Quot.sound"
+    ]
+   },
+   {
+    "declaration": "msl_r55_sorted_sublist_v2",
+    "clean": true,
+    "axioms": []
+   }
+  ],
+  "errors": []
+ },
+ "lean_result_block": "LEAN_RESULT r55-sorted-sublist-v2\n  FORMAL_STATUS KERNEL_CHECKED\n  FILE oracle/frontier_formalizer/cable/theorems/msl_r55-sorted-sublist-v2.lean\n  THEOREMS msl_r55_sorted_sublist_v2\n  BACKEND windows\n  AXIOMS Classical.choice, Quot.sound, propext\n  TACTIC (supplied proof)\n  BUDGET 120s:KERNEL_CHECKED\n  FAILURE NONE",
+ "timestamp": "2026-09-04T17:12:14Z"
+}

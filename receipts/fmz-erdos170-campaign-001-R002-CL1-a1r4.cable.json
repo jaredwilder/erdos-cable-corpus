@@ -1,0 +1,57 @@
+{
+ "schema": "oracle.msl.cable.v1",
+ "id": "fmz-erdos170-campaign-001-R002-CL1-a1r4",
+ "spec": {
+  "id": "fmz-erdos170-campaign-001-R002-CL1-a1r4",
+  "imports": "Mathlib",
+  "definitions": "-- no auxiliary definitions",
+  "conclusion": "(\u2200 d1 d2 d3 d4 : \u2115, Even (4 * d1 + 6 * d2 + 6 * d3 + 4 * d4)) \u2227 Odd (1 + 2 + 3 + 4 + 5 + 6 + 7 + 8 + 9 + 10)",
+  "proof": "by\n  constructor\n  \u00b7 intro d1 d2 d3 d4\n    use 2 * d1 + 3 * d2 + 3 * d3 + 2 * d4\n    omega\n  \u00b7 norm_num"
+ },
+ "formal_status": "KERNEL_CHECKED",
+ "events": [],
+ "axioms": [
+  "Classical.choice",
+  "Quot.sound",
+  "propext"
+ ],
+ "attempts": [
+  {
+   "tactic": "(supplied proof)",
+   "status": "VERIFIED",
+   "seconds": 8.0,
+   "errors": [],
+   "exitCode": 0,
+   "resource_limit": null
+  }
+ ],
+ "budget_history": [
+  {
+   "tier_seconds": 900.0,
+   "outcome": "KERNEL_CHECKED"
+  }
+ ],
+ "kernel_result": {
+  "status": "VERIFIED",
+  "file": "oracle/frontier_formalizer/cable/theorems/msl_fmz-erdos170-campaign-001-R002-CL1-a1r4.lean",
+  "backend": "wsl",
+  "project": "/root/erdosfire-bench/proofs",
+  "needsMathlib": true,
+  "exitCode": 0,
+  "seconds": 4.4,
+  "declarations": [
+   {
+    "declaration": "msl_fmz_erdos170_campaign_001_R002_CL1_a1r4",
+    "clean": true,
+    "axioms": [
+     "propext",
+     "Classical.choice",
+     "Quot.sound"
+    ]
+   }
+  ],
+  "errors": []
+ },
+ "lean_result_block": "LEAN_RESULT fmz-erdos170-campaign-001-R002-CL1-a1r4\n  FORMAL_STATUS KERNEL_CHECKED\n  FILE oracle/frontier_formalizer/cable/theorems/msl_fmz-erdos170-campaign-001-R002-CL1-a1r4.lean\n  THEOREMS msl_fmz_erdos170_campaign_001_R002_CL1_a1r4\n  BACKEND wsl\n  AXIOMS Classical.choice, Quot.sound, propext\n  TACTIC (supplied proof)\n  BUDGET 900s:KERNEL_CHECKED\n  FAILURE NONE",
+ "timestamp": "2026-09-02T01:55:09Z"
+}

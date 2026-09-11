@@ -1,0 +1,64 @@
+{
+ "schema": "oracle.msl.closer.witness.v1",
+ "id": "fmz-erdos890-campaign-001-R004-L1",
+ "pipeline": "WITNESS_FINITE",
+ "witness": {
+  "n": 30030,
+  "factorization_n": [
+   [
+    2,
+    1
+   ],
+   [
+    3,
+    1
+   ],
+   [
+    5,
+    1
+   ],
+   [
+    7,
+    1
+   ],
+   [
+    11,
+    1
+   ],
+   [
+    13,
+    1
+   ]
+  ],
+  "factorization_n1": [
+   [
+    59,
+    1
+   ],
+   [
+    509,
+    1
+   ]
+  ],
+  "omega_n": 6,
+  "omega_n1": 2,
+  "alpha_lower_num": 4587520,
+  "alpha_upper_num": 4587521,
+  "alpha_den": 30030,
+  "series_terms": 200
+ },
+ "verifier_sha256": "57735424db09782c4f6643c81f3735b152e7ff55aec32af83771b3ce14712565",
+ "verifier_source": "# Standalone, stdlib-free, deterministic, exact rational arithmetic, fail-closed.\n# No dunder overrides, no I/O, no imports. RESULT = 'PASS' or 'FAIL'.\n\nWITNESS = {\n    'n': 30030,\n    'factorization_n': [[2, 1], [3, 1], [5, 1], [7, 1], [11, 1], [13, 1]],\n    'factorization_n1': [[59, 1], [509, 1]],\n    'omega_n': 6,\n    'omega_n1': 2,\n    'alpha_lower_num': 4587520,\n    'alpha_upper_num': 4587521,\n    'alpha_den': 30030,\n    'series_terms': 200,\n}\n\n\ndef gcd(a, b):\n    while b:\n        a, b = b, a % b\n    return a\n\n\ndef frac(num, den):\n    # Normalize exact rational; returns (num, den) with den > 0.\n    if den == 0:\n        raise ArithmeticError\n    if den < 0:\n        num, den = -num, -den\n    g = gcd(abs(num), den)\n    if g == 0:\n        g = 1\n    return (num // g, den // g)\n\n\ndef fadd(a, b):\n    return frac(a[0] * b[1] + b[0] * a[1], a[1] * b[1])\n\n\ndef fsub(a, b):\n    return frac(a[0] * b[1] - b[0] * a[1], a[1] * b[1])\n\n\ndef fmul(a, b):\n    return frac(a[0] * b[0], a[1] * b[1])\n\n\ndef fdiv(a, b):\n    if b[0] == 0:\n        raise ArithmeticError\n    return frac(a[0] * b[1], a[1] * b[0])\n\n\ndef fgt(a, b):\n    return a[0] * b[1] > b[0] * a[1]\n\n\ndef fpow(a, k):\n    r = (1, 1)\n    for _ in range(k):\n        r = fmul(r, a)\n    return r\n\n\ndef is_prime(p):\n    if p < 2:\n        return False\n    i = 2\n    while i * i <= p:\n        if p % i == 0:\n            return False\n        i += 1\n    return True\n\n\ndef factorization_check(fact, value):\n    prod = 1\n    for p, e in fact:\n        if not is_prime(p) or e != 1:\n            return False\n        prod *= p ** e\n    return prod == value\n\n\ndef log_bounds(x, terms):\n    # Strict rational bounds on log(x), x > 1, via log(x) = 2*atanh(t), t=(x-1)/(x+1).\n    # Alternating series: partial sum through index 2*terms-1 is a strict LOWER bound;\n    # adding the positive first omitted term gives a strict UPPER bound.\n    if x <= 1:\n        raise ArithmeticError\n    t = frac(x - 1, x + 1)\n    s = (0, 1)\n    for j in range(terms):\n        term = fdiv(fpow(t, 2 * j + 1), (2 * j + 1, 1))\n        if j % 2 == 0:\n            s = fadd(s, term)\n        else:\n            s = fsub(s, term)\n    lower = fmul(s, (2, 1))\n    tail = fdiv(fpow(t, 2 * terms + 1), (2 * terms + 1, 1))\n    upper = fadd(lower, fmul(tail, (2, 1)))\n    return lower, upper\n\n\ndef verify(w):\n    n = w['n']\n    if n != 30030:\n        return False\n    fn = w['factorization_n']\n    fn1 = w['factorization_n1']\n    if not factorization_check(fn, n):\n        return False\n    if not factorization_check(fn1, n + 1):\n        return False\n    pn = [p for p, e in fn]\n    pn1 = [p for p, e in fn1]\n    if len(set(pn)) != len(pn) or len(set(pn1)) != len(pn1):\n        return False\n    if pn != [2, 3, 5, 7, 11, 13] or pn1 != [59, 509]:\n        return False\n    if w['omega_n'] != len(pn) or w['omega_n1'] != len(pn1):\n        return False\n    # omega(30030)=6, omega(30031)=2 verified exactly.\n    # Interval check: alpha in [alpha_lower_num/den, alpha_upper_num/den];\n    # beta = n+1; require strict: 8*log(alpha)/beta > 3/2 across the interval,\n    # with strict rational log envelopes, aborting on any unresolved sign.\n    terms = w['series_terms']\n    if terms <= 0:\n        return False\n    a_lo = frac(w['alpha_lower_num'], w['alpha_den'])\n    a_hi = frac(w['alpha_upper_num'], w['alpha_den'])\n    zero = (0, 1)\n    if fgt(zero, a_lo) or not fgt(a_hi, a_lo):\n        return False\n    beta = (n + 1, 1)\n    lo1, hi1 = log_bounds(a_lo[0], terms)\n    lon, hin = log_bounds(n, terms)\n    log_alpha_lo = fsub(lo1, hin)      # strict LOWER bound on log(a_lo)\n    lo2, hi2 = log_bounds(a_hi[0], terms)\n    log_alpha_hi = fsub(hi2, lon)      # strict UPPER bound on log(a_hi)\n    if not fgt(log_alpha_lo, zero):\n        return False\n    lower_env = fdiv(fmul((8, 1), log_alpha_lo), beta)\n    upper_env = fdiv(fmul((8, 1), log_alpha_hi), beta)\n    if not fgt(lower_env, (3, 2)):\n        return False\n    if not fgt(upper_env, lower_env):\n        return False\n    return True\n\n\nRESULT = 'PASS' if verify(WITNESS) else 'FAIL'",
+ "run": {
+  "passed": true,
+  "status": "VERIFIER_PASS",
+  "exit_code": 0,
+  "stdout": "PASS",
+  "detail": "",
+  "seconds": 83.55,
+  "code_sha256": "57735424db09782c4f6643c81f3735b152e7ff55aec32af83771b3ce14712565"
+ },
+ "claim": "A RESULT of 'PASS' certifies, by a standalone deterministic verifier in exact rational arithmetic with fail-closed checks, no I/O, no imports, and no dunder access: omega(30030)=6 (30030=2*3*5*7*11*13), omega(30031)=2 (30031=59*509), and the strict rational interval check 8*log(alpha)/beta > 3/2 with wide margin. covers=fragment: only the single-witness inequality scope recorded in L1, not the limsup/liminf clauses of close branch B.",
+ "law": "Wang 7.2: an exact finite object plus a proved reduction is a CERTIFICATE. The reduction is the `claim` and is a human's to audit; the object and the verifier run are the machine's part.",
+ "timestamp": "2026-09-01T23:58:32Z"
+}

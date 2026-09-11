@@ -1,0 +1,65 @@
+{
+ "schema": "oracle.msl.cable.v1",
+ "id": "fmz-erdos1142-campaign-001-R003-L1-a1r3",
+ "spec": {
+  "id": "fmz-erdos1142-campaign-001-R003-L1-a1r3",
+  "imports": "Mathlib",
+  "definitions": "def Erdos1142Prop (n : \u2115) : Prop := 2 < n \u2227 \u2200 k, 0 < k \u2192 2 ^ k < n \u2192 (n - 2 ^ k).Prime",
+  "conclusion": "Erdos1142Prop 4 \u2227 \u00ac Erdos1142Prop 5",
+  "proof": "by\n  constructor\n  \u00b7 refine \u27e8by norm_num, ?_\u27e9\n    intro k hk hlt\n    have hk1 : k = 1 := by omega\n    subst k\n    norm_num\n  \u00b7 intro h\n    rcases h with \u27e8_, hp\u27e9\n    have h := hp 2 (by norm_num) (by norm_num)\n    norm_num at h"
+ },
+ "formal_status": "KERNEL_FAILED",
+ "events": [
+  "((supplied proof)) RAW[/tmp/oracle_lean_9VCvpR5a.lean:11:27: error: omega could not prove the goal:]"
+ ],
+ "axioms": [
+  "Classical.choice",
+  "Quot.sound",
+  "propext",
+  "sorryAx"
+ ],
+ "attempts": [
+  {
+   "tactic": "(supplied proof)",
+   "status": "UNVERIFIED",
+   "seconds": 54.3,
+   "errors": [
+    "/tmp/oracle_lean_9VCvpR5a.lean:11:27: error: omega could not prove the goal:"
+   ],
+   "exitCode": 1,
+   "resource_limit": null
+  }
+ ],
+ "budget_history": [
+  {
+   "tier_seconds": 900.0,
+   "outcome": "KERNEL_FAILED"
+  }
+ ],
+ "kernel_result": {
+  "status": "UNVERIFIED",
+  "file": "oracle/frontier_formalizer/cable/theorems/msl_fmz-erdos1142-campaign-001-R003-L1-a1r3.lean",
+  "backend": "wsl",
+  "project": "/root/erdosfire-bench/proofs",
+  "needsMathlib": true,
+  "exitCode": 1,
+  "seconds": 51.9,
+  "declarations": [
+   {
+    "declaration": "msl_fmz_erdos1142_campaign_001_R003_L1_a1r3",
+    "clean": false,
+    "axioms": [
+     "propext",
+     "sorryAx",
+     "Classical.choice",
+     "Quot.sound"
+    ]
+   }
+  ],
+  "errors": [
+   "/tmp/oracle_lean_9VCvpR5a.lean:11:27: error: omega could not prove the goal:"
+  ]
+ },
+ "lean_result_block": "LEAN_RESULT fmz-erdos1142-campaign-001-R003-L1-a1r3\n  FORMAL_STATUS KERNEL_FAILED\n  FILE oracle/frontier_formalizer/cable/theorems/msl_fmz-erdos1142-campaign-001-R003-L1-a1r3.lean\n  THEOREMS msl_fmz_erdos1142_campaign_001_R003_L1_a1r3\n  BACKEND wsl\n  AXIOMS Classical.choice, Quot.sound, propext, sorryAx\n  TACTIC (supplied proof)\n  BUDGET 900s:KERNEL_FAILED\n  FAILURE ((supplied proof)) RAW[/tmp/oracle_lean_9VCvpR5a.lean:11:27: error: omega could not prove the goal:]\n  LAW KERNEL_FAILED does not refute the claim \u2014 the FAILURE line names what actually broke",
+ "timestamp": "2026-09-02T09:25:30Z"
+}

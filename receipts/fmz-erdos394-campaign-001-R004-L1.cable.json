@@ -1,0 +1,49 @@
+{
+ "schema": "oracle.msl.cable.v1",
+ "id": "fmz-erdos394-campaign-001-R004-L1",
+ "spec": {
+  "id": "fmz-erdos394-campaign-001-R004-L1",
+  "imports": "none",
+  "definitions": "def natMin (x y : Nat) : Nat := if x <= y then x else y\n\ndef splitAt (n a : Nat) : Option (Prod Nat Nat) :=\n  if a == 0 then none\n  else if n % a == 0 && Nat.gcd a (n / a) == 1 then some (a, n / a) else none\n\ndef splits (n : Nat) : List (Prod Nat Nat) :=\n  List.filterMap (fun a => splitAt n a) (List.range (n + 1))\n\ndef crtRes (a b : Nat) : Nat :=\n  List.headD (List.filter (fun r => r % a == 0 && (r + 1) % b == 0) (List.range (a * b))) 0\n\ndef classRes (n : Nat) : List Nat :=\n  List.map (fun p => crtRes p.1 p.2) (splits n)\n\ndef countBF (n T : Nat) : Nat :=\n  List.length (List.filter (fun m => (m * (m + 1)) % n == 0) (List.map (fun j => j + 1) (List.range T)))\n\ndef countDec (n T : Nat) : Nat :=\n  List.foldl (fun acc r => acc + List.length (List.filter (fun m => m % n == r) (List.map (fun j => j + 1) (List.range T)))) 0 (classRes n)\n\ndef t2BF (n : Nat) : Nat :=\n  List.headD (List.filter (fun m => (m * (m + 1)) % n == 0) (List.map (fun j => j + 1) (List.range (n + 2)))) (n + 1)\n\ndef t2Dec (n : Nat) : Nat :=\n  List.foldl (fun acc r => natMin acc (if r == 0 then n else r)) n (classRes n)\n\ndef checkPair (n T : Nat) : Bool := countBF n T == countDec n T\n\ndef checkT2 (n : Nat) : Bool := t2BF n == t2Dec n\n\ndef checkAll (N M : Nat) : Bool :=\n  List.all (List.range N) (fun i =>\n    checkT2 (i + 1) && List.all (List.range M) (fun j => checkPair (i + 1) (j + 1)))",
+  "conclusion": "checkAll 32 32 = true",
+  "proof": "by decide"
+ },
+ "formal_status": "KERNEL_CHECKED",
+ "events": [],
+ "axioms": [],
+ "attempts": [
+  {
+   "tactic": "(supplied proof)",
+   "status": "VERIFIED",
+   "seconds": 9.7,
+   "errors": [],
+   "exitCode": 0,
+   "resource_limit": null
+  }
+ ],
+ "budget_history": [
+  {
+   "tier_seconds": 900.0,
+   "outcome": "KERNEL_CHECKED"
+  }
+ ],
+ "kernel_result": {
+  "status": "VERIFIED",
+  "file": "oracle/frontier_formalizer/cable/theorems/msl_fmz-erdos394-campaign-001-R004-L1.lean",
+  "backend": "windows",
+  "project": "C:\\Users\\jared\\Local Sites\\woocommerce-enterprise\\oracle\\math\\EG411Formal",
+  "needsMathlib": false,
+  "exitCode": 0,
+  "seconds": 9.7,
+  "declarations": [
+   {
+    "declaration": "msl_fmz_erdos394_campaign_001_R004_L1",
+    "clean": true,
+    "axioms": []
+   }
+  ],
+  "errors": []
+ },
+ "lean_result_block": "LEAN_RESULT fmz-erdos394-campaign-001-R004-L1\n  FORMAL_STATUS KERNEL_CHECKED\n  FILE oracle/frontier_formalizer/cable/theorems/msl_fmz-erdos394-campaign-001-R004-L1.lean\n  THEOREMS msl_fmz_erdos394_campaign_001_R004_L1\n  BACKEND windows\n  AXIOMS -\n  TACTIC (supplied proof)\n  BUDGET 900s:KERNEL_CHECKED\n  FAILURE NONE",
+ "timestamp": "2026-09-01T21:54:28Z"
+}

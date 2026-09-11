@@ -1,0 +1,27 @@
+{
+ "schema": "oracle.msl.closer.witness.v1",
+ "id": "fmz-erdos11-campaign-001-R008-L1-a2r4",
+ "pipeline": "WITNESS_FINITE",
+ "witness": {
+  "range": {
+   "n_min": 3,
+   "n_max": 199,
+   "parity": "odd"
+  },
+  "l_max": 7
+ },
+ "verifier_sha256": "e9e673d0cb81139affe3b85e957d169a6f7dd20cfb50126d182718b12a36651d",
+ "verifier_source": "def verify(witness):\n    def is_squarefree(k):\n        if k < 1:\n            return False\n        d = 2\n        while d * d <= k:\n            if k % (d * d) == 0:\n                return False\n            d += 1\n        return True\n\n    r = witness['range']\n    lo, hi, lmax = r['n_min'], r['n_max'], witness['l_max']\n    if r['parity'] != 'odd':\n        raise AssertionError('bad parity')\n    if lo % 2 != 1 or lo < 3 or hi < lo or lmax < 0:\n        raise AssertionError('bad range')\n    for n in range(lo, hi + 1, 2):\n        found = False\n        for l in range(0, lmax + 1):\n            p2 = 2 ** l\n            if p2 >= n:\n                break\n            k = n - p2\n            if k >= 1 and is_squarefree(k):\n                found = True\n                break\n        if not found:\n            raise AssertionError('no decomposition for n=%d' % n)\n\nWITNESS = {\"range\": {\"n_min\": 3, \"n_max\": 199, \"parity\": \"odd\"}, \"l_max\": 7}\nverify(WITNESS)",
+ "run": {
+  "passed": true,
+  "status": "VERIFIER_PASS",
+  "exit_code": 0,
+  "stdout": "PASS",
+  "detail": "",
+  "seconds": 0.11,
+  "code_sha256": "e9e673d0cb81139affe3b85e957d169a6f7dd20cfb50126d182718b12a36651d"
+ },
+ "claim": "The verifier is a single stdlib-only source with zero imports and no I/O; it defines verify(witness), which raises AssertionError on any failed check and returns cleanly only if every odd n with 3 <= n <= 199 has a decomposition n = k + 2^l with k squarefree (k=1 allowed, Mathlib convention) and l in 0..7. Clean return certifies this finite range fragment of L1; the all-odd-n>1 extension remains open.",
+ "law": "Wang 7.2: an exact finite object plus a proved reduction is a CERTIFICATE. The reduction is the `claim` and is a human's to audit; the object and the verifier run are the machine's part.",
+ "timestamp": "2026-09-02T01:21:04Z"
+}

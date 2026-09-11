@@ -1,0 +1,49 @@
+{
+ "schema": "oracle.msl.closer.witness.v1",
+ "id": "fmz-erdos683-campaign-001-R008-L1",
+ "pipeline": "WITNESS_FINITE",
+ "witness": {
+  "range": {
+   "n_min": 2,
+   "n_max": 40
+  },
+  "definition": "G(n) = distance from n to the next prime: least g>=1 with n+g prime.",
+  "bound": {
+   "G_min": 1,
+   "G_max": 6
+  },
+  "argmax_G6": [
+   23,
+   31
+  ],
+  "G_value_multiset_over_n_2_to_40": {
+   "1": 12,
+   "2": 11,
+   "3": 6,
+   "4": 6,
+   "5": 2,
+   "6": 2
+  },
+  "prime_gap_multiset_consecutive_primes_le_41": {
+   "1": 1,
+   "2": 6,
+   "4": 4,
+   "6": 2
+  },
+  "not_certified_here": "the 0.4650 infimum / abort clause (analytic asymptotic content, not finite)"
+ },
+ "verifier_sha256": "65e9645434ba0483020843507833b182cc46c2c934a670cacaf914f99fc5f78c",
+ "verifier_source": "# Standalone, stdlib-free: no imports, no I/O, no print, no filesystem, no network.\n# Deterministic exact integer arithmetic. Fail-closed: any defect raises, so the\n# only normal exit is the final return True. The witness is embedded as a literal;\n# an orchestrator may substitute its own witness dict by assigning to W before\n# calling verify() in the same module scope.\n\nW = {\n  'range': {'n_min': 2, 'n_max': 40},\n  'bound': {'G_min': 1, 'G_max': 6},\n  'argmax_G6': [23, 31],\n  'G_value_multiset_over_n_2_to_40': {'1': 12, '2': 11, '3': 6, '4': 6, '5': 2, '6': 2},\n  'prime_gap_multiset_consecutive_primes_le_41': {'1': 1, '2': 6, '4': 4, '6': 2},\n}\n\ndef _is_prime(n):\n    if n < 2:\n        return False\n    i = 2\n    while i * i <= n:\n        if n % i == 0:\n            return False\n        i += 1\n    return True\n\ndef _next_prime_dist(n):\n    g = 1\n    while not _is_prime(n + g):\n        g += 1\n    return g\n\ndef verify():\n    lo = W['range']['n_min']\n    hi = W['range']['n_max']\n    if not (isinstance(lo, int) and isinstance(hi, int) and 2 <= lo <= hi):\n        raise ValueError('bad range')\n    G = {}\n    for n in range(lo, hi + 1):\n        G[n] = _next_prime_dist(n)\n    # 1. every gap within the certified bounds\n    for n in sorted(G):\n        g = G[n]\n        if not (W['bound']['G_min'] <= g <= W['bound']['G_max']):\n            raise ValueError('gap bound violated at n=%d g=%d' % (n, g))\n    # 2. G = G_max exactly at the claimed argmax set\n    got = sorted(n for n in G if G[n] == W['bound']['G_max'])\n    if got != sorted(W['argmax_G6']):\n        raise ValueError('argmax mismatch: %r' % (got,))\n    # 3. exact multiset of G-values over the sweep\n    ms = {}\n    for n in G:\n        k = str(G[n])\n        ms[k] = ms.get(k, 0) + 1\n    if ms != W['G_value_multiset_over_n_2_to_40']:\n        raise ValueError('G multiset mismatch: %r' % (ms,))\n    # 4. exact multiset of gaps between consecutive primes up to hi+1 = 41\n    pr = [p for p in range(2, hi + 2) if _is_prime(p)]\n    np_le_40 = 0\n    for p in pr:\n        if p <= 40:\n            np_le_40 += 1\n    if np_le_40 != 12:\n        raise ValueError('prime count <= 40 mismatch: %d' % np_le_40)\n    pm = {}\n    for i in range(len(pr) - 1):\n        k = str(pr[i + 1] - pr[i])\n        pm[k] = pm.get(k, 0) + 1\n    if pm != W['prime_gap_multiset_consecutive_primes_le_41']:\n        raise ValueError('prime-gap multiset mismatch: %r' % (pm,))\n    return True\n",
+ "run": {
+  "passed": false,
+  "status": "VERIFIER_FAIL",
+  "exit_code": 1,
+  "stdout": "",
+  "detail": "TypeError: verify() takes 0 positional arguments but 1 was given",
+  "seconds": 0.11,
+  "code_sha256": "65e9645434ba0483020843507833b182cc46c2c934a670cacaf914f99fc5f78c"
+ },
+ "claim": "verify() == True certifies the finite core of L1 verbatim: for every 2<=n<=40 the next-prime gap G(n) lies in [1,6], attains 6 exactly at n in {23,31}, with exact G-value multiset {1:12,2:11,3:6,4:6,5:2,6:2} and consecutive-prime gap multiset {1:1,2:6,4:4,6:2} over primes <=41 — all by exact integer arithmetic, fail-closed, no floats.",
+ "law": "Wang 7.2: an exact finite object plus a proved reduction is a CERTIFICATE. The reduction is the `claim` and is a human's to audit; the object and the verifier run are the machine's part.",
+ "timestamp": "2026-09-02T00:00:45Z"
+}

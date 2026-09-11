@@ -1,0 +1,44 @@
+{
+ "schema": "oracle.msl.closer.witness.v1",
+ "id": "fmz-erdos170-campaign-001-R008-L1",
+ "pipeline": "WITNESS_FINITE",
+ "witness": {
+  "max_N": 5,
+  "certificates": [
+   {
+    "N": 1,
+    "n_star": 2
+   },
+   {
+    "N": 2,
+    "n_star": 3
+   },
+   {
+    "N": 3,
+    "n_star": 3
+   },
+   {
+    "N": 4,
+    "n_star": 4
+   },
+   {
+    "N": 5,
+    "n_star": 4
+   }
+  ]
+ },
+ "verifier_sha256": "46617f668af0094e5a72fa885deff53944cf232885194696947f21798d2607cd",
+ "verifier_source": "# Standalone verifier: no imports, no filesystem, no network, deterministic,\n# exact integer arithmetic, fail-closed (raises on any failed check).\n\ndef verify(witness):\n    certs = witness[\"certificates\"]\n    assert witness[\"max_N\"] == 5\n    assert isinstance(certs, list) and len(certs) == 5\n    seen = []\n    for c in certs:\n        N = c[\"N\"]\n        n = c[\"n_star\"]\n        assert isinstance(N, int) and isinstance(n, int)\n        assert 1 <= N <= 5\n        assert N not in seen\n        seen.append(N)\n        assert n >= 1\n        # Two-sided exact certificate for n* = min{ m>=1 : m(m-1)//2 + 1 >= N+1 }\n        lower = (n - 1) * (n - 2) // 2 + 1\n        upper = n * (n - 1) // 2 + 1\n        assert upper >= N + 1, \"upper check failed\"\n        assert lower < N + 1, \"lower check failed\"\n        # Minimality: any m < n fails to cover N+1.\n        if n > 1:\n            m = n - 1\n            assert m * (m - 1) // 2 + 1 < N + 1, \"minimality failed\"\n    assert sorted(seen) == [1, 2, 3, 4, 5]\n    return True\n\n# Execute on the embedded witness; any failed check raises, aborting the run.\nwitness = {\n    \"max_N\": 5,\n    \"certificates\": [\n        {\"N\": 1, \"n_star\": 2},\n        {\"N\": 2, \"n_star\": 3},\n        {\"N\": 3, \"n_star\": 3},\n        {\"N\": 4, \"n_star\": 4},\n        {\"N\": 5, \"n_star\": 4},\n    ],\n}\nverify(witness)\n",
+ "run": {
+  "passed": true,
+  "status": "VERIFIER_PASS",
+  "exit_code": 0,
+  "stdout": "PASS",
+  "detail": "",
+  "seconds": 0.12,
+  "code_sha256": "46617f668af0094e5a72fa885deff53944cf232885194696947f21798d2607cd"
+ },
+ "claim": "Running the verifier (exit 0, no exception) certifies the full lemma L1: for each 1<=N<=5 the integer n* = min{n>=1 : n(n-1)//2+1 >= N+1} satisfies the two-sided exact certificate (n-1)(n-2)//2+1 < N+1 <= n(n-1)//2+1 with minimality; counting-lower-bound scope only, no limit constant claimed (covers=full).",
+ "law": "Wang 7.2: an exact finite object plus a proved reduction is a CERTIFICATE. The reduction is the `claim` and is a human's to audit; the object and the verifier run are the machine's part.",
+ "timestamp": "2026-09-01T23:37:13Z"
+}

@@ -1,0 +1,62 @@
+{
+ "schema": "oracle.msl.cable.v1",
+ "id": "fmz-erdos826-campaign-001-R001-L1",
+ "spec": {
+  "id": "fmz-erdos826-campaign-001-R001-L1",
+  "imports": "none",
+  "definitions": "def divCount : Nat \u2192 Nat \u2192 Nat\n  | _, 0 => 0\n  | m, d+1 => (if m % (d+1) == 0 then 1 else 0) + divCount m d\n\ndef tau (m : Nat) : Nat := divCount m m\n\ndef checkBound (m : Nat) : Bool := tau m * tau m <= 4 * m\n\ndef checkRange (lo hi : Nat) : Bool :=\n  match lo with\n  | 0 => checkBound 0\n  | lo+1 => checkBound (lo+1) && (if lo+1 < hi then checkRange (lo+2) hi else true)",
+  "conclusion": "checkRange 1 32 = true",
+  "proof": "by decide"
+ },
+ "formal_status": "KERNEL_FAILED",
+ "events": [
+  "((supplied proof)) RAW[tmpxyo5nn6b.lean:11:4: error: fail to show termination for]",
+  "((supplied proof)) RAW[tmpxyo5nn6b.lean:16:78: error: Tactic `decide` failed for proposition]"
+ ],
+ "axioms": [
+  "sorryAx"
+ ],
+ "attempts": [
+  {
+   "tactic": "(supplied proof)",
+   "status": "UNVERIFIED",
+   "seconds": 2.2,
+   "errors": [
+    "tmpxyo5nn6b.lean:11:4: error: fail to show termination for",
+    "tmpxyo5nn6b.lean:16:78: error: Tactic `decide` failed for proposition"
+   ],
+   "exitCode": 1,
+   "resource_limit": null
+  }
+ ],
+ "budget_history": [
+  {
+   "tier_seconds": 900.0,
+   "outcome": "KERNEL_FAILED"
+  }
+ ],
+ "kernel_result": {
+  "status": "UNVERIFIED",
+  "file": "oracle/frontier_formalizer/cable/theorems/msl_fmz-erdos826-campaign-001-R001-L1.lean",
+  "backend": "windows",
+  "project": "C:\\Users\\jared\\Local Sites\\woocommerce-enterprise\\oracle\\math\\EG411Formal",
+  "needsMathlib": false,
+  "exitCode": 1,
+  "seconds": 2.2,
+  "declarations": [
+   {
+    "declaration": "msl_fmz_erdos826_campaign_001_R001_L1",
+    "clean": false,
+    "axioms": [
+     "sorryAx"
+    ]
+   }
+  ],
+  "errors": [
+   "tmpxyo5nn6b.lean:11:4: error: fail to show termination for",
+   "tmpxyo5nn6b.lean:16:78: error: Tactic `decide` failed for proposition"
+  ]
+ },
+ "lean_result_block": "LEAN_RESULT fmz-erdos826-campaign-001-R001-L1\n  FORMAL_STATUS KERNEL_FAILED\n  FILE oracle/frontier_formalizer/cable/theorems/msl_fmz-erdos826-campaign-001-R001-L1.lean\n  THEOREMS msl_fmz_erdos826_campaign_001_R001_L1\n  BACKEND windows\n  AXIOMS sorryAx\n  TACTIC (supplied proof)\n  BUDGET 900s:KERNEL_FAILED\n  FAILURE ((supplied proof)) RAW[tmpxyo5nn6b.lean:11:4: error: fail to show termination for]; ((supplied proof)) RAW[tmpxyo5nn6b.lean:16:78: error: Tactic `decide` failed for proposition]\n  LAW KERNEL_FAILED does not refute the claim \u2014 the FAILURE line names what actually broke",
+ "timestamp": "2026-09-01T21:49:03Z"
+}

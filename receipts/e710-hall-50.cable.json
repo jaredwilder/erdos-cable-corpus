@@ -1,0 +1,48 @@
+{
+ "schema": "oracle.msl.cable.v1",
+ "id": "e710-hall-50",
+ "spec": {
+  "id": "e710-hall-50",
+  "imports": "Mathlib",
+  "conclusion": "((List.range 125).filter (fun m => m > 50 && [12, 20, 24, 30, 36, 40, 42, 45, 48, 50].any (fun k => m % k == 0))).length < [12, 20, 24, 30, 36, 40, 42, 45, 48, 50].length",
+  "proof": "by decide"
+ },
+ "formal_status": "KERNEL_CHECKED",
+ "events": [],
+ "axioms": [],
+ "attempts": [
+  {
+   "tactic": "(supplied proof)",
+   "status": "VERIFIED",
+   "seconds": 63.3,
+   "errors": [],
+   "exitCode": 0,
+   "resource_limit": null
+  }
+ ],
+ "budget_history": [
+  {
+   "tier_seconds": 120.0,
+   "outcome": "KERNEL_CHECKED"
+  }
+ ],
+ "kernel_result": {
+  "status": "VERIFIED",
+  "file": "oracle/frontier_formalizer/cable/theorems/msl_e710-hall-50.lean",
+  "backend": "wsl",
+  "project": "/root/erdosfire-bench/proofs",
+  "needsMathlib": true,
+  "exitCode": 0,
+  "seconds": 52.6,
+  "declarations": [
+   {
+    "declaration": "msl_e710_hall_50",
+    "clean": true,
+    "axioms": []
+   }
+  ],
+  "errors": []
+ },
+ "lean_result_block": "LEAN_RESULT e710-hall-50\n  FORMAL_STATUS KERNEL_CHECKED\n  FILE oracle/frontier_formalizer/cable/theorems/msl_e710-hall-50.lean\n  THEOREMS msl_e710_hall_50\n  BACKEND wsl\n  AXIOMS -\n  TACTIC (supplied proof)\n  BUDGET 120s:KERNEL_CHECKED\n  FAILURE NONE",
+ "timestamp": "2026-09-03T19:06:03Z"
+}

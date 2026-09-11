@@ -1,0 +1,70 @@
+{
+ "schema": "oracle.msl.cable.v1",
+ "id": "erdos595-tc-le-tau",
+ "spec": {
+  "id": "erdos595-tc-le-tau",
+  "imports": "Mathlib",
+  "definitions": "open SimpleGraph in\ndef IsCUTF {V : Type} (G : SimpleGraph V) : Prop :=\n  \u2203 H : \u2115 \u2192 SimpleGraph V, (\u2200 i, (H i).CliqueFree 3) \u2227 G = \u2a06 i, H i\n\nopen SimpleGraph in\ndef IsProperN {V : Type} (H : SimpleGraph V) (f : V \u2192 \u2115) : Prop :=\n  \u2200 a b : V, H.Adj a b \u2192 f a \u2260 f b\n\ntheorem nbhdBound {V : Type} (G : SimpleGraph V) :\n    (\u2200 u : V, \u2203 g : V \u2192 \u2115, \u2200 a b : V, G.Adj u a \u2192 G.Adj u b \u2192 G.Adj a b \u2192 g a \u2260 g b) \u2192 IsCUTF G := by\n  classical\n  intro hnb\n  choose g hg using hnb\n  letI : LinearOrder V := IsWellOrder.linearOrder (WellOrderingRel (\u03b1 := V))\n  set F : V \u2192 V \u2192 \u2115 := fun a b => if a \u2264 b then g a b else g b a with hF\n  have hsymm : \u2200 a b : V, F a b = F b a := by\n    intro a b\n    rcases eq_or_ne a b with rfl | hne\n    \u00b7 rfl\n    \u00b7 rcases le_total a b with h | h\n      \u00b7 have h2 : \u00ac b \u2264 a := fun hc => hne (le_antisymm h hc)\n        simp [hF, h, h2]\n      \u00b7 have h2 : \u00ac a \u2264 b := fun hc => hne (le_antisymm hc h)\n        simp [hF, h, h2]\n  set c : Sym2 V \u2192 \u2115 := Sym2.lift \u27e8F, hsymm\u27e9 with hc\n  have hcval : \u2200 a b : V, c s(a, b) = F a b := by intro a b; rfl\n  have key : \u2200 u x y : V, u \u2264 x \u2192 u \u2264 y \u2192 G.Adj u x \u2192 G.Adj u y \u2192 G.Adj x y \u2192\n      c s(u, x) = c s(u, y) \u2192 False := by\n    intro u x y hux huy h1 h2 h3 heq\n    rw [hcval, hcval, hF] at heq\n    simp only [if_pos hux, if_pos huy] at heq\n    exact hg u x y h1 h2 h3 heq\n  refine \u27e8fun n => SimpleGraph.fromEdgeSet {e | e \u2208 G.edgeSet \u2227 c e = n}, ?_, ?_\u27e9\n  \u00b7 intro n t ht\n    obtain \u27e8hcl, hcard\u27e9 := ht\n    obtain \u27e8a, b, d, hab, had, hbd, hteq\u27e9 := Finset.card_eq_three.mp hcard\n    have ha : a \u2208 t := by rw [hteq]; simp\n    have hb : b \u2208 t := by rw [hteq]; simp\n    have hd : d \u2208 t := by rw [hteq]; simp\n    have e1 := hcl ha hb hab\n    have e2 := hcl ha hd had\n    have e3 := hcl hb hd hbd\n    rw [SimpleGraph.fromEdgeSet_adj] at e1 e2 e3\n    have g1 : G.Adj a b := e1.1.1\n    have g2 : G.Adj a d := e2.1.1\n    have g3 : G.Adj b d := e3.1.1\n    have c1 : c s(a, b) = n := e1.1.2\n    have c2 : c s(a, d) = n := e2.1.2\n    have c3 : c s(b, d) = n := e3.1.2\n    have swapDA : s(d, a) = s(a, d) := Sym2.eq_swap\n    have swapDB : s(d, b) = s(b, d) := Sym2.eq_swap\n    have swapBA : s(b, a) = s(a, b) := Sym2.eq_swap\n    have kmin_a : a \u2264 b \u2192 a \u2264 d \u2192 False := fun h1' h2' =>\n      key a b d h1' h2' g1 g2 g3 (by rw [c1, c2])\n    have kmin_b : b \u2264 a \u2192 b \u2264 d \u2192 False := fun h1' h2' =>\n      key b a d h1' h2' g1.symm g3 g2 (by rw [swapBA, c1, c3])\n    have kmin_d : d \u2264 a \u2192 d \u2264 b \u2192 False := fun h1' h2' =>\n      key d a b h1' h2' g2.symm g3.symm g1 (by rw [swapDA, swapDB, c2, c3])\n    rcases le_total a b with hab' | hab'\n    \u00b7 rcases le_total a d with had' | had'\n      \u00b7 exact kmin_a hab' had'\n      \u00b7 exact kmin_d had' (le_trans had' hab')\n    \u00b7 rcases le_total b d with hbd' | hbd'\n      \u00b7 exact kmin_b hab' hbd'\n      \u00b7 exact kmin_d (le_trans hbd' hab') hbd'\n  \u00b7 ext a b\n    rw [SimpleGraph.iSup_adj]\n    constructor\n    \u00b7 intro hab\n      exact \u27e8c s(a, b), by\n        rw [SimpleGraph.fromEdgeSet_adj]\n        exact \u27e8\u27e8hab, rfl\u27e9, G.ne_of_adj hab\u27e9\u27e9\n    \u00b7 rintro \u27e8n, hn\u27e9\n      rw [SimpleGraph.fromEdgeSet_adj] at hn\n      exact hn.1.1",
+  "hypotheses": [
+   "{V : Type}",
+   "(G : SimpleGraph V)"
+  ],
+  "conclusion": "G.CliqueFree 4 \u2192 (\u2200 H : SimpleGraph V, H \u2264 G \u2192 H.CliqueFree 3 \u2192 \u2203 f : V \u2192 \u2115, IsProperN H f) \u2192 IsCUTF G",
+  "proof": "by\n  classical\n  intro hK4 htau\n  refine nbhdBound G (fun u => ?_)\n  set Hu : SimpleGraph V :=\n    G \u2293 SimpleGraph.fromRel (fun a b => G.Adj u a \u2227 G.Adj u b) with hHu\n  have hle : Hu \u2264 G := inf_le_left\n  have hadj : \u2200 a b : V, Hu.Adj a b \u2192 G.Adj a b \u2227 G.Adj u a \u2227 G.Adj u b := by\n    intro a b h\n    rw [hHu, SimpleGraph.inf_adj, SimpleGraph.fromRel_adj] at h\n    refine \u27e8h.1, ?_\u27e9\n    rcases h.2.2 with \u27e8h1, h2\u27e9 | \u27e8h1, h2\u27e9\n    \u00b7 exact \u27e8h1, h2\u27e9\n    \u00b7 exact \u27e8h2, h1\u27e9\n  have hmk : \u2200 a b : V, G.Adj a b \u2192 G.Adj u a \u2192 G.Adj u b \u2192 Hu.Adj a b := by\n    intro a b h1 h2 h3\n    rw [hHu, SimpleGraph.inf_adj, SimpleGraph.fromRel_adj]\n    exact \u27e8h1, G.ne_of_adj h1, Or.inl \u27e8h2, h3\u27e9\u27e9\n  have hfree : Hu.CliqueFree 3 := by\n    intro t ht\n    obtain \u27e8hcl, hcard\u27e9 := ht\n    obtain \u27e8a, b, d, hab, had, hbd, hteq\u27e9 := Finset.card_eq_three.mp hcard\n    have ha : a \u2208 t := by rw [hteq]; simp\n    have hb : b \u2208 t := by rw [hteq]; simp\n    have hd : d \u2208 t := by rw [hteq]; simp\n    obtain \u27e8g1, hua, hub\u27e9 := hadj a b (hcl ha hb hab)\n    obtain \u27e8g2, -, hud\u27e9 := hadj a d (hcl ha hd had)\n    obtain \u27e8g3, -, -\u27e9 := hadj b d (hcl hb hd hbd)\n    have h3c : G.IsNClique 3 {a, b, d} :=\n      SimpleGraph.is3Clique_triple_iff.mpr \u27e8g1, g2, g3\u27e9\n    refine hK4 (insert u {a, b, d}) (h3c.insert ?_)\n    intro x hx\n    simp only [Finset.mem_insert, Finset.mem_singleton] at hx\n    rcases hx with rfl | rfl | rfl\n    \u00b7 exact hua\n    \u00b7 exact hub\n    \u00b7 exact hud\n  obtain \u27e8f, hf\u27e9 := htau Hu hle hfree\n  exact \u27e8f, fun a b hua hub hab => hf a b (hmk a b hab hua hub)\u27e9"
+ },
+ "formal_status": "KERNEL_CHECKED",
+ "events": [],
+ "axioms": [
+  "Classical.choice",
+  "Quot.sound",
+  "propext"
+ ],
+ "attempts": [
+  {
+   "tactic": "(supplied proof)",
+   "status": "VERIFIED",
+   "seconds": 69.5,
+   "errors": [],
+   "exitCode": 0,
+   "resource_limit": null
+  }
+ ],
+ "budget_history": [
+  {
+   "tier_seconds": 120.0,
+   "outcome": "KERNEL_CHECKED"
+  }
+ ],
+ "kernel_result": {
+  "status": "VERIFIED",
+  "file": "oracle/frontier_formalizer/cable/theorems/msl_erdos595-tc-le-tau.lean",
+  "backend": "wsl",
+  "project": "/root/erdosfire-bench/proofs",
+  "needsMathlib": true,
+  "exitCode": 0,
+  "seconds": 55.0,
+  "declarations": [
+   {
+    "declaration": "nbhdBound",
+    "clean": true,
+    "axioms": [
+     "propext",
+     "Classical.choice",
+     "Quot.sound"
+    ]
+   },
+   {
+    "declaration": "msl_erdos595_tc_le_tau",
+    "clean": true,
+    "axioms": [
+     "propext",
+     "Classical.choice",
+     "Quot.sound"
+    ]
+   }
+  ],
+  "errors": []
+ },
+ "lean_result_block": "LEAN_RESULT erdos595-tc-le-tau\n  FORMAL_STATUS KERNEL_CHECKED\n  FILE oracle/frontier_formalizer/cable/theorems/msl_erdos595-tc-le-tau.lean\n  THEOREMS msl_erdos595_tc_le_tau\n  BACKEND wsl\n  AXIOMS Classical.choice, Quot.sound, propext\n  TACTIC (supplied proof)\n  BUDGET 120s:KERNEL_CHECKED\n  FAILURE NONE",
+ "timestamp": "2026-09-06T09:58:48Z"
+}

@@ -1,0 +1,58 @@
+{
+ "schema": "oracle.msl.closer.lap.v1",
+ "id": "erdos943-campaign-001-R003-close",
+ "pipeline": "CITATION_ANCHORED",
+ "lean_file": "oracle/frontier_formalizer/cable/theorems/lap_erdos943-campaign-001-R003-close.lean",
+ "theorem": "msl_erdos943_campaign_001_R003_close",
+ "axiom_name": "Wigert1907",
+ "axiom_statement_lean": "∀ n : ℕ, 2 ≤ n → (Nat.divisorCount n : ℝ) ≤ (n : ℝ) ^ ((Real.log 2 + 1) / Real.log (Real.log n))",
+ "citation": {
+  "source": "S. Wigert, 'Contributions à la théorie de la distribution des nombres entiers', Bihang till K. Svenska Vet.-Akad. Handlingar, Stockholm, 1907; as recorded in G. H. Hardy and E. M. Wright, An Introduction to the Theory of Numbers, 6th ed., Cambridge University Press, 2008, Theorem 317.",
+  "theorem_number": "Theorem 317 (Hardy & Wright 6th ed.), attribute Wigert",
+  "verbatim": "Theorem 317. 'log d(n) ≤ (log 2 + o(1)) log n / log log n' — i.e. the maximum order of log d(n) is log 2 · log n / log log n, where d(n) is the number of divisors of n.",
+  "url_or_doi": "n/a (1907 monograph); statement quoted from Hardy & Wright, 6th ed., Theorem 317"
+ },
+ "claim": "CONDITIONAL on the single axiom Wigert1907: the canonical statement 1_A*1_A(n) = n^{o(1)} for every powerful n is closed affirmatively — the explicit exponent e(n) = (log 2 + 1)/log log(n+2) tends to 0 and dominates f(n) for all n ≥ 2, via the elementary pointwise bound f(n) ≤ d(n). Axiom footprint expected: {propext, Classical.choice, Quot.sound, Wigert1907} — CITATION-ANCHORED, one rank below a full close, exactly because Wigert's theorem is invoked and not re-proved.",
+ "gate": {
+  "passed": false,
+  "reason": "KERNEL_FAILED",
+  "detail": "the LAP file did not compile (exit 1)"
+ },
+ "kernel_result": {
+  "status": "UNVERIFIED",
+  "file": "oracle/frontier_formalizer/cable/theorems/lap_erdos943-campaign-001-R003-close.lean",
+  "backend": "wsl",
+  "project": "/root/erdosfire-bench/proofs",
+  "needsMathlib": true,
+  "exitCode": 1,
+  "seconds": 309.4,
+  "declarations": [
+   {
+    "declaration": "msl_erdos943_campaign_001_R003_close",
+    "clean": true,
+    "axioms": []
+   },
+   {
+    "declaration": "close_branch_A",
+    "clean": false,
+    "axioms": [
+     "propext",
+     "sorryAx",
+     "Classical.choice",
+     "Quot.sound"
+    ]
+   }
+  ],
+  "errors": [
+   "/tmp/oracle_lean_ztNXX4ed.lean:7:4: error(lean.dependsOnNoncomputable): failed to compile definition, consider marking it as 'noncomputable' because it depends on 'Nat.card', which is 'noncomputable'",
+   "/tmp/oracle_lean_ztNXX4ed.lean:10:4: error(lean.dependsOnNoncomputable): failed to compile definition, consider marking it as 'noncomputable' because it depends on 'Real.instDivInvMonoid', which is 'noncomputable'",
+   "/tmp/oracle_lean_ztNXX4ed.lean:13:20: error(lean.unknownIdentifier): Unknown constant `Nat.divisorCount`",
+   "/tmp/oracle_lean_ztNXX4ed.lean:15:47: error: unexpected token 'theorem'; expected term",
+   "/tmp/oracle_lean_ztNXX4ed.lean:19:59: error: unsolved goals",
+   "/tmp/oracle_lean_ztNXX4ed.lean:19:62: error: unexpected token ':='; expected command"
+  ]
+ },
+ "seconds": 320.4,
+ "law": "CLOSED_CONDITIONAL_ON_CITATION is NOT TARGET_CLOSED. The kernel checked the IMPLICATION from the assumed theorem; it did not check the assumed theorem. Confirm `axiom_statement_lean` against `citation.verbatim`, and confirm that the cited theorem exists in that form, before this is cited as a result.",
+ "timestamp": "2026-09-01T20:07:33Z"
+}

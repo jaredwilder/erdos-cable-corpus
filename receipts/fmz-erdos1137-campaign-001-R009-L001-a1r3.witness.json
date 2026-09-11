@@ -1,0 +1,31 @@
+{
+ "schema": "oracle.msl.closer.witness.v1",
+ "id": "fmz-erdos1137-campaign-001-R009-L001-a1r3",
+ "pipeline": "WITNESS_FINITE",
+ "witness": {
+  "embedded": true,
+  "range": [
+   1,
+   200
+  ],
+  "expected": {
+   "R_14": "1/2",
+   "R_100": "9/16"
+  },
+  "convention": "p_1=2,3,5,...; d_n = p_{n+1}-p_n for n>=1; d_0=0 (finite-prefix convention only); R(x) = max_{1<=n<x} d_n d_{n-1} / (max_{1<=n<x} d_n)^2, exact Fractions."
+ },
+ "verifier_sha256": "58983310dbb67541dafa2dc329d6c41f34f3a2449f8c532310755d59ee0ede65",
+ "verifier_source": "#!/usr/bin/env python3\n# L001 verifier: exact rational, fail-closed, deterministic, no network/filesystem.\n# Entry point: verify(witness) raises on ANY failed check; returns True on full pass.\nfrom fractions import Fraction\n\ndef verify(witness):\n    if witness.get(\"embedded\") is not True:\n        raise RuntimeError(\"FAIL: witness marker missing\")\n    lo, hi = witness[\"range\"]\n    if (lo, hi) != (1, 200):\n        raise RuntimeError(\"FAIL: range mismatch\")\n    if witness[\"expected\"] != {\"R_14\": \"1/2\", \"R_100\": \"9/16\"}:\n        raise RuntimeError(\"FAIL: expected identities mismatch\")\n\n    def primes_upto(N):\n        if N < 2:\n            raise RuntimeError(\"FAIL: bad prime bound\")\n        sieve = [True]*(N+1)\n        sieve[0] = sieve[1] = False\n        i = 2\n        while i*i <= N:\n            if sieve[i]:\n                for j in range(i*i, N+1, i):\n                    sieve[j] = False\n            i += 1\n        return [k for k in range(2, N+1) if sieve[k]]\n\n    P = primes_upto(3000)\n    if len(P) < 202:\n        raise RuntimeError(\"FAIL: insufficient primes\")\n    d = [0]*len(P)\n    for n in range(1, len(P)):\n        d[n] = P[n] - P[n-1]\n\n    def R(x):\n        ns = [n for n in range(1, x) if n < len(d)]\n        if not ns:\n            raise RuntimeError(\"FAIL: empty window at x=%d\" % x)\n        M1 = max(Fraction(d[n]) for n in ns)\n        if M1 <= 0:\n            raise RuntimeError(\"FAIL: nonpositive max gap\")\n        M2 = max(Fraction(d[n]) * Fraction(d[n-1]) for n in ns)\n        return M2 / (M1*M1)\n\n    for x in range(lo, hi+1):\n        if R(x) > Fraction(1):\n            raise RuntimeError(\"FAIL: R(%d) > 1\" % x)\n    if R(14) != Fraction(1, 2):\n        raise RuntimeError(\"FAIL: R(14) != 1/2\")\n    if R(100) != Fraction(9, 16):\n        raise RuntimeError(\"FAIL: R(100) != 9/16\")\n    return True\n\nverify({\n  \"embedded\": True,\n  \"range\": [1, 200],\n  \"expected\": {\"R_14\": \"1/2\", \"R_100\": \"9/16\"}\n})\n",
+ "run": {
+  "passed": false,
+  "status": "VERIFIER_FAIL",
+  "exit_code": 1,
+  "stdout": "",
+  "detail": "RuntimeError: FAIL: empty window at x=1",
+  "seconds": 0.15,
+  "code_sha256": "58983310dbb67541dafa2dc329d6c41f34f3a2449f8c532310755d59ee0ede65"
+ },
+ "claim": "verify(witness) returning True without raising establishes exactly the finite-fragment content of L001: with the frozen conventions (p_1=2, d_0=0), R(x) <= 1 as an exact rational inequality for every integer x in [1,200], and R(14)=1/2, R(100)=9/16 as exact rational identities. Fragment certificate: covers the finite small-case model of L001, not the canonical Tendsto proposition.",
+ "law": "Wang 7.2: an exact finite object plus a proved reduction is a CERTIFICATE. The reduction is the `claim` and is a human's to audit; the object and the verifier run are the machine's part.",
+ "timestamp": "2026-09-02T01:53:26Z"
+}

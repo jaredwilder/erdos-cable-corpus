@@ -1,0 +1,86 @@
+{
+ "schema": "oracle.msl.cable.v1",
+ "id": "r55-degsum-even-v2",
+ "spec": {
+  "id": "r55-degsum-even-v2",
+  "imports": "none",
+  "set_options": [
+   "set_option maxRecDepth 20000"
+  ],
+  "definitions": "def deg (e : Nat \u2192 Nat \u2192 Bool) (v : Nat) (V : List Nat) : Nat := (V.filter (e v)).length\n\ndef degSumOn (e : Nat \u2192 Nat \u2192 Bool) (L W : List Nat) : Nat :=\n  (L.map (fun v => deg e v W)).sum\n\ntheorem deg_cons_self (e : Nat \u2192 Nat \u2192 Bool) (a : Nat) (t : List Nat) (h : e a a = false) :\n    deg e a (a :: t) = deg e a t := by\n  unfold deg\n  simp [List.filter_cons, h]\n\ntheorem deg_cons_other (e : Nat \u2192 Nat \u2192 Bool) (a v : Nat) (t : List Nat) :\n    deg e v (a :: t) = (if e v a = true then 1 else 0) + deg e v t := by\n  unfold deg\n  by_cases h : e v a = true\n  \u00b7 simp [List.filter_cons, h]\n    omega\n  \u00b7 simp [List.filter_cons, h]\n\ntheorem deg_control : deg (fun a b => a != b) 0 [0,1,2] = 2 := by decide\ntheorem deg_control2 : deg (fun a b => a != b) 0 [1,2] = 2 := by decide\ntheorem degSumOn_control : degSumOn (fun a b => a != b) [0,1,2] [0,1,2] = 6 := by decide",
+  "hypotheses": [],
+  "conclusion": "degSumOn (fun a b => a != b) [0,1,2] [0,1,2] = 6",
+  "proof": "by decide"
+ },
+ "formal_status": "KERNEL_CHECKED",
+ "events": [],
+ "axioms": [
+  "Quot.sound",
+  "propext"
+ ],
+ "attempts": [
+  {
+   "tactic": "(supplied proof)",
+   "status": "VERIFIED",
+   "seconds": 3.0,
+   "errors": [],
+   "exitCode": 0,
+   "resource_limit": null
+  }
+ ],
+ "budget_history": [
+  {
+   "tier_seconds": 120.0,
+   "outcome": "KERNEL_CHECKED"
+  }
+ ],
+ "kernel_result": {
+  "status": "VERIFIED",
+  "file": "oracle/frontier_formalizer/cable/theorems/msl_r55-degsum-even-v2.lean",
+  "backend": "windows",
+  "project": "C:\\Users\\jared\\Local Sites\\woocommerce-enterprise\\oracle\\math\\EG411Formal",
+  "needsMathlib": false,
+  "exitCode": 0,
+  "seconds": 3.0,
+  "declarations": [
+   {
+    "declaration": "deg_cons_self",
+    "clean": true,
+    "axioms": [
+     "propext"
+    ]
+   },
+   {
+    "declaration": "deg_cons_other",
+    "clean": true,
+    "axioms": [
+     "propext",
+     "Quot.sound"
+    ]
+   },
+   {
+    "declaration": "deg_control",
+    "clean": true,
+    "axioms": []
+   },
+   {
+    "declaration": "deg_control2",
+    "clean": true,
+    "axioms": []
+   },
+   {
+    "declaration": "degSumOn_control",
+    "clean": true,
+    "axioms": []
+   },
+   {
+    "declaration": "msl_r55_degsum_even_v2",
+    "clean": true,
+    "axioms": []
+   }
+  ],
+  "errors": []
+ },
+ "lean_result_block": "LEAN_RESULT r55-degsum-even-v2\n  FORMAL_STATUS KERNEL_CHECKED\n  FILE oracle/frontier_formalizer/cable/theorems/msl_r55-degsum-even-v2.lean\n  THEOREMS msl_r55_degsum_even_v2\n  BACKEND windows\n  AXIOMS Quot.sound, propext\n  TACTIC (supplied proof)\n  BUDGET 120s:KERNEL_CHECKED\n  FAILURE NONE",
+ "timestamp": "2026-09-04T17:43:43Z"
+}

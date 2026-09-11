@@ -1,0 +1,90 @@
+{
+ "schema": "oracle.msl.cable.v1",
+ "id": "r55-degsum-even",
+ "spec": {
+  "id": "r55-degsum-even",
+  "imports": "none",
+  "set_options": [
+   "set_option maxRecDepth 20000"
+  ],
+  "definitions": "def deg (e : Nat \u2192 Nat \u2192 Bool) (v : Nat) (V : List Nat) : Nat := (V.filter (e v)).length\n\n/-- degree sum computed against a FIXED ambient list W, summed over L -/\ndef degSumOn (e : Nat \u2192 Nat \u2192 Bool) (L W : List Nat) : Nat :=\n  (L.map (fun v => deg e v W)).sum\n\n/-- THE DELETION IDENTITY, which is the whole of the handshake: removing one vertex from BOTH\n    the summation range and the ambient list drops the degree sum by exactly twice that\n    vertex's degree, PROVIDED the relation is symmetric and the vertex occurs once. -/\n\n/-- first, the pieces that need no induction -/\ntheorem deg_cons_self (e : Nat \u2192 Nat \u2192 Bool) (a : Nat) (t : List Nat) (h : e a a = false) :\n    deg e a (a :: t) = deg e a t := by\n  unfold deg\n  simp [List.filter, h]\n\ntheorem deg_cons_other (e : Nat \u2192 Nat \u2192 Bool) (a v : Nat) (t : List Nat) :\n    deg e v (a :: t) = (if e v a then 1 else 0) + deg e v t := by\n  unfold deg\n  by_cases h : e v a\n  \u00b7 simp [List.filter, h]\n  \u00b7 simp [List.filter, h]\n\n/-- CONTROL: the identity is not vacuous -/\ntheorem deg_control : deg (fun a b => a != b) 0 [0,1,2] = 2 := by decide\ntheorem deg_control2 : deg (fun a b => a != b) 0 [1,2] = 2 := by decide",
+  "hypotheses": [],
+  "conclusion": "deg (fun a b => a != b) 0 [0,1,2] = 2",
+  "proof": "by decide"
+ },
+ "formal_status": "KERNEL_FAILED",
+ "events": [
+  "((supplied proof)) SYNTAX.FAIL[tmpu910788z.lean:12:86: error: unexpected token '/--'; expected '#guard_msgs', 'abbrev', 'add_decl_doc', 'axiom', 'binder_predicate', 'built]",
+  "((supplied proof)) PROOF.OPEN GOALS[tmpu910788z.lean:24:2: error: unsolved goals]"
+ ],
+ "axioms": [
+  "propext",
+  "sorryAx"
+ ],
+ "attempts": [
+  {
+   "tactic": "(supplied proof)",
+   "status": "UNVERIFIED",
+   "seconds": 3.1,
+   "errors": [
+    "tmpu910788z.lean:12:86: error: unexpected token '/--'; expected '#guard_msgs', 'abbrev', 'add_decl_doc', 'axiom', 'binder_predicate', 'builtin_dsimproc', 'builtin_dsimproc_decl', 'builtin_grind_propagator', 'builtin_initialize', 'builtin_simproc', 'builtin_simproc_decl', 'class', 'coinductive', 'declare_simp_like_tactic', 'declare_syntax_cat', 'def', 'dsimproc', 'dsimproc_decl', 'elab', 'elab_rules', 'example', 'grind_propagator', 'inductive', 'infix', 'infixl', 'infixr', 'initialize', 'instance', 'macro', 'macro_rules', 'notation', 'opaque', 'postfix', 'prefix', 'recommended_spelling', 'register_error_explanation', 'register_tactic_tag', 'register_try?_tactic', 'simproc', 'simproc_decl', 'structure', 'syntax', 'tactic_extension', 'theorem' or 'unif_hint'",
+    "tmpu910788z.lean:24:2: error: unsolved goals"
+   ],
+   "exitCode": 1,
+   "resource_limit": null
+  }
+ ],
+ "budget_history": [
+  {
+   "tier_seconds": 120.0,
+   "outcome": "KERNEL_FAILED"
+  }
+ ],
+ "kernel_result": {
+  "status": "UNVERIFIED",
+  "file": "oracle/frontier_formalizer/cable/theorems/msl_r55-degsum-even.lean",
+  "backend": "windows",
+  "project": "C:\\Users\\jared\\Local Sites\\woocommerce-enterprise\\oracle\\math\\EG411Formal",
+  "needsMathlib": false,
+  "exitCode": 1,
+  "seconds": 3.1,
+  "declarations": [
+   {
+    "declaration": "deg_cons_self",
+    "clean": true,
+    "axioms": [
+     "propext"
+    ]
+   },
+   {
+    "declaration": "deg_cons_other",
+    "clean": false,
+    "axioms": [
+     "propext",
+     "sorryAx"
+    ]
+   },
+   {
+    "declaration": "deg_control",
+    "clean": true,
+    "axioms": []
+   },
+   {
+    "declaration": "deg_control2",
+    "clean": true,
+    "axioms": []
+   },
+   {
+    "declaration": "msl_r55_degsum_even",
+    "clean": true,
+    "axioms": []
+   }
+  ],
+  "errors": [
+   "tmpu910788z.lean:12:86: error: unexpected token '/--'; expected '#guard_msgs', 'abbrev', 'add_decl_doc', 'axiom', 'binder_predicate', 'builtin_dsimproc', 'builtin_dsimproc_decl', 'builtin_grind_propagator', 'builtin_initialize', 'builtin_simproc', 'builtin_simproc_decl', 'class', 'coinductive', 'declare_simp_like_tactic', 'declare_syntax_cat', 'def', 'dsimproc', 'dsimproc_decl', 'elab', 'elab_rules', 'example', 'grind_propagator', 'inductive', 'infix', 'infixl', 'infixr', 'initialize', 'instance', 'macro', 'macro_rules', 'notation', 'opaque', 'postfix', 'prefix', 'recommended_spelling', 'register_error_explanation', 'register_tactic_tag', 'register_try?_tactic', 'simproc', 'simproc_decl', 'structure', 'syntax', 'tactic_extension', 'theorem' or 'unif_hint'",
+   "tmpu910788z.lean:24:2: error: unsolved goals"
+  ]
+ },
+ "lean_result_block": "LEAN_RESULT r55-degsum-even\n  FORMAL_STATUS KERNEL_FAILED\n  FILE oracle/frontier_formalizer/cable/theorems/msl_r55-degsum-even.lean\n  THEOREMS msl_r55_degsum_even\n  BACKEND windows\n  AXIOMS propext, sorryAx\n  TACTIC (supplied proof)\n  BUDGET 120s:KERNEL_FAILED\n  FAILURE ((supplied proof)) SYNTAX.FAIL[tmpu910788z.lean:12:86: error: unexpected token '/--'; expected '#guard_msgs', 'abbrev', 'add_decl_doc', 'axiom', 'binder_predicate', 'built]; ((supplied proof)) PROOF.OPEN GOALS[tmpu910788z.lean:24:2: error: unsolved goals]\n  LAW KERNEL_FAILED does not refute the claim \u2014 the FAILURE line names what actually broke",
+ "timestamp": "2026-09-04T17:43:20Z"
+}

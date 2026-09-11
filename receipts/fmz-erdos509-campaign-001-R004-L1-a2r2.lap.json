@@ -1,0 +1,50 @@
+{
+ "schema": "oracle.msl.closer.lap.v1",
+ "id": "fmz-erdos509-campaign-001-R004-L1-a2r2",
+ "pipeline": "CITATION_ANCHORED",
+ "lean_file": "oracle/frontier_formalizer/cable/theorems/lap_fmz-erdos509-campaign-001-R004-L1-a2r2.lean",
+ "theorem": "msl_fmz_erdos509_campaign_001_R004_L1_a2r2",
+ "axiom_name": "PublishedTheorem_MathlibMeasureCountableNullUnion",
+ "axiom_statement_lean": "∀ {α : Type*} [MeasurableSpace α] {μ : MeasureTheory.Measure α} {S : ℕ → Set α}, (∀ n, μ (S n) = 0) → μ (⋃ n, S n) = 0",
+ "citation": {
+  "source": "Mathlib (Lean mathematical library), MeasureTheory: countable union of null sets (countable subadditivity / measure_biUnion_null) and measure of the sphere in a normed space (MeasureTheory.measure_real_sphere / sphere of positive radius has Haar measure zero).",
+  "theorem_number": "measure-countable-null-union; measure_real_sphere",
+  "verbatim": "\"For any measure μ and any countable family of sets S n with μ (S n) = 0 for all n, we have μ (⋃ n, S n) = 0.\" (countable subadditivity, Mathlib MeasureTheory); \"the sphere of positive radius in a nontrivial real normed space has measure zero\" (Mathlib, sphere measure).",
+  "url_or_doi": "https://github.com/leanprover-community/mathlib4"
+ },
+ "claim": "Conditional on the two Mathlib measure facts (countable null-union; positive-radius sphere is null), no countable family of circle circumferences covers the unit lemniscate of f(z)=z — the measure-theoretic core of L1. covers = fragment: the interpretive step from this to 'the frozen circle-worded contract is false as written' is not certified here.",
+ "gate": {
+  "passed": false,
+  "reason": "KERNEL_FAILED",
+  "detail": "the LAP file did not compile (exit 1)"
+ },
+ "kernel_result": {
+  "status": "UNVERIFIED",
+  "file": "oracle/frontier_formalizer/cable/theorems/lap_fmz-erdos509-campaign-001-R004-L1-a2r2.lean",
+  "backend": "wsl",
+  "project": "/root/erdosfire-bench/proofs",
+  "needsMathlib": true,
+  "exitCode": 1,
+  "seconds": 4.0,
+  "declarations": [
+   {
+    "declaration": "msl_fmz_erdos509_campaign_001_R004_L1_a2r2",
+    "clean": false,
+    "axioms": [
+     "propext",
+     "sorryAx",
+     "Classical.choice",
+     "Quot.sound"
+    ]
+   }
+  ],
+  "errors": [
+   "/tmp/oracle_lean_EDUsFK5v.lean:5:53: error(lean.unknownIdentifier): Unknown constant `Complex.abs`",
+   "/tmp/oracle_lean_EDUsFK5v.lean:12:232: error(lean.unknownIdentifier): Unknown identifier `intro`",
+   "/tmp/oracle_lean_EDUsFK5v.lean:13:0: error: unexpected token 'have'; expected command"
+  ]
+ },
+ "seconds": 6.9,
+ "law": "CLOSED_CONDITIONAL_ON_CITATION is NOT TARGET_CLOSED. The kernel checked the IMPLICATION from the assumed theorem; it did not check the assumed theorem. Confirm `axiom_statement_lean` against `citation.verbatim`, and confirm that the cited theorem exists in that form, before this is cited as a result.",
+ "timestamp": "2026-09-02T01:55:37Z"
+}

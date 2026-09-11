@@ -1,0 +1,109 @@
+{
+ "schema": "oracle.msl.closer.witness.v1",
+ "id": "fmz-erdos1201-campaign-001-R008-L1",
+ "pipeline": "WITNESS_FINITE",
+ "witness": {
+  "description": "Finite corpus for soundness of exact float->rational conversion and Q-comparison. Each case: IEEE-754 double bits (sign, exponent, fraction), asserted exact dyadic value (num, den), and asserted comparison outcomes over Q. All arithmetic in the verifier is exact integer arithmetic; the dyadic value is reconstructed as sign*mantissa*2^e with (mant, e) computed by the standard IEEE-754 rules, then compared against the asserted rational by cross-multiplication of integers.",
+  "cases": [
+   {
+    "name": "one_tenth",
+    "sign": 1,
+    "exp": 1020,
+    "frac": 2702159776422298,
+    "exact_num": 3602879701896397,
+    "exact_den": 36028797018963968
+   },
+   {
+    "name": "neg_half",
+    "sign": -1,
+    "exp": 1021,
+    "frac": 0,
+    "exact_num": -1,
+    "exact_den": 2
+   },
+   {
+    "name": "zero",
+    "sign": 1,
+    "exp": 0,
+    "frac": 0,
+    "exact_num": 0,
+    "exact_den": 1
+   },
+   {
+    "name": "min_subnormal",
+    "sign": 1,
+    "exp": 0,
+    "frac": 1,
+    "exact_num": 1,
+    "exact_den": 44942328371557897692260554914186451921592904128125753225586938880
+   },
+   {
+    "name": "two_p53_plus_one",
+    "sign": 1,
+    "exp": 1076,
+    "frac": 0,
+    "exact_num": 9007199254740993,
+    "exact_den": 1
+   },
+   {
+    "name": "three_quarters",
+    "sign": 1,
+    "exp": 1022,
+    "frac": 2251799813685248,
+    "exact_num": 3,
+    "exact_den": 4
+   }
+  ],
+  "comparisons": [
+   {
+    "a": "one_tenth",
+    "b": "three_quarters",
+    "lt": true,
+    "eq": false,
+    "gt": false
+   },
+   {
+    "a": "neg_half",
+    "b": "zero",
+    "lt": true,
+    "eq": false,
+    "gt": false
+   },
+   {
+    "a": "min_subnormal",
+    "b": "zero",
+    "lt": false,
+    "eq": false,
+    "gt": true
+   },
+   {
+    "a": "two_p53_plus_one",
+    "b": "three_quarters",
+    "lt": false,
+    "eq": false,
+    "gt": true
+   },
+   {
+    "a": "three_quarters",
+    "b": "three_quarters",
+    "lt": false,
+    "eq": true,
+    "gt": false
+   }
+  ]
+ },
+ "verifier_sha256": "0a3e9bd814c9cf6270d4de86edac84efede359def311b6d43597dd36f0b7bb39",
+ "verifier_source": "def verify(w):\n    # Fail-closed: any mismatch returns False; only full agreement returns True.\n    # No imports, no I/O, no floats, deterministic, exact integer arithmetic only.\n    if len(w[\"cases\"]) == 0:\n        return False\n    vals = {}\n    for c in w[\"cases\"]:\n        sign = c[\"sign\"]\n        exp = c[\"exp\"]\n        frac = c[\"frac\"]\n        if exp == 0:\n            mant = frac\n            e = -1074\n        else:\n            mant = frac + (1 << 52)\n            e = exp - 1075\n        # exact dyadic value = sign * mant * 2^e\n        num = sign * mant\n        den = 1\n        if e >= 0:\n            num = num * (1 << e)\n        else:\n            den = den * (1 << (-e))\n        # cross-multiply against asserted rational exact_num/exact_den\n        lhs = num * c[\"exact_den\"]\n        rhs = c[\"exact_num\"] * den\n        if lhs != rhs:\n            return False\n        if den <= 0:\n            return False\n        vals[c[\"name\"]] = (num, den)\n    if len(w[\"comparisons\"]) == 0:\n        return False\n    for k in w[\"comparisons\"]:\n        if k[\"a\"] not in vals or k[\"b\"] not in vals:\n            return False\n        an, ad = vals[k[\"a\"]]\n        bn, bd = vals[k[\"b\"]]\n        lt = an * bd < bn * ad\n        eq = an * bd == bn * ad\n        gt = an * bd > bn * ad\n        if k[\"lt\"] != lt or k[\"eq\"] != eq or k[\"gt\"] != gt:\n            return False\n    return True\n",
+ "run": {
+  "passed": true,
+  "status": "VERIFIER_PASS",
+  "exit_code": 0,
+  "stdout": "PASS",
+  "detail": "",
+  "seconds": 0.15,
+  "code_sha256": "0a3e9bd814c9cf6270d4de86edac84efede359def311b6d43597dd36f0b7bb39"
+ },
+ "claim": "COVERS=fragment. A PASS (verify returns True) establishes on the finite corpus — including subnormals, negatives, zero, and a 2^53+1 boundary value — that IEEE-754 bit patterns reconstruct to exactly the asserted dyadic rationals and that the asserted order relations hold when comparisons are done by exact integer cross-multiplication over Q. This is the soundness content of L1's conversion/comparison layer. The residual clause of L1 (problem residual uncertified/aborted per fail-closed rule) is procedural, not mathematical, and is not covered.",
+ "law": "Wang 7.2: an exact finite object plus a proved reduction is a CERTIFICATE. The reduction is the `claim` and is a human's to audit; the object and the verifier run are the machine's part.",
+ "timestamp": "2026-09-01T21:42:31Z"
+}

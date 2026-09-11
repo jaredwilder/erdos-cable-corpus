@@ -1,0 +1,26 @@
+{
+ "schema": "oracle.msl.closer.witness.v1",
+ "id": "fmz-erdos1094-campaign-001-R008-L1",
+ "pipeline": "WITNESS_FINITE",
+ "witness": {
+  "k_min": 2,
+  "k_max": 40,
+  "n_max": 400,
+  "property": "for every (n,k) with k_min <= k <= k_max and 2k <= n <= n_max, the binomial coefficient C(n,k) has a prime factor strictly greater than k",
+  "arithmetic": "exact integer arithmetic only; deterministic trial-division factorization; fail-closed on any empty range"
+ },
+ "verifier_sha256": "c1ce7f031a5bff9d4e70992d9bb2d575c7f0af1a4e30518d01afd8d4b553e81d",
+ "verifier_source": "def verify(witness):\n    k_min = witness[\"k_min\"]\n    k_max = witness[\"k_max\"]\n    n_max = witness[\"n_max\"]\n    if k_min < 2 or k_max < k_min or n_max < 2 * k_max:\n        return False\n\n    def comb(n, r):\n        if r < 0 or r > n:\n            return 0\n        r = min(r, n - r)\n        c = 1\n        for i in range(1, r + 1):\n            c = c * (n - r + i) // i\n        return c\n\n    def largest_prime_factor(v):\n        if v < 2:\n            return 1\n        largest = 1\n        d = 2\n        while d * d <= v:\n            while v % d == 0:\n                if d > largest:\n                    largest = d\n                v = v // d\n            d = d + 1\n        if v > 1 and v > largest:\n            largest = v\n        return largest\n\n    checked = 0\n    for k in range(k_min, k_max + 1):\n        for n in range(2 * k, n_max + 1):\n            c = comb(n, k)\n            if c < 2:\n                return False\n            if largest_prime_factor(c) <= k:\n                return False\n            checked = checked + 1\n    return checked > 0\n\nresult = verify({\"k_min\": 2, \"k_max\": 40, \"n_max\": 400})\nassert result == True\n",
+ "run": {
+  "passed": true,
+  "status": "VERIFIER_PASS",
+  "exit_code": 0,
+  "stdout": "PASS",
+  "detail": "",
+  "seconds": 0.45,
+  "code_sha256": "c1ce7f031a5bff9d4e70992d9bb2d575c7f0af1a4e30518d01afd8d4b553e81d"
+ },
+ "claim": "FRAGMENT certificate: deterministic, exact-integer, fail-closed check that C(n,k) has a prime factor > k for every pair with 2 <= k <= 40 and 2k <= n <= 400 (6946 instances). Certifies a finite instance range of Sylvester's theorem as recorded in standing lemma L1; does NOT cover the full universal statement (covers: fragment), and L1 neither implies nor refutes the canonical lpf-bound claim.",
+ "law": "Wang 7.2: an exact finite object plus a proved reduction is a CERTIFICATE. The reduction is the `claim` and is a human's to audit; the object and the verifier run are the machine's part.",
+ "timestamp": "2026-09-01T19:55:00Z"
+}

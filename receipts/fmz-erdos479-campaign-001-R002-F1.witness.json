@@ -1,0 +1,42 @@
+{
+ "schema": "oracle.msl.closer.witness.v1",
+ "id": "fmz-erdos479-campaign-001-R002-F1",
+ "pipeline": "WITNESS_FINITE",
+ "witness": {
+  "bound": 20,
+  "fragment_description": "The verifier computes, exhaustively and exactly, the full set {n : 2 <= n <= 20, 2^n ≡ k (mod n)} for k=2 and k=0, and asserts it equals the witness lists. These are explicit finite instances of the same congruence family the route's trial-division machinery counts at scale (k=2/4/8/16, q<=1e5); the large-scale counts are NOT re-asserted here, so this certifies a strict fragment of F1.",
+  "counts": {
+   "k2_n_in_2_to_20": [
+    2,
+    3,
+    5,
+    7,
+    11,
+    13,
+    17,
+    19
+   ],
+   "k0_n_in_2_to_20": [
+    2,
+    4,
+    8,
+    16
+   ]
+  },
+  "sanity": "k=2: every prime n works by Fermat (n | 2^n - 2), and a case check shows no composite n <= 20 works; k=0: 2^n ≡ 0 mod n iff n | 2^n iff n is a power of two, giving {2,4,8,16} in range."
+ },
+ "verifier_sha256": "35a325634d8e65dc8cd65630bc56017223927b37c8e8dcb34f0b70642aaac80f",
+ "verifier_source": "# Standalone deterministic verifier. No imports, no files, no network, no output.\n# Entry point: verify(witness) — returns None (PASS) or raises AssertionError (FAIL).\n\ndef verify(witness):\n    assert witness[\"bound\"] == 20\n    lists = witness[\"counts\"]\n    assert sorted(lists[\"k2_n_in_2_to_20\"]) == [2, 3, 5, 7, 11, 13, 17, 19]\n    assert sorted(lists[\"k0_n_in_2_to_20\"]) == [2, 4, 8, 16]\n\n    bound = witness[\"bound\"]\n\n    # exhaustive recomputation, k=2\n    got2 = []\n    n = 2\n    while n <= bound:\n        if pow(2, n, n) == 2 % n:\n            got2.append(n)\n        n += 1\n    assert got2 == sorted(lists[\"k2_n_in_2_to_20\"]), (\"k2\", got2)\n\n    # exhaustive recomputation, k=0\n    got0 = []\n    n = 2\n    while n <= bound:\n        if pow(2, n, n) == 0:\n            got0.append(n)\n        n += 1\n    assert got0 == sorted(lists[\"k0_n_in_2_to_20\"]), (\"k0\", got0)\n",
+ "run": {
+  "passed": true,
+  "status": "VERIFIER_PASS",
+  "exit_code": 0,
+  "stdout": "PASS",
+  "detail": "",
+  "seconds": 0.09,
+  "code_sha256": "35a325634d8e65dc8cd65630bc56017223927b37c8e8dcb34f0b70642aaac80f"
+ },
+ "claim": "verify(witness) returning without raising establishes an explicit finite fragment of lemma F1: the exact, deterministic, fail-closed congruence test 2^n ≡ k (mod n) holds for exactly n ∈ {2,3,5,7,11,13,17,19} when k=2 and exactly n ∈ {2,4,8,16} when k=0, over the exhaustive range 2 ≤ n ≤ 20. covers=\"fragment\": the large-scale counts (2196/1157/681/462 at q≤1e5) and the excluded infinitude clause are not asserted here.",
+ "law": "Wang 7.2: an exact finite object plus a proved reduction is a CERTIFICATE. The reduction is the `claim` and is a human's to audit; the object and the verifier run are the machine's part.",
+ "timestamp": "2026-09-01T22:48:19Z"
+}

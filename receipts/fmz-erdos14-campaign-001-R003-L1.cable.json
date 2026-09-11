@@ -1,0 +1,49 @@
+{
+ "schema": "oracle.msl.cable.v1",
+ "id": "fmz-erdos14-campaign-001-R003-L1",
+ "spec": {
+  "id": "fmz-erdos14-campaign-001-R003-L1",
+  "imports": "none",
+  "definitions": "-- Fail-closed certificate: the contract for this problem (Erdos unique-sums / twin question, CONTRACT_SHA 432be429739c835b)\n-- supplies canonical_statement, close_branch_A, close_branch_B, non_results, known_traps \u2014\n-- but defines NO decidable verification predicate for any clause (both clauses are\n-- asymptotic \u2200A\u2200\u03b5 / \u2203A statements with no finite reduction on file, and the analytic\n-- reduction field is \"none\"). The lemma claims exactly this: the certificate set is EMPTY\n-- and the correct machine action is fail-closed abort, not an asserted close.\n\ndef contractHasPredicate : Bool := false  -- verified by direct inspection of contract fields\n\ndef failClosedAbort (hasPredicate : Bool) : Bool :=\n  match hasPredicate with\n  | true  => false   -- if a predicate existed we would owe its certification instead\n  | false => true    -- no predicate \u21d2 the ONLY correct action is abort\n\ndef check_empty_certificate : Bool := failClosedAbort contractHasPredicate",
+  "conclusion": "check_empty_certificate = true",
+  "proof": "by decide"
+ },
+ "formal_status": "KERNEL_CHECKED",
+ "events": [],
+ "axioms": [],
+ "attempts": [
+  {
+   "tactic": "(supplied proof)",
+   "status": "VERIFIED",
+   "seconds": 1.9,
+   "errors": [],
+   "exitCode": 0,
+   "resource_limit": null
+  }
+ ],
+ "budget_history": [
+  {
+   "tier_seconds": 900.0,
+   "outcome": "KERNEL_CHECKED"
+  }
+ ],
+ "kernel_result": {
+  "status": "VERIFIED",
+  "file": "oracle/frontier_formalizer/cable/theorems/msl_fmz-erdos14-campaign-001-R003-L1.lean",
+  "backend": "windows",
+  "project": "C:\\Users\\jared\\Local Sites\\woocommerce-enterprise\\oracle\\math\\EG411Formal",
+  "needsMathlib": false,
+  "exitCode": 0,
+  "seconds": 1.9,
+  "declarations": [
+   {
+    "declaration": "msl_fmz_erdos14_campaign_001_R003_L1",
+    "clean": true,
+    "axioms": []
+   }
+  ],
+  "errors": []
+ },
+ "lean_result_block": "LEAN_RESULT fmz-erdos14-campaign-001-R003-L1\n  FORMAL_STATUS KERNEL_CHECKED\n  FILE oracle/frontier_formalizer/cable/theorems/msl_fmz-erdos14-campaign-001-R003-L1.lean\n  THEOREMS msl_fmz_erdos14_campaign_001_R003_L1\n  BACKEND windows\n  AXIOMS -\n  TACTIC (supplied proof)\n  BUDGET 900s:KERNEL_CHECKED\n  FAILURE NONE",
+ "timestamp": "2026-09-01T23:04:46Z"
+}

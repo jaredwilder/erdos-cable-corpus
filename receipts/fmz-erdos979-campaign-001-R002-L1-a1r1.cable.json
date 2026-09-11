@@ -1,0 +1,73 @@
+{
+ "schema": "oracle.msl.cable.v1",
+ "id": "fmz-erdos979-campaign-001-R002-L1-a1r1",
+ "spec": {
+  "id": "fmz-erdos979-campaign-001-R002-L1-a1r1",
+  "imports": "none",
+  "definitions": "def isPrime (n : Nat) : Bool :=\n  n >= 2 && ((List.range (n - 2)).all (fun d => n % (d + 2) != 0))\n\ndef primeSquareReps (n : Nat) : Nat :=\n  ((List.range (n + 1)).filterFun (fun p => isPrime p)).filterFun (fun p =>\n    ((List.range (n + 1)).filterFun (fun q => isPrime q && p <= q && p * p + q * q == n)).length > 0).length\n-- count of unordered pairs {p, q} of primes with p^2 + q^2 = n, p <= q:\ndef countReps (n : Nat) : Nat :=\n  ((List.range (Nat.sqrt n + 1)).filter (fun p => isPrime p &&\n    let r := n - p * p\n    Nat.sqrt r * Nat.sqrt r == r && isPrime (Nat.sqrt r) && p <= Nat.sqrt r)).length\n\ndef check650 : Bool := countReps 650 == 2",
+  "conclusion": "check650 = true",
+  "proof": "by decide"
+ },
+ "formal_status": "KERNEL_FAILED",
+ "events": [
+  "((supplied proof)) RAW[tmp47hmx7ts.lean:7:24: error(lean.invalidField): Invalid field `filterFun`: The environment does not contain `List.filterFun`, so it is not possible to project ]",
+  "((supplied proof)) TYPE.FAIL NEED[Nat.sqrt]",
+  "((supplied proof)) RAW[tmp47hmx7ts.lean:17:76: error: Tactic `decide` failed for proposition]"
+ ],
+ "axioms": [
+  "sorryAx"
+ ],
+ "attempts": [
+  {
+   "tactic": "(supplied proof)",
+   "status": "UNVERIFIED",
+   "seconds": 2.1,
+   "errors": [
+    "tmp47hmx7ts.lean:7:24: error(lean.invalidField): Invalid field `filterFun`: The environment does not contain `List.filterFun`, so it is not possible to project the field `filterFun` from an expression",
+    "tmp47hmx7ts.lean:11:16: error(lean.unknownIdentifier): Unknown constant `Nat.sqrt`",
+    "tmp47hmx7ts.lean:13:4: error(lean.unknownIdentifier): Unknown constant `Nat.sqrt`",
+    "tmp47hmx7ts.lean:13:17: error(lean.unknownIdentifier): Unknown constant `Nat.sqrt`",
+    "tmp47hmx7ts.lean:13:45: error(lean.unknownIdentifier): Unknown constant `Nat.sqrt`",
+    "tmp47hmx7ts.lean:13:65: error(lean.unknownIdentifier): Unknown constant `Nat.sqrt`",
+    "tmp47hmx7ts.lean:17:76: error: Tactic `decide` failed for proposition"
+   ],
+   "exitCode": 1,
+   "resource_limit": null
+  }
+ ],
+ "budget_history": [
+  {
+   "tier_seconds": 900.0,
+   "outcome": "KERNEL_FAILED"
+  }
+ ],
+ "kernel_result": {
+  "status": "UNVERIFIED",
+  "file": "oracle/frontier_formalizer/cable/theorems/msl_fmz-erdos979-campaign-001-R002-L1-a1r1.lean",
+  "backend": "windows",
+  "project": "C:\\Users\\jared\\Local Sites\\woocommerce-enterprise\\oracle\\math\\EG411Formal",
+  "needsMathlib": false,
+  "exitCode": 1,
+  "seconds": 2.1,
+  "declarations": [
+   {
+    "declaration": "msl_fmz_erdos979_campaign_001_R002_L1_a1r1",
+    "clean": false,
+    "axioms": [
+     "sorryAx"
+    ]
+   }
+  ],
+  "errors": [
+   "tmp47hmx7ts.lean:7:24: error(lean.invalidField): Invalid field `filterFun`: The environment does not contain `List.filterFun`, so it is not possible to project the field `filterFun` from an expression",
+   "tmp47hmx7ts.lean:11:16: error(lean.unknownIdentifier): Unknown constant `Nat.sqrt`",
+   "tmp47hmx7ts.lean:13:4: error(lean.unknownIdentifier): Unknown constant `Nat.sqrt`",
+   "tmp47hmx7ts.lean:13:17: error(lean.unknownIdentifier): Unknown constant `Nat.sqrt`",
+   "tmp47hmx7ts.lean:13:45: error(lean.unknownIdentifier): Unknown constant `Nat.sqrt`",
+   "tmp47hmx7ts.lean:13:65: error(lean.unknownIdentifier): Unknown constant `Nat.sqrt`",
+   "tmp47hmx7ts.lean:17:76: error: Tactic `decide` failed for proposition"
+  ]
+ },
+ "lean_result_block": "LEAN_RESULT fmz-erdos979-campaign-001-R002-L1-a1r1\n  FORMAL_STATUS KERNEL_FAILED\n  FILE oracle/frontier_formalizer/cable/theorems/msl_fmz-erdos979-campaign-001-R002-L1-a1r1.lean\n  THEOREMS msl_fmz_erdos979_campaign_001_R002_L1_a1r1\n  BACKEND windows\n  AXIOMS sorryAx\n  TACTIC (supplied proof)\n  BUDGET 900s:KERNEL_FAILED\n  FAILURE ((supplied proof)) RAW[tmp47hmx7ts.lean:7:24: error(lean.invalidField): Invalid field `filterFun`: The environment does not contain `List.filterFun`, so it is not possible to project ]; ((supplied proof)) TYPE.FAIL NEED[Nat.sqrt]; ((supplied proof)) RAW[tmp47hmx7ts.lean:17:76: error: Tactic `decide` failed for proposition]\n  LAW KERNEL_FAILED does not refute the claim \u2014 the FAILURE line names what actually broke",
+ "timestamp": "2026-09-02T02:38:18Z"
+}

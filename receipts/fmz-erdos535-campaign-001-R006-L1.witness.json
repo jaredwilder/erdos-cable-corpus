@@ -1,0 +1,41 @@
+{
+ "schema": "oracle.msl.closer.witness.v1",
+ "id": "fmz-erdos535-campaign-001-R006-L1",
+ "pipeline": "WITNESS_FINITE",
+ "witness": {
+  "r": 3,
+  "range_N": [
+   1,
+   2,
+   3,
+   4,
+   5,
+   6,
+   7
+  ],
+  "claimed_values_f3": [
+   1,
+   2,
+   2,
+   3,
+   3,
+   3,
+   3
+  ],
+  "definition": "f_3(N) = max size of S ⊆ {1..N} such that no 3-element subset {a,b,c} ⊆ S has gcd(a,b) = gcd(a,c) = gcd(b,c)."
+ },
+ "verifier_sha256": "8714fb9ffedb14d3206eb724629a44a160a4102a8b7eb83a65809e2725483e53",
+ "verifier_source": "import itertools\nfrom math import gcd\n\n# Witness is embedded; no file, network, stream, or process access anywhere.\nR = 3\nRANGE_N = [1, 2, 3, 4, 5, 6, 7]\nCLAIMED = [1, 2, 2, 3, 3, 3, 3]\n\ndef max_good(N, r):\n    pts = list(range(1, N + 1))\n    for k in range(len(pts), -1, -1):\n        for S in itertools.combinations(pts, k):\n            ok = True\n            for T in itertools.combinations(S, r):\n                g = [gcd(T[i], T[j]) for i in range(r) for j in range(i + 1, r)]\n                if len(set(g)) == 1:\n                    ok = False\n                    break\n            if ok:\n                return k\n    return 0\n\ndef verify() -> bool:\n    assert R == 3\n    assert RANGE_N == [1, 2, 3, 4, 5, 6, 7]\n    assert len(CLAIMED) == 7\n    for N in RANGE_N:\n        if max_good(N, R) != CLAIMED[N - 1]:\n            return False\n    for i in range(1, 7):  # monotonicity sanity\n        if CLAIMED[i] < CLAIMED[i - 1]:\n            return False\n    return True\n\nRESULT = verify()\nassert RESULT, \"FAIL: witness does not verify\"\n# exit 0 iff every claim verified exactly; any failure raises (fail closed)\n",
+ "run": {
+  "passed": false,
+  "status": "VERIFIER_FAIL",
+  "exit_code": 1,
+  "stdout": "",
+  "detail": "TypeError: verify() takes 0 positional arguments but 1 was given",
+  "seconds": 0.09,
+  "code_sha256": "8714fb9ffedb14d3206eb724629a44a160a4102a8b7eb83a65809e2725483e53"
+ },
+ "claim": "Running the verifier (exit 0) certifies by exhaustive exact-integer enumeration — stdlib gcd over every subset of {1..N} and every triple, fail-closed asserts, no floats, no filesystem/network/stream access, deterministic — that f_3(N)=1,2,2,3,3,3,3 for N=1..7, which is the entire finite content of L1; it has no asymptotic content and does not close Branch A.",
+ "law": "Wang 7.2: an exact finite object plus a proved reduction is a CERTIFICATE. The reduction is the `claim` and is a human's to audit; the object and the verifier run are the machine's part.",
+ "timestamp": "2026-09-01T23:47:39Z"
+}

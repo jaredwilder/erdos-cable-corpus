@@ -1,0 +1,67 @@
+{
+ "schema": "oracle.msl.closer.witness.v1",
+ "id": "fmz-erdos51-campaign-001-R010-L1-a1r2",
+ "pipeline": "WITNESS_FINITE",
+ "witness": {
+  "description": "Table of n_a = min{m>=1 : phi(m)=a} for every a in im(phi) intersect [8,50], recomputed by the verifier by exhaustive scan m<=256 with exact integer arithmetic. The witness below carries the claimed table; the verifier independently rederives image, least preimages, ratio bound, anchors, and max location, and raises on any mismatch (fail-closed).",
+  "M": 256,
+  "image_range": [
+   8,
+   50
+  ],
+  "n_table": {
+   "8": 15,
+   "10": 11,
+   "12": 13,
+   "16": 17,
+   "18": 19,
+   "20": 25,
+   "22": 23,
+   "24": 35,
+   "28": 29,
+   "30": 31,
+   "32": 51,
+   "36": 37,
+   "40": 41,
+   "42": 43,
+   "44": 69,
+   "46": 47,
+   "48": 65
+  },
+  "declared_nontotients_in_range": [
+   14,
+   26,
+   34,
+   38,
+   50
+  ],
+  "anchors": {
+   "1": 1,
+   "2": 3,
+   "4": 5,
+   "6": 7,
+   "8": 15,
+   "32": 51
+  },
+  "max_ratio_claim": {
+   "a": 8,
+   "n_a": 15,
+   "ratio": "15/8",
+   "bound": "15/8"
+  }
+ },
+ "verifier_sha256": "0f0fe4ee966ded0f54bd5c2fa488839626a377f0fe9bad553a939caba4f2ca8d",
+ "verifier_source": "class VerifyFailure(Exception):\n    pass\n\ndef phi(n):\n    if n < 1:\n        raise VerifyFailure('domain')\n    r, m = n, n\n    p = 2\n    while p * p <= m:\n        if m % p == 0:\n            r -= r // p\n            while m % p == 0:\n                m //= p\n        p += 1\n    if m > 1:\n        r -= r // m\n    return r\n\ndef frac_cmp(n1, d1, n2, d2):\n    return n1 * d2 - n2 * d1\n\ndef require(cond, msg):\n    if not cond:\n        raise VerifyFailure(msg)\n\ndef run(w):\n    M = w['M']\n    require(M == 256, 'M')\n    lo, hi = w['image_range']\n    require((lo, hi) == (8, 50), 'range')\n\n    image = set()\n    nmin = {}\n    for m in range(1, M + 1):\n        v = phi(m)\n        if lo <= v <= hi:\n            image.add(v)\n            if v not in nmin:\n                nmin[v] = m\n\n    ntab = {int(k): int(v) for k, v in w['n_table'].items()}\n    require(set(ntab.keys()) == image, 'witness keys != recomputed image')\n    for a in image:\n        require(ntab[a] == nmin[a], 'n_a mismatch at a=%d' % a)\n        require(phi(ntab[a]) == a, 'phi(n_a)!=a at a=%d' % a)\n        for m in range(1, ntab[a]):\n            require(phi(m) != a, 'leastness fails at a=%d' % a)\n\n    for a in w['declared_nontotients_in_range']:\n        require(a not in image, 'declared nontotient %d has preimage' % a)\n        require(a not in ntab, 'nontotient in table')\n\n    best_r_num, best_r_den, best_a = 0, 1, None\n    for a in image:\n        rn, rd = ntab[a], a\n        require(frac_cmp(rn, rd, 15, 8) <= 0, 'ratio bound fails at a=%d' % a)\n        if best_a is None or frac_cmp(rn, rd, best_r_num, best_r_den) > 0:\n            best_r_num, best_r_den, best_a = rn, rd, a\n    require((best_r_num, best_r_den, best_a) == (15, 8, 8),\n            'max ratio not 15/8 at a=8')\n\n    for a_s, n_s in w['anchors'].items():\n        a, n = int(a_s), int(n_s)\n        if lo <= a <= hi:\n            require(ntab[a] == n, 'anchor a=%d' % a)\n        else:\n            require(phi(n) == a, 'anchor phi(%d)=%d' % (n, a))\n\n    return True\n\ndef verify(witness):\n    return run(witness)\n",
+ "run": {
+  "passed": true,
+  "status": "VERIFIER_PASS",
+  "exit_code": 0,
+  "stdout": "PASS",
+  "detail": "",
+  "seconds": 0.09,
+  "code_sha256": "0f0fe4ee966ded0f54bd5c2fa488839626a377f0fe9bad553a939caba4f2ca8d"
+ },
+ "claim": "verify(witness) returning True (any inconsistency raises VerifyFailure, exit nonzero) establishes L1's full finite content: (i) exact image im(phi)∩[8,50] is the 17 listed values with the five listed gaps; (ii) each listed n_a is the true least preimage, reconfirmed by exhaustive scan m≤256 plus per-a leastness check; (iii) n_a/a ≤ 15/8 for every a in the image, attained exactly at a=8; (iv) all six anchors hold. covers='full' of L1's finite scope; the asymptotic branch-A proposition itself is NOT stamped. No imports, no I/O, no floats, fail-closed, deterministic.",
+ "law": "Wang 7.2: an exact finite object plus a proved reduction is a CERTIFICATE. The reduction is the `claim` and is a human's to audit; the object and the verifier run are the machine's part.",
+ "timestamp": "2026-09-02T02:16:02Z"
+}

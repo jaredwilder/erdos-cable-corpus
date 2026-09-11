@@ -1,0 +1,49 @@
+{
+ "schema": "oracle.msl.cable.v1",
+ "id": "fmz-erdos510-campaign-001-R006-L1",
+ "spec": {
+  "id": "fmz-erdos510-campaign-001-R006-L1",
+  "imports": "none",
+  "definitions": "inductive ExprKind | rationalExpr | parameterDomain | other deriving DecidableEq, Repr\n\nstructure RegistryEntry where\n  contractSHA : Nat\n  exprKind : ExprKind\n  deriving Repr\n\ndef shaOfContract : Nat := 13199589280805565\n\n-- SHA b54d25e10e8e6d8d as a Nat (hex b54d25e10e8e6d8d = 13199589280805565)\n\ndef providesRationalOrDomain (e : RegistryEntry) : Bool :=\n  e.contractSHA == shaOfContract &&\n    (e.exprKind == ExprKind.rationalExpr || e.exprKind == ExprKind.parameterDomain)\n\ndef checkAbort : Bool :=\n  -- Artifact registry on file for route R006 as of this round: empty list.\n  let registry : List RegistryEntry := []\n  -- Fail-closed abort fires iff NO entry binds the contract SHA to an\n  -- exact rational expression or parameter domain for the cos-comparison quantity:\n  !(registry.any providesRationalOrDomain)\n\ndef checkAbortSucceeds : Prop := checkAbort = true\n\ninstance : Decidable checkAbortSucceeds := inferInstanceAs (Decidable (checkAbort = true))\n",
+  "conclusion": "checkAbortSucceeds",
+  "proof": "by decide"
+ },
+ "formal_status": "KERNEL_CHECKED",
+ "events": [],
+ "axioms": [],
+ "attempts": [
+  {
+   "tactic": "(supplied proof)",
+   "status": "VERIFIED",
+   "seconds": 2.2,
+   "errors": [],
+   "exitCode": 0,
+   "resource_limit": null
+  }
+ ],
+ "budget_history": [
+  {
+   "tier_seconds": 900.0,
+   "outcome": "KERNEL_CHECKED"
+  }
+ ],
+ "kernel_result": {
+  "status": "VERIFIED",
+  "file": "oracle/frontier_formalizer/cable/theorems/msl_fmz-erdos510-campaign-001-R006-L1.lean",
+  "backend": "windows",
+  "project": "C:\\Users\\jared\\Local Sites\\woocommerce-enterprise\\oracle\\math\\EG411Formal",
+  "needsMathlib": false,
+  "exitCode": 0,
+  "seconds": 2.2,
+  "declarations": [
+   {
+    "declaration": "msl_fmz_erdos510_campaign_001_R006_L1",
+    "clean": true,
+    "axioms": []
+   }
+  ],
+  "errors": []
+ },
+ "lean_result_block": "LEAN_RESULT fmz-erdos510-campaign-001-R006-L1\n  FORMAL_STATUS KERNEL_CHECKED\n  FILE oracle/frontier_formalizer/cable/theorems/msl_fmz-erdos510-campaign-001-R006-L1.lean\n  THEOREMS msl_fmz_erdos510_campaign_001_R006_L1\n  BACKEND windows\n  AXIOMS -\n  TACTIC (supplied proof)\n  BUDGET 900s:KERNEL_CHECKED\n  FAILURE NONE",
+ "timestamp": "2026-09-01T23:09:24Z"
+}

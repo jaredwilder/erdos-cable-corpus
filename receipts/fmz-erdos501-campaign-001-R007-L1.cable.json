@@ -1,0 +1,59 @@
+{
+ "schema": "oracle.msl.cable.v1",
+ "id": "fmz-erdos501-campaign-001-R007-L1",
+ "spec": {
+  "id": "fmz-erdos501-campaign-001-R007-L1",
+  "imports": "none",
+  "definitions": "def independent (edges : List (Nat \u00d7 Nat)) (sub : List Nat) : Bool :=\n  edges.all (fun e => !(sub.contains e.1 && sub.contains e.2))\n\ndef subsets (n : Nat) : List (List Nat) :=\n  (List.range (2^n)).map (fun mask =>\n    (List.range n).filter (fun i => (mask >>> i) % 2 == 1))\n\ndef alpha (n : Nat) (edges : List (Nat \u00d7 Nat)) : Nat :=\n  (subsets n).foldl (fun acc sub =>\n    if independent edges sub && sub.length > acc then sub.length else acc) 0\n\n-- C5: 5-cycle on vertices 0..4\ndef c5Edges : List (Nat \u00d7 Nat) := [(0,1),(1,2),(2,3),(3,4),(4,0)]\n\n-- directed 3-cycle, size-3-forbidding encoding (arc forbids head co-occurrence)\ndef d3Edges : List (Nat \u00d7 Nat) := [(0,1),(1,2),(2,0)]\n\ndef check_witness : Bool :=\n  -- exhaustive 2^5 enumeration: alpha(C5) = 2 exactly (size-3 forbidding holds)\n  (alpha 5 c5Edges == 2)\n  -- witness {0,2} is independent in C5\n  && independent c5Edges [0,2]\n  -- exhaustive 2^3 enumeration: alpha = 2 for the directed 3-cycle surrogate\n  && (alpha 3 d3Edges == 2)\n  -- witness {0,1} is independent under the encoding\n  && independent d3Edges [0,1]",
+  "conclusion": "check_witness = true",
+  "proof": "by decide"
+ },
+ "formal_status": "KERNEL_FAILED",
+ "events": [
+  "((supplied proof)) REFUTED.DECIDABLE[decide proved the negation \u2014 this one IS a refutation]"
+ ],
+ "axioms": [
+  "sorryAx"
+ ],
+ "attempts": [
+  {
+   "tactic": "(supplied proof)",
+   "status": "UNVERIFIED",
+   "seconds": 22.3,
+   "errors": [
+    "tmppa3stcly.lean:30:76: error: Tactic `decide` proved that the proposition"
+   ],
+   "exitCode": 1,
+   "resource_limit": null
+  }
+ ],
+ "budget_history": [
+  {
+   "tier_seconds": 900.0,
+   "outcome": "REFUTED_DECIDABLE"
+  }
+ ],
+ "kernel_result": {
+  "status": "UNVERIFIED",
+  "file": "oracle/frontier_formalizer/cable/theorems/msl_fmz-erdos501-campaign-001-R007-L1.lean",
+  "backend": "windows",
+  "project": "C:\\Users\\jared\\Local Sites\\woocommerce-enterprise\\oracle\\math\\EG411Formal",
+  "needsMathlib": false,
+  "exitCode": 1,
+  "seconds": 22.3,
+  "declarations": [
+   {
+    "declaration": "msl_fmz_erdos501_campaign_001_R007_L1",
+    "clean": false,
+    "axioms": [
+     "sorryAx"
+    ]
+   }
+  ],
+  "errors": [
+   "tmppa3stcly.lean:30:76: error: Tactic `decide` proved that the proposition"
+  ]
+ },
+ "lean_result_block": "LEAN_RESULT fmz-erdos501-campaign-001-R007-L1\n  FORMAL_STATUS KERNEL_FAILED\n  FILE oracle/frontier_formalizer/cable/theorems/msl_fmz-erdos501-campaign-001-R007-L1.lean\n  THEOREMS msl_fmz_erdos501_campaign_001_R007_L1\n  BACKEND windows\n  AXIOMS sorryAx\n  TACTIC (supplied proof)\n  BUDGET 900s:REFUTED_DECIDABLE\n  FAILURE ((supplied proof)) REFUTED.DECIDABLE[decide proved the negation \u2014 this one IS a refutation]\n  LAW KERNEL_FAILED does not refute the claim \u2014 the FAILURE line names what actually broke",
+ "timestamp": "2026-09-01T23:44:34Z"
+}

@@ -1,0 +1,49 @@
+{
+ "schema": "oracle.msl.cable.v1",
+ "id": "fmz-erdos454-campaign-001-R006-L1",
+ "spec": {
+  "id": "fmz-erdos454-campaign-001-R006-L1",
+  "imports": "none",
+  "definitions": "-- Fail-closed pin-check, abort-correctness scope only.\n-- The contract's pin vector: three pin slots, each pinned by an explicit\n-- reduction/residual binding. Pins are recorded as (slot, reduction, residual).\ndef pins : List (String \u00d7 String \u00d7 String) :=\n  [ (\"objective\", \"none\", \"per contract\"),\n    (\"domain\",    \"none\", \"per contract\"),\n    (\"sign\",      \"none\", \"per contract\") ]\n\n-- A slot is pinned iff its reduction binds a concrete objective/domain/sign choice,\n-- i.e. reduction != \"none\". With reduction = \"none\" and residual = \"per contract\",\n-- nothing is pinned: the residual defers to the open canonical statement.\ndef isPinned : String \u00d7 String \u00d7 String \u2192 Bool\n  | (_, reduction, _) => reduction != \"none\"\n\ndef pinCount : Nat := (pins.filter isPinned).length\n\n-- Abort-on-unresolved-sign: with 0 pins the unique deterministic, reproducible,\n-- empty-scope output is ABORT; any non-abort output would require a pinned sign.\ndef abortIsUnique : Bool := pinCount == 0\n\ndef check_sha_8fab17a4372ba50c : Bool :=\n  pins.length == 3\n  && pinCount == 0\n  && (pins.all fun (_, r, s) => r == \"none\" && s == \"per contract\")\n  && abortIsUnique",
+  "conclusion": "check_sha_8fab17a4372ba50c = true",
+  "proof": "by decide"
+ },
+ "formal_status": "KERNEL_CHECKED",
+ "events": [],
+ "axioms": [],
+ "attempts": [
+  {
+   "tactic": "(supplied proof)",
+   "status": "VERIFIED",
+   "seconds": 2.0,
+   "errors": [],
+   "exitCode": 0,
+   "resource_limit": null
+  }
+ ],
+ "budget_history": [
+  {
+   "tier_seconds": 900.0,
+   "outcome": "KERNEL_CHECKED"
+  }
+ ],
+ "kernel_result": {
+  "status": "VERIFIED",
+  "file": "oracle/frontier_formalizer/cable/theorems/msl_fmz-erdos454-campaign-001-R006-L1.lean",
+  "backend": "windows",
+  "project": "C:\\Users\\jared\\Local Sites\\woocommerce-enterprise\\oracle\\math\\EG411Formal",
+  "needsMathlib": false,
+  "exitCode": 0,
+  "seconds": 2.0,
+  "declarations": [
+   {
+    "declaration": "msl_fmz_erdos454_campaign_001_R006_L1",
+    "clean": true,
+    "axioms": []
+   }
+  ],
+  "errors": []
+ },
+ "lean_result_block": "LEAN_RESULT fmz-erdos454-campaign-001-R006-L1\n  FORMAL_STATUS KERNEL_CHECKED\n  FILE oracle/frontier_formalizer/cable/theorems/msl_fmz-erdos454-campaign-001-R006-L1.lean\n  THEOREMS msl_fmz_erdos454_campaign_001_R006_L1\n  BACKEND windows\n  AXIOMS -\n  TACTIC (supplied proof)\n  BUDGET 900s:KERNEL_CHECKED\n  FAILURE NONE",
+ "timestamp": "2026-09-01T23:08:23Z"
+}

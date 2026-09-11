@@ -1,0 +1,49 @@
+{
+ "schema": "oracle.msl.cable.v1",
+ "id": "fmz-erdos413-campaign-001-R004-L1",
+ "spec": {
+  "id": "fmz-erdos413-campaign-001-R004-L1",
+  "imports": "none",
+  "definitions": "def isPrime : Nat \u2192 Bool\n  | 0 => false | 1 => false\n  | d => (List.range (d - 1)).all (fun k => (d % (k + 2)) != 0)\n\n/-- \u03c9(n): number of distinct prime divisors, exact for n \u2265 0. -/\ndef omegaM (n : Nat) : Nat :=\n  ((List.range (n + 1)).filter (fun d => isPrime d && n % d == 0)).length\n\n/-- n \u2208 B_1 iff \u2200 m < n, m + \u03c9(m) \u2264 n. -/\ndef inB1 (n : Nat) : Bool :=\n  (List.range n).all (fun m => m + omegaM m <= n)\n\n/-- Exhaustive exact check of the n \u2264 50 segment of B_1. -/\ndef checkB1 (N : Nat) : Bool :=\n  (List.range (N + 1)).all inB1",
+  "conclusion": "checkB1 50 = true",
+  "proof": "by decide"
+ },
+ "formal_status": "KERNEL_CHECKED",
+ "events": [],
+ "axioms": [],
+ "attempts": [
+  {
+   "tactic": "(supplied proof)",
+   "status": "VERIFIED",
+   "seconds": 13.0,
+   "errors": [],
+   "exitCode": 0,
+   "resource_limit": null
+  }
+ ],
+ "budget_history": [
+  {
+   "tier_seconds": 900.0,
+   "outcome": "KERNEL_CHECKED"
+  }
+ ],
+ "kernel_result": {
+  "status": "VERIFIED",
+  "file": "oracle/frontier_formalizer/cable/theorems/msl_fmz-erdos413-campaign-001-R004-L1.lean",
+  "backend": "windows",
+  "project": "C:\\Users\\jared\\Local Sites\\woocommerce-enterprise\\oracle\\math\\EG411Formal",
+  "needsMathlib": false,
+  "exitCode": 0,
+  "seconds": 12.8,
+  "declarations": [
+   {
+    "declaration": "msl_fmz_erdos413_campaign_001_R004_L1",
+    "clean": true,
+    "axioms": []
+   }
+  ],
+  "errors": []
+ },
+ "lean_result_block": "LEAN_RESULT fmz-erdos413-campaign-001-R004-L1\n  FORMAL_STATUS KERNEL_CHECKED\n  FILE oracle/frontier_formalizer/cable/theorems/msl_fmz-erdos413-campaign-001-R004-L1.lean\n  THEOREMS msl_fmz_erdos413_campaign_001_R004_L1\n  BACKEND windows\n  AXIOMS -\n  TACTIC (supplied proof)\n  BUDGET 900s:KERNEL_CHECKED\n  FAILURE NONE",
+ "timestamp": "2026-09-01T23:39:30Z"
+}

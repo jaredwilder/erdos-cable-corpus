@@ -1,0 +1,62 @@
+{
+ "schema": "oracle.msl.cable.v1",
+ "id": "fmz-erdos412-campaign-001-R004-L1",
+ "spec": {
+  "id": "fmz-erdos412-campaign-001-R004-L1",
+  "imports": "none",
+  "definitions": "def sigma (k : Nat) : Nat := (List.range (k+1)).filter (fun d => k % d == 0) |>.sum\n\ndef isPrime (k : Nat) : Bool := k >= 2 && (List.range k).drop 2 |>.all (fun d => k % d != 0)\n\ndef check_lemma (N : Nat) : Bool :=\n  (List.range (N - 1)).all (fun i =>\n    let k := i + 2\n    (sigma k >= k + 1) && ((sigma k == k + 1) == isPrime k))",
+  "conclusion": "check_lemma 50 = true",
+  "proof": "by decide"
+ },
+ "formal_status": "KERNEL_FAILED",
+ "events": [
+  "((supplied proof)) TYPE.FAIL MISMATCH[tmpont73wbt.lean:5:42: error: Application type mismatch: The argument]",
+  "((supplied proof)) RAW[tmpont73wbt.lean:12:77: error: Tactic `decide` failed for proposition]"
+ ],
+ "axioms": [
+  "sorryAx"
+ ],
+ "attempts": [
+  {
+   "tactic": "(supplied proof)",
+   "status": "UNVERIFIED",
+   "seconds": 2.5,
+   "errors": [
+    "tmpont73wbt.lean:5:42: error: Application type mismatch: The argument",
+    "tmpont73wbt.lean:12:77: error: Tactic `decide` failed for proposition"
+   ],
+   "exitCode": 1,
+   "resource_limit": null
+  }
+ ],
+ "budget_history": [
+  {
+   "tier_seconds": 900.0,
+   "outcome": "KERNEL_FAILED"
+  }
+ ],
+ "kernel_result": {
+  "status": "UNVERIFIED",
+  "file": "oracle/frontier_formalizer/cable/theorems/msl_fmz-erdos412-campaign-001-R004-L1.lean",
+  "backend": "windows",
+  "project": "C:\\Users\\jared\\Local Sites\\woocommerce-enterprise\\oracle\\math\\EG411Formal",
+  "needsMathlib": false,
+  "exitCode": 1,
+  "seconds": 2.5,
+  "declarations": [
+   {
+    "declaration": "msl_fmz_erdos412_campaign_001_R004_L1",
+    "clean": false,
+    "axioms": [
+     "sorryAx"
+    ]
+   }
+  ],
+  "errors": [
+   "tmpont73wbt.lean:5:42: error: Application type mismatch: The argument",
+   "tmpont73wbt.lean:12:77: error: Tactic `decide` failed for proposition"
+  ]
+ },
+ "lean_result_block": "LEAN_RESULT fmz-erdos412-campaign-001-R004-L1\n  FORMAL_STATUS KERNEL_FAILED\n  FILE oracle/frontier_formalizer/cable/theorems/msl_fmz-erdos412-campaign-001-R004-L1.lean\n  THEOREMS msl_fmz_erdos412_campaign_001_R004_L1\n  BACKEND windows\n  AXIOMS sorryAx\n  TACTIC (supplied proof)\n  BUDGET 900s:KERNEL_FAILED\n  FAILURE ((supplied proof)) TYPE.FAIL MISMATCH[tmpont73wbt.lean:5:42: error: Application type mismatch: The argument]; ((supplied proof)) RAW[tmpont73wbt.lean:12:77: error: Tactic `decide` failed for proposition]\n  LAW KERNEL_FAILED does not refute the claim \u2014 the FAILURE line names what actually broke",
+ "timestamp": "2026-09-01T20:11:44Z"
+}

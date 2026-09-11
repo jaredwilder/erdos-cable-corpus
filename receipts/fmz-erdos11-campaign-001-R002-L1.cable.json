@@ -1,0 +1,49 @@
+{
+ "schema": "oracle.msl.cable.v1",
+ "id": "fmz-erdos11-campaign-001-R002-L1",
+ "spec": {
+  "id": "fmz-erdos11-campaign-001-R002-L1",
+  "imports": "none",
+  "definitions": "def dividesNat (p k : Nat) : Bool := p * (k / p) == k\n\ndef squarefreeTD : Nat \u2192 Bool\n  | 0 => false\n  | 1 => true\n  | k => ((List.range (k + 1)).filter (fun p => 2 \u2264 p \u2227 p \u2264 k \u2227 dividesNat p k)).all\n           (fun p => \u00ac dividesNat (p * p) k)\n\ndef decomposable (n : Nat) : Bool :=\n  (List.range 11).any (fun l =>\n    let p := 2 ^ l\n    p \u2264 n \u2227 squarefreeTD (n - p))\n\ndef witnessTable : Bool :=\n  decomposable 3 && decomposable 5 && decomposable 7 && decomposable 9 &&\n  decomposable 11 && decomposable 13 && decomposable 15",
+  "conclusion": "witnessTable = true",
+  "proof": "by decide"
+ },
+ "formal_status": "KERNEL_CHECKED",
+ "events": [],
+ "axioms": [],
+ "attempts": [
+  {
+   "tactic": "(supplied proof)",
+   "status": "VERIFIED",
+   "seconds": 2.1,
+   "errors": [],
+   "exitCode": 0,
+   "resource_limit": null
+  }
+ ],
+ "budget_history": [
+  {
+   "tier_seconds": 900.0,
+   "outcome": "KERNEL_CHECKED"
+  }
+ ],
+ "kernel_result": {
+  "status": "VERIFIED",
+  "file": "oracle/frontier_formalizer/cable/theorems/msl_fmz-erdos11-campaign-001-R002-L1.lean",
+  "backend": "windows",
+  "project": "C:\\Users\\jared\\Local Sites\\woocommerce-enterprise\\oracle\\math\\EG411Formal",
+  "needsMathlib": false,
+  "exitCode": 0,
+  "seconds": 2.1,
+  "declarations": [
+   {
+    "declaration": "msl_fmz_erdos11_campaign_001_R002_L1",
+    "clean": true,
+    "axioms": []
+   }
+  ],
+  "errors": []
+ },
+ "lean_result_block": "LEAN_RESULT fmz-erdos11-campaign-001-R002-L1\n  FORMAL_STATUS KERNEL_CHECKED\n  FILE oracle/frontier_formalizer/cable/theorems/msl_fmz-erdos11-campaign-001-R002-L1.lean\n  THEOREMS msl_fmz_erdos11_campaign_001_R002_L1\n  BACKEND windows\n  AXIOMS -\n  TACTIC (supplied proof)\n  BUDGET 900s:KERNEL_CHECKED\n  FAILURE NONE",
+ "timestamp": "2026-09-01T23:04:02Z"
+}

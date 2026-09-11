@@ -1,0 +1,58 @@
+{
+ "schema": "oracle.msl.cable.v1",
+ "id": "LO900",
+ "spec": {
+  "id": "LO900",
+  "conclusion": "((List.range (900+1659)).filter (fun m => m > 900 && [160,162,168,180,192,216,224,240,243,252,264,270,280,288,300,312,320,324,336,352,360,378,384,392,396,405,416,420,432,448,450,468,480,486,504,528,540,560,567,576,588,594,600,624,630,640,648,660,672,675,700,702,704,720,729,750,756,768,780,784,792,800,810,832,840,864,880,882,891,896,900].any (fun k => m % k == 0))).length < [160,162,168,180,192,216,224,240,243,252,264,270,280,288,300,312,320,324,336,352,360,378,384,392,396,405,416,420,432,448,450,468,480,486,504,528,540,560,567,576,588,594,600,624,630,640,648,660,672,675,700,702,704,720,729,750,756,768,780,784,792,800,810,832,840,864,880,882,891,896,900].length",
+  "proof": "by decide",
+  "imports": "Mathlib"
+ },
+ "formal_status": "KERNEL_FAILED",
+ "events": [
+  "((supplied proof)) RAW[/tmp/oracle_lean_8pyDUWmv.lean:5:696: error: maximum recursion depth has been reached]"
+ ],
+ "axioms": [
+  "sorryAx"
+ ],
+ "attempts": [
+  {
+   "tactic": "(supplied proof)",
+   "status": "UNVERIFIED",
+   "seconds": 106.4,
+   "errors": [
+    "/tmp/oracle_lean_8pyDUWmv.lean:5:696: error: maximum recursion depth has been reached"
+   ],
+   "exitCode": 1,
+   "resource_limit": "maximum recursion depth"
+  }
+ ],
+ "budget_history": [
+  {
+   "tier_seconds": 120.0,
+   "outcome": "UNDECIDED_RESOURCE[maximum recursion depth]"
+  }
+ ],
+ "kernel_result": {
+  "status": "UNVERIFIED",
+  "file": "oracle/frontier_formalizer/cable/theorems/msl_LO900.lean",
+  "backend": "wsl",
+  "project": "/root/erdosfire-bench/proofs",
+  "needsMathlib": true,
+  "exitCode": 1,
+  "seconds": 94.7,
+  "declarations": [
+   {
+    "declaration": "msl_LO900",
+    "clean": false,
+    "axioms": [
+     "sorryAx"
+    ]
+   }
+  ],
+  "errors": [
+   "/tmp/oracle_lean_8pyDUWmv.lean:5:696: error: maximum recursion depth has been reached"
+  ]
+ },
+ "lean_result_block": "LEAN_RESULT LO900\n  FORMAL_STATUS KERNEL_FAILED\n  FILE oracle/frontier_formalizer/cable/theorems/msl_LO900.lean\n  THEOREMS msl_LO900\n  BACKEND wsl\n  AXIOMS sorryAx\n  TACTIC (supplied proof)\n  BUDGET 120s:UNDECIDED_RESOURCE[maximum recursion depth]\n  FAILURE ((supplied proof)) RAW[/tmp/oracle_lean_8pyDUWmv.lean:5:696: error: maximum recursion depth has been reached]\n  LAW KERNEL_FAILED does not refute the claim \u2014 the FAILURE line names what actually broke\n  LAW BUDGET_EXHAUSTED is an UNDECIDED question, not a failed proof \u2014 the machine stopped, the mathematics did not answer",
+ "timestamp": "2026-09-03T20:18:44Z"
+}

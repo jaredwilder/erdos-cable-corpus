@@ -1,0 +1,79 @@
+{
+ "schema": "oracle.msl.cable.v1",
+ "id": "fmz-erdos341-campaign-001-R004-L1-a3r3",
+ "spec": {
+  "id": "fmz-erdos341-campaign-001-R004-L1-a3r3",
+  "imports": "none",
+  "definitions": "inductive St : Type where\n  | pt : St\n\nopen St\n\n-- (C2): the unique endomap of a 1-point state space forces M(3) = 3.\ndef M : St \u2192 St := fun _ => pt\n\ndef periodOf : \u2115 := 1\n\ndef gapWord : List St := [pt]\n\n-- (C1) structural check, all Bool/Nat, total and decidable:\n-- exactly one state, period 1, zero analytic reductions (nothing encoded),\n-- and the orbit check M^k pt = pt for every k in the checked range 0..19,\n-- where the degenerate 1-point orbit makes the finite check conclusive.\ndef orbitCheck (K : \u2115) : Bool :=\n  (List.range (K + 1)).all fun k => M^[k] pt == pt\n\ndef certCheck : Bool :=\n  (gapWord.length == 1)\n  && (periodOf == 1)\n  && (M pt == pt)\n  && orbitCheck 19\n  && ((List.range periodOf).drop 1).all (fun d => !(M^[d] pt == pt))",
+  "conclusion": "certCheck = true",
+  "proof": "by decide"
+ },
+ "formal_status": "KERNEL_FAILED",
+ "events": [
+  "((supplied proof)) TYPE.FAIL NEED[\u2115]",
+  "((supplied proof)) SYNTAX.FAIL[tmpdn65w8pk.lean:20:38: error: Function expected at]",
+  "((supplied proof)) TYPE.FAIL INSTANCE[tmpdn65w8pk.lean:20:36: error(lean.synthInstanceFailed): failed to synthesize instance of type class]",
+  "((supplied proof)) TYPE.FAIL INSTANCE[tmpdn65w8pk.lean:25:6: error(lean.synthInstanceFailed): failed to synthesize instance of type class]",
+  "((supplied proof)) SYNTAX.FAIL[tmpdn65w8pk.lean:27:54: error: Function expected at]",
+  "((supplied proof)) TYPE.FAIL INSTANCE[tmpdn65w8pk.lean:27:52: error(lean.synthInstanceFailed): failed to synthesize instance of type class]",
+  "((supplied proof)) RAW[tmpdn65w8pk.lean:29:77: error: Tactic `decide` failed for proposition]"
+ ],
+ "axioms": [
+  "sorryAx"
+ ],
+ "attempts": [
+  {
+   "tactic": "(supplied proof)",
+   "status": "UNVERIFIED",
+   "seconds": 2.2,
+   "errors": [
+    "tmpdn65w8pk.lean:11:15: error(lean.unknownIdentifier): Unknown identifier `\u2115`",
+    "tmpdn65w8pk.lean:19:20: error(lean.unknownIdentifier): Unknown identifier `\u2115`",
+    "tmpdn65w8pk.lean:20:38: error: Function expected at",
+    "tmpdn65w8pk.lean:20:36: error(lean.synthInstanceFailed): failed to synthesize instance of type class",
+    "tmpdn65w8pk.lean:25:6: error(lean.synthInstanceFailed): failed to synthesize instance of type class",
+    "tmpdn65w8pk.lean:27:54: error: Function expected at",
+    "tmpdn65w8pk.lean:27:52: error(lean.synthInstanceFailed): failed to synthesize instance of type class",
+    "tmpdn65w8pk.lean:29:77: error: Tactic `decide` failed for proposition"
+   ],
+   "exitCode": 1,
+   "resource_limit": null
+  }
+ ],
+ "budget_history": [
+  {
+   "tier_seconds": 900.0,
+   "outcome": "KERNEL_FAILED"
+  }
+ ],
+ "kernel_result": {
+  "status": "UNVERIFIED",
+  "file": "oracle/frontier_formalizer/cable/theorems/msl_fmz-erdos341-campaign-001-R004-L1-a3r3.lean",
+  "backend": "windows",
+  "project": "C:\\Users\\jared\\Local Sites\\woocommerce-enterprise\\oracle\\math\\EG411Formal",
+  "needsMathlib": false,
+  "exitCode": 1,
+  "seconds": 2.2,
+  "declarations": [
+   {
+    "declaration": "msl_fmz_erdos341_campaign_001_R004_L1_a3r3",
+    "clean": false,
+    "axioms": [
+     "sorryAx"
+    ]
+   }
+  ],
+  "errors": [
+   "tmpdn65w8pk.lean:11:15: error(lean.unknownIdentifier): Unknown identifier `\u2115`",
+   "tmpdn65w8pk.lean:19:20: error(lean.unknownIdentifier): Unknown identifier `\u2115`",
+   "tmpdn65w8pk.lean:20:38: error: Function expected at",
+   "tmpdn65w8pk.lean:20:36: error(lean.synthInstanceFailed): failed to synthesize instance of type class",
+   "tmpdn65w8pk.lean:25:6: error(lean.synthInstanceFailed): failed to synthesize instance of type class",
+   "tmpdn65w8pk.lean:27:54: error: Function expected at",
+   "tmpdn65w8pk.lean:27:52: error(lean.synthInstanceFailed): failed to synthesize instance of type class",
+   "tmpdn65w8pk.lean:29:77: error: Tactic `decide` failed for proposition"
+  ]
+ },
+ "lean_result_block": "LEAN_RESULT fmz-erdos341-campaign-001-R004-L1-a3r3\n  FORMAL_STATUS KERNEL_FAILED\n  FILE oracle/frontier_formalizer/cable/theorems/msl_fmz-erdos341-campaign-001-R004-L1-a3r3.lean\n  THEOREMS msl_fmz_erdos341_campaign_001_R004_L1_a3r3\n  BACKEND windows\n  AXIOMS sorryAx\n  TACTIC (supplied proof)\n  BUDGET 900s:KERNEL_FAILED\n  FAILURE ((supplied proof)) TYPE.FAIL NEED[\u2115]; ((supplied proof)) SYNTAX.FAIL[tmpdn65w8pk.lean:20:38: error: Function expected at]; ((supplied proof)) TYPE.FAIL INSTANCE[tmpdn65w8pk.lean:20:36: error(lean.synthInstanceFailed): failed to synthesize instance of type class]; ((supplied proof)) TYPE.FAIL INSTANCE[tmpdn65w8pk.lean:25:6: error(lean.synthInstanceFailed): failed to synthesize instance of type class]; ((supplied proof)) SYNTAX.FAIL[tmpdn65w8pk.lean:27:54: error: Function expected at]; ((supplied proof)) TYPE.FAIL INSTANCE[tmpdn65w8pk.lean:27:52: error(lean.synthInstanceFailed): failed to synthesize instance of type class]; ((supplied proof)) RAW[tmpdn65w8pk.lean:29:77: error: Tactic `decide` failed for proposition]\n  LAW KERNEL_FAILED does not refute the claim \u2014 the FAILURE line names what actually broke",
+ "timestamp": "2026-09-02T02:03:59Z"
+}

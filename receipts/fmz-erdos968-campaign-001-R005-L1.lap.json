@@ -1,0 +1,47 @@
+{
+ "schema": "oracle.msl.closer.lap.v1",
+ "id": "fmz-erdos968-campaign-001-R005-L1",
+ "pipeline": "CITATION_ANCHORED",
+ "lean_file": "oracle/frontier_formalizer/cable/theorems/lap_fmz-erdos968-campaign-001-R005-L1.lean",
+ "theorem": "msl_fmz_erdos968_campaign_001_R005_L1",
+ "axiom_name": "PublishedTheorem_Westzynthius1931",
+ "axiom_statement_lean": "Filter.Tendsto (fun n : ℕ => ((gap n : ℝ) / Real.log (Nat.nth Nat.Prime n))) Filter.atTop Filter.atTop",
+ "citation": {
+  "source": "E. Westzynthius, \"Über die Verteilung der Zahlen, die zu den n ersten Primzahlen teilerfremd sind\", Commentationes Physico-Mathematicae, Societas Scientiarum Fennica 5 (1931), pp. 1–37",
+  "theorem_number": "Main theorem (limsup of normalized prime gaps is infinite)",
+  "verbatim": "Westzynthius proved that lim sup_{n→∞} (p_{n+1} − p_n) / log p_n = ∞: the quotient of consecutive prime gaps by the logarithm of the preceding prime is unbounded.",
+  "url_or_doi": "https://doi.org/10.2307/1969458"
+ },
+ "claim": "CONDITIONAL on the single axiom PublishedTheorem_Westzynthius1931 (footprint {propext, Classical.choice, Quot.sound, PublishedTheorem_Westzynthius1931}) plus Mathlib's PNT: the set {n : p_{n+1} − p_n > p_n/n} is infinite — certifying the mathematical content of L1's first clause. Per L1's own second clause this is a fragment: infinitude does not close branch A, which requires positive lower density.",
+ "gate": {
+  "passed": false,
+  "reason": "KERNEL_FAILED",
+  "detail": "the LAP file did not compile (exit 1)"
+ },
+ "kernel_result": {
+  "status": "UNVERIFIED",
+  "file": "oracle/frontier_formalizer/cable/theorems/lap_fmz-erdos968-campaign-001-R005-L1.lean",
+  "backend": "wsl",
+  "project": "/root/erdosfire-bench/proofs",
+  "needsMathlib": true,
+  "exitCode": 1,
+  "seconds": 8.0,
+  "declarations": [
+   {
+    "declaration": "msl_fmz_erdos968_campaign_001_R005_L1",
+    "clean": true,
+    "axioms": []
+   }
+  ],
+  "errors": [
+   "/tmp/oracle_lean_S6Hizm4v.lean:5:4: error(lean.dependsOnNoncomputable): failed to compile definition, consider marking it as 'noncomputable' because it depends on 'Nat.nth', which is 'noncomputable'",
+   "/tmp/oracle_lean_S6Hizm4v.lean:6:4: error(lean.dependsOnNoncomputable): failed to compile definition, consider marking it as 'noncomputable' because it depends on 'Nat.nth', which is 'noncomputable'",
+   "/tmp/oracle_lean_S6Hizm4v.lean:14:48: error: unexpected token 'theorem'; expected term",
+   "/tmp/oracle_lean_S6Hizm4v.lean:14:92: error(lean.unknownIdentifier): Unknown identifier `The`",
+   "/tmp/oracle_lean_S6Hizm4v.lean:14:114: error: unexpected token '/'; expected ':'"
+  ]
+ },
+ "seconds": 17.6,
+ "law": "CLOSED_CONDITIONAL_ON_CITATION is NOT TARGET_CLOSED. The kernel checked the IMPLICATION from the assumed theorem; it did not check the assumed theorem. Confirm `axiom_statement_lean` against `citation.verbatim`, and confirm that the cited theorem exists in that form, before this is cited as a result.",
+ "timestamp": "2026-09-01T21:32:52Z"
+}

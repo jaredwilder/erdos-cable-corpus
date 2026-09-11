@@ -1,0 +1,62 @@
+{
+ "schema": "oracle.msl.cable.v1",
+ "id": "fmz-erdos535-campaign-001-R001-L1-a2r1",
+ "spec": {
+  "id": "fmz-erdos535-campaign-001-R001-L1-a2r1",
+  "imports": "none",
+  "definitions": "def tg (a b c : Nat) : Nat \u00d7 Nat \u00d7 Nat := (Nat.gcd a b, Nat.gcd a c, Nat.gcd b c)\ndef peq (a b c : Nat) : Bool := Nat.gcd a b == Nat.gcd a c && Nat.gcd a b == Nat.gcd b c\n-- B\u00e9zout-exactness of the gcd: g divides a and b exactly (Nat), and normalization\n-- by the common factor of all three preserves the pairwise-gcd-equality predicate.\ndef bezoutExact (a b : Nat) : Bool :=\n  let g := Nat.gcd a b\n  g * (a / g) == a && g * (b / g) == b\n-- every triple from [1..12]\ndef trips : List (Nat \u00d7 Nat \u00d7 Nat) :=\n  (List.range 12).flatMap fun i =>\n  (List.range 12).flatMap fun j =>\n  (List.range 12).map fun k => (i+1, j+1, k+1)\n-- fail-closed scan: return the first witness where the biconditional fails\n-- (primitive-normalized predicate == raw predicate, plus exact Bezout divisibility)\ndef firstBad : Option (Nat \u00d7 Nat \u00d7 Nat) :=\n  trips.find? fun (a, b, c) =>\n    let n := Nat.gcd a (Nat.gcd b c)\n    peq (a/n) (b/n) (c/n) != peq a b c || !bezoutExact a b || !bezoutExact b c\n-- the count of checked triples must be exactly 12*12*12 = 1728 candidate triples;\n-- the distinct-triple scan (i \u2264 j \u2264 k, 220 ordered triples) is subsumed by this full check\ndef tripleCheck12 : Bool := firstBad.isNone && (trips.length == 1728)\n-- finite witness: f_3(6) = 3 \u2014 brute force over subsets of {1..6}\ndef subsetsOf6 : List (List Nat) :=\n  (List.range 64).map fun m =>\n    ((List.range 6).filter fun i => (m >>> i) % 2 == 1).map (\u00b7 + 1)\ndef badSub (s : List Nat) : Bool :=\n  (s.filterSublists.any fun t => t.length == 3 &&\n    let [a, b, c] := t | false\n    peq a b c)\ndef f3le6 : Bool :=\n  (subsetsOf6.all fun s => s.length <= 3 || badSub s) &&\n  !(subsetsOf6.all fun s => s.length <= 2 || badSub s)",
+  "conclusion": "tripleCheck12 = true && f3le6 = true",
+  "proof": "by native_decide"
+ },
+ "formal_status": "KERNEL_FAILED",
+ "events": [
+  "((supplied proof)) SYNTAX.FAIL[tmpcloah8hu.lean:30:23: error: expected ';' or line break]",
+  "((supplied proof)) RAW[tmpcloah8hu.lean:36:97: error: Tactic `native_decide` failed: Could not evaluate decidable instance. Error: cannot evaluate code because 'badSub' uses 'sorry' a]"
+ ],
+ "axioms": [
+  "sorryAx"
+ ],
+ "attempts": [
+  {
+   "tactic": "(supplied proof)",
+   "status": "UNVERIFIED",
+   "seconds": 2.2,
+   "errors": [
+    "tmpcloah8hu.lean:30:23: error: expected ';' or line break",
+    "tmpcloah8hu.lean:36:97: error: Tactic `native_decide` failed: Could not evaluate decidable instance. Error: cannot evaluate code because 'badSub' uses 'sorry' and/or contains errors"
+   ],
+   "exitCode": 1,
+   "resource_limit": null
+  }
+ ],
+ "budget_history": [
+  {
+   "tier_seconds": 900.0,
+   "outcome": "KERNEL_FAILED"
+  }
+ ],
+ "kernel_result": {
+  "status": "UNVERIFIED",
+  "file": "oracle/frontier_formalizer/cable/theorems/msl_fmz-erdos535-campaign-001-R001-L1-a2r1.lean",
+  "backend": "windows",
+  "project": "C:\\Users\\jared\\Local Sites\\woocommerce-enterprise\\oracle\\math\\EG411Formal",
+  "needsMathlib": false,
+  "exitCode": 1,
+  "seconds": 2.2,
+  "declarations": [
+   {
+    "declaration": "msl_fmz_erdos535_campaign_001_R001_L1_a2r1",
+    "clean": false,
+    "axioms": [
+     "sorryAx"
+    ]
+   }
+  ],
+  "errors": [
+   "tmpcloah8hu.lean:30:23: error: expected ';' or line break",
+   "tmpcloah8hu.lean:36:97: error: Tactic `native_decide` failed: Could not evaluate decidable instance. Error: cannot evaluate code because 'badSub' uses 'sorry' and/or contains errors"
+  ]
+ },
+ "lean_result_block": "LEAN_RESULT fmz-erdos535-campaign-001-R001-L1-a2r1\n  FORMAL_STATUS KERNEL_FAILED\n  FILE oracle/frontier_formalizer/cable/theorems/msl_fmz-erdos535-campaign-001-R001-L1-a2r1.lean\n  THEOREMS msl_fmz_erdos535_campaign_001_R001_L1_a2r1\n  BACKEND windows\n  AXIOMS sorryAx\n  TACTIC (supplied proof)\n  BUDGET 900s:KERNEL_FAILED\n  FAILURE ((supplied proof)) SYNTAX.FAIL[tmpcloah8hu.lean:30:23: error: expected ';' or line break]; ((supplied proof)) RAW[tmpcloah8hu.lean:36:97: error: Tactic `native_decide` failed: Could not evaluate decidable instance. Error: cannot evaluate code because 'badSub' uses 'sorry' a]\n  LAW KERNEL_FAILED does not refute the claim \u2014 the FAILURE line names what actually broke",
+ "timestamp": "2026-09-02T02:17:14Z"
+}

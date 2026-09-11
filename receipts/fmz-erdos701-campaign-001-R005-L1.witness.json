@@ -1,0 +1,25 @@
+{
+ "schema": "oracle.msl.closer.witness.v1",
+ "id": "fmz-erdos701-campaign-001-R005-L1",
+ "pipeline": "WITNESS_FINITE",
+ "witness": {
+  "n_small": 3,
+  "n_full": 4,
+  "bound": "2^(n-1)",
+  "tight_witness": "star family {A : 1 in A}, size 2^(n-1), achieved for n=3 (size 4) and n=4 (size 8)"
+ },
+ "verifier_sha256": "788b253ac87cad812d9e95c485efab8ece0d90280329f585c267d2a490eabd7e",
+ "verifier_source": "# No imports. Entry point verify(witness). Raises AssertionError on any failure.\n\ndef is_intersecting_allpairs(fam):\n    # Mathlib Set.Intersecting: all pairs incl. A=B => no empty set, pairwise intersect.\n    lst = list(fam)\n    for a in lst:\n        if a == 0:\n            return False\n    for i in range(len(lst)):\n        for j in range(i, len(lst)):\n            if (lst[i] & lst[j]) == 0:\n                return False\n    return True\n\ndef is_hereditary(fam, n):\n    for a in fam:\n        for e in range(n):\n            if (a >> e) & 1:\n                if (a ^ (1 << e)) not in fam:\n                    return False\n    return True\n\ndef subsets_all(n):\n    return list(range(1 << n))\n\ndef combos(items, r):\n    # itertools-free combinations by index recursion (exact, deterministic)\n    res = []\n    k = len(items)\n    def rec(start, cur):\n        if len(cur) == r:\n            res.append(tuple(cur))\n            return\n        for i in range(start, k):\n            cur.append(items[i])\n            rec(i + 1, cur)\n            cur.pop()\n    rec(0, [])\n    return res\n\ndef verify(witness):\n    assert witness['n_small'] == 3\n    assert witness['n_full'] == 4\n\n    # Part 1: every hereditary family on [3]: every pairwise-intersecting\n    # subfamily has size <= 4; star achieves 4.\n    n3 = 3\n    S3 = subsets_all(n3)\n    half3 = 1 << (n3 - 1)\n    for c in combos(S3, 0) + combos(S3,1) + combos(S3,2) + combos(S3,3) + \\\n             combos(S3,4) + combos(S3,5) + combos(S3,6) + combos(S3,7) + combos(S3,8):\n        F = set(c)\n        if not is_hereditary(F, n3):\n            continue\n        for r2 in range(len(F) + 1):\n            for c2 in combos(sorted(F), r2):\n                sub = set(c2)\n                if is_intersecting_allpairs(sub):\n                    assert len(sub) <= half3, 'hereditary [3] bound violated'\n    star3 = frozenset(a for a in S3 if (a & 1) == 1)\n    assert is_intersecting_allpairs(star3) and len(star3) == half3\n\n    # Part 2: n = 4, exhaustive over all 2^16 candidate families:\n    # pairwise-intersecting (all-pairs, no empty set) => size <= 8;\n    # at most one member per complement pair; star achieves 8.\n    n4 = 4\n    S4 = subsets_all(n4)\n    half4 = 1 << (n4 - 1)\n    for mask in range(1 << len(S4)):\n        fam = [S4[i] for i in range(len(S4)) if (mask >> i) & 1]\n        if not is_intersecting_allpairs(set(fam)):\n            continue\n        assert len(fam) <= half4, 'n=4 intersecting bound violated'\n        seen_complements = set()\n        for a in fam:\n            comp = (~a) & (15)\n            assert a not in seen_complements, 'complement-pair rule violated'\n            seen_complements.add(comp)\n    star4 = frozenset(a for a in S4 if (a & 1) == 1)\n    assert is_intersecting_allpairs(star4) and len(star4) == half4\n    return True\n",
+ "run": {
+  "passed": true,
+  "status": "VERIFIER_PASS",
+  "exit_code": 0,
+  "stdout": "PASS",
+  "detail": "",
+  "seconds": 0.17,
+  "code_sha256": "788b253ac87cad812d9e95c485efab8ece0d90280329f585c267d2a490eabd7e"
+ },
+ "claim": "Fragment (covers=fragment): standalone deterministic verifier, exact integer bit-arithmetic only, no imports/filesystem/network, fail-closed via def verify(witness) raising. Certifies: (a) every hereditary family on [3] has all pairwise-intersecting subfamilies of size <= 4; (b) exhaustively over all 2^16 candidate families on [4], every pairwise-intersecting family (Mathlib all-pairs convention, empty set excluded) has size <= 8 and contains at most one member of each complement pair (the fixed-point-free complement-pairing core of L1); (c) the star family achieves equality, i.e. the bound 2^(n-1) is tight. The uniform bound for all n (Chvatal's conjecture) is NOT certified.",
+ "law": "Wang 7.2: an exact finite object plus a proved reduction is a CERTIFICATE. The reduction is the `claim` and is a human's to audit; the object and the verifier run are the machine's part.",
+ "timestamp": "2026-09-01T23:58:36Z"
+}

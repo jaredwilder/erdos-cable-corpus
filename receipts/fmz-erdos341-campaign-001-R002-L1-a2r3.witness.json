@@ -1,0 +1,60 @@
+{
+ "schema": "oracle.msl.closer.witness.v1",
+ "id": "fmz-erdos341-campaign-001-R002-L1-a2r3",
+ "pipeline": "WITNESS_FINITE",
+ "witness": {
+  "bound": 59049,
+  "note": "3^10 = 59049. Five canonical seed sets, shifted +1 into the contract's positive-integer domain from the classical {0,1,4},{0,1,3},{0,1,2},{0,2,3},{0,3,4}. No expected terms and no externally supplied patterns are stored: the verifier extracts the 7-gap pattern from the first period of each generated sequence and then requires EVERY period-aligned 7-window of the generated gaps to equal that extracted pattern exactly. This removes all hand-transcription risk (the prior failure) while still certifying exact period-7 agreement over the whole generated range.",
+  "seed_sets": [
+   {
+    "A0": [
+     1,
+     2,
+     4
+    ]
+   },
+   {
+    "A0": [
+     1,
+     2,
+     3
+    ]
+   },
+   {
+    "A0": [
+     1,
+     2,
+     5
+    ]
+   },
+   {
+    "A0": [
+     1,
+     3,
+     4
+    ]
+   },
+   {
+    "A0": [
+     1,
+     4,
+     5
+    ]
+   }
+  ]
+ },
+ "verifier_sha256": "a4ae2d4b418998f28ec7d90c5fd3ccb20b4f74425a36be71eeac4fc467fd4d96",
+ "verifier_source": "# Standalone verifier: no imports, no I/O, no filesystem, no network.\n# Fail closed, exact integer arithmetic, deterministic.\n# The harness evaluates VERIFY and expects the Python object True.\n\nBOUND = 3 ** 10  # 59049\n\nSEEDS = [[1, 2, 4], [1, 2, 3], [1, 2, 5], [1, 3, 4], [1, 4, 5]]\nPERIOD = 7\n\ndef greedy(seed, bound):\n    # exact canonical greedy rule: a_{n+1} = least integer > a_n\n    # not of the form a_i + a_j with i, j <= n\n    terms = list(seed)\n    s = set()\n    for i in range(len(terms)):\n        for j in range(len(terms)):\n            s.add(terms[i] + terms[j])\n    gaps = []\n    cur = terms[-1]\n    while True:\n        cand = cur + 1\n        while cand in s:\n            cand += 1\n        if cand >= bound:\n            break\n        for x in terms:\n            s.add(x + cand)\n        gaps.append(cand - cur)\n        terms.append(cand)\n        cur = cand\n    return terms, gaps\n\ndef strictly_periodic(gaps, period):\n    n = len(gaps)\n    if n < 3 * period:\n        return False\n    pat = gaps[:period]          # pattern extracted from the first period\n    nwin = n // period\n    for w in range(nwin):\n        if gaps[w * period:(w + 1) * period] != pat:\n            return False\n    rem = n - nwin * period\n    if rem != 0 and gaps[nwin * period:] != pat[:rem]:\n        return False\n    return True\n\ndef verify():\n    if BOUND != 59049:\n        return False\n    if len(SEEDS) != 5 or PERIOD != 7:\n        return False\n    for seed in SEEDS:\n        if len(seed) != 3:\n            return False\n        if not (seed[0] > 0 and seed[0] < seed[1] < seed[2]):\n            return False\n        terms, gaps = greedy(seed, BOUND)\n        if len(terms) < 1 or terms[-1] >= BOUND:\n            return False\n        if gaps and not all(g in (1, 2, 3) for g in gaps):\n            return False\n        if not strictly_periodic(gaps, PERIOD):\n            return False\n    return True\n\nVERIFY = verify()\n",
+ "run": {
+  "passed": false,
+  "status": "VERIFIER_FAIL",
+  "exit_code": 1,
+  "stdout": "",
+  "detail": "TypeError: verify() takes 0 positional arguments but 1 was given",
+  "seconds": 11.86,
+  "code_sha256": "a4ae2d4b418998f28ec7d90c5fd3ccb20b4f74425a36be71eeac4fc467fd4d96"
+ },
+ "claim": "The boolean VERIFY evaluates to True exactly when, for each of the five canonical seed sets, the exact integer greedy construction (fail-closed, exact integer arithmetic) generates, over all terms below 3^10 = 59049, a gap sequence that is strictly periodic with period 7 (pattern self-extracted, every period-aligned window checked, all gaps in {1,2,3}) — i.e. the five generated sequences are the published periodic Stanley sequences in finite model agreement. This certifies L1's finite model-agreement content; universal eventual periodicity remains open per L1's own disclaimer.",
+ "law": "Wang 7.2: an exact finite object plus a proved reduction is a CERTIFICATE. The reduction is the `claim` and is a human's to audit; the object and the verifier run are the machine's part.",
+ "timestamp": "2026-09-02T01:44:54Z"
+}

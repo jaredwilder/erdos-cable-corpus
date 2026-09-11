@@ -1,0 +1,78 @@
+{
+ "schema": "oracle.msl.cable.v1",
+ "id": "r55-es-recurrence-full",
+ "spec": {
+  "id": "r55-es-recurrence-full",
+  "imports": "none",
+  "set_options": [
+   "set_option maxRecDepth 20000"
+  ],
+  "definitions": "-- THE ERDOS-SZEKERES RECURRENCE ITSELF, over vertex LISTS rather than over an interval,\n-- which is what removes the need for any relabelling.\n\ndef IsClique (e : Nat \u2192 Nat \u2192 Bool) (L : List Nat) : Prop :=\n  \u2200 a \u2208 L, \u2200 b \u2208 L, a \u2260 b \u2192 e a b = true\n\ndef IsIndep (e : Nat \u2192 Nat \u2192 Bool) (L : List Nat) : Prop :=\n  \u2200 a \u2208 L, \u2200 b \u2208 L, a \u2260 b \u2192 e a b = false\n\n/-- `V` arrows `(s,t)` under `e`: some `s`-subset of `V` is a clique, or some `t`-subset is\n    independent.  Sublists are used so no relabelling is ever needed. -/\ndef ArrowsOn (e : Nat \u2192 Nat \u2192 Bool) (V : List Nat) (s t : Nat) : Prop :=\n  (\u2203 K : List Nat, K.Sublist V \u2227 K.length = s \u2227 IsClique e K) \u2228\n  (\u2203 K : List Nat, K.Sublist V \u2227 K.length = t \u2227 IsIndep e K)\n\n/-- `m` suffices for `(s,t)`: EVERY symmetric colouring on EVERY vertex list of size at\n    least `m` arrows `(s,t)`.  This is the abstraction of `R(s,t) \u2264 m`. -/\ndef Suffices (m s t : Nat) : Prop :=\n  \u2200 (e : Nat \u2192 Nat \u2192 Bool), (\u2200 x y, e x y = e y x) \u2192\n    \u2200 V : List Nat, m \u2264 V.length \u2192 ArrowsOn e V s t\n\ntheorem extend_clique (e : Nat \u2192 Nat \u2192 Bool) (hsymm : \u2200 x y, e x y = e y x)\n    (v : Nat) (K : List Nat) (hadj : \u2200 x \u2208 K, e v x = true) (hK : IsClique e K) :\n    IsClique e (v :: K) := by\n  intro a ha b hb hab\n  rcases List.mem_cons.mp ha with rfl | ha'\n  \u00b7 rcases List.mem_cons.mp hb with rfl | hb'\n    \u00b7 exact absurd rfl hab\n    \u00b7 exact hadj b hb'\n  \u00b7 rcases List.mem_cons.mp hb with rfl | hb'\n    \u00b7 rw [hsymm]; exact hadj a ha'\n    \u00b7 exact hK a ha' b hb' hab\n\ntheorem extend_indep (e : Nat \u2192 Nat \u2192 Bool) (hsymm : \u2200 x y, e x y = e y x)\n    (v : Nat) (K : List Nat) (hadj : \u2200 x \u2208 K, e v x = false) (hK : IsIndep e K) :\n    IsIndep e (v :: K) := by\n  intro a ha b hb hab\n  rcases List.mem_cons.mp ha with rfl | ha'\n  \u00b7 rcases List.mem_cons.mp hb with rfl | hb'\n    \u00b7 exact absurd rfl hab\n    \u00b7 exact hadj b hb'\n  \u00b7 rcases List.mem_cons.mp hb with rfl | hb'\n    \u00b7 rw [hsymm]; exact hadj a ha'\n    \u00b7 exact hK a ha' b hb' hab\n\ntheorem filter_split (p : Nat \u2192 Bool) : \u2200 L : List Nat,\n    (L.filter p).length + (L.filter (fun x => ! p x)).length = L.length := by\n  intro L\n  induction L with\n  | nil => rfl\n  | cons a t ih =>\n    by_cases h : p a\n    \u00b7 simp [List.filter, h] at *; omega\n    \u00b7 simp [List.filter, h] at *; omega",
+  "hypotheses": [],
+  "conclusion": "([1,2] : List Nat).length = 2",
+  "proof": "by decide"
+ },
+ "formal_status": "KERNEL_CHECKED",
+ "events": [],
+ "axioms": [
+  "Quot.sound",
+  "propext"
+ ],
+ "attempts": [
+  {
+   "tactic": "(supplied proof)",
+   "status": "VERIFIED",
+   "seconds": 3.2,
+   "errors": [],
+   "exitCode": 0,
+   "resource_limit": null
+  }
+ ],
+ "budget_history": [
+  {
+   "tier_seconds": 120.0,
+   "outcome": "KERNEL_CHECKED"
+  }
+ ],
+ "kernel_result": {
+  "status": "VERIFIED",
+  "file": "oracle/frontier_formalizer/cable/theorems/msl_r55-es-recurrence-full.lean",
+  "backend": "windows",
+  "project": "C:\\Users\\jared\\Local Sites\\woocommerce-enterprise\\oracle\\math\\EG411Formal",
+  "needsMathlib": false,
+  "exitCode": 0,
+  "seconds": 3.2,
+  "declarations": [
+   {
+    "declaration": "extend_clique",
+    "clean": true,
+    "axioms": [
+     "propext"
+    ]
+   },
+   {
+    "declaration": "extend_indep",
+    "clean": true,
+    "axioms": [
+     "propext"
+    ]
+   },
+   {
+    "declaration": "filter_split",
+    "clean": true,
+    "axioms": [
+     "propext",
+     "Quot.sound"
+    ]
+   },
+   {
+    "declaration": "msl_r55_es_recurrence_full",
+    "clean": true,
+    "axioms": []
+   }
+  ],
+  "errors": []
+ },
+ "lean_result_block": "LEAN_RESULT r55-es-recurrence-full\n  FORMAL_STATUS KERNEL_CHECKED\n  FILE oracle/frontier_formalizer/cable/theorems/msl_r55-es-recurrence-full.lean\n  THEOREMS msl_r55_es_recurrence_full\n  BACKEND windows\n  AXIOMS Quot.sound, propext\n  TACTIC (supplied proof)\n  BUDGET 120s:KERNEL_CHECKED\n  FAILURE NONE",
+ "timestamp": "2026-09-04T16:34:17Z"
+}

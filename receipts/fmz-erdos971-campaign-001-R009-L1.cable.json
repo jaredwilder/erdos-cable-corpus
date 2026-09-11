@@ -1,0 +1,55 @@
+{
+ "schema": "oracle.msl.cable.v1",
+ "id": "fmz-erdos971-campaign-001-R009-L1",
+ "spec": {
+  "id": "fmz-erdos971-campaign-001-R009-L1",
+  "imports": "Mathlib",
+  "definitions": "import Mathlib\n\n/-- Euler phi by exhaustive coprimality count (exact, Nat). -/\ndef phiD (d : Nat) : Nat :=\n  ((List.range d).filter (fun k => Nat.gcd k d = 1)).length\n\n/-- Least n in [0,40) congruent to a mod d (ordered search = minimality). -/\ndef leastResidue (a d : Nat) : Nat :=\n  ((List.range 40).filter (fun n => n % d == a)).head!\n\n/-- Exact-rational, float-free verifier core: phi counting, ordered residue-class\n    search, and rational inequality evaluation \u2014 Nat equality and Rat `<` only. -/\ndef checkVerifier : Bool :=\n  phiD 10 == 4 \u2227\n  phiD 12 == 4 \u2227\n  phiD 7 == 6 \u2227\n  leastResidue 2 3 == 2 \u2227\n  leastResidue 3 7 == 3 \u2227\n  leastResidue 4 9 == 4 \u2227\n  ((13 : Rat) > (1 + 1/10) * (6 : Rat) * (11/10)) \u2227\n  \u00ac ((5 : Rat) > (1 + 1/10) * (2 : Rat) * (11/10))",
+  "conclusion": "checkVerifier = true",
+  "proof": "by decide"
+ },
+ "formal_status": "KERNEL_FAILED",
+ "events": [
+  "((supplied proof)) RAW[/tmp/oracle_lean_qU3fCoQR.lean:5:0: error: invalid 'import' command, it must be used in the beginning of the file]"
+ ],
+ "axioms": [],
+ "attempts": [
+  {
+   "tactic": "(supplied proof)",
+   "status": "UNVERIFIED",
+   "seconds": 63.7,
+   "errors": [
+    "/tmp/oracle_lean_qU3fCoQR.lean:5:0: error: invalid 'import' command, it must be used in the beginning of the file"
+   ],
+   "exitCode": 1,
+   "resource_limit": null
+  }
+ ],
+ "budget_history": [
+  {
+   "tier_seconds": 900.0,
+   "outcome": "KERNEL_FAILED"
+  }
+ ],
+ "kernel_result": {
+  "status": "UNVERIFIED",
+  "file": "oracle/frontier_formalizer/cable/theorems/msl_fmz-erdos971-campaign-001-R009-L1.lean",
+  "backend": "wsl",
+  "project": "/root/erdosfire-bench/proofs",
+  "needsMathlib": true,
+  "exitCode": 1,
+  "seconds": 49.7,
+  "declarations": [
+   {
+    "declaration": "msl_fmz_erdos971_campaign_001_R009_L1",
+    "clean": false,
+    "axioms": []
+   }
+  ],
+  "errors": [
+   "/tmp/oracle_lean_qU3fCoQR.lean:5:0: error: invalid 'import' command, it must be used in the beginning of the file"
+  ]
+ },
+ "lean_result_block": "LEAN_RESULT fmz-erdos971-campaign-001-R009-L1\n  FORMAL_STATUS KERNEL_FAILED\n  FILE oracle/frontier_formalizer/cable/theorems/msl_fmz-erdos971-campaign-001-R009-L1.lean\n  THEOREMS msl_fmz_erdos971_campaign_001_R009_L1\n  BACKEND wsl\n  AXIOMS -\n  TACTIC (supplied proof)\n  BUDGET 900s:KERNEL_FAILED\n  FAILURE ((supplied proof)) RAW[/tmp/oracle_lean_qU3fCoQR.lean:5:0: error: invalid 'import' command, it must be used in the beginning of the file]\n  LAW KERNEL_FAILED does not refute the claim \u2014 the FAILURE line names what actually broke",
+ "timestamp": "2026-09-01T22:01:04Z"
+}

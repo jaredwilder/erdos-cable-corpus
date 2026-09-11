@@ -1,0 +1,62 @@
+{
+ "schema": "oracle.msl.cable.v1",
+ "id": "fmz-erdos52-campaign-001-R002-L1",
+ "spec": {
+  "id": "fmz-erdos52-campaign-001-R002-L1",
+  "imports": "none",
+  "definitions": "-- Narrowed fragment: only Nat arithmetic, fully explicit setEnumeration, no closures over Int, no map lambdas.\ndef sumsetA : List Nat := [0,1,2,3,4,5,6,1,2,3,4,5,6,7,2,3,4,5,6,7,8,4,5,6,7,8]\n-- A = [0,1,2,3,4]; A+A enumerated explicitly above.\ndef prodsetA : List Nat := [0,0,0,0,0,0,1,2,3,4,0,2,4,6,8,0,3,6,9,12,0,4,8,12,16]\n-- A*A enumerated explicitly above.\ndef sumsetD : List Nat := [0,2,4,6,8,2,4,6,8,10,4,6,8,10,12,6,8,10,12,14,8,10,12,14,16]\n-- 2A = [0,2,4,6,8]; 2A+2A enumerated explicitly above.\ndef nodupCount : List Nat \u2192 Nat\n  | [] => 0\n  | x :: xs => (if xs.contains x then 0 else 1) + nodupCount xs\ndef sumCardA : Nat := nodupCount sumsetA\ndef prodCardA : Nat := nodupCount prodsetA\ndef sumCardD : Nat := nodupCount sumsetD\ndef checkFour : Bool :=\n  (sumCardA \u2265 9) && (prodCardA \u2265 9) && (sumCardD \u2265 9) && (prodCardD \u2265 5)\ndef prodCardD : Nat := nodupCount [0,4,16,8,0,16,32,4,0,8,16,24,0,12,24,0,16,32,0,0,16,32,0,8,16]\n-- 2A\u00b72A enumerated explicitly above.\n",
+  "conclusion": "checkFour = true",
+  "proof": "by decide"
+ },
+ "formal_status": "KERNEL_FAILED",
+ "events": [
+  "((supplied proof)) TYPE.FAIL NEED[prodCardD]",
+  "((supplied proof)) RAW[tmpj7gptvod.lean:21:71: error: Tactic `decide` failed for proposition]"
+ ],
+ "axioms": [
+  "sorryAx"
+ ],
+ "attempts": [
+  {
+   "tactic": "(supplied proof)",
+   "status": "UNVERIFIED",
+   "seconds": 2.3,
+   "errors": [
+    "tmpj7gptvod.lean:17:58: error(lean.unknownIdentifier): Unknown identifier `prodCardD`",
+    "tmpj7gptvod.lean:21:71: error: Tactic `decide` failed for proposition"
+   ],
+   "exitCode": 1,
+   "resource_limit": null
+  }
+ ],
+ "budget_history": [
+  {
+   "tier_seconds": 900.0,
+   "outcome": "KERNEL_FAILED"
+  }
+ ],
+ "kernel_result": {
+  "status": "UNVERIFIED",
+  "file": "oracle/frontier_formalizer/cable/theorems/msl_fmz-erdos52-campaign-001-R002-L1.lean",
+  "backend": "windows",
+  "project": "C:\\Users\\jared\\Local Sites\\woocommerce-enterprise\\oracle\\math\\EG411Formal",
+  "needsMathlib": false,
+  "exitCode": 1,
+  "seconds": 2.3,
+  "declarations": [
+   {
+    "declaration": "msl_fmz_erdos52_campaign_001_R002_L1",
+    "clean": false,
+    "axioms": [
+     "sorryAx"
+    ]
+   }
+  ],
+  "errors": [
+   "tmpj7gptvod.lean:17:58: error(lean.unknownIdentifier): Unknown identifier `prodCardD`",
+   "tmpj7gptvod.lean:21:71: error: Tactic `decide` failed for proposition"
+  ]
+ },
+ "lean_result_block": "LEAN_RESULT fmz-erdos52-campaign-001-R002-L1\n  FORMAL_STATUS KERNEL_FAILED\n  FILE oracle/frontier_formalizer/cable/theorems/msl_fmz-erdos52-campaign-001-R002-L1.lean\n  THEOREMS msl_fmz_erdos52_campaign_001_R002_L1\n  BACKEND windows\n  AXIOMS sorryAx\n  TACTIC (supplied proof)\n  BUDGET 900s:KERNEL_FAILED\n  FAILURE ((supplied proof)) TYPE.FAIL NEED[prodCardD]; ((supplied proof)) RAW[tmpj7gptvod.lean:21:71: error: Tactic `decide` failed for proposition]\n  LAW KERNEL_FAILED does not refute the claim \u2014 the FAILURE line names what actually broke",
+ "timestamp": "2026-09-01T21:44:00Z"
+}

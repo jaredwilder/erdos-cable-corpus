@@ -1,0 +1,64 @@
+{
+ "schema": "oracle.msl.cable.v1",
+ "id": "r55-transinv-41",
+ "spec": {
+  "id": "r55-transinv-41",
+  "imports": "none",
+  "set_options": [
+   "set_option maxRecDepth 20000",
+   "set_option maxHeartbeats 4000000"
+  ],
+  "definitions": "def S : List Nat := [1,2,3,5,7,10,13,15,16,17,24,25,26,28,31,34,36,38,39,40]\ndef adj (i j : Nat) : Bool := ((i + 41 - j) % 41) \u2208 S\ndef V : List Nat := List.range 41\ndef transInv : Bool :=\n  V.all fun t => V.all fun i => V.all fun j =>\n    adj ((i + t) % 41) ((j + t) % 41) == adj i j\ndef symmetric : Bool := V.all fun i => V.all fun j => adj i j == adj j i\ndef loopfree : Bool := V.all fun i => ! adj i i\ndef regular20 : Bool := V.all fun i => (V.filter (fun j => adj i j)).length == 20\ndef shapeOK : Bool := transInv && symmetric && loopfree && regular20",
+  "hypotheses": [],
+  "conclusion": "shapeOK = true",
+  "proof": "by decide"
+ },
+ "formal_status": "KERNEL_FAILED",
+ "events": [
+  "RAW[exit 124 with no captured error line]"
+ ],
+ "axioms": [],
+ "attempts": [
+  {
+   "tactic": "(supplied proof)",
+   "status": "UNVERIFIED",
+   "seconds": 1800.2,
+   "errors": [],
+   "exitCode": 124,
+   "resource_limit": "wall-clock timeout (exit 124)"
+  }
+ ],
+ "budget_history": [
+  {
+   "tier_seconds": 120.0,
+   "outcome": "UNDECIDED_RESOURCE[wall-clock timeout (exit 124)]"
+  },
+  {
+   "tier_seconds": 600.0,
+   "outcome": "UNDECIDED_RESOURCE[wall-clock timeout (exit 124)]"
+  },
+  {
+   "tier_seconds": 1800.0,
+   "outcome": "UNDECIDED_RESOURCE[wall-clock timeout (exit 124)]"
+  }
+ ],
+ "kernel_result": {
+  "status": "UNVERIFIED",
+  "file": "oracle/frontier_formalizer/cable/theorems/msl_r55-transinv-41.lean",
+  "backend": "windows",
+  "project": "C:\\Users\\jared\\Local Sites\\woocommerce-enterprise\\oracle\\math\\EG411Formal",
+  "needsMathlib": false,
+  "exitCode": 124,
+  "seconds": 1800.0,
+  "declarations": [
+   {
+    "declaration": "msl_r55_transinv_41",
+    "clean": false,
+    "axioms": []
+   }
+  ],
+  "errors": []
+ },
+ "lean_result_block": "LEAN_RESULT r55-transinv-41\n  FORMAL_STATUS KERNEL_FAILED\n  FILE oracle/frontier_formalizer/cable/theorems/msl_r55-transinv-41.lean\n  THEOREMS msl_r55_transinv_41\n  BACKEND windows\n  AXIOMS -\n  TACTIC (supplied proof)\n  BUDGET 120s:UNDECIDED_RESOURCE[wall-clock timeout (exit 124)] -> 600s:UNDECIDED_RESOURCE[wall-clock timeout (exit 124)] -> 1800s:UNDECIDED_RESOURCE[wall-clock timeout (exit 124)]\n  FAILURE RAW[exit 124 with no captured error line]\n  LAW KERNEL_FAILED does not refute the claim \u2014 the FAILURE line names what actually broke\n  LAW BUDGET_EXHAUSTED is an UNDECIDED question, not a failed proof \u2014 the machine stopped, the mathematics did not answer",
+ "timestamp": "2026-09-04T16:24:34Z"
+}

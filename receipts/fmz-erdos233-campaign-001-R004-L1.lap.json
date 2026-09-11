@@ -1,0 +1,86 @@
+{
+ "schema": "oracle.msl.closer.lap.v1",
+ "id": "fmz-erdos233-campaign-001-R004-L1",
+ "pipeline": "CITATION_ANCHORED",
+ "lean_file": "oracle/frontier_formalizer/cable/theorems/lap_fmz-erdos233-campaign-001-R004-L1.lean",
+ "theorem": "msl_fmz_erdos233_campaign_001_R004_L1",
+ "axiom_name": "HeathBrown1982_GapMomentBound",
+ "axiom_statement_lean": "∃ C : ℝ, 0 < C ∧ ∀ x : ℝ, 2 ≤ x → GapSqSum x ≤ C * x * Real.log x",
+ "citation": {
+  "source": "D. R. Heath-Brown, 'The differences between consecutive primes, III', Journal of the London Mathematical Society s2-25 (1982), 449–464.",
+  "theorem_number": "Main unconditional sieve bound of the paper: ∑_{p_n ≤ x} (p_{n+1} − p_n)² ≪ x log x.",
+  "verbatim": "Heath-Brown (1982), 'The differences between consecutive primes, III', proves unconditionally, by Selberg sieve methods, that ∑_{p_n ≤ x} (p_{n+1} − p_n)² ≪ x log x. FLAGGED FOR HUMAN RECONCILIATION: this verbatim field paraphrases the standard statement of the result; side-by-side check against the published text (normalization: whether the sum is cut at p_n ≤ x or p_{n+1} ≤ x) is required before the LAP is stamped. A boundary term O((log x)³) between the two cut conventions does not affect the lemma.",
+  "url_or_doi": "https://doi.org/10.1112/jlms/s2-25.3.449"
+ },
+ "claim": "CONDITIONAL on the single axiom HeathBrown1982_GapMomentBound, the partial-sum form ∑_{n<N} d_n² ≤ C · p_N · log p_N holds for every N ≥ 2 with the SAME absolute constant — this is the kernel-checkable content of L1 (Heath-Brown's unconditional bound, reduced to the canonical partial-sum object via the monotone-subset bridge, no sorry, axiom footprint = {propext, Classical.choice, Quot.sound, HeathBrown1982_GapMomentBound}).",
+ "gate": {
+  "passed": false,
+  "reason": "KERNEL_FAILED",
+  "detail": "the LAP file did not compile (exit 1)"
+ },
+ "kernel_result": {
+  "status": "UNVERIFIED",
+  "file": "oracle/frontier_formalizer/cable/theorems/lap_fmz-erdos233-campaign-001-R004-L1.lean",
+  "backend": "wsl",
+  "project": "/root/erdosfire-bench/proofs",
+  "needsMathlib": true,
+  "exitCode": 1,
+  "seconds": 110.3,
+  "declarations": [
+   {
+    "declaration": "p_ge_succ",
+    "clean": false,
+    "axioms": [
+     "propext",
+     "sorryAx",
+     "Classical.choice",
+     "Quot.sound"
+    ]
+   },
+   {
+    "declaration": "p_ge_two",
+    "clean": false,
+    "axioms": [
+     "propext",
+     "sorryAx",
+     "Classical.choice",
+     "Quot.sound"
+    ]
+   },
+   {
+    "declaration": "bridge",
+    "clean": false,
+    "axioms": [
+     "propext",
+     "sorryAx",
+     "Classical.choice",
+     "Quot.sound"
+    ]
+   },
+   {
+    "declaration": "msl_fmz_erdos233_campaign_001_R004_L1",
+    "clean": false,
+    "axioms": [
+     "propext",
+     "sorryAx",
+     "Classical.choice",
+     "Quot.sound"
+    ]
+   }
+  ],
+  "errors": [
+   "/tmp/oracle_lean_Pwd1hPRG.lean:5:43: error(lean.unknownIdentifier): Unknown constant `Nat.Prime.decide`",
+   "/tmp/oracle_lean_Pwd1hPRG.lean:12:64: error(lean.invalidField): Invalid field `toNat`: The environment does not contain `Real.toNat`, so it is not possible to project the field `toNat` from an expression",
+   "/tmp/oracle_lean_Pwd1hPRG.lean:23:14: error(lean.unknownIdentifier): Unknown constant `Nat.Prime.two_gt_one`",
+   "/tmp/oracle_lean_Pwd1hPRG.lean:22:42: error: unsolved goals",
+   "/tmp/oracle_lean_Pwd1hPRG.lean:25:55: error(lean.unknownIdentifier): Unknown constant `Nat.Prime.nth_strictMono`",
+   "/tmp/oracle_lean_Pwd1hPRG.lean:33:9: error(lean.synthInstanceFailed): failed to synthesize instance of type class",
+   "/tmp/oracle_lean_Pwd1hPRG.lean:34:8: error: No goals to be solved",
+   "/tmp/oracle_lean_Pwd1hPRG.lean:46:138: error(lean.unknownIdentifier): Unknown identifier `obtain`",
+   "/tmp/oracle_lean_Pwd1hPRG.lean:46:157: error: unexpected token ':='; expected command"
+  ]
+ },
+ "seconds": 130.2,
+ "law": "CLOSED_CONDITIONAL_ON_CITATION is NOT TARGET_CLOSED. The kernel checked the IMPLICATION from the assumed theorem; it did not check the assumed theorem. Confirm `axiom_statement_lean` against `citation.verbatim`, and confirm that the cited theorem exists in that form, before this is cited as a result.",
+ "timestamp": "2026-09-01T19:45:57Z"
+}

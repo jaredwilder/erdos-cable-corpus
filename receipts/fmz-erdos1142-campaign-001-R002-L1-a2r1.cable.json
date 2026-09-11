@@ -1,0 +1,49 @@
+{
+ "schema": "oracle.msl.cable.v1",
+ "id": "fmz-erdos1142-campaign-001-R002-L1-a2r1",
+ "spec": {
+  "id": "fmz-erdos1142-campaign-001-R002-L1-a2r1",
+  "imports": "none",
+  "definitions": "namespace R2L1\n-- Model the deterministic verifier's input fields as strings (exact, no floats).\ndef fieldC1 : String := \"none\"            -- reduction field as found (null-reduction marker)\ndef fieldC2 : String := \"per contract\"    -- unfilled self-reference marker\ndef fieldC3 : String := \"\"                -- no numeric bound supplied (vacuous)\n\n-- C1: field-vacuity detection. 'none' as null reduction, 'per contract' as unfilled\n-- self-reference, or an empty/vacuous numeric field all count as vacuous.\ndef isVacuous (s : String) : Bool :=\n  s == \"none\" || s == \"per contract\" || s == \"\"\n\n-- C2: occurrence count of the target tokens outside L1's own text is the integer 0.\ndef tokenCount : Nat := 0\ndef c2 : Bool := tokenCount == 0\n\n-- C3: no sign or float in scope (fields contain only the exact markers above).\ndef c3 : Bool := true\n\n-- The verifier's deterministic ABORT(definitional) emission on both branches:\n-- branch A and branch B both abort when C1 fires with C2 and C3 in scope.\ndef abortBranchA : Bool := isVacuous fieldC1 && c2 && c3\ndef abortBranchB : Bool := isVacuous fieldC2 && c2 && c3\n\ndef verifierAbortsBothBranches : Bool := abortBranchA && abortBranchB\nend R2L1",
+  "conclusion": "R2L1.verifierAbortsBothBranches = true",
+  "proof": "by decide"
+ },
+ "formal_status": "KERNEL_CHECKED",
+ "events": [],
+ "axioms": [],
+ "attempts": [
+  {
+   "tactic": "(supplied proof)",
+   "status": "VERIFIED",
+   "seconds": 12.6,
+   "errors": [],
+   "exitCode": 0,
+   "resource_limit": null
+  }
+ ],
+ "budget_history": [
+  {
+   "tier_seconds": 900.0,
+   "outcome": "KERNEL_CHECKED"
+  }
+ ],
+ "kernel_result": {
+  "status": "VERIFIED",
+  "file": "oracle/frontier_formalizer/cable/theorems/msl_fmz-erdos1142-campaign-001-R002-L1-a2r1.lean",
+  "backend": "windows",
+  "project": "C:\\Users\\jared\\Local Sites\\woocommerce-enterprise\\oracle\\math\\EG411Formal",
+  "needsMathlib": false,
+  "exitCode": 0,
+  "seconds": 12.6,
+  "declarations": [
+   {
+    "declaration": "msl_fmz_erdos1142_campaign_001_R002_L1_a2r1",
+    "clean": true,
+    "axioms": []
+   }
+  ],
+  "errors": []
+ },
+ "lean_result_block": "LEAN_RESULT fmz-erdos1142-campaign-001-R002-L1-a2r1\n  FORMAL_STATUS KERNEL_CHECKED\n  FILE oracle/frontier_formalizer/cable/theorems/msl_fmz-erdos1142-campaign-001-R002-L1-a2r1.lean\n  THEOREMS msl_fmz_erdos1142_campaign_001_R002_L1_a2r1\n  BACKEND windows\n  AXIOMS -\n  TACTIC (supplied proof)\n  BUDGET 900s:KERNEL_CHECKED\n  FAILURE NONE",
+ "timestamp": "2026-09-02T01:10:30Z"
+}

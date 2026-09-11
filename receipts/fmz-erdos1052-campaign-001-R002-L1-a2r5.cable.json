@@ -1,0 +1,61 @@
+{
+ "schema": "oracle.msl.cable.v1",
+ "id": "fmz-erdos1052-campaign-001-R002-L1-a2r5",
+ "spec": {
+  "id": "fmz-erdos1052-campaign-001-R002-L1-a2r5",
+  "imports": "Mathlib",
+  "definitions": "def unitaryDivisors (n : Nat) : Finset Nat := {d \u2208 Finset.Icc 1 n | d \u2223 n \u2227 Nat.Coprime d (n / d)}\ndef properUnitaryDivisors (n : Nat) : Finset Nat := {d \u2208 Finset.Ico 1 n | d \u2223 n \u2227 Nat.Coprime d (n / d)}\ndef isUnitaryPerfect (n : Nat) : Prop := (\u2211 d in properUnitaryDivisors n, d) = n \u2227 0 < n",
+  "conclusion": "6 = 2 * 3 \u2227 unitaryDivisors 6 = ({1, 2, 3, 6} : Finset Nat) \u2227 properUnitaryDivisors 6 = ({1, 2, 3} : Finset Nat) \u2227 (\u2211 d in properUnitaryDivisors 6, d) = 6 \u2227 isUnitaryPerfect 6",
+  "proof": "by\n  decide"
+ },
+ "formal_status": "KERNEL_FAILED",
+ "events": [
+  "((supplied proof)) SYNTAX.FAIL[/tmp/oracle_lean_BjpZwk9z.lean:7:45: error: unexpected token 'in'; expected ',']",
+  "((supplied proof)) SYNTAX.FAIL[/tmp/oracle_lean_BjpZwk9z.lean:9:174: error: unexpected token 'in'; expected ',']",
+  "((supplied proof)) TYPE.FAIL NEED[msl_fmz_erdos1052_campaign_001_R002_L1_a2r5]"
+ ],
+ "axioms": [],
+ "attempts": [
+  {
+   "tactic": "(supplied proof)",
+   "status": "UNVERIFIED",
+   "seconds": 8.1,
+   "errors": [
+    "/tmp/oracle_lean_BjpZwk9z.lean:7:45: error: unexpected token 'in'; expected ','",
+    "/tmp/oracle_lean_BjpZwk9z.lean:9:174: error: unexpected token 'in'; expected ','",
+    "/tmp/oracle_lean_BjpZwk9z.lean:12:14: error(lean.unknownIdentifier): Unknown constant `msl_fmz_erdos1052_campaign_001_R002_L1_a2r5`"
+   ],
+   "exitCode": 1,
+   "resource_limit": null
+  }
+ ],
+ "budget_history": [
+  {
+   "tier_seconds": 900.0,
+   "outcome": "KERNEL_FAILED"
+  }
+ ],
+ "kernel_result": {
+  "status": "UNVERIFIED",
+  "file": "oracle/frontier_formalizer/cable/theorems/msl_fmz-erdos1052-campaign-001-R002-L1-a2r5.lean",
+  "backend": "wsl",
+  "project": "/root/erdosfire-bench/proofs",
+  "needsMathlib": true,
+  "exitCode": 1,
+  "seconds": 4.6,
+  "declarations": [
+   {
+    "declaration": "msl_fmz_erdos1052_campaign_001_R002_L1_a2r5",
+    "clean": false,
+    "axioms": []
+   }
+  ],
+  "errors": [
+   "/tmp/oracle_lean_BjpZwk9z.lean:7:45: error: unexpected token 'in'; expected ','",
+   "/tmp/oracle_lean_BjpZwk9z.lean:9:174: error: unexpected token 'in'; expected ','",
+   "/tmp/oracle_lean_BjpZwk9z.lean:12:14: error(lean.unknownIdentifier): Unknown constant `msl_fmz_erdos1052_campaign_001_R002_L1_a2r5`"
+  ]
+ },
+ "lean_result_block": "LEAN_RESULT fmz-erdos1052-campaign-001-R002-L1-a2r5\n  FORMAL_STATUS KERNEL_FAILED\n  FILE oracle/frontier_formalizer/cable/theorems/msl_fmz-erdos1052-campaign-001-R002-L1-a2r5.lean\n  THEOREMS msl_fmz_erdos1052_campaign_001_R002_L1_a2r5\n  BACKEND wsl\n  AXIOMS -\n  TACTIC (supplied proof)\n  BUDGET 900s:KERNEL_FAILED\n  FAILURE ((supplied proof)) SYNTAX.FAIL[/tmp/oracle_lean_BjpZwk9z.lean:7:45: error: unexpected token 'in'; expected ',']; ((supplied proof)) SYNTAX.FAIL[/tmp/oracle_lean_BjpZwk9z.lean:9:174: error: unexpected token 'in'; expected ',']; ((supplied proof)) TYPE.FAIL NEED[msl_fmz_erdos1052_campaign_001_R002_L1_a2r5]\n  LAW KERNEL_FAILED does not refute the claim \u2014 the FAILURE line names what actually broke",
+ "timestamp": "2026-09-02T01:21:45Z"
+}

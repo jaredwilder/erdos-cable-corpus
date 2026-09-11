@@ -1,0 +1,55 @@
+{
+ "schema": "oracle.msl.cable.v1",
+ "id": "fmz-erdos91-campaign-001-R002-L1",
+ "spec": {
+  "id": "fmz-erdos91-campaign-001-R002-L1",
+  "imports": "none",
+  "definitions": "import Mathlib.Data.Rat.Basic\n\n/-- \u211a[\u221a5] as exact pairs (a, b) meaning a + b\u00b7\u221a5. All arithmetic total and decidable. -/\ndef Q5 := \u211a \u00d7 \u211a\n\ndef mul5 : Q5 \u2192 Q5 \u2192 Q5\n  | (a, b), (c, d) => (a * c + 5 * b * d, a * d + b * c)\n\n/-- \u221a5, with (\u221a5)\u00b2 = 5 checked below. -/\ndef sq5 : Q5 := (0, 1)\n\n/-- cos(2\u03c0/5) = (\u221a5 \u2212 1)/4 as an element of \u211a[\u221a5]. -/\ndef cos72 : Q5 := ((-1)/4, 1/4)\n\n/-- cos(4\u03c0/5) = \u2212(\u221a5 + 1)/4. -/\ndef cos144 : Q5 := ((-1)/4, -1/4)\n\n/-- Squared distance between vertices at cyclic separation m of the unit-circumradius\n    regular pentagon: d\u00b2 = 2 \u2212 2cos(2\u03c0m/5). -/\ndef sqd : \u2115 \u2192 Q5\n  | 0 => (0, 0)\n  | 1 => (5/2, -1/2)   -- 2 \u2212 2\u00b7cos72  = (5 \u2212 \u221a5)/2\n  | _ => (5/2, 1/2)    -- 2 \u2212 2\u00b7cos144 = (5 + \u221a5)/2\n\n/-- Cyclic step between vertices i < j of a pentagon. -/\ndef step (i j : \u2115) : \u2115 :=\n  let d := (j - i) % 5\n  min d (5 - d)\n\n/-- Total Bool check certifying the constructive half of L1:\n    (1) (\u221a5)\u00b2 = 5, so \u211a[\u221a5] arithmetic is consistent with the intended field;\n    (2) cos72 and cos144 satisfy their minimal equations 4c\u00b2+2c\u22121 = 0 and\n        4c\u00b2\u22122c\u22121 = 0 exactly (so the witnesses are the correct algebraic values);\n    (3) the two candidate squared distances are distinct and both nonzero;\n    (4) all ten pairwise squared distances of the pentagon reduce to exactly the two\n        values, each attained. -/\ndef pentagonCheck : Bool :=\n  let v1 : Q5 := (5/2, -1/2)\n  let v2 : Q5 := (5/2, 1/2)\n  let sq5sq := mul5 sq5 sq5\n  let e1 := mul5 cos72 cos72\n  let c1 : Q5 := (mul5 (2,0) e1).1 + (mul5 (2,0) cos72).1, -- assembled below as pairs\n  let chk1 : Q5 := (4 * e1.1 + 2 * cos72.1 - 1, 4 * e1.2 + 2 * cos72.2)\n  let chk2 : Q5 := (4 * (mul5 cos144 cos144).1 - 2 * cos144.1 - 1,\n                    4 * (mul5 cos144 cos144).2 - 2 * cos144.2)\n  (sq5sq = (5, 0)) \u2227\n  (chk1 = (0, 0)) \u2227\n  (chk2 = (0, 0)) \u2227\n  (v1 \u2260 v2) \u2227 (v1 \u2260 (0,0)) \u2227 (v2 \u2260 (0,0)) \u2227\n  (List.all (List.range 5) fun i =>\n    List.all (List.range 5) fun j =>\n      let m := step i j\n      m = 1 \u2228 m = 2 \u2228 i = j) \u2227\n  (sqd (step 0 1) = v1) \u2227 (sqd (step 0 2) = v2) \u2227\n  (List.all (List.range 5) fun i =>\n    List.all (List.range 5) fun j =>\n      i < j \u2192 (sqd (step i j) = v1 \u2228 sqd (step i j) = v2))\n\ninstance : DecidableEq Q5 := inferInstanceAs (DecidableEq (\u211a \u00d7 \u211a))",
+  "conclusion": "pentagonCheck = true",
+  "proof": "by decide"
+ },
+ "formal_status": "KERNEL_FAILED",
+ "events": [
+  "((supplied proof)) RAW[/tmp/oracle_lean_VCt7e276.lean:3:0: error: invalid 'import' command, it must be used in the beginning of the file]"
+ ],
+ "axioms": [],
+ "attempts": [
+  {
+   "tactic": "(supplied proof)",
+   "status": "UNVERIFIED",
+   "seconds": 2.8,
+   "errors": [
+    "/tmp/oracle_lean_VCt7e276.lean:3:0: error: invalid 'import' command, it must be used in the beginning of the file"
+   ],
+   "exitCode": 1,
+   "resource_limit": null
+  }
+ ],
+ "budget_history": [
+  {
+   "tier_seconds": 900.0,
+   "outcome": "KERNEL_FAILED"
+  }
+ ],
+ "kernel_result": {
+  "status": "UNVERIFIED",
+  "file": "oracle/frontier_formalizer/cable/theorems/msl_fmz-erdos91-campaign-001-R002-L1.lean",
+  "backend": "wsl",
+  "project": "/root/erdosfire-bench/proofs",
+  "needsMathlib": true,
+  "exitCode": 1,
+  "seconds": 0.3,
+  "declarations": [
+   {
+    "declaration": "msl_fmz_erdos91_campaign_001_R002_L1",
+    "clean": false,
+    "axioms": []
+   }
+  ],
+  "errors": [
+   "/tmp/oracle_lean_VCt7e276.lean:3:0: error: invalid 'import' command, it must be used in the beginning of the file"
+  ]
+ },
+ "lean_result_block": "LEAN_RESULT fmz-erdos91-campaign-001-R002-L1\n  FORMAL_STATUS KERNEL_FAILED\n  FILE oracle/frontier_formalizer/cable/theorems/msl_fmz-erdos91-campaign-001-R002-L1.lean\n  THEOREMS msl_fmz_erdos91_campaign_001_R002_L1\n  BACKEND wsl\n  AXIOMS -\n  TACTIC (supplied proof)\n  BUDGET 900s:KERNEL_FAILED\n  FAILURE ((supplied proof)) RAW[/tmp/oracle_lean_VCt7e276.lean:3:0: error: invalid 'import' command, it must be used in the beginning of the file]\n  LAW KERNEL_FAILED does not refute the claim \u2014 the FAILURE line names what actually broke",
+ "timestamp": "2026-09-01T21:33:53Z"
+}

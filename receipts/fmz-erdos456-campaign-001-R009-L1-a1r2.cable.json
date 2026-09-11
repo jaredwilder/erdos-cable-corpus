@@ -1,0 +1,57 @@
+{
+ "schema": "oracle.msl.cable.v1",
+ "id": "fmz-erdos456-campaign-001-R009-L1-a1r2",
+ "spec": {
+  "id": "fmz-erdos456-campaign-001-R009-L1-a1r2",
+  "imports": "none",
+  "definitions": "def phi (m : Nat) : Nat := (List.range m).filter (fun k => Nat.gcd k m == 1) |>.length\n\ndef isPrime (n : Nat) : Bool :=\n  n >= 2 && ((List.range n).drop 2).all (fun d => n % d != 0)\n\ndef dividesPhi (n m : Nat) : Bool := phi m % n == 0\n\ndef mOf (n : Nat) : Option Nat :=\n  ((List.range 200).map (fun k => k + 1)).find? (dividesPhi n)\n\ndef pOf (n : Nat) : Option Nat :=\n  ((List.range 2000).map (fun k => n * k + 1)).find? isPrime\n\ndef eqSet : List Nat := [2,3,4,5,6,7,9,10,11,12,13,14,15,16,17,18,19]\n\ndef leCheck : Bool :=\n  ((List.range 20).map (fun k => k + 1)).all (fun n =>\n    match mOf n, pOf n with\n    | some m, some p => m <= p\n    | _, _ => false)\n\ndef eqSetCheck : Bool :=\n  ((List.range 19).map (fun k => k + 2)).all (fun n =>\n    match mOf n, pOf n with\n    | some m, some p =>\n        (m == p) == (eqSet.contains n)\n    | _, _ => false)\n\ndef strictWitnesses : Bool :=\n  match mOf 8, pOf 8, mOf 20, pOf 20 with\n  | some a, some b, some c, some d =>\n      a == 15 && b == 17 && a < b && c == 25 && d == 41 && c < d\n  | _, _, _, _ => false\n\ndef checkL1 : Bool := leCheck && eqSetCheck && strictWitnesses",
+  "conclusion": "checkL1 = true",
+  "proof": "by native_decide"
+ },
+ "formal_status": "KERNEL_FAILED",
+ "events": [
+  "RAW[exit 0 with no captured error line]"
+ ],
+ "axioms": [
+  "msl_fmz_erdos456_campaign_001_R009_L1_a1r2._native.native_decide.ax_1_1",
+  "propext"
+ ],
+ "attempts": [
+  {
+   "tactic": "(supplied proof)",
+   "status": "UNVERIFIED",
+   "seconds": 3.1,
+   "errors": [],
+   "exitCode": 0,
+   "resource_limit": null
+  }
+ ],
+ "budget_history": [
+  {
+   "tier_seconds": 900.0,
+   "outcome": "KERNEL_FAILED"
+  }
+ ],
+ "kernel_result": {
+  "status": "UNVERIFIED",
+  "file": "oracle/frontier_formalizer/cable/theorems/msl_fmz-erdos456-campaign-001-R009-L1-a1r2.lean",
+  "backend": "windows",
+  "project": "C:\\Users\\jared\\Local Sites\\woocommerce-enterprise\\oracle\\math\\EG411Formal",
+  "needsMathlib": false,
+  "exitCode": 0,
+  "seconds": 3.1,
+  "declarations": [
+   {
+    "declaration": "msl_fmz_erdos456_campaign_001_R009_L1_a1r2",
+    "clean": false,
+    "axioms": [
+     "propext",
+     "msl_fmz_erdos456_campaign_001_R009_L1_a1r2._native.native_decide.ax_1_1"
+    ]
+   }
+  ],
+  "errors": []
+ },
+ "lean_result_block": "LEAN_RESULT fmz-erdos456-campaign-001-R009-L1-a1r2\n  FORMAL_STATUS KERNEL_FAILED\n  FILE oracle/frontier_formalizer/cable/theorems/msl_fmz-erdos456-campaign-001-R009-L1-a1r2.lean\n  THEOREMS msl_fmz_erdos456_campaign_001_R009_L1_a1r2\n  BACKEND windows\n  AXIOMS msl_fmz_erdos456_campaign_001_R009_L1_a1r2._native.native_decide.ax_1_1, propext\n  TACTIC (supplied proof)\n  BUDGET 900s:KERNEL_FAILED\n  FAILURE RAW[exit 0 with no captured error line]\n  LAW KERNEL_FAILED does not refute the claim \u2014 the FAILURE line names what actually broke",
+ "timestamp": "2026-09-02T01:54:28Z"
+}

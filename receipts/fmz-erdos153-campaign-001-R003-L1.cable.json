@@ -1,0 +1,67 @@
+{
+ "schema": "oracle.msl.cable.v1",
+ "id": "fmz-erdos153-campaign-001-R003-L1",
+ "spec": {
+  "id": "fmz-erdos153-campaign-001-R003-L1",
+  "imports": "none",
+  "definitions": "-- Pure Lean 4, no Mathlib, no qsort, no Classical.\n\ndef isSidon (A : List Int) : Bool :=\n  let ps := (List.range A.length).flatMap fun i =>\n    (List.range A.length).filterMap fun j =>\n      if i \u2264 j then some (A[i]! + A[j]!) else none\n  (ps.foldr (fun x acc => x :: acc.filter (\u00b7 != x)) []).length = ps.length\n\ndef tval (A : List Int) : \u2115 :=\n  let ps := (List.range A.length).flatMap fun i =>\n    (List.range A.length).filterMap fun j =>\n      if i \u2264 j then some (A[i]! + A[j]!) else none\n  (ps.foldr (fun x acc => x :: acc.filter (\u00b7 != x)) []).length\n\ndef sortedSums (A : List Int) : List Int :=\n  let ps := (List.range A.length).flatMap fun i =>\n    (List.range A.length).filterMap fun j =>\n      if i \u2264 j then some (A[i]! + A[j]!) else none\n  (ps.foldr (fun x acc => x :: acc.filter (\u00b7 != x)) []).insertionSort (\u00b7 \u2264 \u00b7)\n\ndef gaps (s : List Int) : List Int := (s.zip s.tail).map fun p => p.2 - p.1\n\ndef Qnum (A : List Int) : Int :=\n  (gaps (sortedSums A)).foldr (fun d acc => d * d + acc) 0\n\ndef aborts (A : List Int) : Bool := tval A == 0\n\n/-- Fail-closed verifier behavior, exact arithmetic:\n    A=[0,1,3] is Sidon, t=6, sum of squared gaps = 8,\n    abort does not fire on the witness and fires on the empty set\n    (the undefined enclosure (-inf,+inf)). -/\ndef checkWitness : Bool :=\n  isSidon [0, 1, 3]\n  && tval [0, 1, 3] == 6\n  && Qnum [0, 1, 3] == 8\n  && aborts [0, 1, 3] == false\n  && aborts ([] : List Int) == true",
+  "conclusion": "checkWitness = true",
+  "proof": "by decide"
+ },
+ "formal_status": "KERNEL_FAILED",
+ "events": [
+  "((supplied proof)) TYPE.FAIL NEED[\u2115]",
+  "((supplied proof)) RAW[tmpvz7xrazf.lean:21:56: error(lean.invalidField): Invalid field `insertionSort`: The environment does not contain `List.insertionSort`, so it is not possible to]",
+  "((supplied proof)) RAW[tmpvz7xrazf.lean:41:75: error: Tactic `decide` failed for proposition]"
+ ],
+ "axioms": [
+  "propext",
+  "sorryAx"
+ ],
+ "attempts": [
+  {
+   "tactic": "(supplied proof)",
+   "status": "UNVERIFIED",
+   "seconds": 2.3,
+   "errors": [
+    "tmpvz7xrazf.lean:11:26: error(lean.unknownIdentifier): Unknown identifier `\u2115`",
+    "tmpvz7xrazf.lean:21:56: error(lean.invalidField): Invalid field `insertionSort`: The environment does not contain `List.insertionSort`, so it is not possible to project the field `insertionSort` from an expression",
+    "tmpvz7xrazf.lean:41:75: error: Tactic `decide` failed for proposition"
+   ],
+   "exitCode": 1,
+   "resource_limit": null
+  }
+ ],
+ "budget_history": [
+  {
+   "tier_seconds": 900.0,
+   "outcome": "KERNEL_FAILED"
+  }
+ ],
+ "kernel_result": {
+  "status": "UNVERIFIED",
+  "file": "oracle/frontier_formalizer/cable/theorems/msl_fmz-erdos153-campaign-001-R003-L1.lean",
+  "backend": "windows",
+  "project": "C:\\Users\\jared\\Local Sites\\woocommerce-enterprise\\oracle\\math\\EG411Formal",
+  "needsMathlib": false,
+  "exitCode": 1,
+  "seconds": 2.3,
+  "declarations": [
+   {
+    "declaration": "msl_fmz_erdos153_campaign_001_R003_L1",
+    "clean": false,
+    "axioms": [
+     "propext",
+     "sorryAx"
+    ]
+   }
+  ],
+  "errors": [
+   "tmpvz7xrazf.lean:11:26: error(lean.unknownIdentifier): Unknown identifier `\u2115`",
+   "tmpvz7xrazf.lean:21:56: error(lean.invalidField): Invalid field `insertionSort`: The environment does not contain `List.insertionSort`, so it is not possible to project the field `insertionSort` from an expression",
+   "tmpvz7xrazf.lean:41:75: error: Tactic `decide` failed for proposition"
+  ]
+ },
+ "lean_result_block": "LEAN_RESULT fmz-erdos153-campaign-001-R003-L1\n  FORMAL_STATUS KERNEL_FAILED\n  FILE oracle/frontier_formalizer/cable/theorems/msl_fmz-erdos153-campaign-001-R003-L1.lean\n  THEOREMS msl_fmz_erdos153_campaign_001_R003_L1\n  BACKEND windows\n  AXIOMS propext, sorryAx\n  TACTIC (supplied proof)\n  BUDGET 900s:KERNEL_FAILED\n  FAILURE ((supplied proof)) TYPE.FAIL NEED[\u2115]; ((supplied proof)) RAW[tmpvz7xrazf.lean:21:56: error(lean.invalidField): Invalid field `insertionSort`: The environment does not contain `List.insertionSort`, so it is not possible to]; ((supplied proof)) RAW[tmpvz7xrazf.lean:41:75: error: Tactic `decide` failed for proposition]\n  LAW KERNEL_FAILED does not refute the claim \u2014 the FAILURE line names what actually broke",
+ "timestamp": "2026-09-01T23:39:44Z"
+}

@@ -1,0 +1,48 @@
+{
+ "schema": "oracle.msl.cable.v1",
+ "id": "cable-mathlib-route",
+ "spec": {
+  "id": "cable-mathlib-route",
+  "imports": "Mathlib",
+  "conclusion": "(2 : Rat) / 4 = 1 / 2",
+  "proof": "by norm_num"
+ },
+ "formal_status": "KERNEL_CHECKED",
+ "events": [],
+ "axioms": [
+  "Classical.choice",
+  "Quot.sound",
+  "propext"
+ ],
+ "attempts": [
+  {
+   "tactic": "(supplied proof)",
+   "status": "VERIFIED",
+   "seconds": 121.6,
+   "errors": []
+  }
+ ],
+ "kernel_result": {
+  "status": "VERIFIED",
+  "file": "oracle/frontier_formalizer/cable/theorems/msl_cable-mathlib-route.lean",
+  "backend": "wsl",
+  "project": "/root/erdosfire-bench/proofs",
+  "needsMathlib": true,
+  "exitCode": 0,
+  "seconds": 107.7,
+  "declarations": [
+   {
+    "declaration": "msl_cable_mathlib_route",
+    "clean": true,
+    "axioms": [
+     "propext",
+     "Classical.choice",
+     "Quot.sound"
+    ]
+   }
+  ],
+  "errors": []
+ },
+ "lean_result_block": "LEAN_RESULT cable-mathlib-route\n  FORMAL_STATUS KERNEL_CHECKED\n  FILE oracle/frontier_formalizer/cable/theorems/msl_cable-mathlib-route.lean\n  THEOREMS msl_cable_mathlib_route\n  BACKEND wsl\n  AXIOMS Classical.choice, Quot.sound, propext\n  TACTIC (supplied proof)\n  FAILURE NONE",
+ "timestamp": "2026-09-01T00:30:19Z"
+}

@@ -1,0 +1,61 @@
+{
+ "schema": "oracle.msl.cable.v1",
+ "id": "fmz-erdos1094-campaign-001-R008-L1",
+ "spec": {
+  "id": "fmz-erdos1094-campaign-001-R008-L1",
+  "imports": "Mathlib",
+  "definitions": "namespace Erdos1094L1\n\n/-- Standing lemma L1 in full: Sylvester's theorem (1892) \u2014 for 0 < k and 2k \u2264 n,\nbinomial(n,k) has a prime factor greater than k. -/\ndef LemmaL1 : Prop :=\n  \u2200 n k : \u2115, 0 < k \u2192 2 * k \u2264 n \u2192 \u2203 p : \u2115, Nat.Prime p \u2227 k < p \u2227 p \u2223 n.choose k\n\nend Erdos1094L1",
+  "conclusion": "Erdos1094L1.LemmaL1",
+  "proof": "by\n  intro n k hk hnk\n  exact Nat.sylvester n k hk hnk"
+ },
+ "formal_status": "KERNEL_FAILED",
+ "events": [
+  "((supplied proof)) TYPE.FAIL NEED[Nat.sylvester]"
+ ],
+ "axioms": [
+  "propext",
+  "sorryAx"
+ ],
+ "attempts": [
+  {
+   "tactic": "(supplied proof)",
+   "status": "UNVERIFIED",
+   "seconds": 40.0,
+   "errors": [
+    "/tmp/oracle_lean_Xvp6plet.lean:16:8: error(lean.unknownIdentifier): Unknown constant `Nat.sylvester`"
+   ],
+   "exitCode": 1,
+   "resource_limit": null
+  }
+ ],
+ "budget_history": [
+  {
+   "tier_seconds": 900.0,
+   "outcome": "KERNEL_FAILED"
+  }
+ ],
+ "kernel_result": {
+  "status": "UNVERIFIED",
+  "file": "oracle/frontier_formalizer/cable/theorems/msl_fmz-erdos1094-campaign-001-R008-L1.lean",
+  "backend": "wsl",
+  "project": "/root/erdosfire-bench/proofs",
+  "needsMathlib": true,
+  "exitCode": 1,
+  "seconds": 27.6,
+  "declarations": [
+   {
+    "declaration": "msl_fmz_erdos1094_campaign_001_R008_L1",
+    "clean": false,
+    "axioms": [
+     "propext",
+     "sorryAx"
+    ]
+   }
+  ],
+  "errors": [
+   "/tmp/oracle_lean_Xvp6plet.lean:16:8: error(lean.unknownIdentifier): Unknown constant `Nat.sylvester`"
+  ]
+ },
+ "lean_result_block": "LEAN_RESULT fmz-erdos1094-campaign-001-R008-L1\n  FORMAL_STATUS KERNEL_FAILED\n  FILE oracle/frontier_formalizer/cable/theorems/msl_fmz-erdos1094-campaign-001-R008-L1.lean\n  THEOREMS msl_fmz_erdos1094_campaign_001_R008_L1\n  BACKEND wsl\n  AXIOMS propext, sorryAx\n  TACTIC (supplied proof)\n  BUDGET 900s:KERNEL_FAILED\n  FAILURE ((supplied proof)) TYPE.FAIL NEED[Nat.sylvester]\n  LAW KERNEL_FAILED does not refute the claim \u2014 the FAILURE line names what actually broke",
+ "timestamp": "2026-09-01T20:15:41Z"
+}

@@ -1,0 +1,61 @@
+{
+ "schema": "oracle.msl.cable.v1",
+ "id": "erdos595-locally-countable-component",
+ "spec": {
+  "id": "erdos595-locally-countable-component",
+  "imports": "Mathlib",
+  "definitions": "",
+  "hypotheses": [
+   "{W : Type}",
+   "(T : SimpleGraph W)"
+  ],
+  "conclusion": "(\u2200 v : W, (T.neighborSet v).Countable) \u2192 \u2200 w : W, {x : W | T.Reachable w x}.Countable",
+  "proof": "by\n  classical\n  intro h w\n  set B : \u2115 \u2192 Set W := fun n => Nat.rec ({w} : Set W)\n    (fun _ prev => prev \u222a \u22c3 v \u2208 prev, T.neighborSet v) n with hB\n  have hBc : \u2200 n, (B n).Countable := by\n    intro n\n    induction n with\n    | zero => exact Set.countable_singleton w\n    | succ k ih => exact ih.union (ih.biUnion (fun v _ => h v))\n  have hstep : \u2200 (c x : W), T.Adj c x \u2192 (\u2203 n, c \u2208 B n) \u2192 \u2203 n, x \u2208 B n := by\n    rintro c x hcx \u27e8n, hn\u27e9\n    exact \u27e8n + 1, Or.inr (Set.mem_biUnion hn hcx)\u27e9\n  have hrtg : \u2200 x : W, Relation.ReflTransGen T.Adj w x \u2192 \u2203 n, x \u2208 B n := by\n    intro x hx\n    induction hx with\n    | refl => exact \u27e80, rfl\u27e9\n    | tail hprev hadj ih => exact hstep _ _ hadj ih\n  refine Set.Countable.mono (fun x hx => ?_) (Set.countable_iUnion hBc)\n  obtain \u27e8n, hn\u27e9 := hrtg x ((SimpleGraph.reachable_iff_reflTransGen w x).mp hx)\n  exact Set.mem_iUnion.2 \u27e8n, hn\u27e9"
+ },
+ "formal_status": "KERNEL_CHECKED",
+ "events": [],
+ "axioms": [
+  "Classical.choice",
+  "Quot.sound",
+  "propext"
+ ],
+ "attempts": [
+  {
+   "tactic": "(supplied proof)",
+   "status": "VERIFIED",
+   "seconds": 25.0,
+   "errors": [],
+   "exitCode": 0,
+   "resource_limit": null
+  }
+ ],
+ "budget_history": [
+  {
+   "tier_seconds": 120.0,
+   "outcome": "KERNEL_CHECKED"
+  }
+ ],
+ "kernel_result": {
+  "status": "VERIFIED",
+  "file": "oracle/frontier_formalizer/cable/theorems/msl_erdos595-locally-countable-component.lean",
+  "backend": "wsl",
+  "project": "/root/erdosfire-bench/proofs",
+  "needsMathlib": true,
+  "exitCode": 0,
+  "seconds": 12.7,
+  "declarations": [
+   {
+    "declaration": "msl_erdos595_locally_countable_component",
+    "clean": true,
+    "axioms": [
+     "propext",
+     "Classical.choice",
+     "Quot.sound"
+    ]
+   }
+  ],
+  "errors": []
+ },
+ "lean_result_block": "LEAN_RESULT erdos595-locally-countable-component\n  FORMAL_STATUS KERNEL_CHECKED\n  FILE oracle/frontier_formalizer/cable/theorems/msl_erdos595-locally-countable-component.lean\n  THEOREMS msl_erdos595_locally_countable_component\n  BACKEND wsl\n  AXIOMS Classical.choice, Quot.sound, propext\n  TACTIC (supplied proof)\n  BUDGET 120s:KERNEL_CHECKED\n  FAILURE NONE",
+ "timestamp": "2026-09-06T11:01:11Z"
+}

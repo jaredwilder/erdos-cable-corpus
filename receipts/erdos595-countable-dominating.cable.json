@@ -1,0 +1,71 @@
+{
+ "schema": "oracle.msl.cable.v1",
+ "id": "erdos595-countable-dominating",
+ "spec": {
+  "id": "erdos595-countable-dominating",
+  "imports": "Mathlib",
+  "definitions": "open SimpleGraph in\ndef IsUTF {V : Type} (I : Type) (G : SimpleGraph V) : Prop :=\n  \u2203 H : I \u2192 SimpleGraph V, (\u2200 i, (H i).CliqueFree 3) \u2227 G = \u2a06 i, H i\n\ntheorem partitionBound {V I : Type} (G : SimpleGraph V) (rho : V \u2192 I) :\n    (\u2200 a b d : V, rho a = rho b \u2192 rho b = rho d \u2192 G.Adj a b \u2192 G.Adj a d \u2192 G.Adj b d \u2192 False) \u2192 IsUTF (Sym2 I) G := by\n  classical\n  intro h\n  have key : \u2200 x y z : I, s(x, y) = s(x, z) \u2192 s(x, z) = s(y, z) \u2192 x = y \u2227 y = z := by\n    intro x y z h1 h2\n    rcases Sym2.eq_iff.mp h1 with \u27e8-, hyz\u27e9 | \u27e8hxz, hyx\u27e9\n    \u00b7 rcases Sym2.eq_iff.mp h2 with \u27e8hxy, -\u27e9 | \u27e8hxz', hzy\u27e9\n      \u00b7 exact \u27e8hxy, hyz\u27e9\n      \u00b7 exact \u27e8hxz'.trans hzy, hyz\u27e9\n    \u00b7 exact \u27e8hyx.symm, hyx.trans hxz\u27e9\n  refine \u27e8fun p => SimpleGraph.fromEdgeSet {e | e \u2208 G.edgeSet \u2227 Sym2.map rho e = p}, ?_, ?_\u27e9\n  \u00b7 intro p t ht\n    obtain \u27e8hcl, hcard\u27e9 := ht\n    obtain \u27e8a, b, d, hab, had, hbd, hteq\u27e9 := Finset.card_eq_three.mp hcard\n    have ha : a \u2208 t := by rw [hteq]; simp\n    have hb : b \u2208 t := by rw [hteq]; simp\n    have hd : d \u2208 t := by rw [hteq]; simp\n    have e1 := hcl ha hb hab\n    have e2 := hcl ha hd had\n    have e3 := hcl hb hd hbd\n    rw [SimpleGraph.fromEdgeSet_adj] at e1 e2 e3\n    have q1 : s(rho a, rho b) = s(rho a, rho d) := by\n      have t1 : Sym2.map rho s(a, b) = p := e1.1.2\n      have t2 : Sym2.map rho s(a, d) = p := e2.1.2\n      simpa [Sym2.map_pair_eq] using t1.trans t2.symm\n    have q2 : s(rho a, rho d) = s(rho b, rho d) := by\n      have t2 : Sym2.map rho s(a, d) = p := e2.1.2\n      have t3 : Sym2.map rho s(b, d) = p := e3.1.2\n      simpa [Sym2.map_pair_eq] using t2.trans t3.symm\n    obtain \u27e8hx, hy\u27e9 := key (rho a) (rho b) (rho d) q1 q2\n    exact h a b d hx hy e1.1.1 e2.1.1 e3.1.1\n  \u00b7 ext a b\n    rw [SimpleGraph.iSup_adj]\n    constructor\n    \u00b7 intro hab\n      exact \u27e8Sym2.map rho s(a, b), by\n        rw [SimpleGraph.fromEdgeSet_adj]\n        exact \u27e8\u27e8hab, rfl\u27e9, G.ne_of_adj hab\u27e9\u27e9\n    \u00b7 rintro \u27e8p, hp\u27e9\n      rw [SimpleGraph.fromEdgeSet_adj] at hp\n      exact hp.1.1",
+  "hypotheses": [
+   "{V : Type}",
+   "(G : SimpleGraph V)",
+   "(D : \u2115 \u2192 V)"
+  ],
+  "conclusion": "G.CliqueFree 4 \u2192 (\u2200 x : V, \u2203 k : \u2115, x = D k \u2228 G.Adj (D k) x) \u2192 IsUTF (Sym2 (\u2115 \u00d7 Bool)) G",
+  "proof": "by\n  classical\n  intro hK4 hdom\n  set n : V \u2192 \u2115 := fun x => Nat.find (hdom x) with hn\n  have hspec : \u2200 x : V, x = D (n x) \u2228 G.Adj (D (n x)) x := fun x => Nat.find_spec (hdom x)\n  set rho : V \u2192 \u2115 \u00d7 Bool := fun x => (n x, decide (x = D (n x))) with hrho\n  have key : \u2200 a b d : V, rho a = rho b \u2192 rho b = rho d \u2192\n      G.Adj a b \u2192 G.Adj a d \u2192 G.Adj b d \u2192 False := by\n    intro a b d h1 h2 g1 g2 g3\n    have hn1 : n a = n b := congrArg Prod.fst h1\n    have hn2 : n b = n d := congrArg Prod.fst h2\n    have hb1 : decide (a = D (n a)) = decide (b = D (n b)) := congrArg Prod.snd h1\n    by_cases ha : a = D (n a)\n    \u00b7 have hb : b = D (n b) := by\n        by_contra hbb\n        rw [decide_eq_true ha, decide_eq_false hbb] at hb1\n        exact Bool.noConfusion hb1\n      exact (G.ne_of_adj g1) (ha.trans (by rw [hn1] ; exact hb.symm))\n    \u00b7 have hb : \u00ac b = D (n b) := by\n        intro hbb\n        have hb2 : decide (b = D (n b)) = decide (a = D (n a)) := hb1.symm\n        rw [decide_eq_true hbb, decide_eq_false ha] at hb2\n        exact Bool.noConfusion hb2\n      have hd : \u00ac d = D (n d) := by\n        intro hdd\n        have hb3 : decide (b = D (n b)) = decide (d = D (n d)) := congrArg Prod.snd h2\n        rw [decide_eq_true hdd, decide_eq_false hb] at hb3\n        exact Bool.noConfusion hb3\n      have ea : G.Adj (D (n a)) a := (hspec a).resolve_left ha\n      have eb : G.Adj (D (n a)) b := by rw [hn1]; exact (hspec b).resolve_left hb\n      have ed : G.Adj (D (n a)) d := by rw [hn1, hn2]; exact (hspec d).resolve_left hd\n      have h3c : G.IsNClique 3 {a, b, d} :=\n        SimpleGraph.is3Clique_triple_iff.mpr \u27e8g1, g2, g3\u27e9\n      refine hK4 (insert (D (n a)) {a, b, d}) (h3c.insert ?_)\n      intro x hx\n      simp only [Finset.mem_insert, Finset.mem_singleton] at hx\n      rcases hx with rfl | rfl | rfl\n      \u00b7 exact ea\n      \u00b7 exact eb\n      \u00b7 exact ed\n  exact partitionBound G rho key"
+ },
+ "formal_status": "KERNEL_CHECKED",
+ "events": [],
+ "axioms": [
+  "Classical.choice",
+  "Quot.sound",
+  "propext"
+ ],
+ "attempts": [
+  {
+   "tactic": "(supplied proof)",
+   "status": "VERIFIED",
+   "seconds": 56.2,
+   "errors": [],
+   "exitCode": 0,
+   "resource_limit": null
+  }
+ ],
+ "budget_history": [
+  {
+   "tier_seconds": 120.0,
+   "outcome": "KERNEL_CHECKED"
+  }
+ ],
+ "kernel_result": {
+  "status": "VERIFIED",
+  "file": "oracle/frontier_formalizer/cable/theorems/msl_erdos595-countable-dominating.lean",
+  "backend": "wsl",
+  "project": "/root/erdosfire-bench/proofs",
+  "needsMathlib": true,
+  "exitCode": 0,
+  "seconds": 44.7,
+  "declarations": [
+   {
+    "declaration": "partitionBound",
+    "clean": true,
+    "axioms": [
+     "propext",
+     "Classical.choice",
+     "Quot.sound"
+    ]
+   },
+   {
+    "declaration": "msl_erdos595_countable_dominating",
+    "clean": true,
+    "axioms": [
+     "propext",
+     "Classical.choice",
+     "Quot.sound"
+    ]
+   }
+  ],
+  "errors": []
+ },
+ "lean_result_block": "LEAN_RESULT erdos595-countable-dominating\n  FORMAL_STATUS KERNEL_CHECKED\n  FILE oracle/frontier_formalizer/cable/theorems/msl_erdos595-countable-dominating.lean\n  THEOREMS msl_erdos595_countable_dominating\n  BACKEND wsl\n  AXIOMS Classical.choice, Quot.sound, propext\n  TACTIC (supplied proof)\n  BUDGET 120s:KERNEL_CHECKED\n  FAILURE NONE",
+ "timestamp": "2026-09-06T11:22:11Z"
+}

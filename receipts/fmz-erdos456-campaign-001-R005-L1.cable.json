@@ -1,0 +1,49 @@
+{
+ "schema": "oracle.msl.cable.v1",
+ "id": "fmz-erdos456-campaign-001-R005-L1",
+ "spec": {
+  "id": "fmz-erdos456-campaign-001-R005-L1",
+  "imports": "none",
+  "definitions": "def divides (a b : Nat) : Bool := b % a == 0\n\ndef isPrime (n : Nat) : Bool :=\n  n == 2 \u2228 (1 < n \u2227 (List.range (n - 2)).all (fun k => n % (k + 2) != 0))\n\ndef checkW3 : Bool :=\n  -- p_3 witness: 7 is prime\n  isPrime 7\n  -- 7 \u2261 1 (mod 3)\n  && (7 - 1) % 3 == 0\n  -- 7 is the LEAST prime \u2261 1 (mod 3): candidates 3\u00b71+1=4, 3\u00b72+1=7\n  -- 4 is composite:\n  && !isPrime 4\n  -- 7 is prime (restated for the leastness chain)\n  && isPrime 7\n  -- therefore 3 | p_3 \u2212 1 with p_3 = 7:\n  && divides 3 (7 - 1)",
+  "conclusion": "checkW3 = true",
+  "proof": "by decide"
+ },
+ "formal_status": "KERNEL_CHECKED",
+ "events": [],
+ "axioms": [],
+ "attempts": [
+  {
+   "tactic": "(supplied proof)",
+   "status": "VERIFIED",
+   "seconds": 20.2,
+   "errors": [],
+   "exitCode": 0,
+   "resource_limit": null
+  }
+ ],
+ "budget_history": [
+  {
+   "tier_seconds": 900.0,
+   "outcome": "KERNEL_CHECKED"
+  }
+ ],
+ "kernel_result": {
+  "status": "VERIFIED",
+  "file": "oracle/frontier_formalizer/cable/theorems/msl_fmz-erdos456-campaign-001-R005-L1.lean",
+  "backend": "windows",
+  "project": "C:\\Users\\jared\\Local Sites\\woocommerce-enterprise\\oracle\\math\\EG411Formal",
+  "needsMathlib": false,
+  "exitCode": 0,
+  "seconds": 20.2,
+  "declarations": [
+   {
+    "declaration": "msl_fmz_erdos456_campaign_001_R005_L1",
+    "clean": true,
+    "axioms": []
+   }
+  ],
+  "errors": []
+ },
+ "lean_result_block": "LEAN_RESULT fmz-erdos456-campaign-001-R005-L1\n  FORMAL_STATUS KERNEL_CHECKED\n  FILE oracle/frontier_formalizer/cable/theorems/msl_fmz-erdos456-campaign-001-R005-L1.lean\n  THEOREMS msl_fmz_erdos456_campaign_001_R005_L1\n  BACKEND windows\n  AXIOMS -\n  TACTIC (supplied proof)\n  BUDGET 900s:KERNEL_CHECKED\n  FAILURE NONE",
+ "timestamp": "2026-09-01T23:45:12Z"
+}

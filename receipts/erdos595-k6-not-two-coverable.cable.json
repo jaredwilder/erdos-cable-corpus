@@ -1,0 +1,64 @@
+{
+ "schema": "oracle.msl.cable.v1",
+ "id": "erdos595-k6-not-two-coverable",
+ "spec": {
+  "id": "erdos595-k6-not-two-coverable",
+  "imports": "Mathlib",
+  "definitions": "",
+  "hypotheses": [],
+  "conclusion": "\u2200 f : Fin 15 \u2192 Bool, (f 0 = f 1 \u2227 f 1 = f 5) \u2228 (f 0 = f 2 \u2227 f 2 = f 6) \u2228 (f 0 = f 3 \u2227 f 3 = f 7) \u2228 (f 0 = f 4 \u2227 f 4 = f 8) \u2228 (f 1 = f 2 \u2227 f 2 = f 9) \u2228 (f 1 = f 3 \u2227 f 3 = f 10) \u2228 (f 1 = f 4 \u2227 f 4 = f 11) \u2228 (f 2 = f 3 \u2227 f 3 = f 12) \u2228 (f 2 = f 4 \u2227 f 4 = f 13) \u2228 (f 3 = f 4 \u2227 f 4 = f 14) \u2228 (f 5 = f 6 \u2227 f 6 = f 9) \u2228 (f 5 = f 7 \u2227 f 7 = f 10) \u2228 (f 5 = f 8 \u2227 f 8 = f 11) \u2228 (f 6 = f 7 \u2227 f 7 = f 12) \u2228 (f 6 = f 8 \u2227 f 8 = f 13) \u2228 (f 7 = f 8 \u2227 f 8 = f 14) \u2228 (f 9 = f 10 \u2227 f 10 = f 12) \u2228 (f 9 = f 11 \u2227 f 11 = f 13) \u2228 (f 10 = f 11 \u2227 f 11 = f 14) \u2228 (f 12 = f 13 \u2227 f 13 = f 14)",
+  "proof": "by decide",
+  "set_options": [
+   "set_option maxRecDepth 200000",
+   "set_option maxHeartbeats 4000000"
+  ]
+ },
+ "formal_status": "KERNEL_FAILED",
+ "events": [
+  "RAW[exit 137 with no captured error line]"
+ ],
+ "axioms": [],
+ "attempts": [
+  {
+   "tactic": "(supplied proof)",
+   "status": "UNVERIFIED",
+   "seconds": 493.4,
+   "errors": [],
+   "exitCode": 137,
+   "resource_limit": "OS-level process abort: killed by SIGKILL, usually the OOM killer (exit 137) -- the ENVIRONMENT stopped the run, the kernel returned no verdict"
+  }
+ ],
+ "budget_history": [
+  {
+   "tier_seconds": 120.0,
+   "outcome": "UNDECIDED_RESOURCE[wall-clock timeout (exit 124)]"
+  },
+  {
+   "tier_seconds": 600.0,
+   "outcome": "UNDECIDED_RESOURCE[wall-clock timeout (exit 124)]"
+  },
+  {
+   "tier_seconds": 1800.0,
+   "outcome": "UNDECIDED_RESOURCE[OS-level process abort: killed by SIGKILL, usually the OOM killer (exit 137) -- the ENVIRONMENT stopped the run, the kernel returned no verdict]"
+  }
+ ],
+ "kernel_result": {
+  "status": "UNVERIFIED",
+  "file": "oracle/frontier_formalizer/cable/theorems/msl_erdos595-k6-not-two-coverable.lean",
+  "backend": "wsl",
+  "project": "/root/erdosfire-bench/proofs",
+  "needsMathlib": true,
+  "exitCode": 137,
+  "seconds": 492.8,
+  "declarations": [
+   {
+    "declaration": "msl_erdos595_k6_not_two_coverable",
+    "clean": false,
+    "axioms": []
+   }
+  ],
+  "errors": []
+ },
+ "lean_result_block": "LEAN_RESULT erdos595-k6-not-two-coverable\n  FORMAL_STATUS KERNEL_FAILED\n  FILE oracle/frontier_formalizer/cable/theorems/msl_erdos595-k6-not-two-coverable.lean\n  THEOREMS msl_erdos595_k6_not_two_coverable\n  BACKEND wsl\n  AXIOMS -\n  TACTIC (supplied proof)\n  BUDGET 120s:UNDECIDED_RESOURCE[wall-clock timeout (exit 124)] -> 600s:UNDECIDED_RESOURCE[wall-clock timeout (exit 124)] -> 1800s:UNDECIDED_RESOURCE[OS-level process abort: killed by SIGKILL, usually the OOM killer (exit 137) -- the ENVIRONMENT stopped the run, the kernel returned no verdict]\n  FAILURE RAW[exit 137 with no captured error line]\n  LAW KERNEL_FAILED does not refute the claim \u2014 the FAILURE line names what actually broke\n  LAW BUDGET_EXHAUSTED is an UNDECIDED question, not a failed proof \u2014 the machine stopped, the mathematics did not answer",
+ "timestamp": "2026-09-06T12:56:42Z"
+}

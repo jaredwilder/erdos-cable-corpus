@@ -1,0 +1,83 @@
+{
+ "schema": "oracle.msl.cable.v1",
+ "id": "fmz-erdos1049-campaign-001-R001-L1",
+ "spec": {
+  "id": "fmz-erdos1049-campaign-001-R001-L1",
+  "imports": "FormalConjecturesUtil",
+  "definitions": "namespace Erdos1049L1Close\nopen ArithmeticFunction Filter\n\nlemma lambert_convergent_core (t : \u211d) (ht : 1 < |t|) :\n    \u2211' n : \u2115+, 1 / (t ^ (n : \u2115) - 1) =\n    \u2211' n : \u2115+, ((n : \u2115).divisors.card : \u211d) / (t ^ (n : \u2115)) := by\n  have ht0 : t \u2260 0 := fun h => by subst h; simp at ht; linarith [abs_nonneg (0:\u211d)]\n  have htn : \u2200 n : \u2115, t ^ n \u2260 0 := fun n => pow_ne_zero n ht0\n  set r : \u211d := t\u207b\u00b9 with hr_def\n  have hr_norm : \u2016r\u2016 < 1 := by\n    rw [Real.norm_eq_abs, hr_def, abs_inv]; exact inv_lt_one_of_one_lt\u2080 ht\n  have h := tsum_pow_div_one_sub_eq_tsum_sigma (k := 0) hr_norm\n  convert h using 1\n  \u00b7 apply tsum_congr; intro n\n    have hp : t ^ (n : \u2115) \u2260 0 := htn n\n    have hrn : r ^ (n : \u2115) = (t ^ (n : \u2115))\u207b\u00b9 := by rw [hr_def, inv_pow]\n    have hne1 : t ^ (n : \u2115) - 1 \u2260 0 := by\n      intro hc\n      have ht1 : t ^ (n : \u2115) = 1 := by linarith [sub_eq_zero.mp hc]\n      have habs1 : |t| ^ (n : \u2115) = 1 := by rw [\u2190 abs_pow, ht1]; simp\n      have hlt : 1 < |t| ^ (n : \u2115) := one_lt_pow\u2080 ht n.pos.ne'\n      linarith\n    rw [hrn]; field_simp\n  \u00b7 apply tsum_congr; intro n\n    have hp : t ^ (n : \u2115) \u2260 0 := htn n\n    have hrn : r ^ (n : \u2115) = (t ^ (n : \u2115))\u207b\u00b9 := by rw [hr_def, inv_pow]\n    rw [hrn, ArithmeticFunction.sigma_zero_apply]; field_simp\n\nend Erdos1049L1Close",
+  "conclusion": "namespace Erdos1049L1Close\nopen ArithmeticFunction Filter\n\n/-- LEMMA L1, full scope: for every rational t > 1, the Lambert \u03c4-identity\n    \u03a3 1/(t^n \u2212 1) = \u03a3 \u03c4(n)/t^n holds exactly, in the frozen problem's encoding. -/\ntheorem erdos1049_L1_full (t : \u211a) (ht : 1 < t) :\n    \u2211' n : \u2115+, 1 / ((t : \u211d) ^ (n : \u2115) - 1)\n      = \u2211' n : \u2115+, ((n : \u2115).divisors.card : \u211d) / (t : \u211d) ^ (n : \u2115) := by\n  have hpos : (0 : \u211d) < (t : \u211d) := by exact_mod_cast ht\n  have habs : |(t : \u211d)| = (t : \u211d) := abs_of_pos hpos\n  exact Erdos1049L1Close.lambert_convergent_core (t : \u211d) (by rw [habs]; exact_mod_cast ht)\n\nend Erdos1049L1Close",
+  "proof": "by\n  have hpos : (0 : \u211d) < (t : \u211d) := by exact_mod_cast ht\n  have habs : |(t : \u211d)| = (t : \u211d) := abs_of_pos hpos\n  exact Erdos1049L1Close.lambert_convergent_core (t : \u211d) (by rw [habs]; exact_mod_cast ht)"
+ },
+ "formal_status": "KERNEL_FAILED",
+ "events": [
+  "((supplied proof)) RAW[tmpi8jhvok1.lean:4:5: error: unknown namespace `ArithmeticFunction`]",
+  "((supplied proof)) SYNTAX.FAIL[tmpi8jhvok1.lean:6:0: error: unexpected identifier; expected command]",
+  "((supplied proof)) TYPE.FAIL NEED[lambert_convergent_core]",
+  "((supplied proof)) SYNTAX.FAIL[tmpi8jhvok1.lean:34:49: error: unexpected token 'namespace'; expected term]",
+  "((supplied proof)) RAW[tmpi8jhvok1.lean:35:5: error: unknown namespace `ArithmeticFunction`]",
+  "((supplied proof)) SYNTAX.FAIL[tmpi8jhvok1.lean:40:4: error: expected token]",
+  "((supplied proof)) SYNTAX.FAIL[tmpi8jhvok1.lean:48:21: error: unexpected token ':='; expected command]"
+ ],
+ "axioms": [],
+ "attempts": [
+  {
+   "tactic": "(supplied proof)",
+   "status": "UNVERIFIED",
+   "seconds": 6.4,
+   "errors": [
+    "tmpi8jhvok1.lean:4:5: error: unknown namespace `ArithmeticFunction`",
+    "tmpi8jhvok1.lean:6:0: error: unexpected identifier; expected command",
+    "tmpi8jhvok1.lean:31:14: error(lean.unknownIdentifier): Unknown constant `lambert_convergent_core`",
+    "tmpi8jhvok1.lean:34:49: error: unexpected token 'namespace'; expected term",
+    "tmpi8jhvok1.lean:35:5: error: unknown namespace `ArithmeticFunction`",
+    "tmpi8jhvok1.lean:40:4: error: expected token",
+    "tmpi8jhvok1.lean:48:21: error: unexpected token ':='; expected command"
+   ],
+   "exitCode": 1,
+   "resource_limit": null
+  }
+ ],
+ "budget_history": [
+  {
+   "tier_seconds": 900.0,
+   "outcome": "KERNEL_FAILED"
+  }
+ ],
+ "kernel_result": {
+  "status": "UNVERIFIED",
+  "file": "oracle/frontier_formalizer/cable/theorems/msl_fmz-erdos1049-campaign-001-R001-L1.lean",
+  "backend": "windows",
+  "project": "C:\\Users\\jared\\Local Sites\\woocommerce-enterprise\\oracle\\math\\EG411Formal",
+  "needsMathlib": false,
+  "exitCode": 1,
+  "seconds": 6.4,
+  "declarations": [
+   {
+    "declaration": "lambert_convergent_core",
+    "clean": false,
+    "axioms": []
+   },
+   {
+    "declaration": "msl_fmz_erdos1049_campaign_001_R001_L1",
+    "clean": true,
+    "axioms": []
+   },
+   {
+    "declaration": "erdos1049_L1_full",
+    "clean": true,
+    "axioms": []
+   }
+  ],
+  "errors": [
+   "tmpi8jhvok1.lean:4:5: error: unknown namespace `ArithmeticFunction`",
+   "tmpi8jhvok1.lean:6:0: error: unexpected identifier; expected command",
+   "tmpi8jhvok1.lean:31:14: error(lean.unknownIdentifier): Unknown constant `lambert_convergent_core`",
+   "tmpi8jhvok1.lean:34:49: error: unexpected token 'namespace'; expected term",
+   "tmpi8jhvok1.lean:35:5: error: unknown namespace `ArithmeticFunction`",
+   "tmpi8jhvok1.lean:40:4: error: expected token",
+   "tmpi8jhvok1.lean:48:21: error: unexpected token ':='; expected command"
+  ]
+ },
+ "lean_result_block": "LEAN_RESULT fmz-erdos1049-campaign-001-R001-L1\n  FORMAL_STATUS KERNEL_FAILED\n  FILE oracle/frontier_formalizer/cable/theorems/msl_fmz-erdos1049-campaign-001-R001-L1.lean\n  THEOREMS msl_fmz_erdos1049_campaign_001_R001_L1\n  BACKEND windows\n  AXIOMS -\n  TACTIC (supplied proof)\n  BUDGET 900s:KERNEL_FAILED\n  FAILURE ((supplied proof)) RAW[tmpi8jhvok1.lean:4:5: error: unknown namespace `ArithmeticFunction`]; ((supplied proof)) SYNTAX.FAIL[tmpi8jhvok1.lean:6:0: error: unexpected identifier; expected command]; ((supplied proof)) TYPE.FAIL NEED[lambert_convergent_core]; ((supplied proof)) SYNTAX.FAIL[tmpi8jhvok1.lean:34:49: error: unexpected token 'namespace'; expected term]; ((supplied proof)) RAW[tmpi8jhvok1.lean:35:5: error: unknown namespace `ArithmeticFunction`]; ((supplied proof)) SYNTAX.FAIL[tmpi8jhvok1.lean:40:4: error: expected token]; ((supplied proof)) SYNTAX.FAIL[tmpi8jhvok1.lean:48:21: error: unexpected token ':='; expected command]\n  LAW KERNEL_FAILED does not refute the claim \u2014 the FAILURE line names what actually broke",
+ "timestamp": "2026-09-01T20:54:05Z"
+}

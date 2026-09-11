@@ -1,0 +1,49 @@
+{
+ "schema": "oracle.msl.cable.v1",
+ "id": "fmz-erdos726-campaign-001-R005-L1",
+ "spec": {
+  "id": "fmz-erdos726-campaign-001-R005-L1",
+  "imports": "none",
+  "definitions": "def ind1 (n p : Nat) : Bool := let r := n % p; r > p / 2 && r < p\n\ndef ind2 (n p : Nat) : Bool := (2 * n / p) % 2 == 1\n\n/-- The termwise indicator identity of L1, checked for every n <= N and every\n    odd prime p <= n. For odd p, n % p = p/2 is impossible (p/2 non-integer),\n    and with r := n % p: ind2 holds iff floor(2r/p) is odd iff 2r > p iff\n    r > p/2 iff ind1 holds; both indicators are unchanged by subtracting the\n    even multiple 2*floor(n/p)*p from n. p = 2 is the sole boundary case\n    (n % 2 = 1 = p/2) and is deliberately excluded. -/\ndef check (N : Nat) : Bool :=\n  (List.range (N + 1)).all fun n =>\n    ((List.range (n + 1)).filter (fun p => p > 2 && p % 2 == 1)).all fun p =>\n      ind1 n p == ind2 n p",
+  "conclusion": "check 120 = true",
+  "proof": "by decide"
+ },
+ "formal_status": "KERNEL_CHECKED",
+ "events": [],
+ "axioms": [],
+ "attempts": [
+  {
+   "tactic": "(supplied proof)",
+   "status": "VERIFIED",
+   "seconds": 5.2,
+   "errors": [],
+   "exitCode": 0,
+   "resource_limit": null
+  }
+ ],
+ "budget_history": [
+  {
+   "tier_seconds": 900.0,
+   "outcome": "KERNEL_CHECKED"
+  }
+ ],
+ "kernel_result": {
+  "status": "VERIFIED",
+  "file": "oracle/frontier_formalizer/cable/theorems/msl_fmz-erdos726-campaign-001-R005-L1.lean",
+  "backend": "windows",
+  "project": "C:\\Users\\jared\\Local Sites\\woocommerce-enterprise\\oracle\\math\\EG411Formal",
+  "needsMathlib": false,
+  "exitCode": 0,
+  "seconds": 5.2,
+  "declarations": [
+   {
+    "declaration": "msl_fmz_erdos726_campaign_001_R005_L1",
+    "clean": true,
+    "axioms": []
+   }
+  ],
+  "errors": []
+ },
+ "lean_result_block": "LEAN_RESULT fmz-erdos726-campaign-001-R005-L1\n  FORMAL_STATUS KERNEL_CHECKED\n  FILE oracle/frontier_formalizer/cable/theorems/msl_fmz-erdos726-campaign-001-R005-L1.lean\n  THEOREMS msl_fmz_erdos726_campaign_001_R005_L1\n  BACKEND windows\n  AXIOMS -\n  TACTIC (supplied proof)\n  BUDGET 900s:KERNEL_CHECKED\n  FAILURE NONE",
+ "timestamp": "2026-09-01T21:35:02Z"
+}

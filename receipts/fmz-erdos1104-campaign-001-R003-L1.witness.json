@@ -1,0 +1,104 @@
+{
+ "schema": "oracle.msl.closer.witness.v1",
+ "id": "fmz-erdos1104-campaign-001-R003-L1",
+ "pipeline": "WITNESS_FINITE",
+ "witness": {
+  "description": "Grötzsch graph (Mycielskian of C5): 11 vertices, triangle-free, alpha=5, chi=4; certifies the counting mechanism chi >= ceil(N/alpha) driving the lower-half reduction of L1.",
+  "num_vertices": 11,
+  "edges": [
+   [
+    0,
+    1
+   ],
+   [
+    1,
+    2
+   ],
+   [
+    2,
+    3
+   ],
+   [
+    3,
+    4
+   ],
+   [
+    4,
+    0
+   ],
+   [
+    5,
+    1
+   ],
+   [
+    5,
+    4
+   ],
+   [
+    6,
+    0
+   ],
+   [
+    6,
+    2
+   ],
+   [
+    7,
+    1
+   ],
+   [
+    7,
+    3
+   ],
+   [
+    8,
+    2
+   ],
+   [
+    8,
+    4
+   ],
+   [
+    9,
+    0
+   ],
+   [
+    9,
+    3
+   ],
+   [
+    10,
+    5
+   ],
+   [
+    10,
+    6
+   ],
+   [
+    10,
+    7
+   ],
+   [
+    10,
+    8
+   ],
+   [
+    10,
+    9
+   ]
+  ]
+ },
+ "verifier_sha256": "3681aaa9cdffec699f89cb92ad810bdedcc51e2cc4ec46330e8911f328e239ce",
+ "verifier_source": "# Standalone, stdlib-zero: no imports, no I/O, no floats. Witness embedded as a literal.\n# Result: raise SystemExit(0) iff every property is exactly verified; SystemExit(1) otherwise.\n\ndef verify():\n    w = {\n        \"num_vertices\": 11,\n        \"edges\": [[0,1],[1,2],[2,3],[3,4],[4,0],[5,1],[5,4],[6,0],[6,2],[7,1],[7,3],\n                  [8,2],[8,4],[9,0],[9,3],[10,5],[10,6],[10,7],[10,8],[10,9]]\n    }\n    n = w[\"num_vertices\"]\n    if not isinstance(n, int) or n <= 0:\n        return False\n    E = set()\n    for pair in w[\"edges\"]:\n        a, b = pair\n        if not (isinstance(a, int) and isinstance(b, int)):\n            return False\n        if not (0 <= a < n and 0 <= b < n) or a == b:\n            return False\n        E.add((min(a, b), max(a, b)))\n    if len(w[\"edges\"]) != len(E):\n        return False\n    adj = [set() for _ in range(n)]\n    for a, b in E:\n        adj[a].add(b)\n        adj[b].add(a)\n\n    # 1. triangle-freeness, exact\n    for a in range(n):\n        for b in adj[a]:\n            if b > a:\n                for c in adj[b]:\n                    if c in adj[a]:\n                        return False\n\n    # 2. independence number, exact exhaustive search\n    def is_indep(s):\n        for i in range(len(s)):\n            for j in range(i + 1, len(s)):\n                if s[j] in adj[s[i]]:\n                    return False\n        return True\n\n    alpha = 0\n    for r in range(n, 0, -1):\n        found = False\n        # combinations generated index-wise, no itertools\n        idx = list(range(r))\n        while True:\n            if is_indep([idx[i] for i in range(r)]):\n                found = True\n                break\n            i = r - 1\n            while i >= 0 and idx[i] == n - r + i:\n                i -= 1\n            if i < 0:\n                break\n            idx[i] += 1\n            for j in range(i + 1, r):\n                idx[j] = idx[j - 1] + 1\n        if found:\n            alpha = r\n            break\n    if alpha != 5:\n        return False\n\n    # 3. chromatic number, exact backtracking, no recursion depth tricks\n    def colorable(k):\n        colors = [0] * n\n        stack = []\n        i = 0\n        while True:\n            if i == n:\n                return True\n            used = set()\n            for j in adj[i]:\n                if j < i:\n                    used.add(colors[j])\n            placed = False\n            c = colors[i]\n            while c < k:\n                if c not in used:\n                    colors[i] = c\n                    stack.append(c)\n                    placed = True\n                    break\n                c += 1\n            if placed:\n                i += 1\n            else:\n                colors[i] = 0\n                if not stack:\n                    return False\n                i -= 1\n                used_prev = set()\n                for j in adj[i]:\n                    if j < i:\n                        used_prev.add(colors[j])\n                c = stack.pop() + 1\n                placed = False\n                while c < k:\n                    if c not in used_prev:\n                        colors[i] = c\n                        stack.append(c)\n                        placed = True\n                        break\n                    c += 1\n                if not placed:\n                    colors[i] = 0\n                    if not stack:\n                        return False\n                    i -= 1\n                    # continue unwinding at top of loop\n                    # (colors[i] currently stale; force retry path)\n                    colors[i] = k  # sentinel to force the unplaced branch next pass\n                    continue\n        # unreachable\n\n    chi = None\n    for k in range(1, n + 1):\n        if colorable(k):\n            chi = k\n            break\n    if chi != 4:\n        return False\n\n    # 4. counting inequality chi >= ceil(N/alpha), exact integer arithmetic\n    if chi * alpha < n:\n        return False\n    if chi < -(-n // alpha):\n        return False\n    return True\n\nif verify():\n    raise SystemExit(0)\nelse:\n    raise SystemExit(1)\n",
+ "run": {
+  "passed": false,
+  "status": "VERIFIER_TIMEOUT",
+  "seconds": 300,
+  "stdout": "",
+  "code_sha256": "3681aaa9cdffec699f89cb92ad810bdedcc51e2cc4ec46330e8911f328e239ce",
+  "detail": "verifier exceeded 300s — a verifier that does not terminate has not verified anything"
+ },
+ "claim": "EXIT 0 (PASS) certifies the finite, fully checkable core of L1's reduction mechanism: the embedded Grötzsch graph is exactly verified triangle-free with independence number 5 and chromatic number 4, and satisfies the counting inequality chi >= ceil(N/alpha) (chi*alpha >= N) that converts 'triangle-free graph with small independence number' into 'large chromatic number' in the Kim lower-half argument. covers=fragment: the eventually-everywhere statement ∀ᶠ n atTop still requires the Kim 1995 CITATION_ANCHORED axiom and is not closed by this artifact.",
+ "law": "Wang 7.2: an exact finite object plus a proved reduction is a CERTIFICATE. The reduction is the `claim` and is a human's to audit; the object and the verifier run are the machine's part.",
+ "timestamp": "2026-09-01T20:04:20Z"
+}

@@ -1,0 +1,162 @@
+{
+ "schema": "oracle.msl.closer.witness.v1",
+ "id": "fmz-erdos1085-campaign-001-R005-L1",
+ "pipeline": "WITNESS_FINITE",
+ "witness": {
+  "description": "Extremal configurations in R^1 achieving f_1(n) = n-1 for n = 1..12: points {0,1,...,n-1} on the line, exact integer coordinates. Verifier is stdlib-free, uses only builtins, fail-closed via assertions, exits 0 silently iff every property holds exactly.",
+  "cases": [
+   {
+    "n": 1,
+    "points": [
+     0
+    ]
+   },
+   {
+    "n": 2,
+    "points": [
+     0,
+     1
+    ]
+   },
+   {
+    "n": 3,
+    "points": [
+     0,
+     1,
+     2
+    ]
+   },
+   {
+    "n": 4,
+    "points": [
+     0,
+     1,
+     2,
+     3
+    ]
+   },
+   {
+    "n": 5,
+    "points": [
+     0,
+     1,
+     2,
+     3,
+     4
+    ]
+   },
+   {
+    "n": 6,
+    "points": [
+     0,
+     1,
+     2,
+     3,
+     4,
+     5
+    ]
+   },
+   {
+    "n": 7,
+    "points": [
+     0,
+     1,
+     2,
+     3,
+     4,
+     5,
+     6
+    ]
+   },
+   {
+    "n": 8,
+    "points": [
+     0,
+     1,
+     2,
+     3,
+     4,
+     5,
+     6,
+     7
+    ]
+   },
+   {
+    "n": 9,
+    "points": [
+     0,
+     1,
+     2,
+     3,
+     4,
+     5,
+     6,
+     7,
+     8
+    ]
+   },
+   {
+    "n": 10,
+    "points": [
+     0,
+     1,
+     2,
+     3,
+     4,
+     5,
+     6,
+     7,
+     8,
+     9
+    ]
+   },
+   {
+    "n": 11,
+    "points": [
+     0,
+     1,
+     2,
+     3,
+     4,
+     5,
+     6,
+     7,
+     8,
+     9,
+     10
+    ]
+   },
+   {
+    "n": 12,
+    "points": [
+     0,
+     1,
+     2,
+     3,
+     4,
+     5,
+     6,
+     7,
+     8,
+     9,
+     10,
+     11
+    ]
+   }
+  ]
+ },
+ "verifier_sha256": "97d2fe6a4e4ef85091537d15619bdc8b7864abe5b2ab4d79991dbdd58663d5d6",
+ "verifier_source": "# standalone; builtins only; no imports, no IO, fail-closed via assert\n\ndef verify(witness):\n    cases = witness[\"cases\"]\n    assert len(cases) == 12\n    seen = []\n    for c in cases:\n        n = c[\"n\"]\n        assert isinstance(n, int) and not isinstance(n, bool)\n        assert 1 <= n <= 12\n        assert n not in seen\n        seen.append(n)\n        pts = c[\"points\"]\n        assert len(pts) == n\n        for p in pts:\n            assert isinstance(p, int) and not isinstance(p, bool)\n        assert len(set(pts)) == n\n        cnt = 0\n        for i in range(n):\n            for j in range(i + 1, n):\n                d = pts[i] - pts[j]\n                if d * d == 1:\n                    cnt += 1\n        assert cnt == n - 1\n    assert sorted(seen) == list(range(1, 13))\n    return True\n\nverify({\"cases\": [\n  {\"n\": 1,  \"points\": [0]},\n  {\"n\": 2,  \"points\": [0, 1]},\n  {\"n\": 3,  \"points\": [0, 1, 2]},\n  {\"n\": 4,  \"points\": [0, 1, 2, 3]},\n  {\"n\": 5,  \"points\": [0, 1, 2, 3, 4]},\n  {\"n\": 6,  \"points\": [0, 1, 2, 3, 4, 5]},\n  {\"n\": 7,  \"points\": [0, 1, 2, 3, 4, 5, 6]},\n  {\"n\": 8,  \"points\": [0, 1, 2, 3, 4, 5, 6, 7]},\n  {\"n\": 9,  \"points\": [0, 1, 2, 3, 4, 5, 6, 7, 8]},\n  {\"n\": 10, \"points\": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]},\n  {\"n\": 11, \"points\": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10]},\n  {\"n\": 12, \"points\": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11]}\n]})\n",
+ "run": {
+  "passed": true,
+  "status": "VERIFIER_PASS",
+  "exit_code": 0,
+  "stdout": "PASS",
+  "detail": "",
+  "seconds": 0.1,
+  "code_sha256": "97d2fe6a4e4ef85091537d15619bdc8b7864abe5b2ab4d79991dbdd58663d5d6"
+ },
+ "claim": "FRAGMENT certificate (covers=fragment): for each n in {1,...,12} an explicit n-point configuration in R^1 with exactly n-1 unit-distance pairs is verified by exact integer arithmetic, establishing the d=1 achievability core of L1 (f_1(n) >= n-1 on this finite range). The matching upper bound for all n, and L1's meta-claim that d>=2 remains uncovered by the standing record, are not machine-certified here.",
+ "law": "Wang 7.2: an exact finite object plus a proved reduction is a CERTIFICATE. The reduction is the `claim` and is a human's to audit; the object and the verifier run are the machine's part.",
+ "timestamp": "2026-09-01T21:42:52Z"
+}

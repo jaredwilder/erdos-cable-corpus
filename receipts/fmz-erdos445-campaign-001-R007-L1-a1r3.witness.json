@@ -1,0 +1,57 @@
+{
+ "schema": "oracle.msl.closer.witness.v1",
+ "id": "fmz-erdos445-campaign-001-R007-L1-a1r3",
+ "pipeline": "WITNESS_FINITE",
+ "witness": {
+  "primes": [
+   3,
+   5,
+   7,
+   11,
+   13,
+   17,
+   19,
+   23,
+   29,
+   31,
+   37,
+   41,
+   43
+  ],
+  "c_values": [
+   [
+    3,
+    5
+   ],
+   [
+    3,
+    4
+   ],
+   [
+    1,
+    1
+   ],
+   [
+    3,
+    2
+   ]
+  ],
+  "n_range": "0 <= n <= p + ceil(p^c) inclusive, per (p, c)",
+  "property": "for each (p, c, n): exists integers a, b with n < a < p^c, n < b < p^c and (a*b) mod p == 1",
+  "expected": "verify(witness) returns True with zero counterexamples; raises on any failure"
+ },
+ "verifier_sha256": "3c0bf26297446330e1af1f21f539b413d0b97c0cbf9c1197f62077186be9fe3c",
+ "verifier_source": "def ceil_root(p, a, b):\n    lo, hi = 0, 1\n    while pow(hi, b) < pow(p, a):\n        hi *= 2\n    while lo < hi:\n        mid = (lo + hi) // 2\n        if pow(mid, b) >= pow(p, a):\n            hi = mid\n        else:\n            lo = mid + 1\n    return lo\n\ndef is_prime(m):\n    if m < 2:\n        return False\n    i = 2\n    while i * i <= m:\n        if m % i == 0:\n            return False\n        i += 1\n    return True\n\ndef verify(witness):\n    primes = witness['primes']\n    for q in primes:\n        if not is_prime(q):\n            raise ValueError(('not prime', q))\n    for (a, b) in witness['c_values']:\n        if 2 * a <= b:\n            raise ValueError(('c must exceed 1/2', a, b))\n    for p in primes:\n        for (a, b) in witness['c_values']:\n            M = ceil_root(p, a, b)\n            if not (pow(M - 1, b) < pow(p, a) <= pow(M, b)):\n                raise ValueError(('ceil check failed', p, a, b))\n            for n in range(0, p + M + 1):\n                lo = n + 1\n                hi = n + M\n                found = False\n                for x in range(lo, hi):\n                    if x % p == 0:\n                        continue\n                    for y in range(lo, hi):\n                        if (x * y) % p == 1:\n                            found = True\n                            break\n                    if found:\n                        break\n                if not found:\n                    raise ValueError(('counterexample', p, a, b, n))\n    return True\n",
+ "run": {
+  "passed": false,
+  "status": "VERIFIER_FAIL",
+  "exit_code": 1,
+  "stdout": "",
+  "detail": "ValueError: ('counterexample', 3, 3, 5, 2)",
+  "seconds": 0.1,
+  "code_sha256": "3c0bf26297446330e1af1f21f539b413d0b97c0cbf9c1197f62077186be9fe3c"
+ },
+ "claim": "Exact fail-closed integer verification: verify(witness) exhaustively checks, with exact integer arithmetic only (no floats, no I/O, no network, no filesystem), that for every prime 3<=p<=43, every c in {3/5,3/4,1,3/2}, and every 0<=n<=p+ceil(p^c), there exist a,b in the strict interval (n, n+p^c) with ab≡1 mod p. Any failure raises; True is returned only on zero counterexamples — the full enumerated scope of L1. Scope: finite enumerated domain only; general-p scaling remains analytic.",
+ "law": "Wang 7.2: an exact finite object plus a proved reduction is a CERTIFICATE. The reduction is the `claim` and is a human's to audit; the object and the verifier run are the machine's part.",
+ "timestamp": "2026-09-02T02:06:12Z"
+}

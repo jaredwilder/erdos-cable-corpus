@@ -1,0 +1,65 @@
+{
+ "schema": "oracle.msl.cable.v1",
+ "id": "fmz-erdos701-campaign-001-R003-L1",
+ "spec": {
+  "id": "fmz-erdos701-campaign-001-R003-L1",
+  "imports": "none",
+  "definitions": "-- Repaired fragment: scope narrowed to n = 2 (decide-feasible). Same lemma content on that scope: for every hereditary family F on a 2-element ground set there is x with every all-pairs intersecting subfamily F' (Set.Intersecting convention, so any subfamily containing the empty set is excluded) satisfying |F'| <= |{A in F : x in A}|. Pure Nat/Bool/List; total; exact.\n\ndef N : Nat := 2\n\ndef Power : Nat -> List (List Nat)\n  | 0 => [[]]\n  | n+1 =>\n      let p := Power n\n      p ++ (p.map (fun s => n :: s))\n\ndef subsetOf (a b : List Nat) : Bool := a.all (fun x => b.contains x)\n\ndef downClosed (fam : List (List Nat)) : Bool :=\n  fam.all (fun a => (Power N).all (fun b => if subsetOf b a then fam.contains b else true))\n\ndef intersects (a b : List Nat) : Bool :=\n  a.any (fun x => b.contains x)\n\ndef allPairsIntersecting (sub : List (List Nat)) : Bool :=\n  sub.all (fun a => sub.all (fun b => intersects a b))\n\ndef starSize (fam : List (List Nat)) (x : Nat) : Nat :=\n  (fam.filter (fun a => a.contains x)).length\n\ndef subfamilies (fam : List (List Nat)) : List (List (List Nat)) :=\n  (Power fam.length).map (fun idx => idx.filterMap (fun i => fam.get? i))\n\ndef maxIntersecting (fam : List (List Nat)) : Nat :=\n  (subfamilies fam).filter allPairsIntersecting\n    |>.map (fun s => s.length)\n    |>.foldl Nat.max 0\n\ndef checkN : Bool :=\n  let allSubsets := Power N\n  let hereditaryFams := (Power allSubsets.length)\n      |>.map (fun idx => idx.filterMap (fun i => allSubsets.get? i))\n      |>.filter downClosed\n  hereditaryFams.all (fun fam =>\n    (List.range N).any (fun x => maxIntersecting fam <= starSize fam x))",
+  "conclusion": "checkN = true",
+  "proof": "by decide"
+ },
+ "formal_status": "KERNEL_FAILED",
+ "events": [
+  "((supplied proof)) RAW[tmp0_2citsq.lean:28:65: error(lean.invalidField): Invalid field `get?`: The environment does not contain `List.get?`, so it is not possible to project the field]",
+  "((supplied proof)) RAW[tmp0_2citsq.lean:38:60: error(lean.invalidField): Invalid field `get?`: The environment does not contain `List.get?`, so it is not possible to project the field]",
+  "((supplied proof)) RAW[tmp0_2citsq.lean:43:69: error: Tactic `decide` failed for proposition]"
+ ],
+ "axioms": [
+  "sorryAx"
+ ],
+ "attempts": [
+  {
+   "tactic": "(supplied proof)",
+   "status": "UNVERIFIED",
+   "seconds": 2.0,
+   "errors": [
+    "tmp0_2citsq.lean:28:65: error(lean.invalidField): Invalid field `get?`: The environment does not contain `List.get?`, so it is not possible to project the field `get?` from an expression",
+    "tmp0_2citsq.lean:38:60: error(lean.invalidField): Invalid field `get?`: The environment does not contain `List.get?`, so it is not possible to project the field `get?` from an expression",
+    "tmp0_2citsq.lean:43:69: error: Tactic `decide` failed for proposition"
+   ],
+   "exitCode": 1,
+   "resource_limit": null
+  }
+ ],
+ "budget_history": [
+  {
+   "tier_seconds": 900.0,
+   "outcome": "KERNEL_FAILED"
+  }
+ ],
+ "kernel_result": {
+  "status": "UNVERIFIED",
+  "file": "oracle/frontier_formalizer/cable/theorems/msl_fmz-erdos701-campaign-001-R003-L1.lean",
+  "backend": "windows",
+  "project": "C:\\Users\\jared\\Local Sites\\woocommerce-enterprise\\oracle\\math\\EG411Formal",
+  "needsMathlib": false,
+  "exitCode": 1,
+  "seconds": 2.0,
+  "declarations": [
+   {
+    "declaration": "msl_fmz_erdos701_campaign_001_R003_L1",
+    "clean": false,
+    "axioms": [
+     "sorryAx"
+    ]
+   }
+  ],
+  "errors": [
+   "tmp0_2citsq.lean:28:65: error(lean.invalidField): Invalid field `get?`: The environment does not contain `List.get?`, so it is not possible to project the field `get?` from an expression",
+   "tmp0_2citsq.lean:38:60: error(lean.invalidField): Invalid field `get?`: The environment does not contain `List.get?`, so it is not possible to project the field `get?` from an expression",
+   "tmp0_2citsq.lean:43:69: error: Tactic `decide` failed for proposition"
+  ]
+ },
+ "lean_result_block": "LEAN_RESULT fmz-erdos701-campaign-001-R003-L1\n  FORMAL_STATUS KERNEL_FAILED\n  FILE oracle/frontier_formalizer/cable/theorems/msl_fmz-erdos701-campaign-001-R003-L1.lean\n  THEOREMS msl_fmz_erdos701_campaign_001_R003_L1\n  BACKEND windows\n  AXIOMS sorryAx\n  TACTIC (supplied proof)\n  BUDGET 900s:KERNEL_FAILED\n  FAILURE ((supplied proof)) RAW[tmp0_2citsq.lean:28:65: error(lean.invalidField): Invalid field `get?`: The environment does not contain `List.get?`, so it is not possible to project the field]; ((supplied proof)) RAW[tmp0_2citsq.lean:38:60: error(lean.invalidField): Invalid field `get?`: The environment does not contain `List.get?`, so it is not possible to project the field]; ((supplied proof)) RAW[tmp0_2citsq.lean:43:69: error: Tactic `decide` failed for proposition]\n  LAW KERNEL_FAILED does not refute the claim \u2014 the FAILURE line names what actually broke",
+ "timestamp": "2026-09-01T23:59:02Z"
+}

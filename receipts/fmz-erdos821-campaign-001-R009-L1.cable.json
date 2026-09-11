@@ -1,0 +1,62 @@
+{
+ "schema": "oracle.msl.cable.v1",
+ "id": "fmz-erdos821-campaign-001-R009-L1",
+ "spec": {
+  "id": "fmz-erdos821-campaign-001-R009-L1",
+  "imports": "none",
+  "definitions": "def phi : Nat \u2192 Nat\n  | 0 => 0\n  | (m+1) => (List.range (m+2)).filter (fun k => Nat.gcd k (m+1) == 1) |>.length\n\ndef gCnt (n : Nat) : Nat :=\n  (List.range 8193).filter (fun m => phi m == n) |>.length\n\ndef anchors : Bool :=\n  gCnt 24 == 10 && gCnt 36 == 13 && gCnt 60 == 20\n\ndef smallRange : Bool :=\n  (List.range 9).all (fun n => gCnt n ==\n    (List.range 65).filter (fun m => phi m == n) |>.length)\n\ndef closureCheck : Bool := anchors && smallRange",
+  "conclusion": "closureCheck = true",
+  "proof": "by native_decide"
+ },
+ "formal_status": "KERNEL_FAILED",
+ "events": [
+  "((supplied proof)) RAW[tmpzbvs2r1z.lean:15:4: error: Type mismatch]",
+  "((supplied proof)) RAW[tmpzbvs2r1z.lean:19:75: error: Tactic `native_decide` failed: Could not evaluate decidable instance. Error: cannot evaluate code because 'smallRange._lam_0' use]"
+ ],
+ "axioms": [
+  "sorryAx"
+ ],
+ "attempts": [
+  {
+   "tactic": "(supplied proof)",
+   "status": "UNVERIFIED",
+   "seconds": 75.0,
+   "errors": [
+    "tmpzbvs2r1z.lean:15:4: error: Type mismatch",
+    "tmpzbvs2r1z.lean:19:75: error: Tactic `native_decide` failed: Could not evaluate decidable instance. Error: cannot evaluate code because 'smallRange._lam_0' uses 'sorry' and/or contains errors"
+   ],
+   "exitCode": 1,
+   "resource_limit": null
+  }
+ ],
+ "budget_history": [
+  {
+   "tier_seconds": 900.0,
+   "outcome": "KERNEL_FAILED"
+  }
+ ],
+ "kernel_result": {
+  "status": "UNVERIFIED",
+  "file": "oracle/frontier_formalizer/cable/theorems/msl_fmz-erdos821-campaign-001-R009-L1.lean",
+  "backend": "windows",
+  "project": "C:\\Users\\jared\\Local Sites\\woocommerce-enterprise\\oracle\\math\\EG411Formal",
+  "needsMathlib": false,
+  "exitCode": 1,
+  "seconds": 75.0,
+  "declarations": [
+   {
+    "declaration": "msl_fmz_erdos821_campaign_001_R009_L1",
+    "clean": false,
+    "axioms": [
+     "sorryAx"
+    ]
+   }
+  ],
+  "errors": [
+   "tmpzbvs2r1z.lean:15:4: error: Type mismatch",
+   "tmpzbvs2r1z.lean:19:75: error: Tactic `native_decide` failed: Could not evaluate decidable instance. Error: cannot evaluate code because 'smallRange._lam_0' uses 'sorry' and/or contains errors"
+  ]
+ },
+ "lean_result_block": "LEAN_RESULT fmz-erdos821-campaign-001-R009-L1\n  FORMAL_STATUS KERNEL_FAILED\n  FILE oracle/frontier_formalizer/cable/theorems/msl_fmz-erdos821-campaign-001-R009-L1.lean\n  THEOREMS msl_fmz_erdos821_campaign_001_R009_L1\n  BACKEND windows\n  AXIOMS sorryAx\n  TACTIC (supplied proof)\n  BUDGET 900s:KERNEL_FAILED\n  FAILURE ((supplied proof)) RAW[tmpzbvs2r1z.lean:15:4: error: Type mismatch]; ((supplied proof)) RAW[tmpzbvs2r1z.lean:19:75: error: Tactic `native_decide` failed: Could not evaluate decidable instance. Error: cannot evaluate code because 'smallRange._lam_0' use]\n  LAW KERNEL_FAILED does not refute the claim \u2014 the FAILURE line names what actually broke",
+ "timestamp": "2026-09-01T23:19:25Z"
+}

@@ -1,0 +1,65 @@
+{
+ "schema": "oracle.msl.cable.v1",
+ "id": "fmz-erdos170-campaign-001-R017-L1-a1r1",
+ "spec": {
+  "id": "fmz-erdos170-campaign-001-R017-L1-a1r1",
+  "imports": "none",
+  "definitions": "def witness : List (List Nat) := [[0,1],[0,1,2],[0,1,3],[0,1,3,4],[0,1,3,5],[0,1,4,6],[0,1,3,4,7]]\n\ndef pairSums (a : List Nat) : List Nat :=\n  (a.zipIdx.flatMap fun (x, i) =>\n    (a.drop (i+1)).map (fun y => x + y)).eraseDups\n\ndef covers (a : List Nat) (N : Nat) : Bool :=\n  (List.range (N+1)).all (fun t => pairSums a contains t)\n\ndef minK (N : Nat) : Nat :=\n  -- smallest k with k*(k-1) >= 2*N  (ceil((1+sqrt(1+8N))/2))\n  (List.range 50).find! (fun k => k*(k-1) >= 2*N)\n\ndef claimFN (N : Nat) (F : Nat) (w : List Nat) : Bool :=\n  w.length == F\n  && covers w N\n  && minK N == F  -- k(k-1)>=2N lower bound is tight at F\n\ndef checkAll : Bool :=\n  claimFN 1 2 [0,1]\n  && claimFN 2 3 [0,1,2]\n  && claimFN 3 3 [0,1,3]\n  && claimFN 4 4 [0,1,3,4]\n  && claimFN 5 4 [0,1,3,5]\n  && claimFN 6 4 [0,1,4,6]\n  && claimFN 7 5 [0,1,3,4,7]",
+  "conclusion": "checkAll = true",
+  "proof": "by native_decide"
+ },
+ "formal_status": "KERNEL_FAILED",
+ "events": [
+  "((supplied proof)) SYNTAX.FAIL[tmpnm3o5od1.lean:10:35: error: Function expected at]",
+  "((supplied proof)) RAW[tmpnm3o5od1.lean:14:18: error(lean.invalidField): Invalid field `find!`: The environment does not contain `List.find!`, so it is not possible to project the fie]",
+  "((supplied proof)) RAW[tmpnm3o5od1.lean:30:76: error: Tactic `native_decide` failed: Could not evaluate decidable instance. Error: cannot evaluate code because 'minK' uses 'sorry' and]"
+ ],
+ "axioms": [
+  "sorryAx"
+ ],
+ "attempts": [
+  {
+   "tactic": "(supplied proof)",
+   "status": "UNVERIFIED",
+   "seconds": 10.0,
+   "errors": [
+    "tmpnm3o5od1.lean:10:35: error: Function expected at",
+    "tmpnm3o5od1.lean:14:18: error(lean.invalidField): Invalid field `find!`: The environment does not contain `List.find!`, so it is not possible to project the field `find!` from an expression",
+    "tmpnm3o5od1.lean:30:76: error: Tactic `native_decide` failed: Could not evaluate decidable instance. Error: cannot evaluate code because 'minK' uses 'sorry' and/or contains errors"
+   ],
+   "exitCode": 1,
+   "resource_limit": null
+  }
+ ],
+ "budget_history": [
+  {
+   "tier_seconds": 900.0,
+   "outcome": "KERNEL_FAILED"
+  }
+ ],
+ "kernel_result": {
+  "status": "UNVERIFIED",
+  "file": "oracle/frontier_formalizer/cable/theorems/msl_fmz-erdos170-campaign-001-R017-L1-a1r1.lean",
+  "backend": "windows",
+  "project": "C:\\Users\\jared\\Local Sites\\woocommerce-enterprise\\oracle\\math\\EG411Formal",
+  "needsMathlib": false,
+  "exitCode": 1,
+  "seconds": 10.0,
+  "declarations": [
+   {
+    "declaration": "msl_fmz_erdos170_campaign_001_R017_L1_a1r1",
+    "clean": false,
+    "axioms": [
+     "sorryAx"
+    ]
+   }
+  ],
+  "errors": [
+   "tmpnm3o5od1.lean:10:35: error: Function expected at",
+   "tmpnm3o5od1.lean:14:18: error(lean.invalidField): Invalid field `find!`: The environment does not contain `List.find!`, so it is not possible to project the field `find!` from an expression",
+   "tmpnm3o5od1.lean:30:76: error: Tactic `native_decide` failed: Could not evaluate decidable instance. Error: cannot evaluate code because 'minK' uses 'sorry' and/or contains errors"
+  ]
+ },
+ "lean_result_block": "LEAN_RESULT fmz-erdos170-campaign-001-R017-L1-a1r1\n  FORMAL_STATUS KERNEL_FAILED\n  FILE oracle/frontier_formalizer/cable/theorems/msl_fmz-erdos170-campaign-001-R017-L1-a1r1.lean\n  THEOREMS msl_fmz_erdos170_campaign_001_R017_L1_a1r1\n  BACKEND windows\n  AXIOMS sorryAx\n  TACTIC (supplied proof)\n  BUDGET 900s:KERNEL_FAILED\n  FAILURE ((supplied proof)) SYNTAX.FAIL[tmpnm3o5od1.lean:10:35: error: Function expected at]; ((supplied proof)) RAW[tmpnm3o5od1.lean:14:18: error(lean.invalidField): Invalid field `find!`: The environment does not contain `List.find!`, so it is not possible to project the fie]; ((supplied proof)) RAW[tmpnm3o5od1.lean:30:76: error: Tactic `native_decide` failed: Could not evaluate decidable instance. Error: cannot evaluate code because 'minK' uses 'sorry' and]\n  LAW KERNEL_FAILED does not refute the claim \u2014 the FAILURE line names what actually broke",
+ "timestamp": "2026-09-02T02:00:54Z"
+}

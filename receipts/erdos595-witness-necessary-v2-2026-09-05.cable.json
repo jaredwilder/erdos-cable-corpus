@@ -1,0 +1,116 @@
+{
+ "schema": "oracle.msl.cable.v1",
+ "id": "erdos595-witness-necessary-v2-2026-09-05",
+ "spec": {
+  "id": "erdos595-witness-necessary-v2-2026-09-05",
+  "imports": "Mathlib",
+  "definitions": "namespace Erdos595Nec\n\nvariable {V : Type*}\n\ndef Coverable (G : SimpleGraph V) : Prop :=\n  \u2203 H : \u2115 \u2192 SimpleGraph V, (\u2200 n, H n \u2264 G) \u2227 (\u2200 n, (H n).CliqueFree 3) \u2227\n    G.edgeSet \u2286 \u22c3 n, (H n).edgeSet\n\ntheorem cliqueFree_three_iff (G : SimpleGraph V) :\n    G.CliqueFree 3 \u2194 \u2200 x y z : V, G.Adj x y \u2192 G.Adj y z \u2192 G.Adj x z \u2192 False := by\n  classical\n  constructor\n  \u00b7 intro hG x y z hxy hyz hxz\n    exact hG {x, y, z} (SimpleGraph.is3Clique_triple_iff.mpr \u27e8hxy, hxz, hyz\u27e9)\n  \u00b7 intro h s hs\n    obtain \u27e8x, y, z, hxy, hxz, hyz, hset\u27e9 := Finset.card_eq_three.mp hs.2\n    subst hset\n    exact h x y z (hs.1 (by simp) (by simp) hxy) (hs.1 (by simp) (by simp) hyz)\n      (hs.1 (by simp) (by simp) hxz)\n\ntheorem colouring_cover (G : SimpleGraph V) (c : Sym2 V \u2192 \u2115)\n    (hc : \u2200 x y z : V, G.Adj x y \u2192 G.Adj y z \u2192 G.Adj x z \u2192\n      \u00ac (c s(x, y) = c s(y, z) \u2227 c s(x, z) = c s(y, z))) : Coverable G := by\n  classical\n  refine \u27e8fun n => SimpleGraph.fromEdgeSet {e | e \u2208 G.edgeSet \u2227 c e = n}, ?_, ?_, ?_\u27e9\n  \u00b7 intro n x y h\n    rw [SimpleGraph.fromEdgeSet_adj] at h\n    exact G.mem_edgeSet.mp h.1.1\n  \u00b7 intro n\n    rw [cliqueFree_three_iff]\n    intro x y z hxy hyz hxz\n    rw [SimpleGraph.fromEdgeSet_adj] at hxy hyz hxz\n    exact hc x y z (G.mem_edgeSet.mp hxy.1.1) (G.mem_edgeSet.mp hyz.1.1)\n      (G.mem_edgeSet.mp hxz.1.1)\n      \u27e8hxy.1.2.trans hyz.1.2.symm, hxz.1.2.trans hyz.1.2.symm\u27e9\n  \u00b7 intro e he\n    refine Set.mem_iUnion.mpr \u27e8c e, ?_\u27e9\n    rw [SimpleGraph.edgeSet_fromEdgeSet]\n    exact \u27e8\u27e8he, rfl\u27e9, fun hd => (G.not_isDiag_of_mem_edgeSet he) hd\u27e9\n\ntheorem pair_inj (a b x y : \u2115) (h : Nat.pair a b = Nat.pair x y) : a = x \u2227 b = y := by\n  have h2 := congrArg Nat.unpair h\n  simp only [Nat.unpair_pair] at h2\n  exact \u27e8congrArg Prod.fst h2, congrArg Prod.snd h2\u27e9\n\ndef edgeCol (col : V \u2192 \u2115) : Sym2 V \u2192 \u2115 :=\n  Sym2.lift \u27e8fun x y => Nat.pair (min (col x) (col y)) (max (col x) (col y)), by\n    intro x y\n    simp [min_comm, max_comm]\u27e9\n\ntheorem coverable_of_colouring (G : SimpleGraph V) (col : V \u2192 \u2115)\n    (hcol : \u2200 x y : V, G.Adj x y \u2192 col x \u2260 col y) : Coverable G := by\n  refine colouring_cover G (edgeCol col) ?_\n  rintro x y z hxy hyz hxz \u27e8h1, h2\u27e9\n  simp only [edgeCol, Sym2.lift_mk] at h1 h2\n  have hxy' := hcol x y hxy\n  have hyz' := hcol y z hyz\n  have hxz' := hcol x z hxz\n  obtain \u27e8p1, q1\u27e9 := pair_inj _ _ _ _ h1\n  obtain \u27e8p2, q2\u27e9 := pair_inj _ _ _ _ h2\n  omega\n\ntheorem coverable_of_countable_edgeSet (G : SimpleGraph V) (h : G.edgeSet.Countable) :\n    Coverable G := by\n  classical\n  rcases Set.eq_empty_or_nonempty G.edgeSet with he | hne\n  \u00b7 refine \u27e8fun _ => \u22a5, fun n => bot_le, fun n => ?_, ?_\u27e9\n    \u00b7 rw [cliqueFree_three_iff]\n      intro x y z hxy _ _\n      simp at hxy\n    \u00b7 rw [he]\n      exact Set.empty_subset _\n  \u00b7 obtain \u27e8f, hf\u27e9 := h.exists_eq_range hne\n    refine \u27e8fun n => SimpleGraph.fromEdgeSet {f n}, ?_, ?_, ?_\u27e9\n    \u00b7 intro n x y hxy\n      rw [SimpleGraph.fromEdgeSet_adj] at hxy\n      have hmem : s(x, y) \u2208 G.edgeSet := by\n        rw [hf]\n        exact \u27e8n, hxy.1.symm\u27e9\n      exact G.mem_edgeSet.mp hmem\n    \u00b7 intro n\n      rw [cliqueFree_three_iff]\n      intro x y z hxy hyz hxz\n      rw [SimpleGraph.fromEdgeSet_adj] at hxy hyz hxz\n      have hxz' : x \u2260 z := hxz.2\n      have heq : s(x, y) = s(y, z) := by\n        rw [hxy.1, hyz.1]\n      rw [Sym2.eq_iff] at heq\n      rcases heq with \u27e8hx, hy\u27e9 | \u27e8hx, hy\u27e9\n      \u00b7 exact hxy.2 hx\n      \u00b7 exact hxz' hx\n    \u00b7 intro e he\n      have : e \u2208 Set.range f := by rw [\u2190 hf]; exact he\n      obtain \u27e8n, hn\u27e9 := this\n      refine Set.mem_iUnion.mpr \u27e8n, ?_\u27e9\n      rw [SimpleGraph.edgeSet_fromEdgeSet]\n      exact \u27e8hn.symm, fun hd => (G.not_isDiag_of_mem_edgeSet he) hd\u27e9\n\ntheorem witness_necessary (G : SimpleGraph V) (hw : \u00ac Coverable G) :\n    (\u00ac \u2203 col : V \u2192 \u2115, \u2200 x y : V, G.Adj x y \u2192 col x \u2260 col y) \u2227 \u00ac G.edgeSet.Countable := by\n  constructor\n  \u00b7 rintro \u27e8col, hcol\u27e9\n    exact hw (coverable_of_colouring G col hcol)\n  \u00b7 intro hc\n    exact hw (coverable_of_countable_edgeSet G hc)\n\nend Erdos595Nec",
+  "hypotheses": [
+   "{V : Type*}",
+   "(G : SimpleGraph V)",
+   "(hw : \u00ac Erdos595Nec.Coverable G)"
+  ],
+  "conclusion": "(\u00ac \u2203 col : V \u2192 \u2115, \u2200 x y : V, G.Adj x y \u2192 col x \u2260 col y) \u2227 \u00ac G.edgeSet.Countable",
+  "proof": "by exact Erdos595Nec.witness_necessary G hw"
+ },
+ "formal_status": "KERNEL_CHECKED",
+ "events": [],
+ "axioms": [
+  "Classical.choice",
+  "Quot.sound",
+  "propext"
+ ],
+ "attempts": [
+  {
+   "tactic": "(supplied proof)",
+   "status": "VERIFIED",
+   "seconds": 58.6,
+   "errors": [],
+   "exitCode": 0,
+   "resource_limit": null
+  }
+ ],
+ "budget_history": [
+  {
+   "tier_seconds": 120.0,
+   "outcome": "KERNEL_CHECKED"
+  }
+ ],
+ "kernel_result": {
+  "status": "VERIFIED",
+  "file": "oracle/frontier_formalizer/cable/theorems/msl_erdos595-witness-necessary-v2-2026-09-05.lean",
+  "backend": "wsl",
+  "project": "/root/erdosfire-bench/proofs",
+  "needsMathlib": true,
+  "exitCode": 0,
+  "seconds": 45.4,
+  "declarations": [
+   {
+    "declaration": "cliqueFree_three_iff",
+    "clean": true,
+    "axioms": [
+     "propext",
+     "Classical.choice",
+     "Quot.sound"
+    ]
+   },
+   {
+    "declaration": "colouring_cover",
+    "clean": true,
+    "axioms": [
+     "propext",
+     "Classical.choice",
+     "Quot.sound"
+    ]
+   },
+   {
+    "declaration": "pair_inj",
+    "clean": true,
+    "axioms": [
+     "propext",
+     "Classical.choice",
+     "Quot.sound"
+    ]
+   },
+   {
+    "declaration": "coverable_of_colouring",
+    "clean": true,
+    "axioms": [
+     "propext",
+     "Classical.choice",
+     "Quot.sound"
+    ]
+   },
+   {
+    "declaration": "coverable_of_countable_edgeSet",
+    "clean": true,
+    "axioms": [
+     "propext",
+     "Classical.choice",
+     "Quot.sound"
+    ]
+   },
+   {
+    "declaration": "witness_necessary",
+    "clean": true,
+    "axioms": [
+     "propext",
+     "Classical.choice",
+     "Quot.sound"
+    ]
+   },
+   {
+    "declaration": "msl_erdos595_witness_necessary_v2_2026_09_05",
+    "clean": true,
+    "axioms": [
+     "propext",
+     "Classical.choice",
+     "Quot.sound"
+    ]
+   }
+  ],
+  "errors": []
+ },
+ "lean_result_block": "LEAN_RESULT erdos595-witness-necessary-v2-2026-09-05\n  FORMAL_STATUS KERNEL_CHECKED\n  FILE oracle/frontier_formalizer/cable/theorems/msl_erdos595-witness-necessary-v2-2026-09-05.lean\n  THEOREMS msl_erdos595_witness_necessary_v2_2026_09_05\n  BACKEND wsl\n  AXIOMS Classical.choice, Quot.sound, propext\n  TACTIC (supplied proof)\n  BUDGET 120s:KERNEL_CHECKED\n  FAILURE NONE",
+ "timestamp": "2026-09-05T17:44:49Z"
+}

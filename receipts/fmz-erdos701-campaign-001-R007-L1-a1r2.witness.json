@@ -1,0 +1,24 @@
+{
+ "schema": "oracle.msl.closer.witness.v1",
+ "id": "fmz-erdos701-campaign-001-R007-L1-a1r2",
+ "pipeline": "WITNESS_FINITE",
+ "witness": {
+  "n": 4,
+  "claim_scope": "all 168 hereditary families on [4] (subsets of {1,2,3,4} as bitmasks 0..15) satisfy max-intersecting = max-star under the frozen all-pairs convention (Set.Intersecting: all A,B incl. A=B; a family containing ∅ is not intersecting)",
+  "expected": "PASS on every family; no branch-B counterexample at n=4"
+ },
+ "verifier_sha256": "65021699d99aa55328921a4d14eaeff10bd5e7b1abc6ffb2bbb4435075662583",
+ "verifier_source": "# Standalone fail-closed verifier, Python 3, no imports, no IO, no prints.\n# Pure function verify() -> bool; the calling harness treats True as PASS.\n# Witness is embedded: n = 4, subsets as bitmasks 0..15.\n\ndef popcount(v):\n    c = 0\n    while v:\n        c += v & 1\n        v >>= 1\n    return c\n\ndef verify():\n    hered = []\n    for F in range(1 << 16):\n        ok = True\n        for s in range(16):\n            if (F >> s) & 1:\n                for t in range(16):\n                    if (t & s) == t and not ((F >> t) & 1):\n                        ok = False\n                        break\n                if not ok:\n                    break\n        if ok:\n            hered.append(F)\n    # Dedekind number M(4) = 168, fail-closed count check\n    if len(hered) != 168:\n        return False\n    for F in hered:\n        best_i = 0\n        for G in range(F + 1):\n            if (G & ~F) != 0:\n                continue\n            ok = True\n            for a in range(16):\n                if (G >> a) & 1:\n                    for b in range(16):\n                        if (G >> b) & 1 and (a & b) == 0:\n                            ok = False\n                            break\n                    if not ok:\n                        break\n            if ok and popcount(G) > best_i:\n                best_i = popcount(G)\n        best_s = 0\n        for x in range(4):\n            cnt = 0\n            for s in range(16):\n                if ((F >> s) & 1) and ((s >> x) & 1):\n                    cnt += 1\n            if cnt > best_s:\n                best_s = cnt\n        if best_i != best_s:\n            return False\n    return True\n",
+ "run": {
+  "passed": false,
+  "status": "VERIFIER_FAIL",
+  "exit_code": 1,
+  "stdout": "",
+  "detail": "TypeError: verify() takes 0 positional arguments but 1 was given",
+  "seconds": 0.11,
+  "code_sha256": "65021699d99aa55328921a4d14eaeff10bd5e7b1abc6ffb2bbb4435075662583"
+ },
+ "claim": "verify() returning True certifies the full lemma L1: exhaustive check over all 168 hereditary families on [4] (Dedekind count enforced fail-closed) that max-intersecting = max-star under the all-pairs convention; covers=\"full\".",
+ "law": "Wang 7.2: an exact finite object plus a proved reduction is a CERTIFICATE. The reduction is the `claim` and is a human's to audit; the object and the verifier run are the machine's part.",
+ "timestamp": "2026-09-02T02:29:11Z"
+}

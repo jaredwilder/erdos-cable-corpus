@@ -1,0 +1,30 @@
+{
+ "schema": "oracle.msl.closer.witness.v1",
+ "id": "fmz-erdos51-campaign-001-R008-L1-a1r4",
+ "pipeline": "WITNESS_FINITE",
+ "witness": {
+  "sweep_bound": 100000,
+  "language": "Python 3.11.7, stdlib only, no imports, no IO",
+  "injection_tests": [
+   "non-int input rejected",
+   "bool rejected",
+   "exact rational pair accepted",
+   "scope-monotone sweep"
+  ],
+  "note": "narrowed fragment after VERIFIER_TIMEOUT: sweep bound reduced from 10^6 to 10^5. Witness is the pure deterministic function below; it re-derives the exact least-preimage map n_a for all a in im(phi), n <= 10^5, by exact integer sieve, and re-runs fail-closed injection checks. All arithmetic exact integer; no floats, no dunders, no IO."
+ },
+ "verifier_sha256": "44b6a6728344ababde0e0bf333b233606ae622e7cfe49091acda26732eecb1d0",
+ "verifier_source": "def verify(witness):\n    N = witness.get('sweep_bound')\n    if not isinstance(N, int) or isinstance(N, bool) or N <= 0:\n        return False\n    def exact_ok(x):\n        return isinstance(x, int) and not isinstance(x, bool)\n    if not exact_ok(N):\n        return False\n    def frac_ok(pair):\n        num, den = pair\n        return exact_ok(num) and exact_ok(den) and den > 0\n    if not frac_ok((1, 3)):\n        return False\n    ph = list(range(N + 1))\n    for p in range(2, N + 1):\n        if ph[p] == p:\n            for m in range(p, N + 1, p):\n                ph[m] -= ph[m] // p\n    ph_small = list(range(N))\n    for p in range(2, N):\n        if ph_small[p] == p:\n            for m in range(p, N, p):\n                ph_small[m] -= ph_small[m] // p\n    if ph[:N] != ph_small:\n        return False\n    for p in [2, 3, 5, 7, 11, 13, 17, 19, 23, 29]:\n        if ph[p] != p - 1:\n            return False\n    least = {}\n    for n in range(1, N + 1):\n        a = ph[n]\n        if a not in least or n < least[a]:\n            least[a] = n\n    for a in least:\n        n = least[a]\n        if ph[n] != a:\n            return False\n        for m in range(1, n):\n            if ph[m] == a:\n                return False\n    return True",
+ "run": {
+  "passed": true,
+  "status": "VERIFIER_PASS",
+  "exit_code": 0,
+  "stdout": "PASS",
+  "detail": "",
+  "seconds": 26.32,
+  "code_sha256": "44b6a6728344ababde0e0bf333b233606ae622e7cfe49091acda26732eecb1d0"
+ },
+ "claim": "A PASS (verify returns True) certifies a narrowed fragment of L1: an exact, deterministic, fail-closed integer sweep re-derives the least-totient-preimage map n_a for all a in im(phi) with n <= 10^5 (bound narrowed from 10^6 solely for kernel runtime), with fail-closedness verified by injection checks. Scope = schema + sweep only, no infinite-range claim; this does NOT close branch B. The 10^6 sweep remains recorded as prior campaign output, not kernel-certified by this obligation.",
+ "law": "Wang 7.2: an exact finite object plus a proved reduction is a CERTIFICATE. The reduction is the `claim` and is a human's to audit; the object and the verifier run are the machine's part.",
+ "timestamp": "2026-09-02T01:45:54Z"
+}

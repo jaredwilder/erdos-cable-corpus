@@ -1,0 +1,23 @@
+{
+  "receipt_id": "erdos595-dispersion-2026-09-05",
+  "campaign": "msl-595 FLAGSHIP epoch 11",
+  "target": "Erdos #595 flagship, the dispersion sufficient condition for a witness",
+  "file": "oracle/evidence/erdos595/lean/Erdos595Dispersion.lean",
+  "file_sha256": "ed72dc8f5f60a2f708b30ce97278c1668aa6e4c1e6493c153c238acaf4db03c4",
+  "backend": "box root@51.158.234.15 /root/formalizer/proofs, Mathlib 919544d4, toolchain v4.31.0-rc1",
+  "command": "lake env lean /root/peer/msl-595/Erdos595Dispersion.lean",
+  "exit_code": 0,
+  "log": "oracle/evidence/erdos595/lean/kernel-dispersion-2026-09-05.log",
+  "theorems": [
+    "Erdos595D.isProper_iSup_pi",
+    "Erdos595D.not_countableUnion_of_dispersion",
+    "Erdos595D.erdos595_witness_of_dispersion"
+  ],
+  "axioms": ["propext", "Classical.choice", "Quot.sound"],
+  "axiom_verdict": "CLEAN_TRIPLE",
+  "sorry_count": 0,
+  "formal_status": "KERNEL_CHECKED_UNIVERSAL",
+  "packet_cards_sealed": {"T38_T39": "isProper_iSup_pi", "T40_T41_T43": "not_countableUnion_of_dispersion"},
+  "covers": "FRAGMENT",
+  "not_covered": "no graph is exhibited satisfying the two dispersion hypotheses; this is a criterion, not a witness"
+}

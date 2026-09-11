@@ -1,0 +1,52 @@
+{
+ "schema": "oracle.msl.closer.witness.v1",
+ "id": "fmz-erdos145-campaign-001-R004-L1-a2r4",
+ "pipeline": "WITNESS_FINITE",
+ "witness": {
+  "m": 5,
+  "primes_q": [
+   3,
+   5,
+   7,
+   11,
+   13
+  ],
+  "offsets_j": [
+   1,
+   2,
+   3,
+   4,
+   5
+  ],
+  "moduli": [
+   9,
+   25,
+   49,
+   121,
+   169
+  ],
+  "residues": [
+   8,
+   23,
+   46,
+   116,
+   164
+  ],
+  "Q": 225399525,
+  "crt_solution_n0": 0
+ },
+ "verifier_sha256": "735afb9eb3d784640cd946d8a156beca8e7814daeacb76ad337acc8e3f6a5175",
+ "verifier_source": "from math import isqrt\nfrom fractions import Fraction\n\ndef verify(witness):\n    m = witness['m']\n    primes_q = witness['primes_q']\n    offsets_j = witness['offsets_j']\n    moduli = witness['moduli']\n    residues = witness['residues']\n    Q_w = witness['Q']\n    n0 = witness['crt_solution_n0']\n\n    def isprime(k):\n        if k < 2:\n            return False\n        for p in range(2, isqrt(k) + 1):\n            if k % p == 0:\n                return False\n        return True\n\n    if len(primes_q) != m:\n        raise ValueError('m primes')\n    if len(set(primes_q)) != m:\n        raise ValueError('distinct primes')\n    for q in primes_q:\n        if not isprime(q):\n            raise ValueError('not prime')\n    for q in primes_q:\n        if not (q * q > m):\n            raise ValueError('q not > sqrt(m)')\n    for j in offsets_j:\n        if not (1 <= j <= m):\n            raise ValueError('offset range')\n    if len(moduli) != m or len(residues) != m:\n        raise ValueError('length')\n    for i in range(m):\n        if moduli[i] != primes_q[i] * primes_q[i]:\n            raise ValueError('modulus')\n        if residues[i] != (-offsets_j[i]) % moduli[i]:\n            raise ValueError('residue n = -j mod q^2')\n    for i in range(m):\n        for k in range(i + 1, m):\n            if moduli[i] == moduli[k] or primes_q[i] == primes_q[k]:\n                raise ValueError('moduli not coprime')\n    Q = 1\n    for mo in moduli:\n        Q *= mo\n    if Q != Q_w:\n        raise ValueError('Q product')\n    for i in range(m):\n        if (n0 + offsets_j[i]) % moduli[i] != 0:\n            raise ValueError('CRT solution check')\n    dens = Fraction(1, 1)\n    for q in primes_q:\n        dens *= Fraction(q * q - 1, q * q)\n    if not (dens > 0):\n        raise ValueError('density')\n    return True",
+ "run": {
+  "passed": false,
+  "status": "VERIFIER_FAIL",
+  "exit_code": 1,
+  "stdout": "",
+  "detail": "ValueError: residue n = -j mod q^2",
+  "seconds": 0.15,
+  "code_sha256": "735afb9eb3d784640cd946d8a156beca8e7814daeacb76ad337acc8e3f6a5175"
+ },
+ "claim": "Fragment of L1 (covers='fragment'): explicit CRT witness for m=5 with distinct primes q_j in {3,5,7,11,13}, all with q_j^2 > m, and n0 = 0 satisfying n0 + j ≡ 0 (mod q_j^2) for j=1..5, with Q = prod q_j^2 = 225399525 — certifying the finite core of 'd(m) exists and is positive for EVERY m' via the forbidden-class construction. verify(witness) raises on any failed check; exact integer/rational arithmetic only, no I/O; returning True = PASS. The asymptotic statements (m^α d(m)→0, L_α<∞) remain analytic and are not covered.",
+ "law": "Wang 7.2: an exact finite object plus a proved reduction is a CERTIFICATE. The reduction is the `claim` and is a human's to audit; the object and the verifier run are the machine's part.",
+ "timestamp": "2026-09-02T01:12:23Z"
+}

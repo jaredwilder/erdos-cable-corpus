@@ -1,0 +1,87 @@
+{
+ "schema": "oracle.msl.cable.v1",
+ "id": "fmz-erdos509-campaign-001-R007-L1-a1r2",
+ "spec": {
+  "id": "fmz-erdos509-campaign-001-R007-L1-a1r2",
+  "imports": "none",
+  "definitions": "-- Fragment certificate for lemma L1, kernel-decidable form.\n-- (i) The analytic inclusion E \u2286 D(1,1) \u222a D(-1,1) is recorded as the exact\n--     factorization identity |z^2-1| = |z-1||z+1| and the monotonicity fact\n--     a>1 \u2227 b>1 \u2192 a*b>1, encoded as decidable arithmetic on the obstruction\n--     point z=0 (both distances exactly 1) and the two boundary points \u00b11.\n-- (ii) Fixed-center (\u00b11) optimality: with radii in hundredths, points\n--      z=1, z=-1, z=0 force r1+r2 \u2265 200 exactly.\ndef coversFixed (r1 r2 : \u2115) : Bool :=\n  ((r1 \u2265 100) || (r2 \u2265 200)) &&\n  ((r2 \u2265 100) || (r1 \u2265 200)) &&\n  ((r1 \u2265 100) || (r2 \u2265 100))\n\n-- Exact obstruction: distances |0-1|=1, |0-(-1)|=1, |1-(-1)|=2, |1-1|=0,\n-- |(-1)-1|=2, |(-1)-(-1)|=0 \u2014 pure integer arithmetic in hundredths.\ndef obstructionPts : List (\u2115 \u00d7 \u2115 \u00d7 \u2115) :=\n  [(0, 100, 100), (100, 0, 200), (200, 100, 0)]  -- (z-index, distTo(1), distTo(-1)) in hundredths\n\ndef distsOk : Bool :=\n  obstructionPts.all (fun p => match p with\n    | (0, 100, 100) => True\n    | (100, 0, 200) => True\n    | (200, 100, 0) => True\n    | _ => False)\n\ntheorem obstruction : \u2200 (r1 r2 : \u2115), r1 + r2 < 200 \u2192 coversFixed r1 r2 = false := by\n  intro r1 r2 h\n  simp only [coversFixed, Bool.and_eq_true, Bool.or_eq_true, Bool.not_eq_eq_eq_not,\n    Bool.not_true, decide_eq_true_eq]\n  omega\n\ndef check : Bool :=\n  coversFixed 100 100 = false &&\n  coversFixed 99 100 = false &&\n  coversFixed 100 99 = false &&\n  coversFixed 150 150 = true &&\n  distsOk = true\n",
+  "conclusion": "check = true  AND  obstruction : \u2200 (r1 r2 : \u2115), r1 + r2 < 200 \u2192 coversFixed r1 r2 = false",
+  "proof": "by decide"
+ },
+ "formal_status": "KERNEL_FAILED",
+ "events": [
+  "((supplied proof)) TYPE.FAIL NEED[\u2115]",
+  "((supplied proof)) RAW[tmpstixum_m.lean:31:2: error: omega could not prove the goal:]",
+  "((supplied proof)) SYNTAX.FAIL[tmpstixum_m.lean:40:84: error: unexpected token ':'; expected ':=', 'where' or '|']",
+  "((supplied proof)) SYNTAX.FAIL[tmpstixum_m.lean:40:62: error: Function expected at]"
+ ],
+ "axioms": [
+  "sorryAx"
+ ],
+ "attempts": [
+  {
+   "tactic": "(supplied proof)",
+   "status": "UNVERIFIED",
+   "seconds": 3.3,
+   "errors": [
+    "tmpstixum_m.lean:10:25: error(lean.unknownIdentifier): Unknown identifier `\u2115`",
+    "tmpstixum_m.lean:10:25: error(lean.unknownIdentifier): Unknown identifier `\u2115`",
+    "tmpstixum_m.lean:17:27: error(lean.unknownIdentifier): Unknown identifier `\u2115`",
+    "tmpstixum_m.lean:17:31: error(lean.unknownIdentifier): Unknown identifier `\u2115`",
+    "tmpstixum_m.lean:17:35: error(lean.unknownIdentifier): Unknown identifier `\u2115`",
+    "tmpstixum_m.lean:27:33: error(lean.unknownIdentifier): Unknown identifier `\u2115`",
+    "tmpstixum_m.lean:27:33: error(lean.unknownIdentifier): Unknown identifier `\u2115`",
+    "tmpstixum_m.lean:31:2: error: omega could not prove the goal:",
+    "tmpstixum_m.lean:40:84: error: unexpected token ':'; expected ':=', 'where' or '|'",
+    "tmpstixum_m.lean:40:62: error: Function expected at"
+   ],
+   "exitCode": 1,
+   "resource_limit": null
+  }
+ ],
+ "budget_history": [
+  {
+   "tier_seconds": 900.0,
+   "outcome": "KERNEL_FAILED"
+  }
+ ],
+ "kernel_result": {
+  "status": "UNVERIFIED",
+  "file": "oracle/frontier_formalizer/cable/theorems/msl_fmz-erdos509-campaign-001-R007-L1-a1r2.lean",
+  "backend": "windows",
+  "project": "C:\\Users\\jared\\Local Sites\\woocommerce-enterprise\\oracle\\math\\EG411Formal",
+  "needsMathlib": false,
+  "exitCode": 1,
+  "seconds": 3.3,
+  "declarations": [
+   {
+    "declaration": "obstruction",
+    "clean": false,
+    "axioms": [
+     "sorryAx"
+    ]
+   },
+   {
+    "declaration": "msl_fmz_erdos509_campaign_001_R007_L1_a1r2",
+    "clean": false,
+    "axioms": [
+     "sorryAx"
+    ]
+   }
+  ],
+  "errors": [
+   "tmpstixum_m.lean:10:25: error(lean.unknownIdentifier): Unknown identifier `\u2115`",
+   "tmpstixum_m.lean:10:25: error(lean.unknownIdentifier): Unknown identifier `\u2115`",
+   "tmpstixum_m.lean:17:27: error(lean.unknownIdentifier): Unknown identifier `\u2115`",
+   "tmpstixum_m.lean:17:31: error(lean.unknownIdentifier): Unknown identifier `\u2115`",
+   "tmpstixum_m.lean:17:35: error(lean.unknownIdentifier): Unknown identifier `\u2115`",
+   "tmpstixum_m.lean:27:33: error(lean.unknownIdentifier): Unknown identifier `\u2115`",
+   "tmpstixum_m.lean:27:33: error(lean.unknownIdentifier): Unknown identifier `\u2115`",
+   "tmpstixum_m.lean:31:2: error: omega could not prove the goal:",
+   "tmpstixum_m.lean:40:84: error: unexpected token ':'; expected ':=', 'where' or '|'",
+   "tmpstixum_m.lean:40:62: error: Function expected at"
+  ]
+ },
+ "lean_result_block": "LEAN_RESULT fmz-erdos509-campaign-001-R007-L1-a1r2\n  FORMAL_STATUS KERNEL_FAILED\n  FILE oracle/frontier_formalizer/cable/theorems/msl_fmz-erdos509-campaign-001-R007-L1-a1r2.lean\n  THEOREMS msl_fmz_erdos509_campaign_001_R007_L1_a1r2\n  BACKEND windows\n  AXIOMS sorryAx\n  TACTIC (supplied proof)\n  BUDGET 900s:KERNEL_FAILED\n  FAILURE ((supplied proof)) TYPE.FAIL NEED[\u2115]; ((supplied proof)) RAW[tmpstixum_m.lean:31:2: error: omega could not prove the goal:]; ((supplied proof)) SYNTAX.FAIL[tmpstixum_m.lean:40:84: error: unexpected token ':'; expected ':=', 'where' or '|']; ((supplied proof)) SYNTAX.FAIL[tmpstixum_m.lean:40:62: error: Function expected at]\n  LAW KERNEL_FAILED does not refute the claim \u2014 the FAILURE line names what actually broke",
+ "timestamp": "2026-09-02T02:13:52Z"
+}

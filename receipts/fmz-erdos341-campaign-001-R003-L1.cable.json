@@ -1,0 +1,67 @@
+{
+ "schema": "oracle.msl.cable.v1",
+ "id": "fmz-erdos341-campaign-001-R003-L1",
+ "spec": {
+  "id": "fmz-erdos341-campaign-001-R003-L1",
+  "imports": "none",
+  "definitions": "-- Canonical greedy construction with A={1}: a1=1, and for n>=1,\n-- a_{n+1} = least m > a_n with m not in {a_i + a_j : i,j <= n}.\n-- Fully decidable, Nat/Bool only; membership test via decidable List checks.\n\ndef isSumOfTwo {l : List Nat} (m : Nat) : Bool :=\n  l.any (fun x => l.any (fun y => x + y == m))\n\ndef nextGreedy (prev : List Nat) : Nat :=\n  let a := prev.getLastD 1 1\n  let rec leastExcl : Nat \u2192 Nat\n    | m => if isSumOfTwo (prev) m then leastExcl (m+1) else m\n  leastExcl (a + 1)\n\ndef greedySeq : Nat \u2192 List Nat\n  | 0 => [1]\n  | (n+1) =>\n    let prev := greedySeq n\n    prev ++ [nextGreedy prev]\n\ndef gapsAllTwo (s : List Nat) : Bool :=\n  match s with\n  | [] => true\n  | [_] => true\n  | _ :: rest => (rest.headD 0 - s.headD 0 == 2) && gapsAllTwo rest\n\ndef checkSingleton (bound : Nat) : Bool :=\n  let s := greedySeq bound\n  s.all (fun a => a % 2 == 1) && gapsAllTwo s",
+  "conclusion": "checkSingleton 12 = true",
+  "proof": "by native_decide"
+ },
+ "formal_status": "KERNEL_FAILED",
+ "events": [
+  "((supplied proof)) SYNTAX.FAIL[tmp1nrhemdl.lean:11:11: error: Function expected at]",
+  "((supplied proof)) TYPE.FAIL MISMATCH[tmp1nrhemdl.lean:13:25: error: Application type mismatch: The argument]",
+  "((supplied proof)) RAW[tmp1nrhemdl.lean:32:80: error: Tactic `native_decide` failed: Could not evaluate decidable instance. Error: cannot evaluate code because 'nextGreedy' uses 'sorr]"
+ ],
+ "axioms": [
+  "propext",
+  "sorryAx"
+ ],
+ "attempts": [
+  {
+   "tactic": "(supplied proof)",
+   "status": "UNVERIFIED",
+   "seconds": 31.5,
+   "errors": [
+    "tmp1nrhemdl.lean:11:11: error: Function expected at",
+    "tmp1nrhemdl.lean:13:25: error: Application type mismatch: The argument",
+    "tmp1nrhemdl.lean:32:80: error: Tactic `native_decide` failed: Could not evaluate decidable instance. Error: cannot evaluate code because 'nextGreedy' uses 'sorry' and/or contains errors"
+   ],
+   "exitCode": 1,
+   "resource_limit": null
+  }
+ ],
+ "budget_history": [
+  {
+   "tier_seconds": 900.0,
+   "outcome": "KERNEL_FAILED"
+  }
+ ],
+ "kernel_result": {
+  "status": "UNVERIFIED",
+  "file": "oracle/frontier_formalizer/cable/theorems/msl_fmz-erdos341-campaign-001-R003-L1.lean",
+  "backend": "windows",
+  "project": "C:\\Users\\jared\\Local Sites\\woocommerce-enterprise\\oracle\\math\\EG411Formal",
+  "needsMathlib": false,
+  "exitCode": 1,
+  "seconds": 31.5,
+  "declarations": [
+   {
+    "declaration": "msl_fmz_erdos341_campaign_001_R003_L1",
+    "clean": false,
+    "axioms": [
+     "propext",
+     "sorryAx"
+    ]
+   }
+  ],
+  "errors": [
+   "tmp1nrhemdl.lean:11:11: error: Function expected at",
+   "tmp1nrhemdl.lean:13:25: error: Application type mismatch: The argument",
+   "tmp1nrhemdl.lean:32:80: error: Tactic `native_decide` failed: Could not evaluate decidable instance. Error: cannot evaluate code because 'nextGreedy' uses 'sorry' and/or contains errors"
+  ]
+ },
+ "lean_result_block": "LEAN_RESULT fmz-erdos341-campaign-001-R003-L1\n  FORMAL_STATUS KERNEL_FAILED\n  FILE oracle/frontier_formalizer/cable/theorems/msl_fmz-erdos341-campaign-001-R003-L1.lean\n  THEOREMS msl_fmz_erdos341_campaign_001_R003_L1\n  BACKEND windows\n  AXIOMS propext, sorryAx\n  TACTIC (supplied proof)\n  BUDGET 900s:KERNEL_FAILED\n  FAILURE ((supplied proof)) SYNTAX.FAIL[tmp1nrhemdl.lean:11:11: error: Function expected at]; ((supplied proof)) TYPE.FAIL MISMATCH[tmp1nrhemdl.lean:13:25: error: Application type mismatch: The argument]; ((supplied proof)) RAW[tmp1nrhemdl.lean:32:80: error: Tactic `native_decide` failed: Could not evaluate decidable instance. Error: cannot evaluate code because 'nextGreedy' uses 'sorr]\n  LAW KERNEL_FAILED does not refute the claim \u2014 the FAILURE line names what actually broke",
+ "timestamp": "2026-09-01T23:38:39Z"
+}

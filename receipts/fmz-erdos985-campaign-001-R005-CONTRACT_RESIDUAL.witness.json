@@ -1,0 +1,36 @@
+{
+ "schema": "oracle.msl.closer.witness.v1",
+ "id": "fmz-erdos985-campaign-001-R005-CONTRACT_RESIDUAL",
+ "pipeline": "WITNESS_FINITE",
+ "witness": {
+  "contract_sha": "92de17cc91e715eb",
+  "instances": [
+   {
+    "p": 5,
+    "least_prime_primitive_root": 2
+   },
+   {
+    "p": 17,
+    "least_prime_primitive_root": 3
+   },
+   {
+    "p": 41,
+    "least_prime_primitive_root": 7
+   }
+  ]
+ },
+ "verifier_sha256": "2b78b1438da0ee2e388aae97fc3f29bb6179b205d5547f7b42d36da5c90be15f",
+ "verifier_source": "# Standalone exact verifier, zero imports, no I/O, no print, no filesystem.\n# Discipline: def verify(witness) raises on any failed check. Exact integer\n# arithmetic only. Fail-closed: any anomaly raises. Clean return = PASS.\n\ndef is_prime(n):\n    if n < 2:\n        return False\n    d = 2\n    while d * d <= n:\n        if n % d == 0:\n            return False\n        d += 1\n    return True\n\ndef mpow_exact(b, e, m):\n    r = 1\n    b = b % m\n    while e > 0:\n        if e % 2 == 1:\n            r = (r * b) % m\n        b = (b * b) % m\n        e //= 2\n    return r\n\ndef prime_factors(n):\n    fs = set()\n    m = n\n    d = 2\n    while d * d <= m:\n        while m % d == 0:\n            fs.add(d)\n            m //= d\n        d += 1\n    if m > 1:\n        fs.add(m)\n    return fs\n\ndef order_is_full(a, p):\n    n = p - 1\n    for f in prime_factors(n):\n        if mpow_exact(a, n // f, p) == 1:\n            return False\n    return mpow_exact(a, n, p) == 1\n\ndef least_prime_primitive_root(p):\n    for q in range(2, p):\n        if is_prime(q) and order_is_full(q, p):\n            return q\n    raise RuntimeError('FAIL: no primitive root found')\n\ndef verify(witness):\n    if not isinstance(witness, dict):\n        raise RuntimeError('FAIL: witness not a dict')\n    if witness.get('contract_sha') != '92de17cc91e715eb':\n        raise RuntimeError('FAIL: contract sha mismatch')\n    instances = witness.get('instances')\n    if not isinstance(instances, list) or len(instances) == 0:\n        raise RuntimeError('FAIL: no instances')\n    for inst in instances:\n        p = inst.get('p')\n        expected = inst.get('least_prime_primitive_root')\n        if not isinstance(p, int) or not isinstance(expected, int):\n            raise RuntimeError('FAIL: non-integer instance')\n        if not is_prime(p) or p <= 2:\n            raise RuntimeError('FAIL: p not an admissible prime')\n        if not is_prime(expected):\n            raise RuntimeError('FAIL: claimed least primitive root not prime')\n        if not order_is_full(expected, p):\n            raise RuntimeError('FAIL: claimed least primitive root does not generate')\n        for q in range(2, expected):\n            if is_prime(q) and order_is_full(q, p):\n                raise RuntimeError('FAIL: smaller prime generates')\n        got = least_prime_primitive_root(p)\n        if got != expected:\n            raise RuntimeError('FAIL: independent recomputation disagrees')\n    # clean return = PASS\n",
+ "run": {
+  "passed": true,
+  "status": "VERIFIER_PASS",
+  "exit_code": 0,
+  "stdout": "PASS",
+  "detail": "",
+  "seconds": 0.09,
+  "code_sha256": "2b78b1438da0ee2e388aae97fc3f29bb6179b205d5547f7b42d36da5c90be15f"
+ },
+ "claim": "The verifier defines verify(witness), raising on every failed check, and PASSes (clean return) iff for each witness instance (p, q) with p in {5,17,41}: p is prime > 2, q is prime, q generates (ZMod p)^× (exact order test against each prime factor of p−1), no smaller prime generates, and an independent recomputation of the least prime primitive root agrees. Corrected fragment after prior VERIFIER_FAIL: 6 is the least integer primitive root mod 41 but is not prime; the least PRIME primitive root mod 41 is 7 (7^20 ≡ −1 mod 41, order 40). Zero imports, no print, no filesystem, no network, exact integer arithmetic, fail-closed, deterministic. covers='fragment': concrete-instance executable fragment of CONTRACT_RESIDUAL only.",
+ "law": "Wang 7.2: an exact finite object plus a proved reduction is a CERTIFICATE. The reduction is the `claim` and is a human's to audit; the object and the verifier run are the machine's part.",
+ "timestamp": "2026-09-01T22:43:10Z"
+}

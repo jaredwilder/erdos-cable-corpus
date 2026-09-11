@@ -1,0 +1,30 @@
+{
+ "schema": "oracle.msl.closer.witness.v1",
+ "id": "fmz-erdos51-campaign-001-R004-L1",
+ "pipeline": "WITNESS_FINITE",
+ "witness": {
+  "t_range": [
+   32,
+   63
+  ],
+  "F5": 4294967297,
+  "F5_factors": [
+   641,
+   6700417
+  ]
+ },
+ "verifier_sha256": "0087dd3495d48ed9d5708dce8c1c40606fad0e784ac89467d35ebfdb6a6f5601",
+ "verifier_source": "#!/usr/bin/env python3\n# Standalone, deterministic, exact integer arithmetic, no imports, no I/O.\n# Entry point: verify(witness) -> raises on any failed check (fail closed).\n\nLO = 32\nHI = 63\nF5 = 4294967297\nF5_A = 641\nF5_B = 6700417\n\ndef is_prime(n):\n    if n < 2:\n        raise ValueError('not prime candidate')\n    for p in (2,3,5,7,11,13,17,19,23,29,31,37):\n        if n % p == 0:\n            return n == p\n    d = n - 1\n    r = 0\n    while d % 2 == 0:\n        d //= 2\n        r += 1\n    for a in (2,3,5,7,11,13,17,19,23,29,31,37):\n        x = pow(a, d, n)\n        if x == 1 or x == n - 1:\n            continue\n        ok = False\n        for _ in range(r - 1):\n            x = (x * x) % n\n            if x == n - 1:\n                ok = True\n                break\n        if not ok:\n            return False\n    return True\n\ndef phi_power2(k):\n    return 1 if k == 0 else 2 ** (k - 1)\n\ndef _combinations(items, r):\n    n = len(items)\n    if r > n:\n        return\n    idx = list(range(r))\n    while True:\n        yield tuple(items[i] for i in idx)\n        i = r - 1\n        while i >= 0 and idx[i] == i + n - r:\n            i -= 1\n        if i < 0:\n            return\n        idx[i] += 1\n        for j in range(i + 1, r):\n            idx[j] = idx[j - 1] + 1\n\ndef verify(witness):\n    # Witness consistency\n    if tuple(witness['t_range']) != (LO, HI):\n        raise ValueError('witness t_range mismatch')\n    if witness['F5'] != F5:\n        raise ValueError('witness F5 mismatch')\n    if sorted(witness['F5_factors']) != sorted([F5_A, F5_B]):\n        raise ValueError('witness factors mismatch')\n\n    # F5 = 2^32 + 1 = 641 * 6700417, exact, distinct primes (Euler 1732)\n    if F5 != 2 ** 32 + 1:\n        raise ValueError('F5 value')\n    if F5_A * F5_B != F5:\n        raise ValueError('F5 factorization')\n    if F5_A == F5_B:\n        raise ValueError('factors not distinct')\n    if not (is_prime(F5_A) and is_prime(F5_B)):\n        raise ValueError('factor not prime')\n\n    # Primes p with (p-1) | 2^63 and p < 2^64: p = 2^j + 1, 0 <= j <= 63.\n    special = []\n    for j in range(64):\n        p = 2 ** j + 1\n        if is_prime(p):\n            special.append((p, j))\n\n    # Any n with phi(n) = 2^t: odd primes occur only to the first power\n    # (p^2 | n would force odd p | phi(n)), so n = 2^k * prod_{p in S} p\n    # with S a subset of 'special'. Exhaustive exact search over all (S, k).\n    for t in range(LO, HI + 1):\n        target = 2 ** t\n        best = None\n        sp = [pj for pj in special if pj[1] <= t]\n        for r in range(len(sp) + 1):\n            for S in _combinations(sp, r):\n                s = 0\n                m = 1\n                for (p, j) in S:\n                    s += j\n                    m *= p\n                if s > t:\n                    continue\n                k = t - s + 1\n                if k >= 1:\n                    n = m * (2 ** k)\n                    ph = phi_power2(k)\n                    for (p, j) in S:\n                        ph *= (p - 1)\n                    if ph == target and (best is None or n < best):\n                        best = n\n                if s == t and m > 1:\n                    ph = 1\n                    for (p, j) in S:\n                        ph *= (p - 1)\n                    if ph == target and (best is None or m < best):\n                        best = m\n        if best != 2 ** (t + 1):\n            raise ValueError('least preimage wrong at t=%d' % t)\n        if phi_power2(t + 1) != target:\n            raise ValueError('phi(2^(t+1)) wrong at t=%d' % t)\n    return True\n\nWITNESS = {\n    't_range': [LO, HI],\n    'F5': F5,\n    'F5_factors': [F5_A, F5_B]\n}\n\nverify(WITNESS)\n",
+ "run": {
+  "passed": true,
+  "status": "VERIFIER_PASS",
+  "exit_code": 0,
+  "stdout": "PASS",
+  "detail": "",
+  "seconds": 0.11,
+  "code_sha256": "0087dd3495d48ed9d5708dce8c1c40606fad0e784ac89467d35ebfdb6a6f5601"
+ },
+ "claim": "Exit 0 (verify(WITNESS) returning True with no exception) certifies exactly: F5 = 641*6700417 with both factors prime, and, by exhaustive exact search over all n of the forced form 2^k * prod of distinct primes p = 2^j+1 (p^2 | n impossible when phi(n) = 2^t), that the least n with phi(n) = 2^t is exactly 2^(t+1) for every 32 <= t <= 63. Hence n_{2^t} = 2^(t+1), n_a/a = 2 is attained on im(phi), and any Branch-B constant needs C >= 2. Any defect raises and exits nonzero (fail closed).",
+ "law": "Wang 7.2: an exact finite object plus a proved reduction is a CERTIFICATE. The reduction is the `claim` and is a human's to audit; the object and the verifier run are the machine's part.",
+ "timestamp": "2026-09-01T21:20:36Z"
+}

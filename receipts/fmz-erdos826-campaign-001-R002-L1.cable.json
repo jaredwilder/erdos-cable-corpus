@@ -1,0 +1,55 @@
+{
+ "schema": "oracle.msl.cable.v1",
+ "id": "fmz-erdos826-campaign-001-R002-L1",
+ "spec": {
+  "id": "fmz-erdos826-campaign-001-R002-L1",
+  "imports": "Mathlib",
+  "definitions": "import Mathlib\n\nopen Nat\n\n/-- \u03c4(m) as the exact cardinality of the divisor list. -/\nnoncomputable def tau (m : \u2115) : \u2115 := m.divisors.card\n\n/-- Boolean predicate: L1's divisor bound \u03c4(m) \u2264 2\u00b7\u221am holds for this m.\n    decide turns the decidable Nat comparison into a Bool. -/\ndef tauBoundOk (m : \u2115) : Bool := decide (tau m \u2264 2 * sqrt m)\n\n/-- Exact integer check of L1's load-bearing bound \u03c4(m) \u2264 2\u00b7\u221am\n    for all 0 \u2264 m \u2264 N. Total and computable: List.range + Bool.all. -/\ndef checkTauBound (N : \u2115) : Bool := (List.range (N + 1)).all tauBoundOk",
+  "conclusion": "checkTauBound 1000 = true",
+  "proof": "by native_decide"
+ },
+ "formal_status": "KERNEL_FAILED",
+ "events": [
+  "((supplied proof)) RAW[/tmp/oracle_lean_sfpKRirI.lean:5:0: error: invalid 'import' command, it must be used in the beginning of the file]"
+ ],
+ "axioms": [],
+ "attempts": [
+  {
+   "tactic": "(supplied proof)",
+   "status": "UNVERIFIED",
+   "seconds": 18.1,
+   "errors": [
+    "/tmp/oracle_lean_sfpKRirI.lean:5:0: error: invalid 'import' command, it must be used in the beginning of the file"
+   ],
+   "exitCode": 1,
+   "resource_limit": null
+  }
+ ],
+ "budget_history": [
+  {
+   "tier_seconds": 900.0,
+   "outcome": "KERNEL_FAILED"
+  }
+ ],
+ "kernel_result": {
+  "status": "UNVERIFIED",
+  "file": "oracle/frontier_formalizer/cable/theorems/msl_fmz-erdos826-campaign-001-R002-L1.lean",
+  "backend": "wsl",
+  "project": "/root/erdosfire-bench/proofs",
+  "needsMathlib": true,
+  "exitCode": 1,
+  "seconds": 7.1,
+  "declarations": [
+   {
+    "declaration": "msl_fmz_erdos826_campaign_001_R002_L1",
+    "clean": false,
+    "axioms": []
+   }
+  ],
+  "errors": [
+   "/tmp/oracle_lean_sfpKRirI.lean:5:0: error: invalid 'import' command, it must be used in the beginning of the file"
+  ]
+ },
+ "lean_result_block": "LEAN_RESULT fmz-erdos826-campaign-001-R002-L1\n  FORMAL_STATUS KERNEL_FAILED\n  FILE oracle/frontier_formalizer/cable/theorems/msl_fmz-erdos826-campaign-001-R002-L1.lean\n  THEOREMS msl_fmz_erdos826_campaign_001_R002_L1\n  BACKEND wsl\n  AXIOMS -\n  TACTIC (supplied proof)\n  BUDGET 900s:KERNEL_FAILED\n  FAILURE ((supplied proof)) RAW[/tmp/oracle_lean_sfpKRirI.lean:5:0: error: invalid 'import' command, it must be used in the beginning of the file]\n  LAW KERNEL_FAILED does not refute the claim \u2014 the FAILURE line names what actually broke",
+ "timestamp": "2026-09-01T21:57:01Z"
+}

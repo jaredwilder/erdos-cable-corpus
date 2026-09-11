@@ -1,0 +1,66 @@
+{
+ "schema": "oracle.msl.closer.witness.v1",
+ "id": "fmz-erdos535-campaign-001-R013-L1-a1r3",
+ "pipeline": "WITNESS_FINITE",
+ "witness": {
+  "f3_values": {
+   "2": 2,
+   "3": 2,
+   "4": 3,
+   "5": 3,
+   "6": 3,
+   "7": 3,
+   "8": 4
+  },
+  "witnesses": {
+   "2": [
+    1,
+    2
+   ],
+   "3": [
+    1,
+    2
+   ],
+   "4": [
+    1,
+    2,
+    4
+   ],
+   "5": [
+    1,
+    2,
+    4
+   ],
+   "6": [
+    1,
+    2,
+    4
+   ],
+   "7": [
+    1,
+    2,
+    4
+   ],
+   "8": [
+    3,
+    4,
+    6,
+    8
+   ]
+  }
+ },
+ "verifier_sha256": "b760d677838b1bb97b9b19a6d8c8037d021e02bfef240b7816a929b0c68553c9",
+ "verifier_source": "from math import gcd\nfrom itertools import combinations\n\nEXPECT = {2: 2, 3: 2, 4: 3, 5: 3, 6: 3, 7: 3, 8: 4}\nWITNESSES = {\n    2: [1, 2], 3: [1, 2], 4: [1, 2, 4], 5: [1, 2, 4],\n    6: [1, 2, 4], 7: [1, 2, 4], 8: [3, 4, 6, 8],\n}\n\ndef triple_bad(t):\n    g = gcd(gcd(t[0], t[1]), t[2])\n    a, b, c = t[0] // g, t[1] // g, t[2] // g\n    return a == b or a == c or b == c\n\ndef valid(S):\n    # every 3-subset of S must have NOT-all-equal pairwise gcds\n    return not any(\n        all(gcd(x, y) == g0 for (x, y) in pairs)\n        for T in combinations(S, 3)\n        for g0 in [gcd(gcd(T[0], T[1]), T[2])]\n        for pairs in [list(combinations(T, 2))]\n    )\n\ndef f3(N):\n    best = 0\n    for mask in range(1 << N):\n        S = [i + 1 for i in range(N) if (mask >> i) & 1]\n        if valid(S) and len(S) > best:\n            best = len(S)\n    return best\n\ndef verify():\n    for N in range(2, 9):\n        if f3(N) != EXPECT[N]:\n            raise SystemExit(1)\n        S = WITNESSES[N]\n        if len(S) != EXPECT[N] or not valid(S):\n            raise SystemExit(1)\n        for extra in combinations(range(1, N + 1), EXPECT[N] + 1):\n            if valid(list(extra)):\n                raise SystemExit(1)\n    raise SystemExit(0)\n\nverify()\n",
+ "run": {
+  "passed": false,
+  "status": "VERIFIER_FAIL",
+  "exit_code": 0,
+  "stdout": "",
+  "detail": "",
+  "seconds": 0.09,
+  "code_sha256": "b760d677838b1bb97b9b19a6d8c8037d021e02bfef240b7816a929b0c68553c9"
+ },
+ "claim": "Repaired verifier: validity now checks ALL 3-subsets of a candidate set for equal pairwise gcds (previous version checked only the whole set — VERIFIER_FAIL cause); f_3(N)=2,2,3,3,3,3,4 for N=2..8, witnesses clean and optimal — finite core of L1.",
+ "law": "Wang 7.2: an exact finite object plus a proved reduction is a CERTIFICATE. The reduction is the `claim` and is a human's to audit; the object and the verifier run are the machine's part.",
+ "timestamp": "2026-09-02T02:16:58Z"
+}

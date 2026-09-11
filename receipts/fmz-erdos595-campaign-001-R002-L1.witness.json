@@ -1,0 +1,23 @@
+{
+ "schema": "oracle.msl.closer.witness.v1",
+ "id": "fmz-erdos595-campaign-001-R002-L1",
+ "pipeline": "WITNESS_FINITE",
+ "witness": {
+  "n_max": 6,
+  "lemma_fragment": "For every labeled simple graph G on vertex set {0,...,n-1} with n <= 6: if the least-common-neighbor edge coloring (color{u,v} = min{w : w adjacent to both u and v}, undefined if no such w) has a monochromatic triangle (three triangle edges sharing one defined color), then G contains a K4."
+ },
+ "verifier_sha256": "32f6f37d7b698827e26a554516abe5638f9ad1afef95562ea6111ee0b6326673",
+ "verifier_source": "def adjacent(adj, u, v):\n    return u != v and ((adj >> (u*16 + v)) & 1) == 1\n\ndef lcn_color(adj, u, v):\n    for w in range(16):\n        if adjacent(adj, u, w) and adjacent(adj, v, w):\n            return w\n    return None\n\ndef has_k4(adj, n):\n    for a in range(n):\n        for b in range(a+1, n):\n            for c in range(b+1, n):\n                for d in range(c+1, n):\n                    if (adjacent(adj,a,b) and adjacent(adj,a,c) and adjacent(adj,a,d)\n                            and adjacent(adj,b,c) and adjacent(adj,b,d)\n                            and adjacent(adj,c,d)):\n                        return True\n    return False\n\ndef has_mono_triangle(adj, n):\n    for a in range(n):\n        for b in range(a+1, n):\n            for c in range(b+1, n):\n                c01 = lcn_color(adj, a, b)\n                c02 = lcn_color(adj, a, c)\n                c12 = lcn_color(adj, b, c)\n                if c01 is not None and c01 == c02 and c01 == c12:\n                    return True\n    return False\n\ndef verify(n_max):\n    if not isinstance(n_max, int) or n_max < 4 or n_max > 6:\n        return False\n    for n in range(4, n_max + 1):\n        pairs = []\n        for u in range(n):\n            for v in range(u+1, n):\n                pairs.append((u, v))\n        for mask in range(1 << len(pairs)):\n            adj = 0\n            for i in range(len(pairs)):\n                if (mask >> i) & 1:\n                    adj = adj | (1 << (pairs[i][0]*16 + pairs[i][1]))\n            if has_mono_triangle(adj, n) and not has_k4(adj, n):\n                return False\n    return True\n\ndef main():\n    return verify(6)\n",
+ "run": {
+  "passed": true,
+  "status": "VERIFIER_PASS",
+  "exit_code": 0,
+  "stdout": "PASS",
+  "detail": "",
+  "seconds": 0.13,
+  "code_sha256": "32f6f37d7b698827e26a554516abe5638f9ad1afef95562ea6111ee0b6326673"
+ },
+ "claim": "PASS (main() == True) establishes the finite-instance fragment (n <= 6) of L1's core implication — a monochromatic triangle in the least-common-neighbor coloring forces a K4 — by exhaustive exact enumeration with zero tolerance; covers=fragment (the full lemma covers all n and the branch-B reduction, not decided by this finite check).",
+ "law": "Wang 7.2: an exact finite object plus a proved reduction is a CERTIFICATE. The reduction is the `claim` and is a human's to audit; the object and the verifier run are the machine's part.",
+ "timestamp": "2026-09-01T19:51:29Z"
+}

@@ -1,0 +1,57 @@
+{
+ "schema": "oracle.msl.cable.v1",
+ "id": "fmz-erdos479-campaign-001-R007-L1-a3r2",
+ "spec": {
+  "id": "fmz-erdos479-campaign-001-R007-L1-a3r2",
+  "imports": "Mathlib",
+  "definitions": "def checkLTE (a : Nat) : Bool :=\n  let m := 2 ^ (3 ^ a) + 1\n  (m % (3 ^ (a + 1)) == 0) && (m % (3 ^ (a + 2)) != 0)\n\ndef checkAll : Bool := checkLTE 1 && checkLTE 2",
+  "conclusion": "checkAll = true",
+  "proof": "by native_decide"
+ },
+ "formal_status": "KERNEL_FAILED",
+ "events": [
+  "RAW[exit 0 with no captured error line]"
+ ],
+ "axioms": [
+  "msl_fmz_erdos479_campaign_001_R007_L1_a3r2._native.native_decide.ax_1_1",
+  "propext"
+ ],
+ "attempts": [
+  {
+   "tactic": "(supplied proof)",
+   "status": "UNVERIFIED",
+   "seconds": 6.1,
+   "errors": [],
+   "exitCode": 0,
+   "resource_limit": null
+  }
+ ],
+ "budget_history": [
+  {
+   "tier_seconds": 900.0,
+   "outcome": "KERNEL_FAILED"
+  }
+ ],
+ "kernel_result": {
+  "status": "UNVERIFIED",
+  "file": "oracle/frontier_formalizer/cable/theorems/msl_fmz-erdos479-campaign-001-R007-L1-a3r2.lean",
+  "backend": "wsl",
+  "project": "/root/erdosfire-bench/proofs",
+  "needsMathlib": true,
+  "exitCode": 0,
+  "seconds": 3.4,
+  "declarations": [
+   {
+    "declaration": "msl_fmz_erdos479_campaign_001_R007_L1_a3r2",
+    "clean": false,
+    "axioms": [
+     "propext",
+     "msl_fmz_erdos479_campaign_001_R007_L1_a3r2._native.native_decide.ax_1_1"
+    ]
+   }
+  ],
+  "errors": []
+ },
+ "lean_result_block": "LEAN_RESULT fmz-erdos479-campaign-001-R007-L1-a3r2\n  FORMAL_STATUS KERNEL_FAILED\n  FILE oracle/frontier_formalizer/cable/theorems/msl_fmz-erdos479-campaign-001-R007-L1-a3r2.lean\n  THEOREMS msl_fmz_erdos479_campaign_001_R007_L1_a3r2\n  BACKEND wsl\n  AXIOMS msl_fmz_erdos479_campaign_001_R007_L1_a3r2._native.native_decide.ax_1_1, propext\n  TACTIC (supplied proof)\n  BUDGET 900s:KERNEL_FAILED\n  FAILURE RAW[exit 0 with no captured error line]\n  LAW KERNEL_FAILED does not refute the claim \u2014 the FAILURE line names what actually broke",
+ "timestamp": "2026-09-02T01:01:54Z"
+}

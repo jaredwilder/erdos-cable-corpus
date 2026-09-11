@@ -1,0 +1,65 @@
+{
+ "schema": "oracle.msl.cable.v1",
+ "id": "fmz-erdos51-campaign-001-R007-L1",
+ "spec": {
+  "id": "fmz-erdos51-campaign-001-R007-L1",
+  "imports": "none",
+  "definitions": "def check_cert : Bool :=\n  decide ((15 : Nat) > 8) &&\n  decide ((51 : Nat) > 32) &&\n  decide ((69 : Nat) > 44) &&\n  decide ((69 : Rat) / 44 - 3 / 2 = 3 / 44) &&\n  decide ((69 : Rat) / 44 - 3 / 2 > 0)",
+  "conclusion": "check_cert = true",
+  "proof": "by decide"
+ },
+ "formal_status": "KERNEL_FAILED",
+ "events": [
+  "((supplied proof)) RAW[tmp1efvx_7u.lean:10:72: error: Tactic `decide` failed for proposition]"
+ ],
+ "axioms": [
+  "Classical.choice",
+  "Quot.sound",
+  "propext",
+  "sorryAx"
+ ],
+ "attempts": [
+  {
+   "tactic": "(supplied proof)",
+   "status": "UNVERIFIED",
+   "seconds": 2.0,
+   "errors": [
+    "tmp1efvx_7u.lean:10:72: error: Tactic `decide` failed for proposition"
+   ],
+   "exitCode": 1,
+   "resource_limit": null
+  }
+ ],
+ "budget_history": [
+  {
+   "tier_seconds": 900.0,
+   "outcome": "KERNEL_FAILED"
+  }
+ ],
+ "kernel_result": {
+  "status": "UNVERIFIED",
+  "file": "oracle/frontier_formalizer/cable/theorems/msl_fmz-erdos51-campaign-001-R007-L1.lean",
+  "backend": "windows",
+  "project": "C:\\Users\\jared\\Local Sites\\woocommerce-enterprise\\oracle\\math\\EG411Formal",
+  "needsMathlib": false,
+  "exitCode": 1,
+  "seconds": 2.0,
+  "declarations": [
+   {
+    "declaration": "msl_fmz_erdos51_campaign_001_R007_L1",
+    "clean": false,
+    "axioms": [
+     "propext",
+     "sorryAx",
+     "Classical.choice",
+     "Quot.sound"
+    ]
+   }
+  ],
+  "errors": [
+   "tmp1efvx_7u.lean:10:72: error: Tactic `decide` failed for proposition"
+  ]
+ },
+ "lean_result_block": "LEAN_RESULT fmz-erdos51-campaign-001-R007-L1\n  FORMAL_STATUS KERNEL_FAILED\n  FILE oracle/frontier_formalizer/cable/theorems/msl_fmz-erdos51-campaign-001-R007-L1.lean\n  THEOREMS msl_fmz_erdos51_campaign_001_R007_L1\n  BACKEND windows\n  AXIOMS Classical.choice, Quot.sound, propext, sorryAx\n  TACTIC (supplied proof)\n  BUDGET 900s:KERNEL_FAILED\n  FAILURE ((supplied proof)) RAW[tmp1efvx_7u.lean:10:72: error: Tactic `decide` failed for proposition]\n  LAW KERNEL_FAILED does not refute the claim \u2014 the FAILURE line names what actually broke",
+ "timestamp": "2026-09-01T23:40:46Z"
+}

@@ -1,0 +1,72 @@
+{
+ "schema": "oracle.msl.cable.v1",
+ "id": "erdos595-colour-interface",
+ "spec": {
+  "id": "erdos595-colour-interface",
+  "imports": "Mathlib",
+  "definitions": "open SimpleGraph in\ndef IsUTF {V : Type} (I : Type) (G : SimpleGraph V) : Prop :=\n  \u2203 H : I \u2192 SimpleGraph V, (\u2200 i, (H i).CliqueFree 3) \u2227 G = \u2a06 i, H i\n\ntheorem properBinary {V I : Type} (G : SimpleGraph V) (e : V \u2192 (I \u2192 Bool)) :\n    (\u2200 a b : V, G.Adj a b \u2192 e a \u2260 e b) \u2192 IsUTF I G := by\n  classical\n  intro he\n  have hdiff : \u2200 a b : V, G.Adj a b \u2192 \u2203 i : I, e a i \u2260 e b i := by\n    intro a b hab\n    by_contra hcon\n    push_neg at hcon\n    exact he a b hab (funext hcon)\n  choose ch hch using hdiff\n  refine \u27e8fun i => SimpleGraph.fromRel (fun a b => \u2203 h : G.Adj a b, ch a b h = i), ?_, ?_\u27e9\n  \u00b7 intro i t ht\n    obtain \u27e8hcl, hcard\u27e9 := ht\n    obtain \u27e8a, b, d, hab, had, hbd, hteq\u27e9 := Finset.card_eq_three.mp hcard\n    have ha : a \u2208 t := by rw [hteq]; simp\n    have hb : b \u2208 t := by rw [hteq]; simp\n    have hd : d \u2208 t := by rw [hteq]; simp\n    have get : \u2200 x y : V,\n        (SimpleGraph.fromRel (fun a b => \u2203 h : G.Adj a b, ch a b h = i)).Adj x y \u2192\n        e x i \u2260 e y i := by\n      intro x y hxy\n      rw [SimpleGraph.fromRel_adj] at hxy\n      rcases hxy.2 with \u27e8h, hn\u27e9 | \u27e8h, hn\u27e9\n      \u00b7 have hs := hch x y h\n        rw [hn] at hs\n        exact hs\n      \u00b7 have hs := hch y x h\n        rw [hn] at hs\n        exact fun hc => hs hc.symm\n    have d1 := get a b (hcl ha hb hab)\n    have d2 := get a d (hcl ha hd had)\n    have d3 := get b d (hcl hb hd hbd)\n    rcases Bool.eq_false_or_eq_true (e a i) with h | h <;>\n      rcases Bool.eq_false_or_eq_true (e b i) with h' | h' <;>\n      rcases Bool.eq_false_or_eq_true (e d i) with h'' | h'' <;>\n      simp_all\n  \u00b7 ext a b\n    rw [SimpleGraph.iSup_adj]\n    constructor\n    \u00b7 intro hab\n      refine \u27e8ch a b hab, ?_\u27e9\n      rw [SimpleGraph.fromRel_adj]\n      exact \u27e8G.ne_of_adj hab, Or.inl \u27e8hab, rfl\u27e9\u27e9\n    \u00b7 rintro \u27e8i, hi\u27e9\n      rw [SimpleGraph.fromRel_adj] at hi\n      rcases hi.2 with \u27e8h, -\u27e9 | \u27e8h, -\u27e9\n      \u00b7 exact h\n      \u00b7 exact h.symm",
+  "hypotheses": [
+   "{V I C : Type}",
+   "(G : SimpleGraph V)",
+   "(f : V \u2192 C)",
+   "(g : C \u2192 (I \u2192 Bool))"
+  ],
+  "conclusion": "(\u2200 a b : V, G.Adj a b \u2192 f a \u2260 f b) \u2192 Function.Injective g \u2192 IsUTF I G",
+  "proof": "by\n  intro hf hg\n  refine properBinary G (fun v => g (f v)) ?_\n  intro a b hab hcon\n  exact hf a b hab (hg hcon)"
+ },
+ "formal_status": "KERNEL_CHECKED",
+ "events": [],
+ "axioms": [
+  "Classical.choice",
+  "Quot.sound",
+  "propext"
+ ],
+ "attempts": [
+  {
+   "tactic": "(supplied proof)",
+   "status": "VERIFIED",
+   "seconds": 60.8,
+   "errors": [],
+   "exitCode": 0,
+   "resource_limit": null
+  }
+ ],
+ "budget_history": [
+  {
+   "tier_seconds": 120.0,
+   "outcome": "KERNEL_CHECKED"
+  }
+ ],
+ "kernel_result": {
+  "status": "VERIFIED",
+  "file": "oracle/frontier_formalizer/cable/theorems/msl_erdos595-colour-interface.lean",
+  "backend": "wsl",
+  "project": "/root/erdosfire-bench/proofs",
+  "needsMathlib": true,
+  "exitCode": 0,
+  "seconds": 50.3,
+  "declarations": [
+   {
+    "declaration": "properBinary",
+    "clean": true,
+    "axioms": [
+     "propext",
+     "Classical.choice",
+     "Quot.sound"
+    ]
+   },
+   {
+    "declaration": "msl_erdos595_colour_interface",
+    "clean": true,
+    "axioms": [
+     "propext",
+     "Classical.choice",
+     "Quot.sound"
+    ]
+   }
+  ],
+  "errors": []
+ },
+ "lean_result_block": "LEAN_RESULT erdos595-colour-interface\n  FORMAL_STATUS KERNEL_CHECKED\n  FILE oracle/frontier_formalizer/cable/theorems/msl_erdos595-colour-interface.lean\n  THEOREMS msl_erdos595_colour_interface\n  BACKEND wsl\n  AXIOMS Classical.choice, Quot.sound, propext\n  TACTIC (supplied proof)\n  BUDGET 120s:KERNEL_CHECKED\n  FAILURE NONE",
+ "timestamp": "2026-09-06T12:06:37Z"
+}

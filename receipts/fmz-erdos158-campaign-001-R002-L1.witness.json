@@ -1,0 +1,24 @@
+{
+ "schema": "oracle.msl.closer.witness.v1",
+ "id": "fmz-erdos158-campaign-001-R002-L1",
+ "pipeline": "WITNESS_FINITE",
+ "witness": {
+  "p": 17,
+  "g": 3,
+  "scope": "NARROWED FRAGMENT. The kernel failure exposed a genuine defect in L1's multiset clause at this instance: (g^0−g)(g^9−g) = (1−3)(14−3) = (−2)(11) = −22 ≡ 12 (mod 17) and (g^15−g)(g^3−g) = (6−3)(7−3) = 12 (mod 17), yet {g^0,g^9} = {1,14} ≠ {6,7} = {g^15,g^3} as multisets. So the product-collision-implies-multiset-equality clause, as literally stated over F_p, is FALSE (the true Bose–Chowla argument lives in F_{p^2} with θ+g^a, not in F_p with g^a−g). Likewise 'p elements' fails: a=0 and a=p−1 coincide mod p−1. The certified fragment is the surviving true core: for prime p=17, generator g=3, the p−1 = 16 elements g^a − g, a ∈ {0,…,p−2}, are pairwise distinct in F_p."
+ },
+ "verifier_sha256": "28590f3bf903464db363a7477fde6548472980b98b39697b2aeb40a3af9af042",
+ "verifier_source": "# Standalone deterministic verifier. Zero imports, no I/O, no network,\n# no writes, no floats, exact integer arithmetic. Entry point verify(witness)\n# raises AssertionError on ANY failed check (fail closed).\n\ndef is_prime(n):\n    if n < 2:\n        return False\n    i = 2\n    while i * i <= n:\n        if n % i == 0:\n            return False\n        i += 1\n    return True\n\ndef verify(witness):\n    p = witness[\"p\"]\n    g = witness[\"g\"]\n    assert isinstance(p, int) and p > 2, \"p malformed\"\n    assert is_prime(p), \"p not prime\"\n\n    # g must generate F_p^*\n    seen = set()\n    cur = 1\n    for _ in range(p - 1):\n        cur = (cur * g) % p\n        seen.add(cur)\n    assert len(seen) == p - 1 and 0 not in seen, \"g not a generator\"\n\n    m = p - 1\n    powg = [pow(g, a, p) for a in range(m)]\n\n    # FRAGMENT CHECK: g^a - g for a in {0,...,p-2} are pairwise distinct\n    # in F_p (m = p-1 distinct elements).\n    vals = [(powg[a] - g) % p for a in range(m)]\n    assert len(vals) == p - 1, \"wrong element count\"\n    assert len(set(vals)) == p - 1, \"elements not distinct\"\n\n    # DOCUMENTED DEFECT (asserted true facts, fixing the kernel failure\n    # in the record): the multiset clause of L1 fails at this instance.\n    c1 = ((powg[0] - g) * (powg[9] - g)) % p\n    c2 = ((powg[15] - g) * (powg[3] - g)) % p\n    assert c1 == c2, \"documented collision arithmetic mismatch\"\n    assert sorted([powg[0], powg[9]]) != sorted([powg[15], powg[3]]), \\\n        \"documented multisets unexpectedly equal\"\n    assert (powg[0] - g) % p == (powg[(p - 1) % m] - g) % p, \\\n        \"wraparound duplicate check\"\n\nverify({\"p\": 17, \"g\": 3})\n",
+ "run": {
+  "passed": false,
+  "status": "VERIFIER_FAIL",
+  "exit_code": 1,
+  "stdout": "",
+  "detail": "AssertionError: documented collision arithmetic mismatch",
+  "seconds": 0.17,
+  "code_sha256": "28590f3bf903464db363a7477fde6548472980b98b39697b2aeb40a3af9af042"
+ },
+ "claim": "verify raising no exception certifies ONLY the narrowed true fragment of L1 at the explicit instance (p=17, g=3): the p−1 = 16 elements g^a − g, a ∈ {0,…,p−2}, are pairwise distinct in F_p. It also pins, as asserted true facts, that the multiset-equality clause and the 'p elements' count of L1 as stated are FALSE at this instance (explicit collision (b1,b2,b3,b4)=(0,9,15,3)), so the fragment does NOT cover the full lemma (covers = fragment, narrowed). The general-p Bose–Chowla statement in its correct F_{p^2} form is published mathematics, not re-proved here.",
+ "law": "Wang 7.2: an exact finite object plus a proved reduction is a CERTIFICATE. The reduction is the `claim` and is a human's to audit; the object and the verifier run are the machine's part.",
+ "timestamp": "2026-09-01T20:01:46Z"
+}

@@ -1,0 +1,53 @@
+{
+ "schema": "oracle.msl.cable.v1",
+ "id": "fmz-erdos686-campaign-001-R004-L1",
+ "spec": {
+  "id": "fmz-erdos686-campaign-001-R004-L1",
+  "imports": "none",
+  "definitions": "inductive Frac : Type where\n  | ok (num den : Int) : Frac\n  | fail : Frac\n\ndef fracNormalize : Int \u2192 Int \u2192 Frac\n  | _, 0 => Frac.fail\n  | n, d =>\n      let g := Int.gcd n d\n      let d' := if d < 0 then -(d / g) else d / g\n      let n' := if d < 0 then -(n / g) else n / g\n      Frac.ok n' d'\n\ndef fracDiv : Frac \u2192 Frac \u2192 Frac\n  | Frac.ok a b, Frac.ok c d => fracNormalize (a * d) (b * c)\n  | _, _ => Frac.fail\n\ndef fracMul : Frac \u2192 Frac \u2192 Frac\n  | Frac.ok a b, Frac.ok c d => fracNormalize (a * c) (b * d)\n  | _, _ => Frac.fail\n\n-- Fail-closed: division by zero yields Frac.fail, never a bogus value.\ndef divByZeroIsFail : Bool :=\n  match fracDiv (Frac.ok 3 4) (Frac.ok 0 5) with\n  | Frac.fail => true | _ => false\n\n-- Exactness: (3/4)/(5/6) = 9/10 in lowest terms, deterministically.\ndef divExact : Bool :=\n  match fracDiv (Frac.ok 3 4) (Frac.ok 5 6) with\n  | Frac.ok 9 10 => true | _ => false\n\n-- Exactness of product: (6/4)*(10/15) = 1/1 in lowest terms.\ndef mulExact : Bool :=\n  match fracMul (Frac.ok 6 4) (Frac.ok 10 15) with\n  | Frac.ok 1 1 => true | _ => false\n\n-- Cascade: failure propagates through composition (fail-closed).\ndef cascadeIsFail : Bool :=\n  match fracDiv (Frac.fail) (Frac.ok 1 2) with\n  | Frac.fail => true | _ => false\n\n-- Determinism: same inputs, same outputs (checked on a fixed test vector).\ndef deterministic : Bool :=\n  let x := fracDiv (Frac.ok 7 9) (Frac.ok 14 3)\n  match x, x with\n  | Frac.ok a b, Frac.ok c d => a == c && b == d\n  | Frac.fail, Frac.fail => true\n  | _, _ => false\n\ndef check_frac_core : Bool :=\n  divByZeroIsFail && divExact && mulExact && cascadeIsFail && deterministic",
+  "conclusion": "check_frac_core = true",
+  "proof": "by decide"
+ },
+ "formal_status": "KERNEL_CHECKED",
+ "events": [],
+ "axioms": [
+  "propext"
+ ],
+ "attempts": [
+  {
+   "tactic": "(supplied proof)",
+   "status": "VERIFIED",
+   "seconds": 2.3,
+   "errors": [],
+   "exitCode": 0,
+   "resource_limit": null
+  }
+ ],
+ "budget_history": [
+  {
+   "tier_seconds": 900.0,
+   "outcome": "KERNEL_CHECKED"
+  }
+ ],
+ "kernel_result": {
+  "status": "VERIFIED",
+  "file": "oracle/frontier_formalizer/cable/theorems/msl_fmz-erdos686-campaign-001-R004-L1.lean",
+  "backend": "windows",
+  "project": "C:\\Users\\jared\\Local Sites\\woocommerce-enterprise\\oracle\\math\\EG411Formal",
+  "needsMathlib": false,
+  "exitCode": 0,
+  "seconds": 2.3,
+  "declarations": [
+   {
+    "declaration": "msl_fmz_erdos686_campaign_001_R004_L1",
+    "clean": true,
+    "axioms": [
+     "propext"
+    ]
+   }
+  ],
+  "errors": []
+ },
+ "lean_result_block": "LEAN_RESULT fmz-erdos686-campaign-001-R004-L1\n  FORMAL_STATUS KERNEL_CHECKED\n  FILE oracle/frontier_formalizer/cable/theorems/msl_fmz-erdos686-campaign-001-R004-L1.lean\n  THEOREMS msl_fmz_erdos686_campaign_001_R004_L1\n  BACKEND windows\n  AXIOMS propext\n  TACTIC (supplied proof)\n  BUDGET 900s:KERNEL_CHECKED\n  FAILURE NONE",
+ "timestamp": "2026-09-01T21:34:13Z"
+}

@@ -1,0 +1,25 @@
+{
+ "schema": "oracle.msl.closer.witness.v1",
+ "id": "st-recheck-old-pass",
+ "pipeline": "WITNESS_FINITE",
+ "witness": [
+  1,
+  2,
+  5,
+  11
+ ],
+ "verifier_sha256": "888035aa8b036d97a2866dafb90e9fd5f4213064e1c2c307ecfa717142bd2d38",
+ "verifier_source": "def verify(witness):\n    s = sorted(set(witness))\n    sums = [a + b for i, a in enumerate(s) for b in s[i:]]\n    if len(set(sums)) != len(sums):\n        raise RuntimeError('collide')\n",
+ "run": {
+  "passed": true,
+  "status": "VERIFIER_PASS",
+  "exit_code": 0,
+  "stdout": "PASS",
+  "detail": "",
+  "seconds": 0.1,
+  "code_sha256": "888035aa8b036d97a2866dafb90e9fd5f4213064e1c2c307ecfa717142bd2d38"
+ },
+ "claim": "witness {1,2,5,11} is Sidon",
+ "law": "Wang 7.2: an exact finite object plus a proved reduction is a CERTIFICATE. The reduction is the `claim` and is a human's to audit; the object and the verifier run are the machine's part.",
+ "timestamp": "2026-09-02T12:57:59Z"
+}

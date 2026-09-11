@@ -1,0 +1,64 @@
+{
+ "schema": "oracle.msl.cable.v1",
+ "id": "fmz-erdos885-campaign-001-R002-L1",
+ "spec": {
+  "id": "fmz-erdos885-campaign-001-R002-L1",
+  "imports": "none",
+  "definitions": "def isSq (n : Nat) : Bool :=\n  let r := Nat.sqrt n\n  r * r == n\n\ndef inD (N d : Nat) : Bool :=\n  (List.range (N + 1)).any (fun a =>\n    a > 0 && N % a == 0 && (a - N / a) == d || (N / a - a) == d)\n\ndef rootOf (N d : Nat) : Nat := (Nat.sqrt (d*d + 4*N) - d) / 2\n\ndef checkL1 (nMax dMax : Nat) : Bool :=\n  (List.range (nMax + 1)).all (fun N =>\n    if N == 0 then true else\n    (List.range (dMax + 1)).all (fun d =>\n      (inD N d == isSq (d*d + 4*N)) &&\n      (if isSq (d*d + 4*N) then rootOf N d * (rootOf N d + d) == N else true)))",
+  "conclusion": "checkL1 12 12 = true",
+  "proof": "by native_decide"
+ },
+ "formal_status": "KERNEL_FAILED",
+ "events": [
+  "((supplied proof)) TYPE.FAIL NEED[Nat.sqrt]",
+  "((supplied proof)) RAW[tmpwyd12wqr.lean:20:76: error: Tactic `native_decide` failed: Could not evaluate decidable instance. Error: cannot evaluate code because 'isSq' uses 'sorry' and]"
+ ],
+ "axioms": [
+  "sorryAx"
+ ],
+ "attempts": [
+  {
+   "tactic": "(supplied proof)",
+   "status": "UNVERIFIED",
+   "seconds": 3.2,
+   "errors": [
+    "tmpwyd12wqr.lean:4:11: error(lean.unknownIdentifier): Unknown constant `Nat.sqrt`",
+    "tmpwyd12wqr.lean:11:33: error(lean.unknownIdentifier): Unknown constant `Nat.sqrt`",
+    "tmpwyd12wqr.lean:20:76: error: Tactic `native_decide` failed: Could not evaluate decidable instance. Error: cannot evaluate code because 'isSq' uses 'sorry' and/or contains errors"
+   ],
+   "exitCode": 1,
+   "resource_limit": null
+  }
+ ],
+ "budget_history": [
+  {
+   "tier_seconds": 900.0,
+   "outcome": "KERNEL_FAILED"
+  }
+ ],
+ "kernel_result": {
+  "status": "UNVERIFIED",
+  "file": "oracle/frontier_formalizer/cable/theorems/msl_fmz-erdos885-campaign-001-R002-L1.lean",
+  "backend": "windows",
+  "project": "C:\\Users\\jared\\Local Sites\\woocommerce-enterprise\\oracle\\math\\EG411Formal",
+  "needsMathlib": false,
+  "exitCode": 1,
+  "seconds": 3.2,
+  "declarations": [
+   {
+    "declaration": "msl_fmz_erdos885_campaign_001_R002_L1",
+    "clean": false,
+    "axioms": [
+     "sorryAx"
+    ]
+   }
+  ],
+  "errors": [
+   "tmpwyd12wqr.lean:4:11: error(lean.unknownIdentifier): Unknown constant `Nat.sqrt`",
+   "tmpwyd12wqr.lean:11:33: error(lean.unknownIdentifier): Unknown constant `Nat.sqrt`",
+   "tmpwyd12wqr.lean:20:76: error: Tactic `native_decide` failed: Could not evaluate decidable instance. Error: cannot evaluate code because 'isSq' uses 'sorry' and/or contains errors"
+  ]
+ },
+ "lean_result_block": "LEAN_RESULT fmz-erdos885-campaign-001-R002-L1\n  FORMAL_STATUS KERNEL_FAILED\n  FILE oracle/frontier_formalizer/cable/theorems/msl_fmz-erdos885-campaign-001-R002-L1.lean\n  THEOREMS msl_fmz_erdos885_campaign_001_R002_L1\n  BACKEND windows\n  AXIOMS sorryAx\n  TACTIC (supplied proof)\n  BUDGET 900s:KERNEL_FAILED\n  FAILURE ((supplied proof)) TYPE.FAIL NEED[Nat.sqrt]; ((supplied proof)) RAW[tmpwyd12wqr.lean:20:76: error: Tactic `native_decide` failed: Could not evaluate decidable instance. Error: cannot evaluate code because 'isSq' uses 'sorry' and]\n  LAW KERNEL_FAILED does not refute the claim \u2014 the FAILURE line names what actually broke",
+ "timestamp": "2026-09-01T21:49:45Z"
+}

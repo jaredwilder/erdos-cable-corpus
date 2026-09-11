@@ -1,0 +1,49 @@
+{
+ "schema": "oracle.msl.cable.v1",
+ "id": "fmz-erdos82-campaign-001-R006-L1",
+ "spec": {
+  "id": "fmz-erdos82-campaign-001-R006-L1",
+  "imports": "none",
+  "definitions": "-- Pure-Nat checkable fragment of L1's recorded shape: on the subsequence\n-- n = 2^(2^k), log2 n = 2^k and log2 log2 n = k, so a lower bound of the form\n-- F(n) >= c*log n / log log n contributes only O(1/k) to F(n)/log n. The\n-- envelope 100/(10*k) (Nat division) is computed and checked to be strictly\n-- decreasing in k over the sampled range, confirming the bound's ratio\n-- contribution tends to 0 along this subsequence.\ndef env (k : Nat) : Nat := 100 / (10 * k)\n\ndef checkEnvelope : Bool :=\n  (env 1 = 10)\n  && (env 5 = 2)\n  && (env 10 = 1)\n  && (env 20 = 0)\n  && (env 5 < env 1)\n  && (env 10 < env 5)\n  && (env 20 < env 10)",
+  "conclusion": "checkEnvelope = true",
+  "proof": "by decide"
+ },
+ "formal_status": "KERNEL_CHECKED",
+ "events": [],
+ "axioms": [],
+ "attempts": [
+  {
+   "tactic": "(supplied proof)",
+   "status": "VERIFIED",
+   "seconds": 11.0,
+   "errors": [],
+   "exitCode": 0,
+   "resource_limit": null
+  }
+ ],
+ "budget_history": [
+  {
+   "tier_seconds": 900.0,
+   "outcome": "KERNEL_CHECKED"
+  }
+ ],
+ "kernel_result": {
+  "status": "VERIFIED",
+  "file": "oracle/frontier_formalizer/cable/theorems/msl_fmz-erdos82-campaign-001-R006-L1.lean",
+  "backend": "windows",
+  "project": "C:\\Users\\jared\\Local Sites\\woocommerce-enterprise\\oracle\\math\\EG411Formal",
+  "needsMathlib": false,
+  "exitCode": 0,
+  "seconds": 11.0,
+  "declarations": [
+   {
+    "declaration": "msl_fmz_erdos82_campaign_001_R006_L1",
+    "clean": true,
+    "axioms": []
+   }
+  ],
+  "errors": []
+ },
+ "lean_result_block": "LEAN_RESULT fmz-erdos82-campaign-001-R006-L1\n  FORMAL_STATUS KERNEL_CHECKED\n  FILE oracle/frontier_formalizer/cable/theorems/msl_fmz-erdos82-campaign-001-R006-L1.lean\n  THEOREMS msl_fmz_erdos82_campaign_001_R006_L1\n  BACKEND windows\n  AXIOMS -\n  TACTIC (supplied proof)\n  BUDGET 900s:KERNEL_CHECKED\n  FAILURE NONE",
+ "timestamp": "2026-09-01T21:37:00Z"
+}

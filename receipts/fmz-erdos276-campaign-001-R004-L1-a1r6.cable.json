@@ -1,0 +1,65 @@
+{
+ "schema": "oracle.msl.cable.v1",
+ "id": "fmz-erdos276-campaign-001-R004-L1-a1r6",
+ "spec": {
+  "id": "fmz-erdos276-campaign-001-R004-L1-a1r6",
+  "imports": "Mathlib",
+  "definitions": "def IsLucasSequence (L : \u2115 \u2192 \u2115) : Prop := \u2200 n, L (n + 2) = L (n + 1) + L n\n\ndef NecessaryConditions (a : \u2115 \u2192 \u2115) : Prop :=\n  IsLucasSequence a \u2227\n  (\u2200 k, (a k).Composite) \u2227\n  (\u2200 n > 1, \u2203 k, Nat.gcd n (a k) = 1)",
+  "conclusion": "\u2200 (a : \u2115 \u2192 \u2115), NecessaryConditions a \u2192 (a 0).Composite \u2227 (a 1).Composite",
+  "proof": "by\n  intro a h\n  exact \u27e8h.2.1 0, h.2.1 1\u27e9"
+ },
+ "formal_status": "KERNEL_FAILED",
+ "events": [
+  "((supplied proof)) RAW[/tmp/oracle_lean_9srYpj0k.lean:9:14: error(lean.invalidField): Invalid field `Composite`: The environment does not contain `Nat.Composite`, so it is not possibl]",
+  "((supplied proof)) RAW[/tmp/oracle_lean_9srYpj0k.lean:12:99: error(lean.invalidField): Invalid field `Composite`: The environment does not contain `Nat.Composite`, so it is not possib]",
+  "((supplied proof)) RAW[/tmp/oracle_lean_9srYpj0k.lean:12:117: error(lean.invalidField): Invalid field `Composite`: The environment does not contain `Nat.Composite`, so it is not possi]"
+ ],
+ "axioms": [
+  "sorryAx"
+ ],
+ "attempts": [
+  {
+   "tactic": "(supplied proof)",
+   "status": "UNVERIFIED",
+   "seconds": 11.2,
+   "errors": [
+    "/tmp/oracle_lean_9srYpj0k.lean:9:14: error(lean.invalidField): Invalid field `Composite`: The environment does not contain `Nat.Composite`, so it is not possible to project the field `Composite` from an expression",
+    "/tmp/oracle_lean_9srYpj0k.lean:12:99: error(lean.invalidField): Invalid field `Composite`: The environment does not contain `Nat.Composite`, so it is not possible to project the field `Composite` from an expression",
+    "/tmp/oracle_lean_9srYpj0k.lean:12:117: error(lean.invalidField): Invalid field `Composite`: The environment does not contain `Nat.Composite`, so it is not possible to project the field `Composite` from an expression"
+   ],
+   "exitCode": 1,
+   "resource_limit": null
+  }
+ ],
+ "budget_history": [
+  {
+   "tier_seconds": 900.0,
+   "outcome": "KERNEL_FAILED"
+  }
+ ],
+ "kernel_result": {
+  "status": "UNVERIFIED",
+  "file": "oracle/frontier_formalizer/cable/theorems/msl_fmz-erdos276-campaign-001-R004-L1-a1r6.lean",
+  "backend": "wsl",
+  "project": "/root/erdosfire-bench/proofs",
+  "needsMathlib": true,
+  "exitCode": 1,
+  "seconds": 3.5,
+  "declarations": [
+   {
+    "declaration": "msl_fmz_erdos276_campaign_001_R004_L1_a1r6",
+    "clean": false,
+    "axioms": [
+     "sorryAx"
+    ]
+   }
+  ],
+  "errors": [
+   "/tmp/oracle_lean_9srYpj0k.lean:9:14: error(lean.invalidField): Invalid field `Composite`: The environment does not contain `Nat.Composite`, so it is not possible to project the field `Composite` from an expression",
+   "/tmp/oracle_lean_9srYpj0k.lean:12:99: error(lean.invalidField): Invalid field `Composite`: The environment does not contain `Nat.Composite`, so it is not possible to project the field `Composite` from an expression",
+   "/tmp/oracle_lean_9srYpj0k.lean:12:117: error(lean.invalidField): Invalid field `Composite`: The environment does not contain `Nat.Composite`, so it is not possible to project the field `Composite` from an expression"
+  ]
+ },
+ "lean_result_block": "LEAN_RESULT fmz-erdos276-campaign-001-R004-L1-a1r6\n  FORMAL_STATUS KERNEL_FAILED\n  FILE oracle/frontier_formalizer/cable/theorems/msl_fmz-erdos276-campaign-001-R004-L1-a1r6.lean\n  THEOREMS msl_fmz_erdos276_campaign_001_R004_L1_a1r6\n  BACKEND wsl\n  AXIOMS sorryAx\n  TACTIC (supplied proof)\n  BUDGET 900s:KERNEL_FAILED\n  FAILURE ((supplied proof)) RAW[/tmp/oracle_lean_9srYpj0k.lean:9:14: error(lean.invalidField): Invalid field `Composite`: The environment does not contain `Nat.Composite`, so it is not possibl]; ((supplied proof)) RAW[/tmp/oracle_lean_9srYpj0k.lean:12:99: error(lean.invalidField): Invalid field `Composite`: The environment does not contain `Nat.Composite`, so it is not possib]; ((supplied proof)) RAW[/tmp/oracle_lean_9srYpj0k.lean:12:117: error(lean.invalidField): Invalid field `Composite`: The environment does not contain `Nat.Composite`, so it is not possi]\n  LAW KERNEL_FAILED does not refute the claim \u2014 the FAILURE line names what actually broke",
+ "timestamp": "2026-09-02T09:05:23Z"
+}

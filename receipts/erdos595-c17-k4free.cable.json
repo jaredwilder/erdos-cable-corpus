@@ -1,0 +1,64 @@
+{
+ "schema": "oracle.msl.cable.v1",
+ "id": "erdos595-c17-k4free",
+ "spec": {
+  "id": "erdos595-c17-k4free",
+  "imports": "Mathlib",
+  "definitions": "def adjC (a b : Fin 17) : Bool :=\n  (a - b = 1) || (a - b = 2) || (a - b = 4) || (a - b = 8) ||\n  (a - b = 9) || (a - b = 13) || (a - b = 15) || (a - b = 16)\n\ndef colC (a b : Fin 17) : Bool :=\n  (a - b = 1) || (a - b = 4) || (a - b = 13) || (a - b = 16)",
+  "hypotheses": [],
+  "conclusion": "\u2200 a b c d : Fin 17, (adjC a b && adjC a c && adjC a d && adjC b c && adjC b d && adjC c d) = false",
+  "proof": "by decide",
+  "set_options": [
+   "set_option maxRecDepth 400000",
+   "set_option maxHeartbeats 8000000"
+  ]
+ },
+ "formal_status": "KERNEL_CHECKED",
+ "events": [],
+ "axioms": [
+  "Quot.sound",
+  "propext"
+ ],
+ "attempts": [
+  {
+   "tactic": "(supplied proof)",
+   "status": "VERIFIED",
+   "seconds": 69.0,
+   "errors": [],
+   "exitCode": 0,
+   "resource_limit": null
+  }
+ ],
+ "budget_history": [
+  {
+   "tier_seconds": 120.0,
+   "outcome": "UNDECIDED_RESOURCE[wall-clock timeout (exit 124)]"
+  },
+  {
+   "tier_seconds": 600.0,
+   "outcome": "KERNEL_CHECKED"
+  }
+ ],
+ "kernel_result": {
+  "status": "VERIFIED",
+  "file": "oracle/frontier_formalizer/cable/theorems/msl_erdos595-c17-k4free.lean",
+  "backend": "wsl",
+  "project": "/root/erdosfire-bench/proofs",
+  "needsMathlib": true,
+  "exitCode": 0,
+  "seconds": 68.8,
+  "declarations": [
+   {
+    "declaration": "msl_erdos595_c17_k4free",
+    "clean": true,
+    "axioms": [
+     "propext",
+     "Quot.sound"
+    ]
+   }
+  ],
+  "errors": []
+ },
+ "lean_result_block": "LEAN_RESULT erdos595-c17-k4free\n  FORMAL_STATUS KERNEL_CHECKED\n  FILE oracle/frontier_formalizer/cable/theorems/msl_erdos595-c17-k4free.lean\n  THEOREMS msl_erdos595_c17_k4free\n  BACKEND wsl\n  AXIOMS Quot.sound, propext\n  TACTIC (supplied proof)\n  BUDGET 120s:UNDECIDED_RESOURCE[wall-clock timeout (exit 124)] -> 600s:KERNEL_CHECKED\n  FAILURE NONE",
+ "timestamp": "2026-09-06T13:03:52Z"
+}

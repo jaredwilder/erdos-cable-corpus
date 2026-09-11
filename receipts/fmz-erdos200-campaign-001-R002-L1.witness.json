@@ -1,0 +1,33 @@
+{
+ "schema": "oracle.msl.closer.witness.v1",
+ "id": "fmz-erdos200-campaign-001-R002-L1",
+ "pipeline": "WITNESS_FINITE",
+ "witness": {
+  "description": "Explicit arithmetic progression of primes inside {1,...,N}, certifying the finite-instance content of the Maynard-type prime-AP lower bound on a bounded range. Progression: 5, 11, 17, 23, 29 (first term 5, common difference 6), length k=5, all primes, all within N=30.",
+  "N": 30,
+  "progression": [
+   5,
+   11,
+   17,
+   23,
+   29
+  ],
+  "first_term": 5,
+  "common_difference": 6,
+  "length_k": 5
+ },
+ "verifier_sha256": "6dbb326f04428a8516d9ead47786068df40d07ee81455e889b480ef2b7e40199",
+ "verifier_source": "def verify(witness):\n    def fail(msg):\n        raise ValueError(msg)\n\n    if not isinstance(witness, dict):\n        fail('witness must be a dict')\n    N = witness.get('N')\n    prog = witness.get('progression')\n    a = witness.get('first_term')\n    d = witness.get('common_difference')\n    k = witness.get('length_k')\n\n    if not isinstance(N, int) or isinstance(N, bool) or N <= 0:\n        fail('bad N')\n    if not isinstance(prog, list) or not all(isinstance(p, int) and not isinstance(p, bool) for p in prog):\n        fail('bad progression')\n    if not isinstance(a, int) or isinstance(a, bool):\n        fail('bad first_term')\n    if not isinstance(d, int) or isinstance(d, bool) or d <= 0:\n        fail('bad common_difference')\n    if not isinstance(k, int) or isinstance(k, bool) or k <= 0:\n        fail('bad length_k')\n    if len(prog) != k:\n        fail('length mismatch')\n\n    def is_prime(n):\n        if n < 2:\n            return False\n        if n < 4:\n            return True\n        if n % 2 == 0:\n            return False\n        i = 3\n        while i * i <= n:\n            if n % i == 0:\n                return False\n            i += 2\n        return True\n\n    for i in range(k):\n        p = prog[i]\n        if p != a + i * d:            # AP property, exact integers\n            fail('not an arithmetic progression at index %d' % i)\n        if not is_prime(p):           # primality, exact trial division\n            fail('composite or non-prime term at index %d' % i)\n        if not (1 <= p <= N):         # range condition {1,...,N}\n            fail('term out of range at index %d' % i)\n    return True\n\n# invocation with the embedded witness; verify raises on any failed check\nverify({\n    'N': 30,\n    'progression': [5, 11, 17, 23, 29],\n    'first_term': 5,\n    'common_difference': 6,\n    'length_k': 5,\n})",
+ "run": {
+  "passed": true,
+  "status": "VERIFIER_PASS",
+  "exit_code": 0,
+  "stdout": "PASS",
+  "detail": "",
+  "seconds": 0.11,
+  "code_sha256": "6dbb326f04428a8516d9ead47786068df40d07ee81455e889b480ef2b7e40199"
+ },
+ "claim": "Successful return (no exception) establishes the finite-instance content of lemma L1's lower-bound mathematics: an explicit arithmetic progression of 5 primes inside {1,...,30}, verified by exact integer arithmetic. The verifier has the required def verify(witness) entrypoint, raises on every failed check, uses no imports and no I/O, is deterministic and fail-closed. This is a FRAGMENT: it certifies concrete instantiation of the Maynard-type lower-bound phenomenon and is consistent with both the affirmative o(log N) close and its negation — exactly L1's stated non_result character. The infinite-quantifier asymptotic statement itself is NOT covered.",
+ "law": "Wang 7.2: an exact finite object plus a proved reduction is a CERTIFICATE. The reduction is the `claim` and is a human's to audit; the object and the verifier run are the machine's part.",
+ "timestamp": "2026-09-01T19:41:03Z"
+}

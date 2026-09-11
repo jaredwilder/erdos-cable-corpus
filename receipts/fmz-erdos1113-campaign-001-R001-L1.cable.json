@@ -1,0 +1,49 @@
+{
+ "schema": "oracle.msl.cable.v1",
+ "id": "fmz-erdos1113-campaign-001-R001-L1",
+ "spec": {
+  "id": "fmz-erdos1113-campaign-001-R001-L1",
+  "imports": "Mathlib",
+  "definitions": "-- no auxiliary definitions",
+  "conclusion": "\u2200 (verifier\u2081 verifier\u2082 : List Nat \u2192 Bool), verifier\u2081 [] = false \u2192 verifier\u2082 [] = false \u2192 \u00ac (verifier\u2081 [] = true \u2228 verifier\u2082 [] = true)",
+  "proof": "by\n  intro verifier\u2081 verifier\u2082 h\u2081 h\u2082 h\n  rcases h with h | h\n  \u00b7 have : false = true := h\u2081.symm.trans h\n    cases this\n  \u00b7 have : false = true := h\u2082.symm.trans h\n    cases this"
+ },
+ "formal_status": "KERNEL_CHECKED",
+ "events": [],
+ "axioms": [],
+ "attempts": [
+  {
+   "tactic": "(supplied proof)",
+   "status": "VERIFIED",
+   "seconds": 10.4,
+   "errors": [],
+   "exitCode": 0,
+   "resource_limit": null
+  }
+ ],
+ "budget_history": [
+  {
+   "tier_seconds": 900.0,
+   "outcome": "KERNEL_CHECKED"
+  }
+ ],
+ "kernel_result": {
+  "status": "VERIFIED",
+  "file": "oracle/frontier_formalizer/cable/theorems/msl_fmz-erdos1113-campaign-001-R001-L1.lean",
+  "backend": "wsl",
+  "project": "/root/erdosfire-bench/proofs",
+  "needsMathlib": true,
+  "exitCode": 0,
+  "seconds": 6.1,
+  "declarations": [
+   {
+    "declaration": "msl_fmz_erdos1113_campaign_001_R001_L1",
+    "clean": true,
+    "axioms": []
+   }
+  ],
+  "errors": []
+ },
+ "lean_result_block": "LEAN_RESULT fmz-erdos1113-campaign-001-R001-L1\n  FORMAL_STATUS KERNEL_CHECKED\n  FILE oracle/frontier_formalizer/cable/theorems/msl_fmz-erdos1113-campaign-001-R001-L1.lean\n  THEOREMS msl_fmz_erdos1113_campaign_001_R001_L1\n  BACKEND wsl\n  AXIOMS -\n  TACTIC (supplied proof)\n  BUDGET 900s:KERNEL_CHECKED\n  FAILURE NONE",
+ "timestamp": "2026-09-01T23:45:25Z"
+}

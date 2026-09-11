@@ -1,0 +1,59 @@
+{
+ "schema": "oracle.msl.cable.v1",
+ "id": "fmz-erdos25-campaign-001-R005-L2-a1r2",
+ "spec": {
+  "id": "fmz-erdos25-campaign-001-R005-L2-a1r2",
+  "imports": "none",
+  "definitions": "def inClass (n N a : Nat) : Bool := n % N == a % N\n\ndef agree (a a' N B : Nat) : Bool :=\n  (a % N == a' % N) && List.all (List.range B) (fun n => inClass n N a == inClass n N a')\n\ndef check_L2 : Bool :=\n  agree 7 12 5 100 &&\n  agree 0 5 5 100 &&\n  agree 41 9 5 100 &&\n  agree 123 3 10 100 &&\n  !(agree 1 2 5 100)",
+  "conclusion": "check_L2 = true",
+  "proof": "by decide"
+ },
+ "formal_status": "KERNEL_FAILED",
+ "events": [
+  "((supplied proof)) REFUTED.DECIDABLE[decide proved the negation \u2014 this one IS a refutation]"
+ ],
+ "axioms": [
+  "sorryAx"
+ ],
+ "attempts": [
+  {
+   "tactic": "(supplied proof)",
+   "status": "UNVERIFIED",
+   "seconds": 2.2,
+   "errors": [
+    "tmp8csjt0jk.lean:15:75: error: Tactic `decide` proved that the proposition"
+   ],
+   "exitCode": 1,
+   "resource_limit": null
+  }
+ ],
+ "budget_history": [
+  {
+   "tier_seconds": 900.0,
+   "outcome": "REFUTED_DECIDABLE"
+  }
+ ],
+ "kernel_result": {
+  "status": "UNVERIFIED",
+  "file": "oracle/frontier_formalizer/cable/theorems/msl_fmz-erdos25-campaign-001-R005-L2-a1r2.lean",
+  "backend": "windows",
+  "project": "C:\\Users\\jared\\Local Sites\\woocommerce-enterprise\\oracle\\math\\EG411Formal",
+  "needsMathlib": false,
+  "exitCode": 1,
+  "seconds": 2.2,
+  "declarations": [
+   {
+    "declaration": "msl_fmz_erdos25_campaign_001_R005_L2_a1r2",
+    "clean": false,
+    "axioms": [
+     "sorryAx"
+    ]
+   }
+  ],
+  "errors": [
+   "tmp8csjt0jk.lean:15:75: error: Tactic `decide` proved that the proposition"
+  ]
+ },
+ "lean_result_block": "LEAN_RESULT fmz-erdos25-campaign-001-R005-L2-a1r2\n  FORMAL_STATUS KERNEL_FAILED\n  FILE oracle/frontier_formalizer/cable/theorems/msl_fmz-erdos25-campaign-001-R005-L2-a1r2.lean\n  THEOREMS msl_fmz_erdos25_campaign_001_R005_L2_a1r2\n  BACKEND windows\n  AXIOMS sorryAx\n  TACTIC (supplied proof)\n  BUDGET 900s:REFUTED_DECIDABLE\n  FAILURE ((supplied proof)) REFUTED.DECIDABLE[decide proved the negation \u2014 this one IS a refutation]\n  LAW KERNEL_FAILED does not refute the claim \u2014 the FAILURE line names what actually broke",
+ "timestamp": "2026-09-02T02:02:43Z"
+}

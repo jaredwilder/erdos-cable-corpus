@@ -1,0 +1,26 @@
+{
+ "schema": "oracle.msl.closer.witness.v1",
+ "id": "fmz-erdos653-campaign-001-R012-L1-a1r2",
+ "pipeline": "WITNESS_FINITE",
+ "witness": {
+  "construction": "For each n in 2..200, the n collinear points x_j = (j, 0), j = 0,...,n-1, form the arithmetic progression {0,1,...,n-1}. From the endpoint x_0 the squared distances to the other points are 1^2, 2^2, ..., (n-1)^2, i.e. exactly n-1 distinct values.",
+  "range": [
+   2,
+   200
+  ]
+ },
+ "verifier_sha256": "16c66d34e891b43fa74c454f896651d2b6b99aa35f20bb9b5eeb20d78d78914c",
+ "verifier_source": "# Standalone, deterministic, fail-closed. No imports, no I/O, no floats.\n# Witness is embedded: range n in 2..200, construction x_j = (j,0).\n# Exit 0 (no exception) only when every check passes; any mismatch raises.\n\ndef verify(witness):\n    # witness schema check (fail closed on any deviation)\n    if witness is None:\n        raise RuntimeError('FAIL: no witness')\n    if witness.get('construction') is None:\n        raise RuntimeError('FAIL: construction missing')\n    rng = witness.get('range')\n    if (not isinstance(rng, list) or len(rng) != 2\n            or not all(isinstance(t, int) for t in rng)\n            or rng[0] != 2 or rng[1] != 200):\n        raise RuntimeError('FAIL: unexpected range')\n    lo, hi = rng\n    for n in range(lo, hi + 1):\n        pts = [(j, 0) for j in range(n)]\n        if len(set(pts)) != n:\n            raise RuntimeError('FAIL: points not distinct at n=%d' % n)\n        # squared distances from x_0=(0,0), exact integers\n        d = sorted(set((j) * (j) for j in range(1, n)))\n        expected = sorted(k * k for k in range(1, n))\n        if d != expected:\n            raise RuntimeError('FAIL: distance set mismatch at n=%d' % n)\n        if len(d) != n - 1:\n            raise RuntimeError('FAIL: cardinality mismatch at n=%d' % n)\n    return True\n\nEMBEDDED_WITNESS = {\n    'construction': 'x_j = (j,0), j=0..n-1; endpoint distances {1,..,n-1}',\n    'range': [2, 200],\n}\n\nif not verify(EMBEDDED_WITNESS):\n    raise RuntimeError('FAIL')\n",
+ "run": {
+  "passed": true,
+  "status": "VERIFIER_PASS",
+  "exit_code": 0,
+  "stdout": "PASS",
+  "detail": "",
+  "seconds": 0.11,
+  "code_sha256": "16c66d34e891b43fa74c454f896651d2b6b99aa35f20bb9b5eeb20d78d78914c"
+ },
+ "claim": "An exception-free run (exit 0) certifies the finite core of L1: for every n in 2..200 the collinear AP {0,...,n-1} is a set of n DISTINCT points in R^2 and the endpoint vertex has exactly the n-1 distinct squared distances {1^2,...,(n-1)^2}, verified in exact integer arithmetic, fail-closed, deterministic, no imports or I/O. covers=\"fragment\": this certifies the construction core of L1 over n=2..200; the general bijection proof for all n>=2 and the g(n) asymptotic bound are separate pieces.",
+ "law": "Wang 7.2: an exact finite object plus a proved reduction is a CERTIFICATE. The reduction is the `claim` and is a human's to audit; the object and the verifier run are the machine's part.",
+ "timestamp": "2026-09-02T02:16:11Z"
+}

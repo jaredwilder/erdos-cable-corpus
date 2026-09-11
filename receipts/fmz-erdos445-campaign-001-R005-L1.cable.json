@@ -1,0 +1,49 @@
+{
+ "schema": "oracle.msl.cable.v1",
+ "id": "fmz-erdos445-campaign-001-R005-L1",
+ "spec": {
+  "id": "fmz-erdos445-campaign-001-R005-L1",
+  "imports": "none",
+  "definitions": "-- Exact integer surrogate for the strict box (0, p^{3/4}): x is inside iff x^4 < p^3,\n-- written with explicit multiplications to keep the kernel computation small.\ndef inBox (p x : Nat) : Bool := x * x * x * x < p * p * p\n\ndef inv (p a b : Nat) : Bool := a * b % p == 1\n\n-- (i) Witnesses for n = 0: pairs (p, a, b) with ab \u2261 1 (mod p), a and b both in the box.\ndef w1 : Bool := inv 5 2 3  && inBox 5 2 && inBox 5 3\n\ndef w2 : Bool := inv 7 2 4  && inBox 7 2 && inBox 7 4\n\ndef w3 : Bool := inv 11 2 6 && inBox 11 2 && inBox 11 6\n\ndef w4 : Bool := inv 101 6 17 && inBox 101 6 && inBox 101 17\n\n-- (ii) p = 13, n = 0: for a = 2, 3, 4 (i.e. k = 1, 2, 3) NO b in [0,13) satisfies\n-- both ab \u2261 1 (mod 13) and inBox 13 b. Written as explicit conjunctions over the\n-- thirteen candidate b values so the kernel evaluates a fixed small Bool tree.\ndef noInv13 (a : Nat) : Bool :=\n  !((inv 13 a 0 && inBox 13 0)  || (inv 13 a 1 && inBox 13 1)  ||\n    (inv 13 a 2 && inBox 13 2)  || (inv 13 a 3 && inBox 13 3)  ||\n    (inv 13 a 4 && inBox 13 4)  || (inv 13 a 5 && inBox 13 5)  ||\n    (inv 13 a 6 && inBox 13 6)  || (inv 13 a 7 && inBox 13 7)  ||\n    (inv 13 a 8 && inBox 13 8)  || (inv 13 a 9 && inBox 13 9)  ||\n    (inv 13 a 10 && inBox 13 10) || (inv 13 a 11 && inBox 13 11) ||\n    (inv 13 a 12 && inBox 13 12))\n\ndef check_L1 : Bool :=\n  w1 && w2 && w3 && w4 && noInv13 2 && noInv13 3 && noInv13 4",
+  "conclusion": "check_L1 = true",
+  "proof": "by decide"
+ },
+ "formal_status": "KERNEL_CHECKED",
+ "events": [],
+ "axioms": [],
+ "attempts": [
+  {
+   "tactic": "(supplied proof)",
+   "status": "VERIFIED",
+   "seconds": 2.1,
+   "errors": [],
+   "exitCode": 0,
+   "resource_limit": null
+  }
+ ],
+ "budget_history": [
+  {
+   "tier_seconds": 900.0,
+   "outcome": "KERNEL_CHECKED"
+  }
+ ],
+ "kernel_result": {
+  "status": "VERIFIED",
+  "file": "oracle/frontier_formalizer/cable/theorems/msl_fmz-erdos445-campaign-001-R005-L1.lean",
+  "backend": "windows",
+  "project": "C:\\Users\\jared\\Local Sites\\woocommerce-enterprise\\oracle\\math\\EG411Formal",
+  "needsMathlib": false,
+  "exitCode": 0,
+  "seconds": 2.1,
+  "declarations": [
+   {
+    "declaration": "msl_fmz_erdos445_campaign_001_R005_L1",
+    "clean": true,
+    "axioms": []
+   }
+  ],
+  "errors": []
+ },
+ "lean_result_block": "LEAN_RESULT fmz-erdos445-campaign-001-R005-L1\n  FORMAL_STATUS KERNEL_CHECKED\n  FILE oracle/frontier_formalizer/cable/theorems/msl_fmz-erdos445-campaign-001-R005-L1.lean\n  THEOREMS msl_fmz_erdos445_campaign_001_R005_L1\n  BACKEND windows\n  AXIOMS -\n  TACTIC (supplied proof)\n  BUDGET 900s:KERNEL_CHECKED\n  FAILURE NONE",
+ "timestamp": "2026-09-01T23:08:28Z"
+}

@@ -1,0 +1,63 @@
+{
+ "schema": "oracle.msl.cable.v1",
+ "id": "erdos595-successor-cardinal-bound",
+ "spec": {
+  "id": "erdos595-successor-cardinal-bound",
+  "imports": "Mathlib",
+  "definitions": "open SimpleGraph in\ndef IsUTF {V : Type} (I : Type) (G : SimpleGraph V) : Prop :=\n  \u2203 H : I \u2192 SimpleGraph V, (\u2200 i, (H i).CliqueFree 3) \u2227 G = \u2a06 i, H i",
+  "hypotheses": [
+   "{V : Type}",
+   "{I : Type}",
+   "[LinearOrder V]",
+   "(G : SimpleGraph V)"
+  ],
+  "conclusion": "(\u2200 u : V, \u2203 f : V \u2192 I, \u2200 a b : V, a < u \u2192 b < u \u2192 a \u2260 b \u2192 f a \u2260 f b) \u2192 IsUTF I G",
+  "proof": "by\n  classical\n  intro hinj\n  have hcol : \u2200 u : V, \u2203 g : V \u2192 I, \u2200 a b : V, a < u \u2192 b < u \u2192 G.Adj u a \u2192 G.Adj u b \u2192\n      G.Adj a b \u2192 g a \u2260 g b := by\n    intro u\n    obtain \u27e8f, hf\u27e9 := hinj u\n    exact \u27e8f, fun a b hau hbu _ _ hab => hf a b hau hbu (G.ne_of_adj hab)\u27e9\n  choose g hg using hcol\n  set F : V \u2192 V \u2192 I := fun a b => if a \u2264 b then g b a else g a b with hF\n  have hsymm : \u2200 a b : V, F a b = F b a := by\n    intro a b\n    rcases eq_or_ne a b with rfl | hne\n    \u00b7 rfl\n    \u00b7 rcases le_total a b with h | h\n      \u00b7 have h2 : \u00ac b \u2264 a := fun hc => hne (le_antisymm h hc)\n        simp [hF, h, h2]\n      \u00b7 have h2 : \u00ac a \u2264 b := fun hc => hne (le_antisymm hc h)\n        simp [hF, h, h2]\n  set c : Sym2 V \u2192 I := Sym2.lift \u27e8F, hsymm\u27e9 with hc\n  have hcval : \u2200 a b : V, c s(a, b) = F a b := by intro a b; rfl\n  have key : \u2200 u x y : V, x \u2264 u \u2192 y \u2264 u \u2192 G.Adj u x \u2192 G.Adj u y \u2192 G.Adj x y \u2192\n      c s(x, u) = c s(y, u) \u2192 False := by\n    intro u x y hxu hyu h1 h2 h3 heq\n    rw [hcval, hcval, hF] at heq\n    simp only [if_pos hxu, if_pos hyu] at heq\n    exact hg u x y (lt_of_le_of_ne hxu (G.ne_of_adj h1).symm)\n      (lt_of_le_of_ne hyu (G.ne_of_adj h2).symm) h1 h2 h3 heq\n  refine \u27e8fun n => SimpleGraph.fromEdgeSet {e | e \u2208 G.edgeSet \u2227 c e = n}, ?_, ?_\u27e9\n  \u00b7 intro n t ht\n    obtain \u27e8hcl, hcard\u27e9 := ht\n    obtain \u27e8a, b, d, hab, had, hbd, hteq\u27e9 := Finset.card_eq_three.mp hcard\n    have ha : a \u2208 t := by rw [hteq]; simp\n    have hb : b \u2208 t := by rw [hteq]; simp\n    have hd : d \u2208 t := by rw [hteq]; simp\n    have e1 := hcl ha hb hab\n    have e2 := hcl ha hd had\n    have e3 := hcl hb hd hbd\n    rw [SimpleGraph.fromEdgeSet_adj] at e1 e2 e3\n    have g1 : G.Adj a b := e1.1.1\n    have g2 : G.Adj a d := e2.1.1\n    have g3 : G.Adj b d := e3.1.1\n    have c1 : c s(a, b) = n := e1.1.2\n    have c2 : c s(a, d) = n := e2.1.2\n    have c3 : c s(b, d) = n := e3.1.2\n    have swapAB : s(a, b) = s(b, a) := Sym2.eq_swap\n    have swapAD : s(a, d) = s(d, a) := Sym2.eq_swap\n    have swapBD : s(b, d) = s(d, b) := Sym2.eq_swap\n    have kmax_a : b \u2264 a \u2192 d \u2264 a \u2192 False := fun h1' h2' =>\n      key a b d h1' h2' g1 g2 g3 (by rw [\u2190 swapAB, c1, \u2190 swapAD, c2])\n    have kmax_b : a \u2264 b \u2192 d \u2264 b \u2192 False := fun h1' h2' =>\n      key b a d h1' h2' g1.symm g3 g2 (by rw [c1, \u2190 swapBD, c3])\n    have kmax_d : a \u2264 d \u2192 b \u2264 d \u2192 False := fun h1' h2' =>\n      key d a b h1' h2' g2.symm g3.symm g1 (by rw [c2, c3])\n    rcases le_total a b with hab' | hab'\n    \u00b7 rcases le_total b d with hbd' | hbd'\n      \u00b7 exact kmax_d (le_trans hab' hbd') hbd'\n      \u00b7 exact kmax_b hab' hbd'\n    \u00b7 rcases le_total a d with had' | had'\n      \u00b7 exact kmax_d had' (le_trans hab' had')\n      \u00b7 exact kmax_a hab' had'\n  \u00b7 ext a b\n    rw [SimpleGraph.iSup_adj]\n    constructor\n    \u00b7 intro hab\n      exact \u27e8c s(a, b), by\n        rw [SimpleGraph.fromEdgeSet_adj]\n        exact \u27e8\u27e8hab, rfl\u27e9, G.ne_of_adj hab\u27e9\u27e9\n    \u00b7 rintro \u27e8n, hn\u27e9\n      rw [SimpleGraph.fromEdgeSet_adj] at hn\n      exact hn.1.1"
+ },
+ "formal_status": "KERNEL_CHECKED",
+ "events": [],
+ "axioms": [
+  "Classical.choice",
+  "Quot.sound",
+  "propext"
+ ],
+ "attempts": [
+  {
+   "tactic": "(supplied proof)",
+   "status": "VERIFIED",
+   "seconds": 124.6,
+   "errors": [],
+   "exitCode": 0,
+   "resource_limit": null
+  }
+ ],
+ "budget_history": [
+  {
+   "tier_seconds": 120.0,
+   "outcome": "KERNEL_CHECKED"
+  }
+ ],
+ "kernel_result": {
+  "status": "VERIFIED",
+  "file": "oracle/frontier_formalizer/cable/theorems/msl_erdos595-successor-cardinal-bound.lean",
+  "backend": "wsl",
+  "project": "/root/erdosfire-bench/proofs",
+  "needsMathlib": true,
+  "exitCode": 0,
+  "seconds": 110.8,
+  "declarations": [
+   {
+    "declaration": "msl_erdos595_successor_cardinal_bound",
+    "clean": true,
+    "axioms": [
+     "propext",
+     "Classical.choice",
+     "Quot.sound"
+    ]
+   }
+  ],
+  "errors": []
+ },
+ "lean_result_block": "LEAN_RESULT erdos595-successor-cardinal-bound\n  FORMAL_STATUS KERNEL_CHECKED\n  FILE oracle/frontier_formalizer/cable/theorems/msl_erdos595-successor-cardinal-bound.lean\n  THEOREMS msl_erdos595_successor_cardinal_bound\n  BACKEND wsl\n  AXIOMS Classical.choice, Quot.sound, propext\n  TACTIC (supplied proof)\n  BUDGET 120s:KERNEL_CHECKED\n  FAILURE NONE",
+ "timestamp": "2026-09-06T10:24:33Z"
+}

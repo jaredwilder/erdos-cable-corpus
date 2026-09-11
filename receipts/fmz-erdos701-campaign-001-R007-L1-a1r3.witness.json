@@ -1,0 +1,24 @@
+{
+ "schema": "oracle.msl.closer.witness.v1",
+ "id": "fmz-erdos701-campaign-001-R007-L1-a1r3",
+ "pipeline": "WITNESS_FINITE",
+ "witness": {
+  "n": 3,
+  "claim_scope": "all 20 hereditary families on [3] = {1,2,3} (subsets as bitmasks 0..7) satisfy max-intersecting = max-star under the frozen all-pairs convention (Set.Intersecting: all pairs A,B incl. A=B; any family containing ∅ is not intersecting)",
+  "expected": "verify() returns True; no branch-B counterexample at n=3"
+ },
+ "verifier_sha256": "142d08aea209dcdbb1e658114fc3cd33cf42958b550a5e00cb0a5648c95d0031",
+ "verifier_source": "# Standalone fail-closed verifier. Pure function, no imports, no IO.\n# Accepts an optional witness argument; the witness is also embedded.\n\ndef verify(w=None):\n    n = 3\n    size = 1 << n          # 8 subsets\n    nfam = 1 << size       # 256 families\n    def popcount(v):\n        c = 0\n        while v:\n            c += v & 1\n            v >>= 1\n        return c\n    hered = []\n    for F in range(nfam):\n        ok = True\n        for s in range(size):\n            if (F >> s) & 1:\n                for t in range(size):\n                    if (t & s) == t and not ((F >> t) & 1):\n                        ok = False\n                        break\n                if not ok:\n                    break\n        if ok:\n            hered.append(F)\n    # Dedekind number M(3) = 20, fail-closed count check\n    if len(hered) != 20:\n        return False\n    for F in hered:\n        best_i = 0\n        for G in range(nfam):\n            if (G & ~F) != 0:\n                continue\n            ok = True\n            for a in range(size):\n                if (G >> a) & 1:\n                    for b in range(size):\n                        if ((G >> b) & 1) and ((a & b) == 0):\n                            ok = False\n                            break\n                    if not ok:\n                        break\n            if ok and popcount(G) > best_i:\n                best_i = popcount(G)\n        best_s = 0\n        for x in range(n):\n            cnt = 0\n            for s in range(size):\n                if ((F >> s) & 1) and ((s >> x) & 1):\n                    cnt += 1\n            if cnt > best_s:\n                best_s = cnt\n        if best_i != best_s:\n            return False\n    return True\n",
+ "run": {
+  "passed": true,
+  "status": "VERIFIER_PASS",
+  "exit_code": 0,
+  "stdout": "PASS",
+  "detail": "",
+  "seconds": 0.09,
+  "code_sha256": "142d08aea209dcdbb1e658114fc3cd33cf42958b550a5e00cb0a5648c95d0031"
+ },
+ "claim": "verify() returning True certifies the n=3 case of L1: all 20 hereditary families on [3] (Dedekind count enforced fail-closed) satisfy max-intersecting = max-star under the all-pairs convention, so no branch-B counterexample exists at n=3; covers=\"fragment\" (the lemma asserts n<=4; this obligation certifies the n=3 slice with the same check structure).",
+ "law": "Wang 7.2: an exact finite object plus a proved reduction is a CERTIFICATE. The reduction is the `claim` and is a human's to audit; the object and the verifier run are the machine's part.",
+ "timestamp": "2026-09-02T02:29:50Z"
+}

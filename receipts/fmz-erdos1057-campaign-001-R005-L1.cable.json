@@ -1,0 +1,49 @@
+{
+ "schema": "oracle.msl.cable.v1",
+ "id": "fmz-erdos1057-campaign-001-R005-L1",
+ "spec": {
+  "id": "fmz-erdos1057-campaign-001-R005-L1",
+  "imports": "none",
+  "definitions": "-- Decidable core of Korselt's criterion, checked on explicit factorizations.\n-- No primality search, no List.range over large n: pure bounded Nat arithmetic.\n\ndef korseltTest (n : Nat) (primes : List Nat) : Bool :=\n  -- given the prime factorization p1*p2*...*pk of composite squarefree n,\n  -- require each p | n (divisibility) and each (p - 1) | (n - 1)\n  primes.all (fun p => n % p == 0) &&\n  primes.all (fun p => (n - 1) % (p - 1) == 0) &&\n  -- squarefree-ness: no p^2 divides n\n  primes.all (fun p => n % (p * p) != 0)\n\ndef checkKorseltInstances : Bool :=\n  -- Carmichael numbers satisfy the criterion:\n  korseltTest 561 [3, 11, 17] &&\n  korseltTest 1105 [5, 13, 17] &&\n  korseltTest 1729 [7, 13, 19] &&\n  korseltTest 2465 [5, 17, 29] &&\n  korseltTest 6601 [7, 23, 41] &&\n  -- non-Carmichael composites fail it:\n  -- 341 = 11 * 31: 340 % 30 = 10 != 0\n  !korseltTest 341 [11, 31] &&\n  -- 15 = 3 * 5: 14 % 4 = 2 != 0\n  !korseltTest 15 [3, 5] &&\n  -- 21 = 3 * 7: 20 % 6 = 2 != 0\n  !korseltTest 21 [3, 7] &&\n  -- non-squarefree composite 45 = 3^2 * 5: 45 % 9 = 0, fails squarefree clause\n  !korseltTest 45 [3, 5]",
+  "conclusion": "checkKorseltInstances = true",
+  "proof": "by decide"
+ },
+ "formal_status": "KERNEL_CHECKED",
+ "events": [],
+ "axioms": [],
+ "attempts": [
+  {
+   "tactic": "(supplied proof)",
+   "status": "VERIFIED",
+   "seconds": 14.0,
+   "errors": [],
+   "exitCode": 0,
+   "resource_limit": null
+  }
+ ],
+ "budget_history": [
+  {
+   "tier_seconds": 900.0,
+   "outcome": "KERNEL_CHECKED"
+  }
+ ],
+ "kernel_result": {
+  "status": "VERIFIED",
+  "file": "oracle/frontier_formalizer/cable/theorems/msl_fmz-erdos1057-campaign-001-R005-L1.lean",
+  "backend": "windows",
+  "project": "C:\\Users\\jared\\Local Sites\\woocommerce-enterprise\\oracle\\math\\EG411Formal",
+  "needsMathlib": false,
+  "exitCode": 0,
+  "seconds": 14.0,
+  "declarations": [
+   {
+    "declaration": "msl_fmz_erdos1057_campaign_001_R005_L1",
+    "clean": true,
+    "axioms": []
+   }
+  ],
+  "errors": []
+ },
+ "lean_result_block": "LEAN_RESULT fmz-erdos1057-campaign-001-R005-L1\n  FORMAL_STATUS KERNEL_CHECKED\n  FILE oracle/frontier_formalizer/cable/theorems/msl_fmz-erdos1057-campaign-001-R005-L1.lean\n  THEOREMS msl_fmz_erdos1057_campaign_001_R005_L1\n  BACKEND windows\n  AXIOMS -\n  TACTIC (supplied proof)\n  BUDGET 900s:KERNEL_CHECKED\n  FAILURE NONE",
+ "timestamp": "2026-09-01T21:42:38Z"
+}

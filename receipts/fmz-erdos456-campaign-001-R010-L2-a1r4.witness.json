@@ -1,0 +1,74 @@
+{
+ "schema": "oracle.msl.closer.witness.v1",
+ "id": "fmz-erdos456-campaign-001-R010-L2-a1r4",
+ "pipeline": "WITNESS_FINITE",
+ "witness": {
+  "n_values": [
+   1,
+   8,
+   24,
+   32,
+   44,
+   52,
+   64
+  ],
+  "expected": [
+   {
+    "n": 1,
+    "m": 1,
+    "p": 2,
+    "m_lt_p": true
+   },
+   {
+    "n": 8,
+    "m": 15,
+    "p": 17,
+    "m_lt_p": true
+   },
+   {
+    "n": 24,
+    "m": 35,
+    "p": 73,
+    "m_lt_p": true
+   },
+   {
+    "n": 32,
+    "m": 51,
+    "p": 97,
+    "m_lt_p": true
+   },
+   {
+    "n": 44,
+    "m": 69,
+    "p": 89,
+    "m_lt_p": true
+   },
+   {
+    "n": 52,
+    "m": 53,
+    "p": 157,
+    "m_lt_p": true
+   },
+   {
+    "n": 64,
+    "m": 85,
+    "p": 193,
+    "m_lt_p": true
+   }
+  ]
+ },
+ "verifier_sha256": "3514b00caa7c92e6beb92993852e2fbba50505eccbfabe4027de68c0a8e79303",
+ "verifier_source": "#!/usr/bin/env python3\n# Standalone fail-closed exact verifier for lemma L2, finite scope n<=64.\n# No imports, no I/O, no network, no filesystem, deterministic, exact integer\n# arithmetic only. Entry point verify(witness) raises on any failed check.\n\ndef is_prime(k):\n    if k < 2:\n        return False\n    d = 2\n    while d * d <= k:\n        if k % d == 0:\n            return False\n        d += 1\n    return True\n\ndef phi(m):\n    result = 1\n    mm = m\n    d = 2\n    while d * d <= mm:\n        if mm % d == 0:\n            pk = 1\n            while mm % d == 0:\n                mm //= d\n                pk *= d\n            result *= pk - pk // d\n        d += 1\n    if mm > 1:\n        result *= mm - 1\n    return result\n\ndef p_n(n):\n    # smallest prime congruent to 1 mod n, fail-closed search bound\n    k = 1\n    while True:\n        cand = k * n + 1\n        if cand > 10000000:\n            raise AssertionError(\"p_n bound exceeded at n=%d\" % n)\n        if is_prime(cand):\n            return cand\n        k += 1\n\ndef m_n(n, bound):\n    # smallest m with n | phi(m), exhaustive from m=1, fail-closed\n    for m in range(1, bound + 1):\n        if phi(m) % n == 0:\n            return m\n    raise AssertionError(\"m_n bound exceeded at n=%d\" % n)\n\ndef verify(witness):\n    n_values = witness[\"n_values\"]\n    expected = witness[\"expected\"]\n    seen = []\n    for entry in expected:\n        n = entry[\"n\"]\n        if n not in n_values:\n            raise AssertionError(\"entry n=%d not in n_values\" % n)\n        if n in seen:\n            raise AssertionError(\"duplicate entry n=%d\" % n)\n        seen.append(n)\n        p = p_n(n)\n        if p != entry[\"p\"]:\n            raise AssertionError(\"p_n mismatch at n=%d\" % n)\n        m = m_n(n, p)\n        if m != entry[\"m\"]:\n            raise AssertionError(\"m_n mismatch at n=%d\" % n)\n        if (m < p) != entry[\"m_lt_p\"]:\n            raise AssertionError(\"strict inequality verdict mismatch at n=%d\" % n)\n    if sorted(seen) != sorted(n_values):\n        raise AssertionError(\"entry set does not match n_values\")\n",
+ "run": {
+  "passed": false,
+  "status": "VERIFIER_FAIL",
+  "exit_code": 1,
+  "stdout": "",
+  "detail": "AssertionError: p_n mismatch at n=52",
+  "seconds": 0.11,
+  "code_sha256": "3514b00caa7c92e6beb92993852e2fbba50505eccbfabe4027de68c0a8e79303"
+ },
+ "claim": "verify(witness) raising nothing certifies, by exhaustive exact integer computation from m=1 with fail-closed search bounds and zero tolerance, that for every n in {1,8,24,32,44,52,64} the least prime p ≡ 1 (mod n) and the least m with n | phi(m) take exactly the tabulated values and m_n < p_n strictly holds. Corrected table (previous submission had m_52 wrong; phi(53)=52 so m_52=53). Finite-scope fragment of lemma L2; the all-n clause (L1) and the L3 {5,193} classification are out of scope.",
+ "law": "Wang 7.2: an exact finite object plus a proved reduction is a CERTIFICATE. The reduction is the `claim` and is a human's to audit; the object and the verifier run are the machine's part.",
+ "timestamp": "2026-09-02T02:12:26Z"
+}

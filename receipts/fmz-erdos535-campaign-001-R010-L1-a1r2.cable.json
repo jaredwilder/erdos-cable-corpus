@@ -1,0 +1,63 @@
+{
+ "schema": "oracle.msl.cable.v1",
+ "id": "fmz-erdos535-campaign-001-R010-L1-a1r2",
+ "spec": {
+  "id": "fmz-erdos535-campaign-001-R010-L1-a1r2",
+  "imports": "none",
+  "definitions": "def gc : Nat -> Nat -> Nat\n  | 0, m => m\n  | (Nat.succ k), m => gc (m % (k+1)) (k+1)\n\n/-- Condition defining f_3: a set s is ADMISSIBLE iff no 3-element subset\nhas all three pairwise gcds equal (i.e. no triple with\ngcd(a,b)=gcd(a,c)=gcd(b,c)). --/\ndef noBadTriple (s : List Nat) : Bool :=\n  ((List.range s.length).flatMap fun i =>\n    (List.range s.length).flatMap fun j =>\n      (List.range s.length).filterMap fun k =>\n        if i < j && j < k then\n          some (gc (s.getD i 0) (s.getD j 0) == gc (s.getD i 0) (s.getD k 0)\n             && gc (s.getD i 0) (s.getD k 0) == gc (s.getD j 0) (s.getD k 0))\n        else none).any (fun b => b) == false\n\ndef allSubsets : List Nat -> List (List Nat)\n  | [] => [[]]\n  | x :: xs => let rest := allSubsets xs\n               rest ++ rest.map (fun t => x :: t)\n\ndef f3val (n : Nat) : Nat :=\n  (allSubsets (List.range' 1 n)).filter noBadTriple\n    |>.foldl (fun acc s => Nat.max acc s.length) 0\n\ndef witnessOk : Bool := noBadTriple [1,3] && noBadTriple [1,2,4]\n\ndef checkL1 : Bool :=\n  f3val 3 == 2 && f3val 4 == 3 && f3val 5 == 3 && f3val 6 == 3 && witnessOk",
+  "conclusion": "checkL1 = true",
+  "proof": "by native_decide"
+ },
+ "formal_status": "KERNEL_FAILED",
+ "events": [
+  "((supplied proof)) RAW[tmp16xilmvy.lean:3:4: error: fail to show termination for]"
+ ],
+ "axioms": [
+  "msl_fmz_erdos535_campaign_001_R010_L1_a1r2._native.native_decide.ax_1_1",
+  "propext",
+  "sorryAx"
+ ],
+ "attempts": [
+  {
+   "tactic": "(supplied proof)",
+   "status": "UNVERIFIED",
+   "seconds": 2.2,
+   "errors": [
+    "tmp16xilmvy.lean:3:4: error: fail to show termination for"
+   ],
+   "exitCode": 1,
+   "resource_limit": null
+  }
+ ],
+ "budget_history": [
+  {
+   "tier_seconds": 900.0,
+   "outcome": "KERNEL_FAILED"
+  }
+ ],
+ "kernel_result": {
+  "status": "UNVERIFIED",
+  "file": "oracle/frontier_formalizer/cable/theorems/msl_fmz-erdos535-campaign-001-R010-L1-a1r2.lean",
+  "backend": "windows",
+  "project": "C:\\Users\\jared\\Local Sites\\woocommerce-enterprise\\oracle\\math\\EG411Formal",
+  "needsMathlib": false,
+  "exitCode": 1,
+  "seconds": 2.2,
+  "declarations": [
+   {
+    "declaration": "msl_fmz_erdos535_campaign_001_R010_L1_a1r2",
+    "clean": false,
+    "axioms": [
+     "propext",
+     "sorryAx",
+     "msl_fmz_erdos535_campaign_001_R010_L1_a1r2._native.native_decide.ax_1_1"
+    ]
+   }
+  ],
+  "errors": [
+   "tmp16xilmvy.lean:3:4: error: fail to show termination for"
+  ]
+ },
+ "lean_result_block": "LEAN_RESULT fmz-erdos535-campaign-001-R010-L1-a1r2\n  FORMAL_STATUS KERNEL_FAILED\n  FILE oracle/frontier_formalizer/cable/theorems/msl_fmz-erdos535-campaign-001-R010-L1-a1r2.lean\n  THEOREMS msl_fmz_erdos535_campaign_001_R010_L1_a1r2\n  BACKEND windows\n  AXIOMS msl_fmz_erdos535_campaign_001_R010_L1_a1r2._native.native_decide.ax_1_1, propext, sorryAx\n  TACTIC (supplied proof)\n  BUDGET 900s:KERNEL_FAILED\n  FAILURE ((supplied proof)) RAW[tmp16xilmvy.lean:3:4: error: fail to show termination for]\n  LAW KERNEL_FAILED does not refute the claim \u2014 the FAILURE line names what actually broke",
+ "timestamp": "2026-09-02T02:18:57Z"
+}

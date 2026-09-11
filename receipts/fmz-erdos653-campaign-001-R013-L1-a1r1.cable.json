@@ -1,0 +1,65 @@
+{
+ "schema": "oracle.msl.cable.v1",
+ "id": "fmz-erdos653-campaign-001-R013-L1-a1r1",
+ "spec": {
+  "id": "fmz-erdos653-campaign-001-R013-L1-a1r1",
+  "imports": "none",
+  "definitions": "def Rval (i n : Nat) : Nat := max (i-1) (n-i)\n\ndef valueSet (n : Nat) : List Nat :=\n  (List.range n).map (fun i => Rval (i+1) n) |>.eraseDups\n\ndef expectedSet (n : Nat) : List Nat :=\n  (List.range' ((n+1)/2) (n - (n+1)/2 + 1))\n\ndef checkConfig (n : Nat) : Bool :=\n  (valueSet n).sort (\u00b7 \u2264 \u00b7) == (expectedSet n).sort (\u00b7 \u2264 \u00b7)\n  && (valueSet n).length == (n+1)/2\n\ndef checkRange : Bool :=\n  (List.range' 1 400).all checkConfig",
+  "conclusion": "checkRange = true",
+  "proof": "by native_decide"
+ },
+ "formal_status": "KERNEL_FAILED",
+ "events": [
+  "((supplied proof)) RAW[tmpk6c198l_.lean:12:15: error(lean.invalidField): Invalid field `sort`: The environment does not contain `List.sort`, so it is not possible to project the field]",
+  "((supplied proof)) RAW[tmpk6c198l_.lean:12:47: error(lean.invalidField): Invalid field `sort`: The environment does not contain `List.sort`, so it is not possible to project the field]",
+  "((supplied proof)) RAW[tmpk6c198l_.lean:18:78: error: Tactic `native_decide` failed: Could not evaluate decidable instance. Error: cannot evaluate code because 'checkConfig' uses 'sor]"
+ ],
+ "axioms": [
+  "sorryAx"
+ ],
+ "attempts": [
+  {
+   "tactic": "(supplied proof)",
+   "status": "UNVERIFIED",
+   "seconds": 2.3,
+   "errors": [
+    "tmpk6c198l_.lean:12:15: error(lean.invalidField): Invalid field `sort`: The environment does not contain `List.sort`, so it is not possible to project the field `sort` from an expression",
+    "tmpk6c198l_.lean:12:47: error(lean.invalidField): Invalid field `sort`: The environment does not contain `List.sort`, so it is not possible to project the field `sort` from an expression",
+    "tmpk6c198l_.lean:18:78: error: Tactic `native_decide` failed: Could not evaluate decidable instance. Error: cannot evaluate code because 'checkConfig' uses 'sorry' and/or contains errors"
+   ],
+   "exitCode": 1,
+   "resource_limit": null
+  }
+ ],
+ "budget_history": [
+  {
+   "tier_seconds": 900.0,
+   "outcome": "KERNEL_FAILED"
+  }
+ ],
+ "kernel_result": {
+  "status": "UNVERIFIED",
+  "file": "oracle/frontier_formalizer/cable/theorems/msl_fmz-erdos653-campaign-001-R013-L1-a1r1.lean",
+  "backend": "windows",
+  "project": "C:\\Users\\jared\\Local Sites\\woocommerce-enterprise\\oracle\\math\\EG411Formal",
+  "needsMathlib": false,
+  "exitCode": 1,
+  "seconds": 2.3,
+  "declarations": [
+   {
+    "declaration": "msl_fmz_erdos653_campaign_001_R013_L1_a1r1",
+    "clean": false,
+    "axioms": [
+     "sorryAx"
+    ]
+   }
+  ],
+  "errors": [
+   "tmpk6c198l_.lean:12:15: error(lean.invalidField): Invalid field `sort`: The environment does not contain `List.sort`, so it is not possible to project the field `sort` from an expression",
+   "tmpk6c198l_.lean:12:47: error(lean.invalidField): Invalid field `sort`: The environment does not contain `List.sort`, so it is not possible to project the field `sort` from an expression",
+   "tmpk6c198l_.lean:18:78: error: Tactic `native_decide` failed: Could not evaluate decidable instance. Error: cannot evaluate code because 'checkConfig' uses 'sorry' and/or contains errors"
+  ]
+ },
+ "lean_result_block": "LEAN_RESULT fmz-erdos653-campaign-001-R013-L1-a1r1\n  FORMAL_STATUS KERNEL_FAILED\n  FILE oracle/frontier_formalizer/cable/theorems/msl_fmz-erdos653-campaign-001-R013-L1-a1r1.lean\n  THEOREMS msl_fmz_erdos653_campaign_001_R013_L1_a1r1\n  BACKEND windows\n  AXIOMS sorryAx\n  TACTIC (supplied proof)\n  BUDGET 900s:KERNEL_FAILED\n  FAILURE ((supplied proof)) RAW[tmpk6c198l_.lean:12:15: error(lean.invalidField): Invalid field `sort`: The environment does not contain `List.sort`, so it is not possible to project the field]; ((supplied proof)) RAW[tmpk6c198l_.lean:12:47: error(lean.invalidField): Invalid field `sort`: The environment does not contain `List.sort`, so it is not possible to project the field]; ((supplied proof)) RAW[tmpk6c198l_.lean:18:78: error: Tactic `native_decide` failed: Could not evaluate decidable instance. Error: cannot evaluate code because 'checkConfig' uses 'sor]\n  LAW KERNEL_FAILED does not refute the claim \u2014 the FAILURE line names what actually broke",
+ "timestamp": "2026-09-02T01:52:43Z"
+}

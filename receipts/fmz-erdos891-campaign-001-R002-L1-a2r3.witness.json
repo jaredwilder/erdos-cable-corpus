@@ -1,0 +1,27 @@
+{
+ "schema": "oracle.msl.closer.witness.v1",
+ "id": "fmz-erdos891-campaign-001-R002-L1-a2r3",
+ "pipeline": "WITNESS_FINITE",
+ "witness": {
+  "kind": "omega_window_check",
+  "k_min": 2,
+  "k_max": 6,
+  "n_max": 2000,
+  "window": "(n, n+P_k], P_k=product of first k primes, Omega with multiplicity",
+  "predicate": "for every k in {2,3,4,5,6} and every n with 2^k <= n <= 2000: exists m in {n+1,...,n+P_k} with Omega(m) > k"
+ },
+ "verifier_sha256": "e9b545f77d60582d30c1912d36aa4329db59ef223684fca72ad25f7f202022cf",
+ "verifier_source": "def verify(witness):\n    if witness.get('kind') != 'omega_window_check':\n        return False\n    if witness.get('k_min') != 2 or witness.get('k_max') != 6 or witness.get('n_max') != 2000:\n        return False\n    if witness.get('window') != '(n, n+P_k], P_k=product of first k primes, Omega with multiplicity':\n        return False\n    if witness.get('predicate') != 'for every k in {2,3,4,5,6} and every n with 2^k <= n <= 2000: exists m in {n+1,...,n+P_k} with Omega(m) > k':\n        return False\n    NMAX = 2000\n    PK = {2: 6, 3: 30, 4: 210, 5: 2310, 6: 30030}\n    LIMIT = NMAX + PK[6]\n    spf = list(range(LIMIT + 1))\n    i = 2\n    while i * i <= LIMIT:\n        if spf[i] == i:\n            for j in range(i * i, LIMIT + 1, i):\n                if spf[j] == j:\n                    spf[j] = i\n        i += 1\n    om = [0] * (LIMIT + 1)\n    for m in range(2, LIMIT + 1):\n        om[m] = om[m // spf[m]] + 1\n    ps = []\n    v = 2\n    while len(ps) < 6:\n        is_prime = True\n        for d in range(2, v):\n            if v % d == 0:\n                is_prime = False\n                break\n        if is_prime:\n            ps.append(v)\n        v += 1\n    for k in range(2, 7):\n        pr = 1\n        for t in range(k):\n            pr *= ps[t]\n        if pr != PK[k]:\n            return False\n    for k in range(2, 7):\n        pk = PK[k]\n        INF = LIMIT + 1\n        nxt = [INF] * (LIMIT + 2)\n        for m in range(LIMIT, 0, -1):\n            if om[m] > k:\n                nxt[m] = m\n            else:\n                nxt[m] = nxt[m + 1]\n        for n in range(2 ** k, NMAX + 1):\n            if nxt[n + 1] > n + pk:\n                return False\n    return True\n",
+ "run": {
+  "passed": true,
+  "status": "VERIFIER_PASS",
+  "exit_code": 0,
+  "stdout": "PASS",
+  "detail": "",
+  "seconds": 0.09,
+  "code_sha256": "e9b545f77d60582d30c1912d36aa4329db59ef223684fca72ad25f7f202022cf"
+ },
+ "claim": "FRAGMENT certificate for L1. verify(witness) == True establishes, by exact integer arithmetic (smallest-prime-factor sieve, Omega via om[m]=om[m//spf[m]]+1, next-good-index scan, independent recomputation of P_k from the first k primes by trial division), that for every k in {2,3,4,5,6} and every n with 2^k <= n <= 2000 the window (n, n+P_k] contains an integer with Omega > k; since the canonical interval [n, n+P_k) shifted by one is (n, n+P_k], the fragment implies the canonical form for n >= 2^k+1 on this finite range. NOT decided by this artifact: the universal quantifier over all n >= 2^k, and the lemma's 'unique bad n = 2^k-1' aside (for k=2, n=3 in fact succeeds via m=8), which is excluded from the certificate.",
+ "law": "Wang 7.2: an exact finite object plus a proved reduction is a CERTIFICATE. The reduction is the `claim` and is a human's to audit; the object and the verifier run are the machine's part.",
+ "timestamp": "2026-09-02T02:35:18Z"
+}

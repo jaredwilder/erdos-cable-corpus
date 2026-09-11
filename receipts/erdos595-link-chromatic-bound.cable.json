@@ -1,0 +1,17 @@
+{
+ "id": "erdos595-link-chromatic-bound",
+ "status": "KERNEL_CHECKED",
+ "backend": "wsl",
+ "file": "oracle/evidence/erdos595/lean/Erdos595Library.lean",
+ "file_sha256": "fa95c53e8bb0b39041b3db8fd991cb0ed314b2679cd067f1fd5b6da543c6faad",
+ "declarations_checked": 45,
+ "errors": 0,
+ "returncode": 0,
+ "seconds": 175.8,
+ "new_theorems": {
+  "Erdos595Lib.erdos595_link_independence": "propext, Classical.choice, Quot.sound",
+  "Erdos595Lib.erdos595_link_chromatic_bound": "propext, Classical.choice, Quot.sound",
+  "Erdos595Lib.erdos595_link_triangle_free": "propext, Classical.choice, Quot.sound"
+ },
+ "dirty": []
+}

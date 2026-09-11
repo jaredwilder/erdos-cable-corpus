@@ -1,0 +1,36 @@
+{
+ "schema": "oracle.msl.closer.witness.v1",
+ "id": "fmz-erdos14-campaign-001-R002-L1-a2r3",
+ "pipeline": "WITNESS_FINITE",
+ "witness": {
+  "A": [
+   1,
+   4,
+   9,
+   16,
+   25,
+   36,
+   49,
+   64,
+   81,
+   100
+  ],
+  "N": 100,
+  "lb_num": 1,
+  "lb_den": 4
+ },
+ "verifier_sha256": "4444fd41b13e2fce308e766d7901152199b3775eb7f7eae58ee875035f29fb2d",
+ "verifier_source": "# Standalone Python 3 verifier. No imports, no I/O, no floats.\n# Entry point: verify(witness) -- raises on any failed check; returns True on PASS.\n# Instance: A = perfect squares <= 100, N = 100, lower-bound exponent = 1/4.\n\ndef verify(witness):\n    # fail-closed structural checks\n    for key in ('A', 'N', 'lb_num', 'lb_den'):\n        if key not in witness:\n            raise ValueError('missing field ' + key)\n    A = witness['A']\n    N = witness['N']\n    ln = witness['lb_num']\n    ld = witness['lb_den']\n    if not isinstance(N, int) or isinstance(N, bool) or N < 1:\n        raise ValueError('N must be a positive integer')\n    if not isinstance(ln, int) or isinstance(ln, bool) or ln < 0:\n        raise ValueError('lb_num must be a nonnegative integer')\n    if not isinstance(ld, int) or isinstance(ld, bool) or ld < 1:\n        raise ValueError('lb_den must be a positive integer')\n    if not isinstance(A, list) or len(A) == 0:\n        raise ValueError('A must be a nonempty list')\n    prev = 0\n    for a in A:\n        if not isinstance(a, int) or isinstance(a, bool):\n            raise ValueError('non-integer element of A')\n        if a <= 0:\n            raise ValueError('non-positive element of A')\n        if a <= prev:\n            raise ValueError('A not strictly increasing')\n        prev = a\n    # exact r_A(n) in Z-arithmetic, unordered pairs a <= b, capped at 2\n    bad = 0\n    As = set(A)\n    for n in range(1, N + 1):\n        r = 0\n        for a in A:\n            if a > n:\n                break\n            b = n - a\n            if b in As and a <= b:\n                r += 1\n                if r >= 2:\n                    break\n        if r != 1:\n            bad += 1\n    # exact integer check bad >= N^(ln/ld):  bad**ld >= N**ln\n    if not (bad ** ld >= N ** ln):\n        raise ValueError('lower bound violated: bad=' + str(bad))\n    return True\n\nWITNESS = {'A': [1, 4, 9, 16, 25, 36, 49, 64, 81, 100], 'N': 100, 'lb_num': 1, 'lb_den': 4}\nverify(WITNESS)\n",
+ "run": {
+  "passed": true,
+  "status": "VERIFIER_PASS",
+  "exit_code": 0,
+  "stdout": "PASS",
+  "detail": "",
+  "seconds": 0.1,
+  "code_sha256": "4444fd41b13e2fce308e766d7901152199b3775eb7f7eae58ee875035f29fb2d"
+ },
+ "claim": "A clean exit (PASS) certifies the finitary instance of clause (i) for A = {perfect squares <= 100}, N = 100, exponent 1/4: verify(witness) computes |{n<=100 : r_A(n) != 1}| in exact Z-arithmetic, raises on every structural or bound failure (fail-closed, signs resolved, no floats, no imports, no filesystem, no network), and checks bad^4 >= 100 all-integer. FRAGMENT of L1: verifier machinery exercised soundly on a concrete instance; the forall-A forall-eps eventual statement and clause (ii) are out of scope.",
+ "law": "Wang 7.2: an exact finite object plus a proved reduction is a CERTIFICATE. The reduction is the `claim` and is a human's to audit; the object and the verifier run are the machine's part.",
+ "timestamp": "2026-09-02T01:56:50Z"
+}

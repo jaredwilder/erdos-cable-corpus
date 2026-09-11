@@ -1,0 +1,72 @@
+{
+ "schema": "oracle.msl.cable.v1",
+ "id": "fmz-erdos456-campaign-001-R009-L1-a1r1",
+ "spec": {
+  "id": "fmz-erdos456-campaign-001-R009-L1-a1r1",
+  "imports": "none",
+  "definitions": "def phi (m : Nat) : Nat := (List.range (m+1)).filter (fun k => Nat.gcd k m == 1) |>.length\n\ndef isPrime (n : Nat) : Bool :=\n  n >= 2 && (List.range (n-1)).drop 2 |>.all (fun d => d == 0 || n % d != 0)\n\ndef leastPrimeOneMod (n : Nat) : Option Nat :=\n  (List.range 10000).map (fun k => n * k + 1) |>.find isPrime\n\ndef mOf (n : Nat) : Option Nat :=\n  (List.range 10000).map (fun k => k + 1) |>.find (fun m => n % phi m == 0 || phi m % n == 0 && n \u2264 phi m)\n\ndef eqSetCheck : Bool :=\n  (List.range 20).drop 1 |>.all (fun i =>\n    let n := i + 1\n    match mOf n, leastPrimeOneMod n with\n    | some m, some p => (m == p) == ((n \u2208 [2,3,4,5,6,7,9,10,11,12,13,14,15,16,17,18,19]))\n    | _, _ => false)\n\ndef strictWitnessCheck : Bool :=\n  phi 15 % 8 == 0 && 15 < 8 * 1 + 1 -- placeholder replaced below\n\ndef strictWitnesses : Bool :=\n  match mOf 8, leastPrimeOneMod 8, mOf 20, leastPrimeOneMod 20 with\n  | some m8, some p8, some m20, some p20 =>\n      p8 == 17 && m8 == 15 && m8 < p8 && p20 == 41 && m20 == 25 && m20 < p20\n  | _, _, _, _ => false\n\ndef leCheck : Bool :=\n  (List.range 20).drop 1 |>.all (fun i =>\n    let n := i + 1\n    match mOf n, leastPrimeOneMod n with\n    | some m, some p => m \u2264 p\n    | _, _ => false)\n\ndef checkL1 : Bool := leCheck && eqSetCheck && strictWitnesses",
+  "conclusion": "checkL1 = true",
+  "proof": "by decide"
+ },
+ "formal_status": "KERNEL_FAILED",
+ "events": [
+  "((supplied proof)) TYPE.FAIL MISMATCH[tmp13ldf6j8.lean:6:12: error: Application type mismatch: The argument]",
+  "((supplied proof)) RAW[tmp13ldf6j8.lean:9:49: error(lean.invalidField): Invalid field `find`: The environment does not contain `List.find`, so it is not possible to project the field ]",
+  "((supplied proof)) RAW[tmp13ldf6j8.lean:12:45: error(lean.invalidField): Invalid field `find`: The environment does not contain `List.find`, so it is not possible to project the field]",
+  "((supplied proof)) RAW[tmp13ldf6j8.lean:39:75: error: Tactic `decide` failed for proposition]"
+ ],
+ "axioms": [
+  "Quot.sound",
+  "propext",
+  "sorryAx"
+ ],
+ "attempts": [
+  {
+   "tactic": "(supplied proof)",
+   "status": "UNVERIFIED",
+   "seconds": 2.5,
+   "errors": [
+    "tmp13ldf6j8.lean:6:12: error: Application type mismatch: The argument",
+    "tmp13ldf6j8.lean:9:49: error(lean.invalidField): Invalid field `find`: The environment does not contain `List.find`, so it is not possible to project the field `find` from an expression",
+    "tmp13ldf6j8.lean:12:45: error(lean.invalidField): Invalid field `find`: The environment does not contain `List.find`, so it is not possible to project the field `find` from an expression",
+    "tmp13ldf6j8.lean:39:75: error: Tactic `decide` failed for proposition"
+   ],
+   "exitCode": 1,
+   "resource_limit": null
+  }
+ ],
+ "budget_history": [
+  {
+   "tier_seconds": 900.0,
+   "outcome": "KERNEL_FAILED"
+  }
+ ],
+ "kernel_result": {
+  "status": "UNVERIFIED",
+  "file": "oracle/frontier_formalizer/cable/theorems/msl_fmz-erdos456-campaign-001-R009-L1-a1r1.lean",
+  "backend": "windows",
+  "project": "C:\\Users\\jared\\Local Sites\\woocommerce-enterprise\\oracle\\math\\EG411Formal",
+  "needsMathlib": false,
+  "exitCode": 1,
+  "seconds": 2.5,
+  "declarations": [
+   {
+    "declaration": "msl_fmz_erdos456_campaign_001_R009_L1_a1r1",
+    "clean": false,
+    "axioms": [
+     "propext",
+     "sorryAx",
+     "Quot.sound"
+    ]
+   }
+  ],
+  "errors": [
+   "tmp13ldf6j8.lean:6:12: error: Application type mismatch: The argument",
+   "tmp13ldf6j8.lean:9:49: error(lean.invalidField): Invalid field `find`: The environment does not contain `List.find`, so it is not possible to project the field `find` from an expression",
+   "tmp13ldf6j8.lean:12:45: error(lean.invalidField): Invalid field `find`: The environment does not contain `List.find`, so it is not possible to project the field `find` from an expression",
+   "tmp13ldf6j8.lean:39:75: error: Tactic `decide` failed for proposition"
+  ]
+ },
+ "lean_result_block": "LEAN_RESULT fmz-erdos456-campaign-001-R009-L1-a1r1\n  FORMAL_STATUS KERNEL_FAILED\n  FILE oracle/frontier_formalizer/cable/theorems/msl_fmz-erdos456-campaign-001-R009-L1-a1r1.lean\n  THEOREMS msl_fmz_erdos456_campaign_001_R009_L1_a1r1\n  BACKEND windows\n  AXIOMS Quot.sound, propext, sorryAx\n  TACTIC (supplied proof)\n  BUDGET 900s:KERNEL_FAILED\n  FAILURE ((supplied proof)) TYPE.FAIL MISMATCH[tmp13ldf6j8.lean:6:12: error: Application type mismatch: The argument]; ((supplied proof)) RAW[tmp13ldf6j8.lean:9:49: error(lean.invalidField): Invalid field `find`: The environment does not contain `List.find`, so it is not possible to project the field ]; ((supplied proof)) RAW[tmp13ldf6j8.lean:12:45: error(lean.invalidField): Invalid field `find`: The environment does not contain `List.find`, so it is not possible to project the field]; ((supplied proof)) RAW[tmp13ldf6j8.lean:39:75: error: Tactic `decide` failed for proposition]\n  LAW KERNEL_FAILED does not refute the claim \u2014 the FAILURE line names what actually broke",
+ "timestamp": "2026-09-02T01:52:03Z"
+}

@@ -1,0 +1,49 @@
+{
+ "schema": "oracle.msl.cable.v1",
+ "id": "fmz-erdos686-campaign-001-R009-L1",
+ "spec": {
+  "id": "fmz-erdos686-campaign-001-R009-L1",
+  "imports": "none",
+  "definitions": "-- Exact rational comparison |prod_m/prod_n - N| <= bound via cross-multiplication.\n-- prod_n > 0 always, so |prod_m/prod_n - N| <= bound  <=>  |prod_m - N*prod_n| <= bound*prod_n.\n-- Implemented over Nat with the absolute value as max(a,b)-min(a,b) to avoid any subtlety.\ndef prod (s k : Nat) : Nat := (List.range k).foldl (fun acc i => acc * (s + i + 1)) 1\n\ndef residualOk (bound m n k N : Nat) : Bool :=\n  let a := prod m k\n  let b := N * prod n k\n  let diff := max a b - min a b\n  decide (diff <= bound * prod n k)\n\n-- ACCEPT instance: N=4, k=2, m=6, n=1, bound=6.\n-- prod 6 2 = 56, N * prod 1 2 = 4*6 = 24, |56-24| = 32, bound*prod_n = 36, 32 <= 36.\ndef check_accept : Bool := residualOk 6 6 1 2 4\n\n-- ABORT instance: N=4, k=2, m=4, n=1, bound=0.\n-- prod 4 2 = 30, N * prod 1 2 = 24, |30-24| = 6, bound*prod_n = 0, 6 <= 0 fails.\ndef check_abort : Bool := residualOk 0 4 1 2 4\n\ndef checkL1 : Bool := check_accept && !check_abort",
+  "conclusion": "checkL1 = true",
+  "proof": "by decide"
+ },
+ "formal_status": "KERNEL_CHECKED",
+ "events": [],
+ "axioms": [],
+ "attempts": [
+  {
+   "tactic": "(supplied proof)",
+   "status": "VERIFIED",
+   "seconds": 2.1,
+   "errors": [],
+   "exitCode": 0,
+   "resource_limit": null
+  }
+ ],
+ "budget_history": [
+  {
+   "tier_seconds": 900.0,
+   "outcome": "KERNEL_CHECKED"
+  }
+ ],
+ "kernel_result": {
+  "status": "VERIFIED",
+  "file": "oracle/frontier_formalizer/cable/theorems/msl_fmz-erdos686-campaign-001-R009-L1.lean",
+  "backend": "windows",
+  "project": "C:\\Users\\jared\\Local Sites\\woocommerce-enterprise\\oracle\\math\\EG411Formal",
+  "needsMathlib": false,
+  "exitCode": 0,
+  "seconds": 2.1,
+  "declarations": [
+   {
+    "declaration": "msl_fmz_erdos686_campaign_001_R009_L1",
+    "clean": true,
+    "axioms": []
+   }
+  ],
+  "errors": []
+ },
+ "lean_result_block": "LEAN_RESULT fmz-erdos686-campaign-001-R009-L1\n  FORMAL_STATUS KERNEL_CHECKED\n  FILE oracle/frontier_formalizer/cable/theorems/msl_fmz-erdos686-campaign-001-R009-L1.lean\n  THEOREMS msl_fmz_erdos686_campaign_001_R009_L1\n  BACKEND windows\n  AXIOMS -\n  TACTIC (supplied proof)\n  BUDGET 900s:KERNEL_CHECKED\n  FAILURE NONE",
+ "timestamp": "2026-09-01T21:49:54Z"
+}

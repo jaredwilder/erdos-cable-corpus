@@ -1,0 +1,63 @@
+{
+  "receipt_id": "erdos595-continuum-2026-09-05",
+  "campaign": "msl-595 CONTRACT A, box day 2026-09-05",
+  "target": "Erdos #595 continuum barrier, packet cards T10 / T11 / T12",
+  "file": "oracle/evidence/erdos595/lean/Erdos595Continuum.lean",
+  "file_sha256": "03b85e58ae284db536d77f43e96d52276e29baf6f7b9c4f22aecad2548234183",
+  "backend": "box root@51.158.234.15 /root/formalizer/proofs, Mathlib 919544d4, toolchain v4.31.0-rc1",
+  "command": "lake env lean /root/peer/msl-595/Erdos595Continuum.lean",
+  "exit_code": 0,
+  "log": "oracle/evidence/erdos595/lean/kernel-2026-09-05.log",
+  "theorems": [
+    "Erdos595.cover_of_binaryColouring",
+    "Erdos595.no_binaryColouring_of_no_cover",
+    "Erdos595.erdos595_witness_above_continuum",
+    "Erdos595.erdos595_vertices_above_continuum",
+    "Erdos595.cover_of_chromatic_le_two_pow",
+    "Erdos595.chromatic_gt_two_pow_of_no_cover",
+    "Erdos595.erdos595_edges_above_continuum"
+  ],
+  "axioms": [
+    "propext",
+    "Classical.choice",
+    "Quot.sound"
+  ],
+  "axiom_verdict": "CLEAN_TRIPLE",
+  "sorry_count": 0,
+  "native_decide_count": 0,
+  "formal_status": "KERNEL_CHECKED_UNIVERSAL",
+  "packet_cards_sealed": {
+    "T10": "cover_of_binaryColouring + cover_of_chromatic_le_two_pow",
+    "T11": "no_binaryColouring_of_no_cover + chromatic_gt_two_pow_of_no_cover",
+    "T12_chromatic": "erdos595_witness_above_continuum",
+    "T12_vertices": "erdos595_vertices_above_continuum",
+    "T12_edges": "erdos595_edges_above_continuum"
+  },
+  "declared_hypotheses": {
+    "cardinal_form": "kappa != 0",
+    "edge_clause": "the graph has no isolated vertices, exactly as packet card T12 states"
+  },
+  "covers": "FRAGMENT",
+  "not_covered": "the Erdos #595 flagship itself - the EXISTENCE of a K4-free graph with tc > aleph0 is untouched by this seal",
+  "novelty": {
+    "verdict_file": "oracle/evidence/erdos595/novelty-verdict.json",
+    "band": "INCREMENTAL",
+    "discovery_verdict": "INCREMENTAL",
+    "mode_reasons": [
+      "band_does_not_assert_discovery"
+    ],
+    "core_novelty": 0.599034,
+    "overall_novelty": 0.557417,
+    "corpus_size": 109,
+    "promotion": "PROMOTION_BLOCKED",
+    "clear_core_facets": [
+      "mechanism"
+    ],
+    "crowded_core_facets": [
+      "method",
+      "outcome"
+    ],
+    "receipt_hash": "948af3c477eaf8ccaddc40ee8bd8ce6efa91d08a7d561587bffcdc2b39553f6c",
+    "reading": "the system decided; prior art on the theorem is NOT cleared and the packet's own HIGH prior-art risk stands"
+  }
+}

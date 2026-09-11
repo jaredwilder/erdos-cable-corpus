@@ -1,0 +1,37 @@
+{
+ "schema": "oracle.msl.closer.witness.v1",
+ "id": "fmz-erdos1192-campaign-001-R006-L1",
+ "pipeline": "WITNESS_FINITE",
+ "witness": {
+  "N_max": 8,
+  "r_list": [
+   2,
+   3
+  ],
+  "sidon_max": [
+   1,
+   2,
+   2,
+   3,
+   3,
+   3,
+   4,
+   4
+  ],
+  "note": "sidon_max[N-1] is the asserted maximum size of a Sidon subset of {1..N} (pairwise sums a_i+a_j with i<=j all distinct), for N=1..8, verified exhaustively in both directions. The universal asymptotic branch of the canonical statement is NOT covered (no finite-reduction theorem exists) and is excluded, exactly as L1 states."
+ },
+ "verifier_sha256": "9707975b622312ed50c92d331b06b8b9fd2d055bc0b3d6af46d881e38d46c01f",
+ "verifier_source": "def verify(witness):\n    if set(witness.keys()) != {'N_max', 'r_list', 'sidon_max', 'note'}:\n        raise ValueError('unexpected witness schema')\n    Nmax = witness['N_max']\n    rs = witness['r_list']\n    K = witness['sidon_max']\n    if Nmax != 8:\n        raise ValueError('N_max must be 8')\n    if sorted(rs) != [2, 3]:\n        raise ValueError('r_list must be [2, 3]')\n    if len(K) != 8:\n        raise ValueError('sidon_max must have 8 entries')\n    for k in K:\n        if not (isinstance(k, int) and 1 <= k <= Nmax):\n            raise ValueError('bad sidon_max entry')\n\n    def is_sidon(A):\n        s = []\n        for i in range(len(A)):\n            for j in range(i, len(A)):\n                s.append(A[i] + A[j])\n        return len(set(s)) == len(s)\n\n    def subsets(N):\n        out = []\n        for mask in range(1 << N):\n            A = []\n            for i in range(N):\n                if (mask >> i) & 1:\n                    A.append(i + 1)\n            out.append(A)\n        return out\n\n    # (1) Sidon sharpness on N<=8: exhaustive max compared to witness table.\n    Kcomp = []\n    for N in range(1, Nmax + 1):\n        best = 0\n        for A in subsets(N):\n            if len(A) > best and is_sidon(A):\n                best = len(A)\n        Kcomp.append(best)\n    if Kcomp != K:\n        raise ValueError('sidon_max table mismatch')\n\n    # (2) S_r floor on N<=8: exhaustive minimum of sum_{n=r}^{N} f_r(n)^2 over\n    # all A subseteq {1..N} whose r-fold sumset covers [r,N]; invariants:\n    # lower bound N-r+1, monotonicity in N; re-verify argmin independently.\n    def sums_of(A, r, N):\n        sums = {}\n        combos = [[]]\n        for _ in range(r):\n            nxt = []\n            for c in combos:\n                start = c[-1] if c else 0\n                for a in A:\n                    if a >= start:\n                        nxt.append(c + [a])\n            combos = nxt\n        for c in combos:\n            s = 0\n            for a in c:\n                s += a\n            if r <= s <= N:\n                sums[s] = sums.get(s, 0) + 1\n        return sums\n\n    for r in rs:\n        prev = None\n        for N in range(r, Nmax + 1):\n            best = None\n            arg = None\n            for A in subsets(N):\n                sums = sums_of(A, r, N)\n                ok = True\n                for n in range(r, N + 1):\n                    if n not in sums:\n                        ok = False\n                        break\n                if not ok:\n                    continue\n                cost = 0\n                for v in sums.values():\n                    cost += v * v\n                if best is None or cost < best:\n                    best = cost\n                    arg = A\n            if best is None:\n                raise ValueError('no covering set found (verifier bug)')\n            if best < (N - r + 1):\n                raise ValueError('square-sum below provable lower bound N-r+1')\n            if prev is not None and best < prev:\n                raise ValueError('non-monotone in N')\n            sums = sums_of(arg, r, N)\n            for n in range(r, N + 1):\n                if n not in sums:\n                    raise ValueError('argmin fails coverage')\n            cost = 0\n            for v in sums.values():\n                cost += v * v\n            if cost != best:\n                raise ValueError('argmin cost mismatch')\n            prev = best\n\n    # (3) Invariant sanity on the Sidon table: nondecreasing in N.\n    for i in range(1, 8):\n        if K[i] < K[i - 1]:\n            raise ValueError('sidon_max not nondecreasing')\n\n    return True\n",
+ "run": {
+  "passed": true,
+  "status": "VERIFIER_PASS",
+  "exit_code": 0,
+  "stdout": "PASS",
+  "detail": "",
+  "seconds": 0.11,
+  "code_sha256": "9707975b622312ed50c92d331b06b8b9fd2d055bc0b3d6af46d881e38d46c01f"
+ },
+ "claim": "verify(witness) returns True (and only True; every failed check raises) exactly when, for every N<=8, the maximum size of a Sidon subset of {1..N} is [1,2,2,3,3,3,4,4] (both existence and impossibility halves, by exhaustive enumeration over all 2^N subsets with exact integer arithmetic), and for r in {2,3} the minimal value of sum_{n<=N} f_r(n)^2 subject to the finite basis constraint [r,N] subset of rA is computed exactly over all subsets of {1..N}, satisfies the provable lower bound N-r+1 and monotonicity in N, with each exhibited minimizer independently re-verified. Repair note: the previous submission's extra hand-derived ceiling invariant K[5]==K[6]==K[7] was mathematically wrong (k(7)=4 via {1,2,5,7}); it has been removed — the exhaustive enumeration alone determines every entry, so no hand argument is load-bearing. covers=\"fragment\": the universal asymptotic branch (existence, for every r>=2, of an infinite basis of order r with O(x) square-sum) has no finite-reduction theorem and remains uncertifiable, exactly as recorded in L1.",
+ "law": "Wang 7.2: an exact finite object plus a proved reduction is a CERTIFICATE. The reduction is the `claim` and is a human's to audit; the object and the verifier run are the machine's part.",
+ "timestamp": "2026-09-01T22:36:26Z"
+}

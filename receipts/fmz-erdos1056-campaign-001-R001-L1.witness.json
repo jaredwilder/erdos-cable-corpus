@@ -1,0 +1,31 @@
+{
+ "schema": "oracle.msl.closer.witness.v1",
+ "id": "fmz-erdos1056-campaign-001-R001-L1",
+ "pipeline": "WITNESS_FINITE",
+ "witness": {
+  "p": 2,
+  "k_values": [
+   2,
+   3,
+   4,
+   5,
+   10,
+   100
+  ],
+  "intervals": "for each k, I_i = {1} for all 1 <= i <= k (singletons)"
+ },
+ "verifier_sha256": "7d64f72215278405b1b4904cd511d55d278771d35b7eab0d9e19c88d005a6cfb",
+ "verifier_source": "# Pure Python 3, no imports, no I/O, no prints, exact integer arithmetic.\n# Fails closed: raises on any failed check; returns True only if all hold.\n\ndef verify(witness):\n    p = witness[\"p\"]\n    if p < 2:\n        raise ValueError(\"p not prime-candidate\")\n    d = 2\n    while d * d <= p:\n        if p % d == 0:\n            raise ValueError(\"p composite\")\n        d += 1\n    for k in witness[\"k_values\"]:\n        if k < 2:\n            raise ValueError(\"k below canonical range\")\n        # literal reading: k intervals I_1..I_k (1-indexed), each singleton {1}\n        for i in range(1, k + 1):\n            prod = 1  # product of elements of {1}\n            if prod % p != 1:\n                raise ValueError(\"interval product not 1 mod p\")\n    return True\n\n# Embedded witness check; any failure raises (nonzero exit = FAIL).\nWITNESS = {\n    \"p\": 2,\n    \"k_values\": [2, 3, 4, 5, 10, 100],\n}\nverify(WITNESS)\n",
+ "run": {
+  "passed": true,
+  "status": "VERIFIER_PASS",
+  "exit_code": 0,
+  "stdout": "PASS",
+  "detail": "",
+  "seconds": 0.08,
+  "code_sha256": "7d64f72215278405b1b4904cd511d55d278771d35b7eab0d9e19c88d005a6cfb"
+ },
+ "claim": "Normal exit (code 0, no exception) establishes that under the literal canonical statement the witness p=2 with I_1=...=I_k={1} satisfies every stated condition (each interval product is 1 ≡ 1 mod p), confirming the standing lemma L1: the literal reading admits a trivial witness, so the canonical statement requires explicit distinctness/length constraints before a nontrivial affirmative close is meaningful.",
+ "law": "Wang 7.2: an exact finite object plus a proved reduction is a CERTIFICATE. The reduction is the `claim` and is a human's to audit; the object and the verifier run are the machine's part.",
+ "timestamp": "2026-09-01T19:26:34Z"
+}

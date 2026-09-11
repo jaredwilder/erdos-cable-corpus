@@ -1,0 +1,55 @@
+{
+ "schema": "oracle.msl.cable.v1",
+ "id": "fmz-erdos197-campaign-001-R004-L1-a3r2",
+ "spec": {
+  "id": "fmz-erdos197-campaign-001-R004-L1-a3r2",
+  "imports": "none",
+  "definitions": "def bits (n k : Nat) : Bool := (n / (2^k)) % 2 = 1\ndef threeAPs9 : List (Nat \u00d7 Nat \u00d7 Nat) :=\n  (List.range 7).map (fun a => (a, a+1, a+2)) ++\n  (List.range 5).map (fun a => (a, a+2, a+4)) ++\n  (List.range 3).map (fun a => (a, a+3, a+6)) ++\n  [(0,4,8)]\ndef mono (n : Nat) (t : Nat \u00d7 Nat \u00d7 Nat) : Bool :=\n  (bits n t.1 && bits n t.2.1 && bits n t.2.2) ||\n  (!(bits n t.1) && !(bits n t.2.1) && !(bits n t.2.2))\ndef clean (n : Nat) : Bool := !(threeAPs9.any (mono n))\ndef witness : Nat := 0b10100101\ndef aps8 : List (Nat \u00d7 Nat \u00d7 Nat) :=\n  (List.range 6).map (fun a => (a, a+1, a+2)) ++\n  (List.range 4).map (fun a => (a, a+2, a+4)) ++\n  (List.range 2).map (fun a => (a, a+3, a+6))\ndef checkWitness : Bool := !(aps8.any (mono witness))\ndef exhaustiveNoClean9 : Bool :=\n  (List.range 512).all (fun n => ! (clean n))\ndef checkW23 : Bool := checkWitness && exhaustiveNoClean9",
+  "conclusion": "checkW23 = true",
+  "proof": "by native_decide"
+ },
+ "formal_status": "KERNEL_FAILED",
+ "events": [
+  "RAW[exit 0 with no captured error line]"
+ ],
+ "axioms": [
+  "msl_fmz_erdos197_campaign_001_R004_L1_a3r2._native.native_decide.ax_1_1"
+ ],
+ "attempts": [
+  {
+   "tactic": "(supplied proof)",
+   "status": "UNVERIFIED",
+   "seconds": 3.1,
+   "errors": [],
+   "exitCode": 0,
+   "resource_limit": null
+  }
+ ],
+ "budget_history": [
+  {
+   "tier_seconds": 900.0,
+   "outcome": "KERNEL_FAILED"
+  }
+ ],
+ "kernel_result": {
+  "status": "UNVERIFIED",
+  "file": "oracle/frontier_formalizer/cable/theorems/msl_fmz-erdos197-campaign-001-R004-L1-a3r2.lean",
+  "backend": "windows",
+  "project": "C:\\Users\\jared\\Local Sites\\woocommerce-enterprise\\oracle\\math\\EG411Formal",
+  "needsMathlib": false,
+  "exitCode": 0,
+  "seconds": 3.1,
+  "declarations": [
+   {
+    "declaration": "msl_fmz_erdos197_campaign_001_R004_L1_a3r2",
+    "clean": false,
+    "axioms": [
+     "msl_fmz_erdos197_campaign_001_R004_L1_a3r2._native.native_decide.ax_1_1"
+    ]
+   }
+  ],
+  "errors": []
+ },
+ "lean_result_block": "LEAN_RESULT fmz-erdos197-campaign-001-R004-L1-a3r2\n  FORMAL_STATUS KERNEL_FAILED\n  FILE oracle/frontier_formalizer/cable/theorems/msl_fmz-erdos197-campaign-001-R004-L1-a3r2.lean\n  THEOREMS msl_fmz_erdos197_campaign_001_R004_L1_a3r2\n  BACKEND windows\n  AXIOMS msl_fmz_erdos197_campaign_001_R004_L1_a3r2._native.native_decide.ax_1_1\n  TACTIC (supplied proof)\n  BUDGET 900s:KERNEL_FAILED\n  FAILURE RAW[exit 0 with no captured error line]\n  LAW KERNEL_FAILED does not refute the claim \u2014 the FAILURE line names what actually broke",
+ "timestamp": "2026-09-02T01:38:26Z"
+}

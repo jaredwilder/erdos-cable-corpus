@@ -1,0 +1,53 @@
+{
+ "schema": "oracle.msl.closer.witness.v1",
+ "id": "fmz-erdos14-campaign-001-R001-L1",
+ "pipeline": "WITNESS_FINITE",
+ "witness": {
+  "A": [
+   1,
+   2,
+   4,
+   8
+  ],
+  "N": 20,
+  "residual": {
+   "num": 3,
+   "den": 1
+  },
+  "expected_unique_sum_set_upto_N": [
+   2,
+   3,
+   4,
+   5,
+   8,
+   9,
+   10,
+   11,
+   12,
+   16,
+   17,
+   18,
+   19,
+   20
+  ],
+  "expected_complement_count": 6,
+  "expected_resid_computed": {
+   "num": 6,
+   "den": 20
+  }
+ },
+ "verifier_sha256": "fae8a7f26df725fdf2f84c90b02400c80c565a9a1d1b7bb10d40607c003a2232",
+ "verifier_source": "# exact fail-closed verifier V, minimal pure form\n# no imports, no print, no assert, no raise, no set, no I/O, no floats\n# deterministic; exact integer arithmetic only; cross-multiplied rational checks\n\ndef verify():\n    A = [1, 2, 4, 8]\n    N = 20\n    residual_num = 3\n    residual_den = 1\n    expected_unique = [2, 3, 4, 5, 8, 9, 10, 11, 12, 16, 17, 18, 19, 20]\n    expected_complement_count = 6\n    expected_resid_num = 6\n    expected_resid_den = 20\n\n    # fail-closed schema checks\n    if len(A) == 0:\n        return False\n    if N < 1:\n        return False\n    if residual_den <= 0 or expected_resid_den <= 0:\n        return False\n    for a in A:\n        if a < 1:\n            return False\n    i = 0\n    while i < len(A):\n        j = i + 1\n        while j < len(A):\n            if A[i] == A[j]:\n                return False\n            j = j + 1\n        i = i + 1\n\n    # exact representation counts: unordered pairs a <= b by index order\n    sum_indices = []\n    sum_counts = []\n    i = 0\n    while i < len(A):\n        j = i\n        while j < len(A):\n            s = A[i] + A[j]\n            k = 0\n            found = -1\n            while k < len(sum_indices):\n                if sum_indices[k] == s:\n                    found = k\n                    break\n                k = k + 1\n            if found >= 0:\n                sum_counts[found] = sum_counts[found] + 1\n            else:\n                sum_indices.append(s)\n                sum_counts.append(1)\n            j = j + 1\n        i = i + 1\n\n    # unique sums in [1, N], sorted ascending\n    unique = []\n    n = 1\n    while n <= N:\n        k = 0\n        while k < len(sum_indices):\n            if sum_indices[k] == n and sum_counts[k] == 1:\n                unique.append(n)\n            k = k + 1\n        n = n + 1\n\n    # compare against expected list, element-wise exact\n    if len(unique) != len(expected_unique):\n        return False\n    k = 0\n    while k < len(unique):\n        if unique[k] != expected_unique[k]:\n            return False\n        k = k + 1\n\n    complement_count = N - len(unique)\n    if complement_count != expected_complement_count:\n        return False\n\n    # exact rational checks via cross-multiplication (all denominators positive)\n    # computed density c/N <= residual rn/rd  <=>  c*rd <= rn*N\n    if complement_count * residual_den > residual_num * N:\n        return False\n    # reported computed residual c/N == en/ed  <=>  c*ed == en*N\n    if complement_count * expected_resid_den != expected_resid_num * N:\n        return False\n\n    return True\n\nRESULT = verify()\n",
+ "run": {
+  "passed": false,
+  "status": "VERIFIER_FAIL",
+  "exit_code": 1,
+  "stdout": "",
+  "detail": "TypeError: verify() takes 0 positional arguments but 1 was given",
+  "seconds": 0.11,
+  "code_sha256": "fae8a7f26df725fdf2f84c90b02400c80c565a9a1d1b7bb10d40607c003a2232"
+ },
+ "claim": "RESULT == True (exit 0) establishes: (a) exact verifier V exists as deterministic fail-closed pure code with no imports, no print, no assert, no raise, no set, no floats, no network, no filesystem, no writes; (b) V decides the exact predicate |{1..N}\\B_A| and its exact rational density against an outward residual bound on the explicit instance A={1,2,4,8}, N=20 — the finite predicate core of close branch B. covers=fragment: certifies V's existence, discipline, and correctness on enumerated finite domains, not the asymptotic clauses (i)/(ii).",
+ "law": "Wang 7.2: an exact finite object plus a proved reduction is a CERTIFICATE. The reduction is the `claim` and is a human's to audit; the object and the verifier run are the machine's part.",
+ "timestamp": "2026-09-01T23:36:31Z"
+}

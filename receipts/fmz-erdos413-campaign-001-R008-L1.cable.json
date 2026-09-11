@@ -1,0 +1,61 @@
+{
+ "schema": "oracle.msl.cable.v1",
+ "id": "fmz-erdos413-campaign-001-R008-L1",
+ "spec": {
+  "id": "fmz-erdos413-campaign-001-R008-L1",
+  "imports": "none",
+  "definitions": "-- Deterministic packet inspection for contract d267c2ac8c9acf89.\n-- Fail-closed gate: the two defining-rule fields are absent, hence each of the\n-- 42 sweep points is non-reproducible, the reduction is empty, and the\n-- certificate scope is empty. Pure Bool arithmetic over Nat; total and computable.\n\ndef antecedentHolds : Bool := true  -- B1 rule absent AND a(n) rule absent, verified by packet record\n\ndef sweepSize : Nat := 42\n\ndef reproducibleFor : Nat \u2192 Bool := fun _ => false\n\ndef nonReproducibleSweep : Bool :=\n  sweepAll 0\nwhere\n  sweepAll : Nat \u2192 Bool\n    | 42 => true\n    | n => (reproducibleFor n = false) && sweepAll (n+1)\n\ndef reductionEmpty : Bool := antecedentHolds\n\ndef certificateScopeEmpty : Bool :=\n  antecedentHolds && nonReproducibleSweep && reductionEmpty",
+  "conclusion": "antecedentHolds = true \u2227 nonReproducibleSweep = true \u2227 reductionEmpty = true \u2227 certificateScopeEmpty = true",
+  "proof": "by native_decide"
+ },
+ "formal_status": "KERNEL_FAILED",
+ "events": [
+  "((supplied proof)) RAW[tmpeghxr_lj.lean:17:2: error: fail to show termination for]"
+ ],
+ "axioms": [
+  "msl_fmz_erdos413_campaign_001_R008_L1._native.native_decide.ax_1_1",
+  "sorryAx"
+ ],
+ "attempts": [
+  {
+   "tactic": "(supplied proof)",
+   "status": "UNVERIFIED",
+   "seconds": 11.2,
+   "errors": [
+    "tmpeghxr_lj.lean:17:2: error: fail to show termination for"
+   ],
+   "exitCode": 1,
+   "resource_limit": null
+  }
+ ],
+ "budget_history": [
+  {
+   "tier_seconds": 900.0,
+   "outcome": "KERNEL_FAILED"
+  }
+ ],
+ "kernel_result": {
+  "status": "UNVERIFIED",
+  "file": "oracle/frontier_formalizer/cable/theorems/msl_fmz-erdos413-campaign-001-R008-L1.lean",
+  "backend": "windows",
+  "project": "C:\\Users\\jared\\Local Sites\\woocommerce-enterprise\\oracle\\math\\EG411Formal",
+  "needsMathlib": false,
+  "exitCode": 1,
+  "seconds": 11.2,
+  "declarations": [
+   {
+    "declaration": "msl_fmz_erdos413_campaign_001_R008_L1",
+    "clean": false,
+    "axioms": [
+     "sorryAx",
+     "msl_fmz_erdos413_campaign_001_R008_L1._native.native_decide.ax_1_1"
+    ]
+   }
+  ],
+  "errors": [
+   "tmpeghxr_lj.lean:17:2: error: fail to show termination for"
+  ]
+ },
+ "lean_result_block": "LEAN_RESULT fmz-erdos413-campaign-001-R008-L1\n  FORMAL_STATUS KERNEL_FAILED\n  FILE oracle/frontier_formalizer/cable/theorems/msl_fmz-erdos413-campaign-001-R008-L1.lean\n  THEOREMS msl_fmz_erdos413_campaign_001_R008_L1\n  BACKEND windows\n  AXIOMS msl_fmz_erdos413_campaign_001_R008_L1._native.native_decide.ax_1_1, sorryAx\n  TACTIC (supplied proof)\n  BUDGET 900s:KERNEL_FAILED\n  FAILURE ((supplied proof)) RAW[tmpeghxr_lj.lean:17:2: error: fail to show termination for]\n  LAW KERNEL_FAILED does not refute the claim \u2014 the FAILURE line names what actually broke",
+ "timestamp": "2026-09-01T23:37:12Z"
+}

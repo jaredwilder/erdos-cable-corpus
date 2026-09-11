@@ -1,0 +1,49 @@
+{
+ "schema": "oracle.msl.cable.v1",
+ "id": "fmz-erdos274-campaign-001-R005-L2",
+ "spec": {
+  "id": "fmz-erdos274-campaign-001-R005-L2",
+  "imports": "none",
+  "definitions": "def check_k2 (N : Nat) : Bool :=\n  (List.range (N+1)).all fun n =>\n    (List.range (N+1)).all fun d1 =>\n      (List.range (N+1)).all fun d2 =>\n        d1 = 0 \u2228 d2 = 0 \u2228 n % d1 != 0 \u2228 n % d2 != 0 \u2228 d1 = d2 \u2228 d1 + d2 != n\n-- For every n \u2264 N and every d1,d2 \u2264 N: NOT (d1 \u2223 n \u2227 d2 \u2223 n \u2227 d1 \u2260 d2 \u2227 d1 + d2 = n).\n-- This is the k=2 wing of L2: an exact disjoint 2-cover of a finite group G by\n-- cosets of H1, H2 forces |G| = |H1| + |H2| with |Hi| \u2223 |G| (Lagrange);\n-- distinct d1,d2 \u2265 1 with d1 \u2223 n, d2 \u2223 n, d1 + d2 = n is impossible (each of\n-- d1,d2 \u2264 n/2 with equality forcing d1 = d2 = n/2), so k=2 covers with pairwise\n-- distinct subgroup cardinalities cannot exist.",
+  "conclusion": "check_k2 20 = true",
+  "proof": "by decide"
+ },
+ "formal_status": "KERNEL_CHECKED",
+ "events": [],
+ "axioms": [],
+ "attempts": [
+  {
+   "tactic": "(supplied proof)",
+   "status": "VERIFIED",
+   "seconds": 5.1,
+   "errors": [],
+   "exitCode": 0,
+   "resource_limit": null
+  }
+ ],
+ "budget_history": [
+  {
+   "tier_seconds": 900.0,
+   "outcome": "KERNEL_CHECKED"
+  }
+ ],
+ "kernel_result": {
+  "status": "VERIFIED",
+  "file": "oracle/frontier_formalizer/cable/theorems/msl_fmz-erdos274-campaign-001-R005-L2.lean",
+  "backend": "windows",
+  "project": "C:\\Users\\jared\\Local Sites\\woocommerce-enterprise\\oracle\\math\\EG411Formal",
+  "needsMathlib": false,
+  "exitCode": 0,
+  "seconds": 5.1,
+  "declarations": [
+   {
+    "declaration": "msl_fmz_erdos274_campaign_001_R005_L2",
+    "clean": true,
+    "axioms": []
+   }
+  ],
+  "errors": []
+ },
+ "lean_result_block": "LEAN_RESULT fmz-erdos274-campaign-001-R005-L2\n  FORMAL_STATUS KERNEL_CHECKED\n  FILE oracle/frontier_formalizer/cable/theorems/msl_fmz-erdos274-campaign-001-R005-L2.lean\n  THEOREMS msl_fmz_erdos274_campaign_001_R005_L2\n  BACKEND windows\n  AXIOMS -\n  TACTIC (supplied proof)\n  BUDGET 900s:KERNEL_CHECKED\n  FAILURE NONE",
+ "timestamp": "2026-09-01T21:16:04Z"
+}

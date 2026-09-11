@@ -1,0 +1,59 @@
+{
+ "schema": "oracle.msl.cable.v1",
+ "id": "fmz-erdos25-campaign-001-R005-L2-a1r1",
+ "spec": {
+  "id": "fmz-erdos25-campaign-001-R005-L2-a1r1",
+  "imports": "none",
+  "definitions": "def modCls (a N n : Nat) : Bool := n % N == a % N\n\ndef agree (a a' N : Nat) (B : Nat) : Bool :=\n  (a % N == a' % N) && (List.range B |>.all fun n => modCls a N n == modCls a' N n)\n\n-- L2 fragment: representative reduction invariance, instantiated on concrete\n-- moduli and residue representatives spanning the boundary cases (a=0, a=a',\n-- a'>N, negative-equivalent representatives via large a).\ndef check_L2 : Bool :=\n  agree 7 12 5 200 &&   -- a \u2261 a' mod N, different representatives: classes identical\n  agree 0 5 5 200 &&    -- boundary a=0 vs a=N: same class, not distinct classes\n  agree 41 9 5 200 &&   -- a' > N reduced to 5: invariance holds\n  agree 123 3 10 200 && -- large representative reduces mod N: invariance holds\n  !(agree 1 2 5 200)    -- control: non-congruent residues give DIFFERENT classes,\n                        -- so the invariance is not vacuously true",
+  "conclusion": "check_L2 = true",
+  "proof": "by decide"
+ },
+ "formal_status": "KERNEL_FAILED",
+ "events": [
+  "((supplied proof)) REFUTED.DECIDABLE[decide proved the negation \u2014 this one IS a refutation]"
+ ],
+ "axioms": [
+  "sorryAx"
+ ],
+ "attempts": [
+  {
+   "tactic": "(supplied proof)",
+   "status": "UNVERIFIED",
+   "seconds": 2.4,
+   "errors": [
+    "tmpc_blvo0y.lean:19:75: error: Tactic `decide` proved that the proposition"
+   ],
+   "exitCode": 1,
+   "resource_limit": null
+  }
+ ],
+ "budget_history": [
+  {
+   "tier_seconds": 900.0,
+   "outcome": "REFUTED_DECIDABLE"
+  }
+ ],
+ "kernel_result": {
+  "status": "UNVERIFIED",
+  "file": "oracle/frontier_formalizer/cable/theorems/msl_fmz-erdos25-campaign-001-R005-L2-a1r1.lean",
+  "backend": "windows",
+  "project": "C:\\Users\\jared\\Local Sites\\woocommerce-enterprise\\oracle\\math\\EG411Formal",
+  "needsMathlib": false,
+  "exitCode": 1,
+  "seconds": 2.4,
+  "declarations": [
+   {
+    "declaration": "msl_fmz_erdos25_campaign_001_R005_L2_a1r1",
+    "clean": false,
+    "axioms": [
+     "sorryAx"
+    ]
+   }
+  ],
+  "errors": [
+   "tmpc_blvo0y.lean:19:75: error: Tactic `decide` proved that the proposition"
+  ]
+ },
+ "lean_result_block": "LEAN_RESULT fmz-erdos25-campaign-001-R005-L2-a1r1\n  FORMAL_STATUS KERNEL_FAILED\n  FILE oracle/frontier_formalizer/cable/theorems/msl_fmz-erdos25-campaign-001-R005-L2-a1r1.lean\n  THEOREMS msl_fmz_erdos25_campaign_001_R005_L2_a1r1\n  BACKEND windows\n  AXIOMS sorryAx\n  TACTIC (supplied proof)\n  BUDGET 900s:REFUTED_DECIDABLE\n  FAILURE ((supplied proof)) REFUTED.DECIDABLE[decide proved the negation \u2014 this one IS a refutation]\n  LAW KERNEL_FAILED does not refute the claim \u2014 the FAILURE line names what actually broke",
+ "timestamp": "2026-09-02T02:02:22Z"
+}

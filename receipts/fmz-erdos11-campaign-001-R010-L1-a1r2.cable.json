@@ -1,0 +1,59 @@
+{
+ "schema": "oracle.msl.cable.v1",
+ "id": "fmz-erdos11-campaign-001-R010-L1-a1r2",
+ "spec": {
+  "id": "fmz-erdos11-campaign-001-R010-L1-a1r2",
+  "imports": "none",
+  "definitions": "def isSquarefree (k : Nat) : Bool :=\n  (List.range (k+1)).all (fun d =>\n    if d = 0 then true else !(Nat.beq (k / (d*d)) ((k / (d*d)) * (d*d) / (d*d)) && ((d*d) \u2223 k)) || !((d*d) \u2223 k))\n\ndef sqfree (k : Nat) : Bool :=\n  (List.range (k+2)).all (fun d =>\n    if d \u2265 2 then not (Nat.mod (d*d) 1 = 0 && (k % (d*d) == 0)) else true)\n\ndef decomposes (n : Nat) : Bool :=\n  ((List.range 5).map (fun l => 2 ^ l)).any (fun p =>\n    p \u2264 n && sqfree (n - p))\n\ndef oddNs : List Nat := (List.range 25).filter (fun n => n % 2 = 1 && n \u2265 3)\n\ndef check_finite_core : Bool :=\n  oddNs.length == 13 && oddNs.all decomposes",
+  "conclusion": "check_finite_core = true",
+  "proof": "by decide"
+ },
+ "formal_status": "KERNEL_FAILED",
+ "events": [
+  "((supplied proof)) REFUTED.DECIDABLE[decide proved the negation \u2014 this one IS a refutation]"
+ ],
+ "axioms": [
+  "sorryAx"
+ ],
+ "attempts": [
+  {
+   "tactic": "(supplied proof)",
+   "status": "UNVERIFIED",
+   "seconds": 2.4,
+   "errors": [
+    "tmpxjc1sg29.lean:20:84: error: Tactic `decide` proved that the proposition"
+   ],
+   "exitCode": 1,
+   "resource_limit": null
+  }
+ ],
+ "budget_history": [
+  {
+   "tier_seconds": 900.0,
+   "outcome": "REFUTED_DECIDABLE"
+  }
+ ],
+ "kernel_result": {
+  "status": "UNVERIFIED",
+  "file": "oracle/frontier_formalizer/cable/theorems/msl_fmz-erdos11-campaign-001-R010-L1-a1r2.lean",
+  "backend": "windows",
+  "project": "C:\\Users\\jared\\Local Sites\\woocommerce-enterprise\\oracle\\math\\EG411Formal",
+  "needsMathlib": false,
+  "exitCode": 1,
+  "seconds": 2.4,
+  "declarations": [
+   {
+    "declaration": "msl_fmz_erdos11_campaign_001_R010_L1_a1r2",
+    "clean": false,
+    "axioms": [
+     "sorryAx"
+    ]
+   }
+  ],
+  "errors": [
+   "tmpxjc1sg29.lean:20:84: error: Tactic `decide` proved that the proposition"
+  ]
+ },
+ "lean_result_block": "LEAN_RESULT fmz-erdos11-campaign-001-R010-L1-a1r2\n  FORMAL_STATUS KERNEL_FAILED\n  FILE oracle/frontier_formalizer/cable/theorems/msl_fmz-erdos11-campaign-001-R010-L1-a1r2.lean\n  THEOREMS msl_fmz_erdos11_campaign_001_R010_L1_a1r2\n  BACKEND windows\n  AXIOMS sorryAx\n  TACTIC (supplied proof)\n  BUDGET 900s:REFUTED_DECIDABLE\n  FAILURE ((supplied proof)) REFUTED.DECIDABLE[decide proved the negation \u2014 this one IS a refutation]\n  LAW KERNEL_FAILED does not refute the claim \u2014 the FAILURE line names what actually broke",
+ "timestamp": "2026-09-02T01:52:13Z"
+}

@@ -1,0 +1,210 @@
+{
+ "schema": "oracle.msl.cable.v1",
+ "id": "fmz-erdos218-campaign-001-R005-L1",
+ "spec": {
+  "id": "fmz-erdos218-campaign-001-R005-L1",
+  "imports": "Mathlib",
+  "definitions": "open Filter\n\nnamespace Erdos218L1\n\n/-- The explicit sequence d_n = (1,2,1,2,...). -/\ndef d (n : \u2115) : \u2115 := if n % 2 = 0 then 1 else 2\n\ndef cntLE (N : \u2115) : \u2115 := ((Finset.range N).filter (fun n => d (n+1) \u2264 d n)).card\n\ndef cntGE (N : \u2115) : \u2115 := ((Finset.range N).filter (fun n => d n \u2264 d (n+1))).card\n\nlemma d_val (n : \u2115) : d (2*n) = 1 \u2227 d (2*n+1) = 2 := by\n  have h0 : (2*n) % 2 = 0 := by omega\n  have h1 : (2*n+1) % 2 = 1 := by omega\n  simp [d, h0, h1]\n\nlemma le_cond (n : \u2115) : d (n+1) \u2264 d n \u2194 n % 2 = 1 := by\n  rcases Nat.mod_two_eq_zero_or_one n with h | h\n  \u00b7 simp [d, h, show (n+1) % 2 = 1 by omega]\n  \u00b7 simp [d, h, show (n+1) % 2 = 0 by omega]\n\nlemma ge_cond (n : \u2115) : d n \u2264 d (n+1) \u2194 n % 2 = 0 := by\n  rcases Nat.mod_two_eq_zero_or_one n with h | h\n  \u00b7 simp [d, h, show (n+1) % 2 = 1 by omega]\n  \u00b7 simp [d, h, show (n+1) % 2 = 0 by omega]\n\nlemma eq_cond (n : \u2115) : d (n+1) = d n \u2194 False := by\n  rcases Nat.mod_two_eq_zero_or_one n with h | h\n  \u00b7 simp [d, h, show (n+1) % 2 = 1 by omega]\n  \u00b7 simp [d, h, show (n+1) % 2 = 0 by omega]\n\nlemma cntLE_succ (N : \u2115) : cntLE (N+1) = cntLE N + (if N % 2 = 1 then 1 else 0) := by\n  unfold cntLE\n  rw [Finset.range_succ, Finset.filter_insert]\n  by_cases h : d (N+1) \u2264 d N\n  \u00b7 rw [if_pos h, Finset.card_insert_of_notMem (by simp),\n      if_pos ((le_cond N).mp h)]\n  \u00b7 rw [if_neg h, if_neg (fun hc => h (le_cond N \u25b8 hc))]\n\nlemma cntLE_eq (N : \u2115) : cntLE N = N / 2 := by\n  induction N with\n  | zero => rfl\n  | succ N ih =>\n    rw [cntLE_succ, ih]\n    rcases Nat.mod_two_eq_zero_or_one N with h | h <;> simp [h] <;> omega\n\nlemma cntGE_succ (N : \u2115) : cntGE (N+1) = cntGE N + (if N % 2 = 0 then 1 else 0) := by\n  unfold cntGE\n  rw [Finset.range_succ, Finset.filter_insert]\n  by_cases h : d N \u2264 d (N+1)\n  \u00b7 rw [if_pos h, Finset.card_insert_of_notMem (by simp),\n      if_pos ((ge_cond N).mp h)]\n  \u00b7 rw [if_neg h, if_neg (fun hc => h (ge_cond N \u25b8 hc))]\n\nlemma cntGE_eq (N : \u2115) : cntGE N = (N + 1) / 2 := by\n  induction N with\n  | zero => rfl\n  | succ N ih =>\n    rw [cntGE_succ, ih]\n    rcases Nat.mod_two_eq_zero_or_one N with h | h <;> simp [h] <;> omega\n\nlemma ratioLE (N : \u2115) (hN : N \u2260 0) :\n    (cntLE N : \u211d) / N = 1/2 - ((N % 2 : \u2115) : \u211d) / (2 * N) := by\n  rw [cntLE_eq]\n  have hN2 : ((N / 2 : \u2115) : \u211d) * 2 + ((N % 2 : \u2115) : \u211d) = (N : \u211d) :=\n    by exact_mod_cast Nat.div_add_mod N 2\n  have hN0 : (N : \u211d) \u2260 0 := by exact_mod_cast hN\n  field_simp [hN2]\n\nlemma ratioGE (N : \u2115) (hN : N \u2260 0) :\n    (cntGE N : \u211d) / N = 1/2 + ((N % 2 : \u2115) : \u211d) / (2 * N) := by\n  rw [cntGE_eq]\n  have hN2 : ((N / 2 : \u2115) : \u211d) * 2 + ((N % 2 : \u2115) : \u211d) = (N : \u211d) :=\n    by exact_mod_cast Nat.div_add_mod N 2\n  have hN3 : (((N + 1) / 2 : \u2115) : \u211d) = ((N / 2 : \u2115) : \u211d) + ((N % 2 : \u2115) : \u211d) :=\n    by have h := (by omega : ((N + 1) / 2 : \u2115) = (N / 2 : \u2115) + (N % 2 : \u2115)); exact_mod_cast h\n  have hN0 : (N : \u211d) \u2260 0 := by exact_mod_cast hN\n  field_simp [hN2, hN3]\n\nlemma key : Filter.Tendsto (fun N : \u2115 => ((N % 2 : \u2115) : \u211d) / (2 * N)) Filter.atTop\n    (nhds (0 : \u211d)) := by\n  refine squeeze_zero ?_ ?_\n  \u00b7 exact tendsto_one_div_add_atTop_nhds_zero_nat\n  \u00b7 apply Filter.eventually_of_forall\n    intro N\n    have hr : (N % 2 : \u2115) \u2264 1 := by omega\n    rcases Nat.eq_zero_or_pos N with h0 | h0\n    \u00b7 subst h0; simp\n    \u00b7 have hN1 : (1 : \u211d) \u2264 N := by exact_mod_cast h0\n      have hr0 : (0 : \u211d) \u2264 ((N % 2 : \u2115) : \u211d) := Nat.cast_nonneg'\n      have hr1 : ((N % 2 : \u2115) : \u211d) \u2264 1 := by exact_mod_cast hr\n      rw [abs_div, abs_of_nonneg (by positivity), abs_of_nonneg (by positivity : (0:\u211d) \u2264 2 * N)]\n      rw [div_le_div_iff (by positivity) (by positivity)]\n      nlinarith\n\ntheorem densityLE : Filter.Tendsto (fun N => (cntLE N : \u211d) / N) Filter.atTop (nhds (1/2)) := by\n  have h1 : Filter.Tendsto (fun N : \u2115 => (1:\u211d)/2 - ((N % 2 : \u2115):\u211d)/(2*N))\n      Filter.atTop (nhds (1/2)) := Filter.Tendsto.sub tendsto_const_nhds key\n  refine Filter.Tendsto.congr' ?_ h1\n  filter_upwards (Ici_mem_atTop 1) with N hN\n  rw [ratioLE N (by omega)]\n\ntheorem densityGE : Filter.Tendsto (fun N => (cntGE N : \u211d) / N) Filter.atTop (nhds (1/2)) := by\n  have h1 : Filter.Tendsto (fun N : \u2115 => (1:\u211d)/2 + ((N % 2 : \u2115):\u211d)/(2*N))\n      Filter.atTop (nhds (1/2)) := Filter.Tendsto.add tendsto_const_nhds key\n  refine Filter.Tendsto.congr' ?_ h1\n  filter_upwards (Ici_mem_atTop 1) with N hN\n  rw [ratioGE N (by omega)]\n\nend Erdos218L1",
+  "conclusion": "theorem Erdos218L1.L1 :\n    Filter.Tendsto (fun N => (Erdos218L1.cntLE N : \u211d) / N) Filter.atTop (nhds (1/2)) \u2227\n    Filter.Tendsto (fun N => (Erdos218L1.cntGE N : \u211d) / N) Filter.atTop (nhds (1/2)) \u2227\n    \u00ac {n : \u2115 | Erdos218L1.d (n+1) = Erdos218L1.d n}.Infinite := by\n  refine \u27e8Erdos218L1.densityLE, Erdos218L1.densityGE, ?_\u27e9\n  intro h\n  have hE : {n : \u2115 | Erdos218L1.d (n+1) = Erdos218L1.d n} = \u2205 := by\n    ext n; simp [Erdos218L1.eq_cond]\n  rw [hE] at h\n  exact Set.finite_empty.not_infinite h",
+  "proof": "by refine \u27e8Erdos218L1.densityLE, Erdos218L1.densityGE, ?_\u27e9; intro h; have hE : {n : \u2115 | Erdos218L1.d (n+1) = Erdos218L1.d n} = \u2205 := by ext n; simp [Erdos218L1.eq_cond]; rw [hE] at h; exact Set.finite_empty.not_infinite h"
+ },
+ "formal_status": "KERNEL_FAILED",
+ "events": [
+  "((supplied proof)) TYPE.FAIL NEED[Finset.range_succ]",
+  "((supplied proof)) PROOF.OPEN GOALS[/tmp/oracle_lean_Q0QL6tYf.lean:36:83: error: unsolved goals]",
+  "((supplied proof)) PROOF.OPEN GOALS[/tmp/oracle_lean_Q0QL6tYf.lean:51:83: error: unsolved goals]",
+  "((supplied proof)) RAW[/tmp/oracle_lean_Q0QL6tYf.lean:70:7: error: mod_cast has type]",
+  "((supplied proof)) PROOF.OPEN GOALS[/tmp/oracle_lean_Q0QL6tYf.lean:67:61: error: unsolved goals]",
+  "((supplied proof)) RAW[/tmp/oracle_lean_Q0QL6tYf.lean:78:7: error: mod_cast has type]",
+  "((supplied proof)) PROOF.OPEN GOALS[/tmp/oracle_lean_Q0QL6tYf.lean:75:61: error: unsolved goals]",
+  "((supplied proof)) RAW[/tmp/oracle_lean_Q0QL6tYf.lean:86:2: error: Type mismatch]",
+  "((supplied proof)) RAW[/tmp/oracle_lean_Q0QL6tYf.lean:102:35: error: Type mismatch]"
+ ],
+ "axioms": [
+  "Classical.choice",
+  "Quot.sound",
+  "propext",
+  "sorryAx"
+ ],
+ "attempts": [
+  {
+   "tactic": "(supplied proof)",
+   "status": "UNVERIFIED",
+   "seconds": 6.6,
+   "errors": [
+    "/tmp/oracle_lean_Q0QL6tYf.lean:38:6: error(lean.unknownIdentifier): Unknown constant `Finset.range_succ`",
+    "/tmp/oracle_lean_Q0QL6tYf.lean:36:83: error: unsolved goals",
+    "/tmp/oracle_lean_Q0QL6tYf.lean:53:6: error(lean.unknownIdentifier): Unknown constant `Finset.range_succ`",
+    "/tmp/oracle_lean_Q0QL6tYf.lean:51:83: error: unsolved goals",
+    "/tmp/oracle_lean_Q0QL6tYf.lean:70:7: error: mod_cast has type",
+    "/tmp/oracle_lean_Q0QL6tYf.lean:67:61: error: unsolved goals",
+    "/tmp/oracle_lean_Q0QL6tYf.lean:78:7: error: mod_cast has type",
+    "/tmp/oracle_lean_Q0QL6tYf.lean:75:61: error: unsolved goals",
+    "/tmp/oracle_lean_Q0QL6tYf.lean:86:2: error: Type mismatch",
+    "/tmp/oracle_lean_Q0QL6tYf.lean:102:35: error: Type mismatch"
+   ],
+   "exitCode": 1,
+   "resource_limit": null
+  }
+ ],
+ "budget_history": [
+  {
+   "tier_seconds": 900.0,
+   "outcome": "KERNEL_FAILED"
+  }
+ ],
+ "kernel_result": {
+  "status": "UNVERIFIED",
+  "file": "oracle/frontier_formalizer/cable/theorems/msl_fmz-erdos218-campaign-001-R005-L1.lean",
+  "backend": "wsl",
+  "project": "/root/erdosfire-bench/proofs",
+  "needsMathlib": true,
+  "exitCode": 1,
+  "seconds": 3.7,
+  "declarations": [
+   {
+    "declaration": "d_val",
+    "clean": true,
+    "axioms": [
+     "propext",
+     "Quot.sound"
+    ]
+   },
+   {
+    "declaration": "le_cond",
+    "clean": true,
+    "axioms": [
+     "propext",
+     "Classical.choice",
+     "Quot.sound"
+    ]
+   },
+   {
+    "declaration": "ge_cond",
+    "clean": true,
+    "axioms": [
+     "propext",
+     "Classical.choice",
+     "Quot.sound"
+    ]
+   },
+   {
+    "declaration": "eq_cond",
+    "clean": true,
+    "axioms": [
+     "propext",
+     "Quot.sound"
+    ]
+   },
+   {
+    "declaration": "cntLE_succ",
+    "clean": false,
+    "axioms": [
+     "propext",
+     "sorryAx",
+     "Classical.choice",
+     "Quot.sound"
+    ]
+   },
+   {
+    "declaration": "cntLE_eq",
+    "clean": false,
+    "axioms": [
+     "propext",
+     "sorryAx",
+     "Classical.choice",
+     "Quot.sound"
+    ]
+   },
+   {
+    "declaration": "cntGE_succ",
+    "clean": false,
+    "axioms": [
+     "propext",
+     "sorryAx",
+     "Classical.choice",
+     "Quot.sound"
+    ]
+   },
+   {
+    "declaration": "cntGE_eq",
+    "clean": false,
+    "axioms": [
+     "propext",
+     "sorryAx",
+     "Classical.choice",
+     "Quot.sound"
+    ]
+   },
+   {
+    "declaration": "ratioLE",
+    "clean": false,
+    "axioms": [
+     "propext",
+     "sorryAx",
+     "Classical.choice",
+     "Quot.sound"
+    ]
+   },
+   {
+    "declaration": "ratioGE",
+    "clean": false,
+    "axioms": [
+     "propext",
+     "sorryAx",
+     "Classical.choice",
+     "Quot.sound"
+    ]
+   },
+   {
+    "declaration": "key",
+    "clean": false,
+    "axioms": [
+     "propext",
+     "sorryAx",
+     "Classical.choice",
+     "Quot.sound"
+    ]
+   },
+   {
+    "declaration": "densityLE",
+    "clean": false,
+    "axioms": [
+     "propext",
+     "sorryAx",
+     "Classical.choice",
+     "Quot.sound"
+    ]
+   },
+   {
+    "declaration": "densityGE",
+    "clean": false,
+    "axioms": [
+     "propext",
+     "sorryAx",
+     "Classical.choice",
+     "Quot.sound"
+    ]
+   },
+   {
+    "declaration": "msl_fmz_erdos218_campaign_001_R005_L1",
+    "clean": true,
+    "axioms": []
+   }
+  ],
+  "errors": [
+   "/tmp/oracle_lean_Q0QL6tYf.lean:38:6: error(lean.unknownIdentifier): Unknown constant `Finset.range_succ`",
+   "/tmp/oracle_lean_Q0QL6tYf.lean:36:83: error: unsolved goals",
+   "/tmp/oracle_lean_Q0QL6tYf.lean:53:6: error(lean.unknownIdentifier): Unknown constant `Finset.range_succ`",
+   "/tmp/oracle_lean_Q0QL6tYf.lean:51:83: error: unsolved goals",
+   "/tmp/oracle_lean_Q0QL6tYf.lean:70:7: error: mod_cast has type",
+   "/tmp/oracle_lean_Q0QL6tYf.lean:67:61: error: unsolved goals",
+   "/tmp/oracle_lean_Q0QL6tYf.lean:78:7: error: mod_cast has type",
+   "/tmp/oracle_lean_Q0QL6tYf.lean:75:61: error: unsolved goals",
+   "/tmp/oracle_lean_Q0QL6tYf.lean:86:2: error: Type mismatch",
+   "/tmp/oracle_lean_Q0QL6tYf.lean:102:35: error: Type mismatch"
+  ]
+ },
+ "lean_result_block": "LEAN_RESULT fmz-erdos218-campaign-001-R005-L1\n  FORMAL_STATUS KERNEL_FAILED\n  FILE oracle/frontier_formalizer/cable/theorems/msl_fmz-erdos218-campaign-001-R005-L1.lean\n  THEOREMS msl_fmz_erdos218_campaign_001_R005_L1\n  BACKEND wsl\n  AXIOMS Classical.choice, Quot.sound, propext, sorryAx\n  TACTIC (supplied proof)\n  BUDGET 900s:KERNEL_FAILED\n  FAILURE ((supplied proof)) TYPE.FAIL NEED[Finset.range_succ]; ((supplied proof)) PROOF.OPEN GOALS[/tmp/oracle_lean_Q0QL6tYf.lean:36:83: error: unsolved goals]; ((supplied proof)) PROOF.OPEN GOALS[/tmp/oracle_lean_Q0QL6tYf.lean:51:83: error: unsolved goals]; ((supplied proof)) RAW[/tmp/oracle_lean_Q0QL6tYf.lean:70:7: error: mod_cast has type]; ((supplied proof)) PROOF.OPEN GOALS[/tmp/oracle_lean_Q0QL6tYf.lean:67:61: error: unsolved goals]; ((supplied proof)) RAW[/tmp/oracle_lean_Q0QL6tYf.lean:78:7: error: mod_cast has type]; ((supplied proof)) PROOF.OPEN GOALS[/tmp/oracle_lean_Q0QL6tYf.lean:75:61: error: unsolved goals]; ((supplied proof)) RAW[/tmp/oracle_lean_Q0QL6tYf.lean:86:2: error: Type mismatch]; ((supplied proof)) RAW[/tmp/oracle_lean_Q0QL6tYf.lean:102:35: error: Type mismatch]\n  LAW KERNEL_FAILED does not refute the claim \u2014 the FAILURE line names what actually broke",
+ "timestamp": "2026-09-01T21:23:57Z"
+}

@@ -1,0 +1,55 @@
+{
+ "schema": "oracle.msl.cable.v1",
+ "id": "fmz-erdos68-campaign-001-R003-L1",
+ "spec": {
+  "id": "fmz-erdos68-campaign-001-R003-L1",
+  "imports": "Mathlib",
+  "definitions": "import Mathlib.Data.Rat.Defs\n\n-- Certifies the checkable fragment of L1: the exact geometric identity\n-- 1/(n!-1) = sum_{j>=1} (n!)^{-j}  and  tail = 1/((n!-1)(n!)^J),\n-- verified in exact Rational arithmetic with fail-closed equality tests,\n-- at concrete finite values of n and J.\n\ndef fact : Nat -> Nat\n  | 0 => 1\n  | n+1 => (n+1) * fact n\n\n-- partial geometric sum sum_{j=1}^{J} m^{-j}, exact rationals\ndef geomSum (m J : Nat) : Rat :=\n  (List.range J).foldl (fun acc j => acc + (1 : Rat) / ((m^(j+1) : Nat) : Rat)) 0\n\n-- exact tail after J terms of the geometric series with ratio 1/m, m>=2:\n-- tail = m^{-(J+1)} / (1 - 1/m) = 1 / ((m-1) * m^J)\ndef exactTail (m J : Nat) : Rat :=\n  (1 : Rat) / (((m - 1) * m^J : Nat) : Rat)\n\ndef fullValue (m : Nat) : Rat := (1 : Rat) / (((m - 1 : Nat) : Rat))\n\n-- fail-closed identity check: partial sum + exact tail equals 1/(m-1) EXACTLY\ndef checkIdentity (n J : Nat) : Bool :=\n  let m := fact n\n  fullValue m == geomSum m J + exactTail m J\n\n-- fail-closed tail bound: tail <= 2 * m^{-(J+1)}  (exact rational inequality)\ndef checkTailBound (n J : Nat) : Bool :=\n  let m := fact n\n  exactTail m J <= (2 : Rat) / ((m^(J+1) : Nat) : Rat)\n\ndef checkL1 : Bool :=\n  ([2, 3, 4, 5] : List Nat).all fun n =>\n    checkIdentity n 6 && checkTailBound n 6",
+  "conclusion": "checkL1 = true",
+  "proof": "by native_decide"
+ },
+ "formal_status": "KERNEL_FAILED",
+ "events": [
+  "((supplied proof)) RAW[/tmp/oracle_lean_Tsh5v0qN.lean:5:0: error: invalid 'import' command, it must be used in the beginning of the file]"
+ ],
+ "axioms": [],
+ "attempts": [
+  {
+   "tactic": "(supplied proof)",
+   "status": "UNVERIFIED",
+   "seconds": 279.0,
+   "errors": [
+    "/tmp/oracle_lean_Tsh5v0qN.lean:5:0: error: invalid 'import' command, it must be used in the beginning of the file"
+   ],
+   "exitCode": 1,
+   "resource_limit": null
+  }
+ ],
+ "budget_history": [
+  {
+   "tier_seconds": 900.0,
+   "outcome": "KERNEL_FAILED"
+  }
+ ],
+ "kernel_result": {
+  "status": "UNVERIFIED",
+  "file": "oracle/frontier_formalizer/cable/theorems/msl_fmz-erdos68-campaign-001-R003-L1.lean",
+  "backend": "wsl",
+  "project": "/root/erdosfire-bench/proofs",
+  "needsMathlib": true,
+  "exitCode": 1,
+  "seconds": 275.2,
+  "declarations": [
+   {
+    "declaration": "msl_fmz_erdos68_campaign_001_R003_L1",
+    "clean": false,
+    "axioms": []
+   }
+  ],
+  "errors": [
+   "/tmp/oracle_lean_Tsh5v0qN.lean:5:0: error: invalid 'import' command, it must be used in the beginning of the file"
+  ]
+ },
+ "lean_result_block": "LEAN_RESULT fmz-erdos68-campaign-001-R003-L1\n  FORMAL_STATUS KERNEL_FAILED\n  FILE oracle/frontier_formalizer/cable/theorems/msl_fmz-erdos68-campaign-001-R003-L1.lean\n  THEOREMS msl_fmz_erdos68_campaign_001_R003_L1\n  BACKEND wsl\n  AXIOMS -\n  TACTIC (supplied proof)\n  BUDGET 900s:KERNEL_FAILED\n  FAILURE ((supplied proof)) RAW[/tmp/oracle_lean_Tsh5v0qN.lean:5:0: error: invalid 'import' command, it must be used in the beginning of the file]\n  LAW KERNEL_FAILED does not refute the claim \u2014 the FAILURE line names what actually broke",
+ "timestamp": "2026-09-01T23:18:10Z"
+}

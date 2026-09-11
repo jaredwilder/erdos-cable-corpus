@@ -1,0 +1,28 @@
+{
+ "schema": "oracle.msl.closer.witness.v1",
+ "id": "fmz-erdos196-campaign-001-R005-L1-a3r3",
+ "pipeline": "WITNESS_FINITE",
+ "witness": {
+  "N": 4,
+  "permutation": [
+   2,
+   1,
+   4,
+   3
+  ]
+ },
+ "verifier_sha256": "81044a1f6c8ac501405c6e3cb70272d8e755072ff150de9a03877dad43e7dbd4",
+ "verifier_source": "def verify(witness):\n    if type(witness) is not dict:\n        raise ValueError('witness must be a dict')\n    if set(witness.keys()) != {'N', 'permutation'}:\n        raise ValueError('witness keys must be exactly N and permutation')\n    N = witness['N']\n    perm = witness['permutation']\n    if type(N) is not int:\n        raise ValueError('N must be an int')\n    if N < 1:\n        raise ValueError('N must be positive')\n    if type(perm) is not list:\n        raise ValueError('permutation must be a list')\n    if len(perm) != N:\n        raise ValueError('permutation length mismatch')\n    for v in perm:\n        if type(v) is not int:\n            raise ValueError('values must be ints')\n    if sorted(perm) != list(range(1, N + 1)):\n        raise ValueError('not a permutation of [N]')\n    for i in range(N):\n        for j in range(i + 1, N):\n            for k in range(j + 1, N):\n                for l in range(k + 1, N):\n                    d = perm[j] - perm[i]\n                    if d != 0 and perm[k] - perm[j] == d and perm[l] - perm[k] == d:\n                        raise ValueError('monotone 4-term AP at indices %d,%d,%d,%d' % (i, j, k, l))\n    return True\n",
+ "run": {
+  "passed": true,
+  "status": "VERIFIER_PASS",
+  "exit_code": 0,
+  "stdout": "PASS",
+  "detail": "",
+  "seconds": 0.15,
+  "code_sha256": "81044a1f6c8ac501405c6e3cb70272d8e755072ff150de9a03877dad43e7dbd4"
+ },
+ "claim": "covers=fragment. Concrete instance of the finite side of the L1 reduction: verify(witness) raises unless the witness is a permutation of [4] containing no quadruple of indices i<j<k<l whose values form a 4-term arithmetic progression — which, values being distinct, is exactly the canonical monotone condition (i<j<k<l or i>j>k>l with values in AP). A clean return establishes VALID(4) for branch B's equivalent finite form at n=4 only; the forall-n search and the branch-B close are NOT established.",
+ "law": "Wang 7.2: an exact finite object plus a proved reduction is a CERTIFICATE. The reduction is the `claim` and is a human's to audit; the object and the verifier run are the machine's part.",
+ "timestamp": "2026-09-02T01:23:11Z"
+}

@@ -1,0 +1,29 @@
+{
+ "schema": "oracle.msl.closer.witness.v1",
+ "id": "fmz-erdos170-campaign-001-R005-L1",
+ "pipeline": "WITNESS_FINITE",
+ "witness": {
+  "skeleton_id": "R005-L1-failclosed-skeleton",
+  "arithmetic": "exact integer/Fraction only",
+  "inputs_present": {
+   "F_definition": false,
+   "route_thesis_witnesses": false,
+   "duality_lemma_Rk_witnesses": false
+  },
+  "expected_exit_code": 3
+ },
+ "verifier_sha256": "9899b15847caa4ef82463598a9cab304a441ebed4637c4c3bb7b389cc32cf67d",
+ "verifier_source": "def skeleton(inputs):\n    # Frozen fail-closed exact-rational skeleton: pure function, no I/O.\n    required = ['F_definition', 'route_thesis_witnesses', 'duality_lemma_Rk_witnesses']\n    for k in required:\n        if k not in inputs:\n            return (1, None)  # malformed input: fail closed\n    missing = sorted(k for k in required if not inputs[k])\n    if missing:\n        return (3, missing)  # deterministic abort on missing definition/witnesses\n    return (0, None)\n\nREQUIRED = ['F_definition', 'route_thesis_witnesses', 'duality_lemma_Rk_witnesses']\n\nWITNESS = {\n    'skeleton_id': 'R005-L1-failclosed-skeleton',\n    'arithmetic': 'exact integer/Fraction only',\n    'inputs_present': {\n        'F_definition': False,\n        'route_thesis_witnesses': False,\n        'duality_lemma_Rk_witnesses': False\n    },\n    'expected_exit_code': 3\n}\n\ndef verify():\n    w = WITNESS\n    if w.get('skeleton_id') != 'R005-L1-failclosed-skeleton':\n        return False\n    if w.get('arithmetic') != 'exact integer/Fraction only':\n        return False\n    if w.get('expected_exit_code') != 3:\n        return False\n    inp = w.get('inputs_present')\n    if not isinstance(inp, dict):\n        return False\n    # Property 1: as frozen (inputs absent), skeleton aborts deterministically, exit 3.\n    code, abort_set = skeleton(inp)\n    if code != 3 or abort_set is None:\n        return False\n    missing = sorted(k for k in REQUIRED if not inp[k])\n    if abort_set != missing or not missing:\n        return False\n    # Property 2: determinism under re-execution.\n    if skeleton(inp) != (code, abort_set):\n        return False\n    # Property 3: abort set is never empty (fail closed).\n    if abort_set == []:\n        return False\n    # Property 4: with all inputs present the skeleton emits no mathematical claim\n    # (exit 0, no abort) — the skeleton alone never certifies mathematics.\n    full = {k: True for k in REQUIRED}\n    c3, a3 = skeleton(full)\n    if c3 != 0 or a3 is not None:\n        return False\n    # Property 5: any single falsy required input triggers abort 3 naming exactly it.\n    for k in REQUIRED:\n        probe = dict(full)\n        probe[k] = False\n        c4, a4 = skeleton(probe)\n        if c4 != 3 or a4 != [k]:\n            return False\n    return True\n\nRESULT = verify()",
+ "run": {
+  "passed": false,
+  "status": "VERIFIER_FAIL",
+  "exit_code": 1,
+  "stdout": "",
+  "detail": "TypeError: verify() takes 0 positional arguments but 1 was given",
+  "seconds": 0.1,
+  "code_sha256": "9899b15847caa4ef82463598a9cab304a441ebed4637c4c3bb7b389cc32cf67d"
+ },
+ "claim": "RESULT = True establishes the checkable fragment of L1: the frozen fail-closed skeleton aborts deterministically (exit 3, exact abort set = the missing F-definition/witnesses), is deterministic under re-execution, and never emits a mathematical claim on its own — its certificate scope is exactly the fail-closed abort behavior, not the duality/value-determination claim. covers = fragment; certifying the mathematical claim requires refiling with a definition and witnesses.",
+ "law": "Wang 7.2: an exact finite object plus a proved reduction is a CERTIFICATE. The reduction is the `claim` and is a human's to audit; the object and the verifier run are the machine's part.",
+ "timestamp": "2026-09-01T23:04:58Z"
+}

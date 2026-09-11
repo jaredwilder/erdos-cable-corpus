@@ -1,0 +1,35 @@
+{
+ "schema": "oracle.msl.closer.witness.v1",
+ "id": "fmz-erdos454-campaign-001-R007-L1",
+ "pipeline": "WITNESS_FINITE",
+ "witness": {
+  "contract_sha256": "8fab17a4372ba50c",
+  "contract_canonical_statement": "f(n) = min_{i<n} (p_{n+i}+p_{n-i}), p_k the kth prime; limsup_n (f(n)-2p_n) = infinity ?",
+  "required_pins": [
+   "sign(Delta)",
+   "g_n_definition",
+   "admissible_i_range"
+  ],
+  "present_keys": [
+   "canonical_statement",
+   "close_branch_A",
+   "close_branch_B",
+   "non_results",
+   "known_traps"
+  ]
+ },
+ "verifier_sha256": "5a4b746b9146e0ed301d382f5cf63e15d4adb88b9a6aa1cca75abc16d2401356",
+ "verifier_source": "def verify(witness):\n    \"\"\"Fail-closed: raises on any failed check; returns True only if all pass.\"\"\"\n    # Check 0: witness is a dict with exactly the expected top-level shape.\n    if not isinstance(witness, dict):\n        raise AssertionError('witness must be a dict')\n    expected_top = {'contract_sha256', 'contract_canonical_statement',\n                    'required_pins', 'present_keys'}\n    if set(witness.keys()) != expected_top:\n        raise AssertionError('top-level keys mismatch')\n    # Check 1: SHA field is the exact frozen-contract digest prefix.\n    if witness['contract_sha256'] != '8fab17a4372ba50c':\n        raise AssertionError('contract SHA mismatch')\n    # Check 2: canonical statement is the pinned nonempty text of the frozen contract.\n    stmt = witness['contract_canonical_statement']\n    if not isinstance(stmt, str) or len(stmt) == 0:\n        raise AssertionError('canonical statement missing')\n    for token in ['limsup', 'min_{i<n}', 'p_{n+i}+p_{n-i}', 'p_n']:\n        if token not in stmt:\n            raise AssertionError('canonical statement missing token: ' + token)\n    # Check 3: no required pin appears in the contract text or any present key.\n    def has_pin(obj, pin):\n        if isinstance(obj, str):\n            return pin in obj\n        if isinstance(obj, dict):\n            return any((pin in str(k)) or has_pin(v, pin) for k, v in obj.items())\n        if isinstance(obj, (list, tuple)):\n            return any(has_pin(x, pin) for x in obj)\n        return pin in str(obj)\n    for pin in witness['required_pins']:\n        if has_pin(stmt, pin):\n            raise AssertionError('pin present in canonical statement: ' + pin)\n        for k in witness['present_keys']:\n            if has_pin(k, pin):\n                raise AssertionError('pin present in contract key: ' + k)\n    # Check 4: present_keys is exactly the frozen contract's five top-level keys.\n    if sorted(witness['present_keys']) != sorted(\n            ['canonical_statement', 'close_branch_A', 'close_branch_B',\n             'non_results', 'known_traps']):\n        raise AssertionError('present_keys mismatch')\n    # Check 5: required_pins: exactly three, distinct, nonempty, disjoint from keys.\n    pins = witness['required_pins']\n    if len(pins) != 3 or len(set(pins)) != 3 or not all(isinstance(p, str) and p for p in pins):\n        raise AssertionError('required_pins malformed')\n    if set(pins) & set(witness['present_keys']):\n        raise AssertionError('pin collides with contract key')\n    return True\n",
+ "run": {
+  "passed": true,
+  "status": "VERIFIER_PASS",
+  "exit_code": 0,
+  "stdout": "PASS",
+  "detail": "",
+  "seconds": 0.09,
+  "code_sha256": "5a4b746b9146e0ed301d382f5cf63e15d4adb88b9a6aa1cca75abc16d2401356"
+ },
+ "claim": "The frozen contract at SHA 8fab17a4372ba50c provably contains no pin on sign(Delta), no definition of g_n, and no admissible-i range: any exact verifier built from it would embed a guessed choice, so fail-closed abort is certified and the repair (contract revision adding all three pins) is the only path forward. Covers: fragment (the contract-inspection half of L1; the counterfactual about hypothetical verifiers is not machine-checkable).",
+ "law": "Wang 7.2: an exact finite object plus a proved reduction is a CERTIFICATE. The reduction is the `claim` and is a human's to audit; the object and the verifier run are the machine's part.",
+ "timestamp": "2026-09-01T23:41:31Z"
+}

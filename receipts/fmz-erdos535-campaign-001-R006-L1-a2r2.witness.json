@@ -1,0 +1,36 @@
+{
+ "schema": "oracle.msl.closer.witness.v1",
+ "id": "fmz-erdos535-campaign-001-R006-L1-a2r2",
+ "pipeline": "WITNESS_FINITE",
+ "witness": {
+  "r": 3,
+  "N_range": [
+   1,
+   7
+  ],
+  "f3_values": [
+   1,
+   2,
+   2,
+   3,
+   3,
+   3,
+   3
+  ],
+  "method": "exhaustive enumeration of all subsets of {1..N}; subset S feasible iff no 3-element subset has all three pairwise gcds equal; f3(N) = max feasible size"
+ },
+ "verifier_sha256": "0dcfd952e713bd7bfaef3d9e2e470a7041774a35d4b8426bd07539b7a0566f4b",
+ "verifier_source": "from math import gcd\nfrom itertools import combinations\n\n# Witness is embedded as constants; verifier is pure, deterministic,\n# exact integer arithmetic, fail-closed, no I/O, no floats.\n\nWITNESS_R = 3\nWITNESS_F3 = [1, 2, 2, 3, 3, 3, 3]\n\ndef feasible(S, r=3):\n    for T in combinations(S, r):\n        g1 = gcd(T[0], T[1])\n        g2 = gcd(T[0], T[2])\n        g3 = gcd(T[1], T[2])\n        if g1 == g2 == g3:\n            return False\n    return True\n\ndef f3(N):\n    universe = list(range(1, N + 1))\n    for size in range(N, 0, -1):\n        for S in combinations(universe, size):\n            if feasible(list(S)):\n                return size\n    raise AssertionError('unreachable: singleton always feasible')\n\ndef verify() -> bool:\n    if WITNESS_R != 3:\n        return False\n    if len(WITNESS_F3) != 7:\n        return False\n    for N in range(1, 8):\n        if f3(N) != WITNESS_F3[N - 1]:\n            return False\n    return True\n\nRESULT = verify()\nassert RESULT, 'FAIL'\n",
+ "run": {
+  "passed": false,
+  "status": "VERIFIER_FAIL",
+  "exit_code": 1,
+  "stdout": "",
+  "detail": "TypeError: verify() takes 0 positional arguments but 1 was given",
+  "seconds": 0.1,
+  "code_sha256": "0dcfd952e713bd7bfaef3d9e2e470a7041774a35d4b8426bd07539b7a0566f4b"
+ },
+ "claim": "Exhaustive exact integer enumeration (math.gcd, all subsets of {1..N}, N<=7, fail-closed, pure function, no I/O, no floats) certifies f_3(1..7) = 1,2,2,3,3,3,3; strictly finite scope, no asymptotic content.",
+ "law": "Wang 7.2: an exact finite object plus a proved reduction is a CERTIFICATE. The reduction is the `claim` and is a human's to audit; the object and the verifier run are the machine's part.",
+ "timestamp": "2026-09-02T01:47:40Z"
+}

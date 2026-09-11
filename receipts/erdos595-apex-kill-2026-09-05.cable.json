@@ -1,0 +1,114 @@
+{
+ "schema": "oracle.msl.cable.v1",
+ "id": "erdos595-apex-kill-2026-09-05",
+ "spec": {
+  "id": "erdos595-apex-kill-2026-09-05",
+  "imports": "Mathlib",
+  "definitions": "namespace Erdos595Apex\n\nvariable {V : Type*}\n\ndef Coverable (G : SimpleGraph V) : Prop :=\n  \u2203 H : \u2115 \u2192 SimpleGraph V, (\u2200 n, H n \u2264 G) \u2227 (\u2200 n, (H n).CliqueFree 3) \u2227\n    G.edgeSet \u2286 \u22c3 n, (H n).edgeSet\n\ntheorem cliqueFree_three_iff (G : SimpleGraph V) :\n    G.CliqueFree 3 \u2194 \u2200 x y z : V, G.Adj x y \u2192 G.Adj y z \u2192 G.Adj x z \u2192 False := by\n  classical\n  constructor\n  \u00b7 intro hG x y z hxy hyz hxz\n    exact hG {x, y, z} (SimpleGraph.is3Clique_triple_iff.mpr \u27e8hxy, hxz, hyz\u27e9)\n  \u00b7 intro h s hs\n    obtain \u27e8x, y, z, hxy, hxz, hyz, hset\u27e9 := Finset.card_eq_three.mp hs.2\n    subst hset\n    exact h x y z (hs.1 (by simp) (by simp) hxy) (hs.1 (by simp) (by simp) hyz)\n      (hs.1 (by simp) (by simp) hxz)\n\ndef star (G : SimpleGraph V) (v : V) : SimpleGraph V :=\n  SimpleGraph.fromRel (fun x y => x = v \u2227 G.Adj x y)\n\ntheorem star_le (G : SimpleGraph V) (v : V) : star G v \u2264 G := by\n  intro x y h\n  simp only [star, SimpleGraph.fromRel_adj] at h\n  rcases h with \u27e8-, \u27e8-, ha\u27e9 | \u27e8-, ha\u27e9\u27e9\n  \u00b7 exact ha\n  \u00b7 exact ha.symm\n\ntheorem star_adj_endpoint (G : SimpleGraph V) (v : V) :\n    \u2200 x y : V, (star G v).Adj x y \u2192 x = v \u2228 y = v := by\n  intro x y h\n  simp only [star, SimpleGraph.fromRel_adj] at h\n  rcases h with \u27e8-, \u27e8hx, -\u27e9 | \u27e8hy, -\u27e9\u27e9\n  \u00b7 exact Or.inl hx\n  \u00b7 exact Or.inr hy\n\ntheorem star_cliqueFree (G : SimpleGraph V) (v : V) : (star G v).CliqueFree 3 := by\n  rw [cliqueFree_three_iff]\n  intro x y z hxy hyz hxz\n  have key := star_adj_endpoint G v\n  have hxyne : x \u2260 y := hxy.ne\n  have hyzne : y \u2260 z := hyz.ne\n  have hxzne : x \u2260 z := hxz.ne\n  rcases key x y hxy with hx | hy\n  \u00b7 rcases key y z hyz with hy' | hz'\n    \u00b7 exact hxyne (hx.trans hy'.symm)\n    \u00b7 exact hxzne (hx.trans hz'.symm)\n  \u00b7 rcases key x z hxz with hx' | hz'\n    \u00b7 exact hxyne (hx'.trans hy.symm)\n    \u00b7 exact hyzne (hy.trans hz'.symm)\n\ntheorem star_mem_edgeSet (G : SimpleGraph V) (v y : V) (h : G.Adj v y) :\n    s(v, y) \u2208 (star G v).edgeSet := by\n  apply (star G v).mem_edgeSet.mpr\n  show (SimpleGraph.fromRel fun a b => a = v \u2227 G.Adj a b).Adj v y\n  rw [SimpleGraph.fromRel_adj]\n  exact \u27e8G.ne_of_adj h, Or.inl \u27e8rfl, h\u27e9\u27e9\n\ntheorem coverable_of_countable_hitting_set (G : SimpleGraph V) (S : Set V)\n    (hS : S.Countable)\n    (hhit : \u2200 x y z : V, G.Adj x y \u2192 G.Adj y z \u2192 G.Adj x z \u2192 x \u2208 S \u2228 y \u2208 S \u2228 z \u2208 S) :\n    Coverable G := by\n  classical\n  set G0 : SimpleGraph V := SimpleGraph.fromEdgeSet {e | e \u2208 G.edgeSet \u2227 \u2200 x, x \u2208 e \u2192 x \u2209 S}\n    with hG0\n  have hG0le : G0 \u2264 G := by\n    intro x y h\n    rw [hG0, SimpleGraph.fromEdgeSet_adj] at h\n    exact G.mem_edgeSet.mp h.1.1\n  have hG0free : G0.CliqueFree 3 := by\n    rw [cliqueFree_three_iff]\n    intro x y z hxy hyz hxz\n    have hxy' := hxy\n    have hyz' := hyz\n    have hxz' := hxz\n    rw [hG0, SimpleGraph.fromEdgeSet_adj] at hxy' hyz' hxz'\n    have hxS : x \u2209 S := hxy'.1.2 x (by simp)\n    have hyS : y \u2209 S := hxy'.1.2 y (by simp)\n    have hzS : z \u2209 S := hyz'.1.2 z (by simp)\n    rcases hhit x y z (hG0le hxy) (hG0le hyz) (hG0le hxz) with h | h | h\n    \u00b7 exact hxS h\n    \u00b7 exact hyS h\n    \u00b7 exact hzS h\n  rcases Set.eq_empty_or_nonempty S with hemp | hne\n  \u00b7 refine \u27e8fun _ => G0, fun n => hG0le, fun n => hG0free, ?_\u27e9\n    intro e he\n    refine Set.mem_iUnion.mpr \u27e80, ?_\u27e9\n    rw [hG0, SimpleGraph.edgeSet_fromEdgeSet]\n    refine \u27e8\u27e8he, ?_\u27e9, fun hd => (G.not_isDiag_of_mem_edgeSet he) hd\u27e9\n    intro x _\n    rw [hemp]\n    exact Set.notMem_empty x\n  \u00b7 obtain \u27e8f, hf\u27e9 := hS.exists_eq_range hne\n    refine \u27e8fun n => Nat.rec G0 (fun m _ => star G (f m)) n, ?_, ?_, ?_\u27e9\n    \u00b7 intro n\n      cases n with\n      | zero => exact hG0le\n      | succ m => exact star_le G (f m)\n    \u00b7 intro n\n      cases n with\n      | zero => exact hG0free\n      | succ m => exact star_cliqueFree G (f m)\n    \u00b7 intro e he\n      induction e using Sym2.ind with\n      | _ x y =>\n        have hadj : G.Adj x y := G.mem_edgeSet.mp he\n        by_cases hxS : x \u2208 S\n        \u00b7 obtain \u27e8n, hn\u27e9 : \u2203 n, f n = x := by\n            have : x \u2208 Set.range f := by rw [\u2190 hf]; exact hxS\n            exact this\n          refine Set.mem_iUnion.mpr \u27e8n + 1, ?_\u27e9\n          show s(x, y) \u2208 (star G (f n)).edgeSet\n          rw [hn]\n          exact star_mem_edgeSet G x y hadj\n        \u00b7 by_cases hyS : y \u2208 S\n          \u00b7 obtain \u27e8n, hn\u27e9 : \u2203 n, f n = y := by\n              have : y \u2208 Set.range f := by rw [\u2190 hf]; exact hyS\n              exact this\n            refine Set.mem_iUnion.mpr \u27e8n + 1, ?_\u27e9\n            show s(x, y) \u2208 (star G (f n)).edgeSet\n            rw [hn, Sym2.eq_swap]\n            exact star_mem_edgeSet G y x hadj.symm\n          \u00b7 refine Set.mem_iUnion.mpr \u27e80, ?_\u27e9\n            show s(x, y) \u2208 G0.edgeSet\n            rw [hG0, SimpleGraph.edgeSet_fromEdgeSet]\n            refine \u27e8\u27e8he, ?_\u27e9, fun hd => (G.not_isDiag_of_mem_edgeSet he) hd\u27e9\n            intro w hw\n            rcases Sym2.mem_iff.mp hw with rfl | rfl\n            \u00b7 exact hxS\n            \u00b7 exact hyS\n\nend Erdos595Apex",
+  "hypotheses": [
+   "{V : Type*}",
+   "(G : SimpleGraph V)",
+   "(S : Set V)",
+   "(hS : S.Countable)",
+   "(hhit : \u2200 x y z : V, G.Adj x y \u2192 G.Adj y z \u2192 G.Adj x z \u2192 x \u2208 S \u2228 y \u2208 S \u2228 z \u2208 S)"
+  ],
+  "conclusion": "Erdos595Apex.Coverable G",
+  "proof": "by exact Erdos595Apex.coverable_of_countable_hitting_set G S hS hhit"
+ },
+ "formal_status": "KERNEL_CHECKED",
+ "events": [],
+ "axioms": [
+  "Classical.choice",
+  "Quot.sound",
+  "propext"
+ ],
+ "attempts": [
+  {
+   "tactic": "(supplied proof)",
+   "status": "VERIFIED",
+   "seconds": 48.5,
+   "errors": [],
+   "exitCode": 0,
+   "resource_limit": null
+  }
+ ],
+ "budget_history": [
+  {
+   "tier_seconds": 120.0,
+   "outcome": "KERNEL_CHECKED"
+  }
+ ],
+ "kernel_result": {
+  "status": "VERIFIED",
+  "file": "oracle/frontier_formalizer/cable/theorems/msl_erdos595-apex-kill-2026-09-05.lean",
+  "backend": "wsl",
+  "project": "/root/erdosfire-bench/proofs",
+  "needsMathlib": true,
+  "exitCode": 0,
+  "seconds": 36.9,
+  "declarations": [
+   {
+    "declaration": "cliqueFree_three_iff",
+    "clean": true,
+    "axioms": [
+     "propext",
+     "Classical.choice",
+     "Quot.sound"
+    ]
+   },
+   {
+    "declaration": "star_le",
+    "clean": true,
+    "axioms": [
+     "propext"
+    ]
+   },
+   {
+    "declaration": "star_adj_endpoint",
+    "clean": true,
+    "axioms": [
+     "propext"
+    ]
+   },
+   {
+    "declaration": "star_cliqueFree",
+    "clean": true,
+    "axioms": [
+     "propext",
+     "Classical.choice",
+     "Quot.sound"
+    ]
+   },
+   {
+    "declaration": "star_mem_edgeSet",
+    "clean": true,
+    "axioms": [
+     "propext",
+     "Classical.choice",
+     "Quot.sound"
+    ]
+   },
+   {
+    "declaration": "coverable_of_countable_hitting_set",
+    "clean": true,
+    "axioms": [
+     "propext",
+     "Classical.choice",
+     "Quot.sound"
+    ]
+   },
+   {
+    "declaration": "msl_erdos595_apex_kill_2026_09_05",
+    "clean": true,
+    "axioms": [
+     "propext",
+     "Classical.choice",
+     "Quot.sound"
+    ]
+   }
+  ],
+  "errors": []
+ },
+ "lean_result_block": "LEAN_RESULT erdos595-apex-kill-2026-09-05\n  FORMAL_STATUS KERNEL_CHECKED\n  FILE oracle/frontier_formalizer/cable/theorems/msl_erdos595-apex-kill-2026-09-05.lean\n  THEOREMS msl_erdos595_apex_kill_2026_09_05\n  BACKEND wsl\n  AXIOMS Classical.choice, Quot.sound, propext\n  TACTIC (supplied proof)\n  BUDGET 120s:KERNEL_CHECKED\n  FAILURE NONE",
+ "timestamp": "2026-09-05T18:00:53Z"
+}

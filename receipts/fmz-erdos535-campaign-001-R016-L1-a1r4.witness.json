@@ -1,0 +1,44 @@
+{
+ "schema": "oracle.msl.closer.witness.v1",
+ "id": "fmz-erdos535-campaign-001-R016-L1-a1r4",
+ "pipeline": "WITNESS_FINITE",
+ "witness": {
+  "r": 3,
+  "f3_values_N_1_to_8": [
+   1,
+   2,
+   2,
+   3,
+   3,
+   3,
+   3,
+   4
+  ],
+  "extremizer_N8": [
+   1,
+   2,
+   4,
+   8
+  ],
+  "dyadic_chain_N8": [
+   1,
+   2,
+   4,
+   8
+  ]
+ },
+ "verifier_sha256": "18bbaa41c19b2ddf098430f962f69e7124a4f7350728aa4efbb72bf6f7cea091",
+ "verifier_source": "def gcd(a, b):\n    while b:\n        a, b = b, a % b\n    return a\n\ndef combinations(items, k):\n    items = list(items)\n    n = len(items)\n    if k > n or k < 0:\n        return\n    if k == 0:\n        yield ()\n        return\n    for i in range(n - k + 1):\n        for rest in combinations(items[i + 1:], k - 1):\n            yield (items[i],) + rest\n\ndef bad_config(s, r):\n    for sub in combinations(s, r):\n        first = None\n        same = True\n        for a, b in combinations(sub, 2):\n            g = gcd(a, b)\n            if first is None:\n                first = g\n            elif g != first:\n                same = False\n                break\n        if same and first is not None:\n            return True\n    return False\n\ndef f3(N, r):\n    best = 0\n    for mask in range(1, 2 ** N):\n        s = [i + 1 for i in range(N) if (mask >> i) & 1]\n        if len(s) > best and not bad_config(s, r):\n            best = len(s)\n    return best\n\ndef require(cond, msg):\n    if not cond:\n        raise ValueError('VERIFY_FAIL: ' + msg)\n\ndef verify(witness):\n    r = witness['r']\n    require(r == 3, 'r')\n    vals = witness['f3_values_N_1_to_8']\n    require(isinstance(vals, list) and len(vals) == 8, 'len')\n    for N in range(1, 9):\n        require(f3(N, r) == vals[N - 1], 'value at N')\n    require(vals[7] == 4, 'N8')\n    ext = witness['extremizer_N8']\n    require(len(ext) == 4 and not bad_config(ext, r), 'extremizer')\n    ch = witness['dyadic_chain_N8']\n    require(ch == [2 ** i for i in range(len(ch))], 'dyadic form')\n    pairs = list(combinations(ch, 2))\n    gs = []\n    for a, b in pairs:\n        g = gcd(a, b)\n        if g not in gs:\n            gs.append(g)\n    require(len(gs) == len(pairs), 'dyadic distinct gcds')\n    require(len(ch) == vals[7], 'dyadic size')\n",
+ "run": {
+  "passed": false,
+  "status": "VERIFIER_FAIL",
+  "exit_code": 1,
+  "stdout": "",
+  "detail": "ValueError: VERIFY_FAIL: dyadic distinct gcds",
+  "seconds": 0.14,
+  "code_sha256": "18bbaa41c19b2ddf098430f962f69e7124a4f7350728aa4efbb72bf6f7cea091"
+ },
+ "claim": "Standalone pure-Python verifier, verify(witness) entrypoint, no imports, no I/O, raises on any failed check. By exact integer enumeration over all 2^N-1 subsets with exact gcd arithmetic it confirms f_3(1..8)=(1,2,2,3,3,3,3,4), that {1,2,4,8} is a valid size-4 configuration at N=8, and that the dyadic chain {2^0,...,2^k} is valid since gcd(2^a,2^b)=2^min(a,b) takes distinct pairwise values, giving the lower-bound fragment f_3(N) >= floor(log2 N)+1; fragment of L1 only, branch A not certified.",
+ "law": "Wang 7.2: an exact finite object plus a proved reduction is a CERTIFICATE. The reduction is the `claim` and is a human's to audit; the object and the verifier run are the machine's part.",
+ "timestamp": "2026-09-02T02:21:23Z"
+}

@@ -1,0 +1,70 @@
+{
+ "schema": "oracle.msl.cable.v1",
+ "id": "fmz-erdos1052-campaign-001-R002-L1-a2r1",
+ "spec": {
+  "id": "fmz-erdos1052-campaign-001-R002-L1-a2r1",
+  "imports": "Mathlib",
+  "definitions": "-- no auxiliary definitions",
+  "conclusion": "6 = 2 * 3 \u2227 ({d \u2208 Finset.Icc 1 6 | d \u2223 6 \u2227 d.Coprime (6 / d)} : Finset \u2115) = {1, 2, 3, 6} \u2227 1 + 2 + 3 = 6 \u2227 Erdos1052.IsUnitaryPerfect 6",
+  "proof": "by\n  norm_num [Erdos1052.IsUnitaryPerfect, Erdos1052.properUnitaryDivisors] <;> decide"
+ },
+ "formal_status": "KERNEL_FAILED",
+ "events": [
+  "((supplied proof)) TYPE.FAIL NEED[Erdos1052.IsUnitaryPerfect]",
+  "((supplied proof)) TYPE.FAIL NEED[Erdos1052.properUnitaryDivisors]"
+ ],
+ "axioms": [
+  "Classical.choice",
+  "Quot.sound",
+  "propext",
+  "sorryAx"
+ ],
+ "attempts": [
+  {
+   "tactic": "(supplied proof)",
+   "status": "UNVERIFIED",
+   "seconds": 91.1,
+   "errors": [
+    "/tmp/oracle_lean_vQ9N7ktN.lean:7:162: error(lean.unknownIdentifier): Unknown identifier `Erdos1052.IsUnitaryPerfect`",
+    "/tmp/oracle_lean_vQ9N7ktN.lean:8:12: error(lean.unknownIdentifier): Unknown identifier `Erdos1052.IsUnitaryPerfect`",
+    "/tmp/oracle_lean_vQ9N7ktN.lean:8:40: error(lean.unknownIdentifier): Unknown identifier `Erdos1052.properUnitaryDivisors`"
+   ],
+   "exitCode": 1,
+   "resource_limit": null
+  }
+ ],
+ "budget_history": [
+  {
+   "tier_seconds": 900.0,
+   "outcome": "KERNEL_FAILED"
+  }
+ ],
+ "kernel_result": {
+  "status": "UNVERIFIED",
+  "file": "oracle/frontier_formalizer/cable/theorems/msl_fmz-erdos1052-campaign-001-R002-L1-a2r1.lean",
+  "backend": "wsl",
+  "project": "/root/erdosfire-bench/proofs",
+  "needsMathlib": true,
+  "exitCode": 1,
+  "seconds": 51.8,
+  "declarations": [
+   {
+    "declaration": "msl_fmz_erdos1052_campaign_001_R002_L1_a2r1",
+    "clean": false,
+    "axioms": [
+     "propext",
+     "sorryAx",
+     "Classical.choice",
+     "Quot.sound"
+    ]
+   }
+  ],
+  "errors": [
+   "/tmp/oracle_lean_vQ9N7ktN.lean:7:162: error(lean.unknownIdentifier): Unknown identifier `Erdos1052.IsUnitaryPerfect`",
+   "/tmp/oracle_lean_vQ9N7ktN.lean:8:12: error(lean.unknownIdentifier): Unknown identifier `Erdos1052.IsUnitaryPerfect`",
+   "/tmp/oracle_lean_vQ9N7ktN.lean:8:40: error(lean.unknownIdentifier): Unknown identifier `Erdos1052.properUnitaryDivisors`"
+  ]
+ },
+ "lean_result_block": "LEAN_RESULT fmz-erdos1052-campaign-001-R002-L1-a2r1\n  FORMAL_STATUS KERNEL_FAILED\n  FILE oracle/frontier_formalizer/cable/theorems/msl_fmz-erdos1052-campaign-001-R002-L1-a2r1.lean\n  THEOREMS msl_fmz_erdos1052_campaign_001_R002_L1_a2r1\n  BACKEND wsl\n  AXIOMS Classical.choice, Quot.sound, propext, sorryAx\n  TACTIC (supplied proof)\n  BUDGET 900s:KERNEL_FAILED\n  FAILURE ((supplied proof)) TYPE.FAIL NEED[Erdos1052.IsUnitaryPerfect]; ((supplied proof)) TYPE.FAIL NEED[Erdos1052.properUnitaryDivisors]\n  LAW KERNEL_FAILED does not refute the claim \u2014 the FAILURE line names what actually broke",
+ "timestamp": "2026-09-02T01:20:16Z"
+}

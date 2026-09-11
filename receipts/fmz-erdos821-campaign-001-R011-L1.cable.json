@@ -1,0 +1,55 @@
+{
+ "schema": "oracle.msl.cable.v1",
+ "id": "fmz-erdos821-campaign-001-R011-L1",
+ "spec": {
+  "id": "fmz-erdos821-campaign-001-R011-L1",
+  "imports": "none",
+  "definitions": "def units (m : Nat) : List Nat :=\n  (List.range (m + 1)).filter (fun a => Nat.gcd a m == 1)\n\ndef paired (m : Nat) (a : Nat) : Bool :=\n  let b := (m - a) % m\n  Nat.gcd b m == 1 && b != a\n\ndef checkInvolution (m : Nat) : Bool :=\n  (units m).all (paired m)\n\ndef checkAll (bound : Nat) : Bool :=\n  (List.range (bound - 2)).all (fun k => checkInvolution (k + 3))\n-- paired m a : the partner b = (m - a) mod m of a is again a unit of m and\n-- b \u2260 a, i.e. a \u21a6 m - a is a fixed-point-free self-map of U(m); being an\n-- involution it is then a fixed-point-free involution, so \u03c6(m) = |U(m)| is even.\n-- checkAll bound checks this for every 3 \u2264 m < bound + 2... concretely for\n-- m = 3, ..., bound + 2 (bound = 200 gives m up to 202).",
+  "conclusion": "checkAll 200 = true",
+  "proof": "by native_decide"
+ },
+ "formal_status": "KERNEL_FAILED",
+ "events": [
+  "RAW[exit 0 with no captured error line]"
+ ],
+ "axioms": [
+  "msl_fmz_erdos821_campaign_001_R011_L1._native.native_decide.ax_1_1"
+ ],
+ "attempts": [
+  {
+   "tactic": "(supplied proof)",
+   "status": "UNVERIFIED",
+   "seconds": 2.0,
+   "errors": [],
+   "exitCode": 0,
+   "resource_limit": null
+  }
+ ],
+ "budget_history": [
+  {
+   "tier_seconds": 900.0,
+   "outcome": "KERNEL_FAILED"
+  }
+ ],
+ "kernel_result": {
+  "status": "UNVERIFIED",
+  "file": "oracle/frontier_formalizer/cable/theorems/msl_fmz-erdos821-campaign-001-R011-L1.lean",
+  "backend": "windows",
+  "project": "C:\\Users\\jared\\Local Sites\\woocommerce-enterprise\\oracle\\math\\EG411Formal",
+  "needsMathlib": false,
+  "exitCode": 0,
+  "seconds": 2.0,
+  "declarations": [
+   {
+    "declaration": "msl_fmz_erdos821_campaign_001_R011_L1",
+    "clean": false,
+    "axioms": [
+     "msl_fmz_erdos821_campaign_001_R011_L1._native.native_decide.ax_1_1"
+    ]
+   }
+  ],
+  "errors": []
+ },
+ "lean_result_block": "LEAN_RESULT fmz-erdos821-campaign-001-R011-L1\n  FORMAL_STATUS KERNEL_FAILED\n  FILE oracle/frontier_formalizer/cable/theorems/msl_fmz-erdos821-campaign-001-R011-L1.lean\n  THEOREMS msl_fmz_erdos821_campaign_001_R011_L1\n  BACKEND windows\n  AXIOMS msl_fmz_erdos821_campaign_001_R011_L1._native.native_decide.ax_1_1\n  TACTIC (supplied proof)\n  BUDGET 900s:KERNEL_FAILED\n  FAILURE RAW[exit 0 with no captured error line]\n  LAW KERNEL_FAILED does not refute the claim \u2014 the FAILURE line names what actually broke",
+ "timestamp": "2026-09-02T00:00:23Z"
+}

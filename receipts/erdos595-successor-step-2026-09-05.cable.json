@@ -1,0 +1,115 @@
+{
+ "schema": "oracle.msl.cable.v1",
+ "id": "erdos595-successor-step-2026-09-05",
+ "spec": {
+  "id": "erdos595-successor-step-2026-09-05",
+  "imports": "Mathlib",
+  "definitions": "namespace Erdos595Succ\n\nvariable {V : Type*}\n\ndef Coverable (G : SimpleGraph V) : Prop :=\n  \u2203 H : \u2115 \u2192 SimpleGraph V, (\u2200 n, H n \u2264 G) \u2227 (\u2200 n, (H n).CliqueFree 3) \u2227\n    G.edgeSet \u2286 \u22c3 n, (H n).edgeSet\n\ntheorem cliqueFree_three_iff (G : SimpleGraph V) :\n    G.CliqueFree 3 \u2194 \u2200 x y z : V, G.Adj x y \u2192 G.Adj y z \u2192 G.Adj x z \u2192 False := by\n  classical\n  constructor\n  \u00b7 intro hG x y z hxy hyz hxz\n    exact hG {x, y, z} (SimpleGraph.is3Clique_triple_iff.mpr \u27e8hxy, hxz, hyz\u27e9)\n  \u00b7 intro h s hs\n    obtain \u27e8x, y, z, hxy, hxz, hyz, hset\u27e9 := Finset.card_eq_three.mp hs.2\n    subst hset\n    exact h x y z (hs.1 (by simp) (by simp) hxy) (hs.1 (by simp) (by simp) hyz)\n      (hs.1 (by simp) (by simp) hxz)\n\ndef star (G : SimpleGraph V) (v : V) : SimpleGraph V :=\n  SimpleGraph.fromRel (fun x y => x = v \u2227 G.Adj x y)\n\ntheorem star_le (G : SimpleGraph V) (v : V) : star G v \u2264 G := by\n  intro x y h\n  simp only [star, SimpleGraph.fromRel_adj] at h\n  rcases h with \u27e8-, \u27e8-, ha\u27e9 | \u27e8-, ha\u27e9\u27e9\n  \u00b7 exact ha\n  \u00b7 exact ha.symm\n\ntheorem star_adj_endpoint (G : SimpleGraph V) (v : V) :\n    \u2200 x y : V, (star G v).Adj x y \u2192 x = v \u2228 y = v := by\n  intro x y h\n  simp only [star, SimpleGraph.fromRel_adj] at h\n  rcases h with \u27e8-, \u27e8hx, -\u27e9 | \u27e8hy, -\u27e9\u27e9\n  \u00b7 exact Or.inl hx\n  \u00b7 exact Or.inr hy\n\ntheorem star_cliqueFree (G : SimpleGraph V) (v : V) : (star G v).CliqueFree 3 := by\n  rw [cliqueFree_three_iff]\n  intro x y z hxy hyz hxz\n  have key := star_adj_endpoint G v\n  rcases key x y hxy with hx | hy\n  \u00b7 rcases key y z hyz with hy' | hz'\n    \u00b7 exact hxy.ne (hx.trans hy'.symm)\n    \u00b7 exact hxz.ne (hx.trans hz'.symm)\n  \u00b7 rcases key x z hxz with hx' | hz'\n    \u00b7 exact hxy.ne (hx'.trans hy.symm)\n    \u00b7 exact hyz.ne (hy.trans hz'.symm)\n\ntheorem star_mem_edgeSet (G : SimpleGraph V) (v y : V) (h : G.Adj v y) :\n    s(v, y) \u2208 (star G v).edgeSet := by\n  apply (star G v).mem_edgeSet.mpr\n  show (SimpleGraph.fromRel fun a b => a = v \u2227 G.Adj a b).Adj v y\n  rw [SimpleGraph.fromRel_adj]\n  exact \u27e8G.ne_of_adj h, Or.inl \u27e8rfl, h\u27e9\u27e9\n\ntheorem coverable_add_vertex (G H : SimpleGraph V) (v : V) (hGH : G \u2264 H)\n    (hnew : \u2200 x y : V, H.Adj x y \u2192 \u00ac G.Adj x y \u2192 x = v \u2228 y = v)\n    (hG : Coverable G) : Coverable H := by\n  classical\n  obtain \u27e8K, hKle, hKfree, hKcov\u27e9 := hG\n  refine \u27e8fun n => Nat.rec (star H v) (fun m _ => K m) n, ?_, ?_, ?_\u27e9\n  \u00b7 intro n\n    cases n with\n    | zero => exact star_le H v\n    | succ m => exact le_trans (hKle m) hGH\n  \u00b7 intro n\n    cases n with\n    | zero => exact star_cliqueFree H v\n    | succ m => exact hKfree m\n  \u00b7 intro e he\n    induction e using Sym2.ind with\n    | _ x y =>\n      have hHadj : H.Adj x y := H.mem_edgeSet.mp he\n      by_cases hGadj : G.Adj x y\n      \u00b7 obtain \u27e8n, hn\u27e9 := Set.mem_iUnion.mp (hKcov (G.mem_edgeSet.mpr hGadj))\n        exact Set.mem_iUnion.mpr \u27e8n + 1, hn\u27e9\n      \u00b7 refine Set.mem_iUnion.mpr \u27e80, ?_\u27e9\n        rcases hnew x y hHadj hGadj with rfl | rfl\n        \u00b7 exact star_mem_edgeSet H x y hHadj\n        \u00b7 rw [Sym2.eq_swap]\n          exact star_mem_edgeSet H y x hHadj.symm\n\nend Erdos595Succ",
+  "hypotheses": [
+   "{V : Type*}",
+   "(G H : SimpleGraph V)",
+   "(v : V)",
+   "(hGH : G \u2264 H)",
+   "(hnew : \u2200 x y : V, H.Adj x y \u2192 \u00ac G.Adj x y \u2192 x = v \u2228 y = v)",
+   "(hG : Erdos595Succ.Coverable G)"
+  ],
+  "conclusion": "Erdos595Succ.Coverable H",
+  "proof": "by exact Erdos595Succ.coverable_add_vertex G H v hGH hnew hG"
+ },
+ "formal_status": "KERNEL_CHECKED",
+ "events": [],
+ "axioms": [
+  "Classical.choice",
+  "Quot.sound",
+  "propext"
+ ],
+ "attempts": [
+  {
+   "tactic": "(supplied proof)",
+   "status": "VERIFIED",
+   "seconds": 48.5,
+   "errors": [],
+   "exitCode": 0,
+   "resource_limit": null
+  }
+ ],
+ "budget_history": [
+  {
+   "tier_seconds": 120.0,
+   "outcome": "KERNEL_CHECKED"
+  }
+ ],
+ "kernel_result": {
+  "status": "VERIFIED",
+  "file": "oracle/frontier_formalizer/cable/theorems/msl_erdos595-successor-step-2026-09-05.lean",
+  "backend": "wsl",
+  "project": "/root/erdosfire-bench/proofs",
+  "needsMathlib": true,
+  "exitCode": 0,
+  "seconds": 36.9,
+  "declarations": [
+   {
+    "declaration": "cliqueFree_three_iff",
+    "clean": true,
+    "axioms": [
+     "propext",
+     "Classical.choice",
+     "Quot.sound"
+    ]
+   },
+   {
+    "declaration": "star_le",
+    "clean": true,
+    "axioms": [
+     "propext"
+    ]
+   },
+   {
+    "declaration": "star_adj_endpoint",
+    "clean": true,
+    "axioms": [
+     "propext"
+    ]
+   },
+   {
+    "declaration": "star_cliqueFree",
+    "clean": true,
+    "axioms": [
+     "propext",
+     "Classical.choice",
+     "Quot.sound"
+    ]
+   },
+   {
+    "declaration": "star_mem_edgeSet",
+    "clean": true,
+    "axioms": [
+     "propext",
+     "Classical.choice",
+     "Quot.sound"
+    ]
+   },
+   {
+    "declaration": "coverable_add_vertex",
+    "clean": true,
+    "axioms": [
+     "propext",
+     "Classical.choice",
+     "Quot.sound"
+    ]
+   },
+   {
+    "declaration": "msl_erdos595_successor_step_2026_09_05",
+    "clean": true,
+    "axioms": [
+     "propext",
+     "Classical.choice",
+     "Quot.sound"
+    ]
+   }
+  ],
+  "errors": []
+ },
+ "lean_result_block": "LEAN_RESULT erdos595-successor-step-2026-09-05\n  FORMAL_STATUS KERNEL_CHECKED\n  FILE oracle/frontier_formalizer/cable/theorems/msl_erdos595-successor-step-2026-09-05.lean\n  THEOREMS msl_erdos595_successor_step_2026_09_05\n  BACKEND wsl\n  AXIOMS Classical.choice, Quot.sound, propext\n  TACTIC (supplied proof)\n  BUDGET 120s:KERNEL_CHECKED\n  FAILURE NONE",
+ "timestamp": "2026-09-05T18:38:17Z"
+}

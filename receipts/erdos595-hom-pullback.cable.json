@@ -1,0 +1,30 @@
+{
+  "schema": "oracle.msl.cable.v1",
+  "id": "erdos595-hom-pullback",
+  "campaign": "msl-595 FLAGSHIP epoch 11",
+  "target": "Erdos #595 flagship, packet card T15 homomorphism pullback in source vocabulary",
+  "file": "oracle/evidence/erdos595/lean/Erdos595Hom.lean",
+  "file_sha256": "e15c310ed76099148452ef3a2bda88b261bc334422fb6afddcbeffa140c48b3f",
+  "formal_status": "KERNEL_CHECKED",
+  "kernel_result": {
+    "status": "VERIFIED",
+    "backend": "box root@51.158.234.15 /root/formalizer/proofs, Mathlib 919544d4, toolchain v4.31.0-rc1",
+    "command": "lake env lean /root/peer/msl-595/Erdos595Hom.lean",
+    "exitCode": 0,
+    "log": "oracle/evidence/erdos595/lean/kernel-hom-2026-09-05.log",
+    "declarations": [
+      {"declaration": "Erdos595H.cliqueFree_comap", "clean": true, "axioms": ["propext", "Classical.choice", "Quot.sound"]},
+      {"declaration": "Erdos595H.pullback_countableUnion", "clean": true, "axioms": ["propext", "Classical.choice", "Quot.sound"]},
+      {"declaration": "Erdos595H.witness_travels_forward", "clean": true, "axioms": ["propext", "Classical.choice", "Quot.sound"]}
+    ],
+    "errors": []
+  },
+  "axioms": ["propext", "Classical.choice", "Quot.sound"],
+  "sorry_count": 0,
+  "attempts": [
+    {"tactic": "hand clique construction", "status": "FAILED", "errors": ["simp made no progress on the Finset coe membership"]},
+    {"tactic": "is3Clique_triple_iff", "status": "VERIFIED", "errors": []}
+  ],
+  "covers": "FRAGMENT",
+  "not_covered": "the flagship existence question itself"
+}

@@ -1,0 +1,125 @@
+{
+ "schema": "oracle.msl.cable.v1",
+ "id": "erdos595-coverable-parts-2026-09-05",
+ "spec": {
+  "id": "erdos595-coverable-parts-2026-09-05",
+  "imports": "Mathlib",
+  "definitions": "namespace Erdos595CP\n\nvariable {V : Type*}\n\ndef Coverable (G : SimpleGraph V) : Prop :=\n  \u2203 H : \u2115 \u2192 SimpleGraph V, (\u2200 n, H n \u2264 G) \u2227 (\u2200 n, (H n).CliqueFree 3) \u2227\n    G.edgeSet \u2286 \u22c3 n, (H n).edgeSet\n\ntheorem cliqueFree_three_iff (G : SimpleGraph V) :\n    G.CliqueFree 3 \u2194 \u2200 x y z : V, G.Adj x y \u2192 G.Adj y z \u2192 G.Adj x z \u2192 False := by\n  classical\n  constructor\n  \u00b7 intro hG x y z hxy hyz hxz\n    exact hG {x, y, z} (SimpleGraph.is3Clique_triple_iff.mpr \u27e8hxy, hxz, hyz\u27e9)\n  \u00b7 intro h s hs\n    obtain \u27e8x, y, z, hxy, hxz, hyz, hset\u27e9 := Finset.card_eq_three.mp hs.2\n    subst hset\n    exact h x y z (hs.1 (by simp) (by simp) hxy) (hs.1 (by simp) (by simp) hyz)\n      (hs.1 (by simp) (by simp) hxz)\n\ntheorem cliqueFree_three_of_le {A B : SimpleGraph V} (hle : A \u2264 B)\n    (hB : B.CliqueFree 3) : A.CliqueFree 3 := by\n  rw [cliqueFree_three_iff] at hB \u22a2\n  intro x y z hxy hyz hxz\n  exact hB x y z (hle hxy) (hle hyz) (hle hxz)\n\ntheorem coverable_of_le (G K : SimpleGraph V) (hle : K \u2264 G) (hG : Coverable G) :\n    Coverable K := by\n  classical\n  obtain \u27e8H, hHle, hHfree, hHcov\u27e9 := hG\n  refine \u27e8fun n => H n \u2293 K, fun n x y h => h.2, ?_, ?_\u27e9\n  \u00b7 intro n\n    exact cliqueFree_three_of_le (by intro x y h; exact h.1) (hHfree n)\n  \u00b7 intro e he\n    induction e using Sym2.ind with\n    | _ x y =>\n      have hKadj : K.Adj x y := K.mem_edgeSet.mp he\n      obtain \u27e8n, hn\u27e9 := Set.mem_iUnion.mp (hHcov (G.mem_edgeSet.mpr (hle hKadj)))\n      exact Set.mem_iUnion.mpr \u27e8n, (H n \u2293 K).mem_edgeSet.mpr \u27e8(H n).mem_edgeSet.mp hn, hKadj\u27e9\u27e9\n\ntheorem coverable_iUnion (G : SimpleGraph V) (K : \u2115 \u2192 SimpleGraph V)\n    (hle : \u2200 n, K n \u2264 G) (hcov : \u2200 n, Coverable (K n))\n    (hunion : G.edgeSet \u2286 \u22c3 n, (K n).edgeSet) : Coverable G := by\n  classical\n  choose H hH using hcov\n  refine \u27e8fun m => H (Nat.unpair m).1 (Nat.unpair m).2, ?_, ?_, ?_\u27e9\n  \u00b7 intro m\n    exact le_trans ((hH (Nat.unpair m).1).1 (Nat.unpair m).2) (hle _)\n  \u00b7 intro m\n    exact (hH (Nat.unpair m).1).2.1 (Nat.unpair m).2\n  \u00b7 intro e he\n    obtain \u27e8n, hn\u27e9 := Set.mem_iUnion.mp (hunion he)\n    obtain \u27e8k, hk\u27e9 := Set.mem_iUnion.mp ((hH n).2.2 hn)\n    refine Set.mem_iUnion.mpr \u27e8Nat.pair n k, ?_\u27e9\n    simpa [Nat.unpair_pair] using hk\n\ntheorem pair_inj (a b x y : \u2115) (h : Nat.pair a b = Nat.pair x y) : a = x \u2227 b = y := by\n  have h2 := congrArg Nat.unpair h\n  simp only [Nat.unpair_pair] at h2\n  exact \u27e8congrArg Prod.fst h2, congrArg Prod.snd h2\u27e9\n\nnoncomputable def partCol (p : V \u2192 \u2115) : Sym2 V \u2192 \u2115 :=\n  Sym2.lift \u27e8fun x y => Nat.pair (min (p x) (p y)) (max (p x) (p y)), by\n    intro x y\n    simp [min_comm, max_comm]\u27e9\n\ntheorem partCol_mk (p : V \u2192 \u2115) (x y : V) :\n    partCol p s(x, y) = Nat.pair (min (p x) (p y)) (max (p x) (p y)) := by\n  simp [partCol, Sym2.lift_mk]\n\ntheorem coverable_of_coverable_parts (G : SimpleGraph V) (p : V \u2192 \u2115)\n    (hpart : \u2200 n : \u2115,\n      Coverable (SimpleGraph.fromEdgeSet {e | e \u2208 G.edgeSet \u2227 partCol p e = Nat.pair n n})) :\n    Coverable G := by\n  classical\n  refine coverable_iUnion G\n    (fun k => SimpleGraph.fromEdgeSet {e | e \u2208 G.edgeSet \u2227 partCol p e = k}) ?_ ?_ ?_\n  \u00b7 intro k x y h\n    rw [SimpleGraph.fromEdgeSet_adj] at h\n    exact G.mem_edgeSet.mp h.1.1\n  \u00b7 intro k\n    by_cases hk : \u2203 n : \u2115, k = Nat.pair n n\n    \u00b7 obtain \u27e8n, rfl\u27e9 := hk\n      exact hpart n\n    \u00b7 refine \u27e8fun _ => SimpleGraph.fromEdgeSet {e | e \u2208 G.edgeSet \u2227 partCol p e = k},\n        fun _ => le_refl _, ?_, fun e he => Set.mem_iUnion.mpr \u27e80, he\u27e9\u27e9\n      intro _\n      rw [cliqueFree_three_iff]\n      intro x y z hxy hyz hxz\n      rw [SimpleGraph.fromEdgeSet_adj] at hxy hyz hxz\n      have h1 : partCol p s(x, y) = partCol p s(y, z) := by\n        rw [hxy.1.2, hyz.1.2]\n      have h2 : partCol p s(x, z) = partCol p s(y, z) := by\n        rw [hxz.1.2, hyz.1.2]\n      rw [partCol_mk, partCol_mk] at h1\n      rw [partCol_mk, partCol_mk] at h2\n      obtain \u27e8m1, M1\u27e9 := pair_inj _ _ _ _ h1\n      obtain \u27e8m2, M2\u27e9 := pair_inj _ _ _ _ h2\n      have hxy' : p x = p y := by omega\n      apply hk\n      refine \u27e8p x, ?_\u27e9\n      rw [\u2190 hxy.1.2, partCol_mk, hxy']\n      simp\n  \u00b7 intro e he\n    exact Set.mem_iUnion.mpr \u27e8partCol p e, by\n      rw [SimpleGraph.edgeSet_fromEdgeSet]\n      exact \u27e8\u27e8he, rfl\u27e9, fun hd => (G.not_isDiag_of_mem_edgeSet he) hd\u27e9\u27e9\n\nend Erdos595CP",
+  "hypotheses": [
+   "{V : Type*}",
+   "(G : SimpleGraph V)",
+   "(p : V \u2192 \u2115)",
+   "(hpart : \u2200 n : \u2115, Erdos595CP.Coverable (SimpleGraph.fromEdgeSet {e | e \u2208 G.edgeSet \u2227 Erdos595CP.partCol p e = Nat.pair n n}))"
+  ],
+  "conclusion": "Erdos595CP.Coverable G",
+  "proof": "by exact Erdos595CP.coverable_of_coverable_parts G p hpart"
+ },
+ "formal_status": "KERNEL_CHECKED",
+ "events": [],
+ "axioms": [
+  "Classical.choice",
+  "Quot.sound",
+  "propext"
+ ],
+ "attempts": [
+  {
+   "tactic": "(supplied proof)",
+   "status": "VERIFIED",
+   "seconds": 59.6,
+   "errors": [],
+   "exitCode": 0,
+   "resource_limit": null
+  }
+ ],
+ "budget_history": [
+  {
+   "tier_seconds": 120.0,
+   "outcome": "KERNEL_CHECKED"
+  }
+ ],
+ "kernel_result": {
+  "status": "VERIFIED",
+  "file": "oracle/frontier_formalizer/cable/theorems/msl_erdos595-coverable-parts-2026-09-05.lean",
+  "backend": "wsl",
+  "project": "/root/erdosfire-bench/proofs",
+  "needsMathlib": true,
+  "exitCode": 0,
+  "seconds": 45.3,
+  "declarations": [
+   {
+    "declaration": "cliqueFree_three_iff",
+    "clean": true,
+    "axioms": [
+     "propext",
+     "Classical.choice",
+     "Quot.sound"
+    ]
+   },
+   {
+    "declaration": "cliqueFree_three_of_le",
+    "clean": true,
+    "axioms": [
+     "propext",
+     "Classical.choice",
+     "Quot.sound"
+    ]
+   },
+   {
+    "declaration": "coverable_of_le",
+    "clean": true,
+    "axioms": [
+     "propext",
+     "Classical.choice",
+     "Quot.sound"
+    ]
+   },
+   {
+    "declaration": "coverable_iUnion",
+    "clean": true,
+    "axioms": [
+     "propext",
+     "Classical.choice",
+     "Quot.sound"
+    ]
+   },
+   {
+    "declaration": "pair_inj",
+    "clean": true,
+    "axioms": [
+     "propext",
+     "Classical.choice",
+     "Quot.sound"
+    ]
+   },
+   {
+    "declaration": "partCol_mk",
+    "clean": true,
+    "axioms": [
+     "propext",
+     "Quot.sound"
+    ]
+   },
+   {
+    "declaration": "coverable_of_coverable_parts",
+    "clean": true,
+    "axioms": [
+     "propext",
+     "Classical.choice",
+     "Quot.sound"
+    ]
+   },
+   {
+    "declaration": "msl_erdos595_coverable_parts_2026_09_05",
+    "clean": true,
+    "axioms": [
+     "propext",
+     "Classical.choice",
+     "Quot.sound"
+    ]
+   }
+  ],
+  "errors": []
+ },
+ "lean_result_block": "LEAN_RESULT erdos595-coverable-parts-2026-09-05\n  FORMAL_STATUS KERNEL_CHECKED\n  FILE oracle/frontier_formalizer/cable/theorems/msl_erdos595-coverable-parts-2026-09-05.lean\n  THEOREMS msl_erdos595_coverable_parts_2026_09_05\n  BACKEND wsl\n  AXIOMS Classical.choice, Quot.sound, propext\n  TACTIC (supplied proof)\n  BUDGET 120s:KERNEL_CHECKED\n  FAILURE NONE",
+ "timestamp": "2026-09-05T19:03:12Z"
+}

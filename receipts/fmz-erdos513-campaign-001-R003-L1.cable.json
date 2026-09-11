@@ -1,0 +1,53 @@
+{
+ "schema": "oracle.msl.cable.v1",
+ "id": "fmz-erdos513-campaign-001-R003-L1",
+ "spec": {
+  "id": "fmz-erdos513-campaign-001-R003-L1",
+  "imports": "Mathlib",
+  "definitions": "-- Narrowed fragment of L1: exact instance certificate for the decay\n-- max_n r^n/n! / e^r -> 0 behind Q(e^z)=0. At r=5, eps=1/5: the unscaled max of\n-- r^n/n! is attained at n = r (successive ratios r/(n+1) >= 1 for n <= r-1,\n-- < 1 afterward). Clear denominators by scaling with (2r)!: term n becomes\n-- (N!/n!) * r^n, a natural number, and sum_{n=0}^{N} of these is < (N)! e^r,\n-- so the inequality max_n r^n/n! <= (1/5) e^r follows from the finite check.\n\ndef scaledTerm (N n r : Nat) : Nat := (Nat.factorial N / Nat.factorial n) * r ^ n\n\ndef partialSum (N r : Nat) : Nat :=\n  (List.range (N + 1)).foldr (fun n acc => scaledTerm N n r + acc) 0\n\ndef checkWitness (r epsNum : Nat) : Bool :=\n  let N := 2 * r\n  epsNum * scaledTerm N r r <= partialSum N r\n\ndef check_witness : Bool := checkWitness 5 5",
+  "conclusion": "check_witness = true",
+  "proof": "by decide"
+ },
+ "formal_status": "KERNEL_CHECKED",
+ "events": [],
+ "axioms": [
+  "propext"
+ ],
+ "attempts": [
+  {
+   "tactic": "(supplied proof)",
+   "status": "VERIFIED",
+   "seconds": 15.4,
+   "errors": [],
+   "exitCode": 0,
+   "resource_limit": null
+  }
+ ],
+ "budget_history": [
+  {
+   "tier_seconds": 900.0,
+   "outcome": "KERNEL_CHECKED"
+  }
+ ],
+ "kernel_result": {
+  "status": "VERIFIED",
+  "file": "oracle/frontier_formalizer/cable/theorems/msl_fmz-erdos513-campaign-001-R003-L1.lean",
+  "backend": "wsl",
+  "project": "/root/erdosfire-bench/proofs",
+  "needsMathlib": true,
+  "exitCode": 0,
+  "seconds": 7.1,
+  "declarations": [
+   {
+    "declaration": "msl_fmz_erdos513_campaign_001_R003_L1",
+    "clean": true,
+    "axioms": [
+     "propext"
+    ]
+   }
+  ],
+  "errors": []
+ },
+ "lean_result_block": "LEAN_RESULT fmz-erdos513-campaign-001-R003-L1\n  FORMAL_STATUS KERNEL_CHECKED\n  FILE oracle/frontier_formalizer/cable/theorems/msl_fmz-erdos513-campaign-001-R003-L1.lean\n  THEOREMS msl_fmz_erdos513_campaign_001_R003_L1\n  BACKEND wsl\n  AXIOMS propext\n  TACTIC (supplied proof)\n  BUDGET 900s:KERNEL_CHECKED\n  FAILURE NONE",
+ "timestamp": "2026-09-01T23:11:47Z"
+}

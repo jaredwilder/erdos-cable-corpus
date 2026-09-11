@@ -1,0 +1,48 @@
+{
+ "schema": "oracle.msl.closer.lap.v1",
+ "id": "erdos101-campaign-001-R001-close",
+ "pipeline": "CITATION_ANCHORED",
+ "lean_file": "oracle/frontier_formalizer/cable/theorems/lap_erdos101-campaign-001-R001-close.lean",
+ "theorem": "msl_erdos101_campaign_001_R001_close",
+ "axiom_name": "OrdinaryLineBounds_CsimaSawyer_Melchior",
+ "axiom_statement_lean": "∀ (S : Finset Point), (∀ l : Line, (∀ p ∈ S, p ∈ l) → False) → t S 2 ≥ 3 + ∑ k in Finset.Icc 4 (S.card), (k - 3) * t S k",
+ "citation": {
+  "source": "J. Csima, E. T. Sawyer, 'There exist 6n/13 points on a line', Discrete & Computational Geometry 10 (1993) 351–360, main theorem; combined with E. Melchior, 'Über Vielseite von Punktmengen auf Geraden', Deutsche Mathematik 6 (1941) 466–470, Melchior's inequality (Satz).",
+  "theorem_number": "Csima–Sawyer main theorem (6n/13); Melchior, Satz (t₂ ≥ 3 + Σ_{k≥4}(k−3)t_k)",
+  "verbatim": "Csima–Sawyer: 'any set of n points in the real plane, not all on a line, spans at least ⌈6n/13⌉ ordinary lines (2-point lines).' Melchior: 't₂ ≥ 3 + Σ_{k≥4}(k−3)t_k' for any finite set of points in the real projective plane not all on one line, where t_k is the number of lines containing exactly k of the points.",
+  "url_or_doi": "doi:10.1007/BF02574652"
+ },
+ "claim": "CONDITIONAL on the single declared axiom (Csima–Sawyer 6n/13 + Melchior's inequality, combined as one published corollary), branch A closes: under exactly the hypothesis 'no five points on a line', t₄(S) ≤ ⌈6n/13⌉ ≤ n = O(n) = o(n²), absolute constants C=1, N=9, full range of n, no n-dependent constants, two-sided o(n²) from a two-sided O(n) upper bound on t₄. The axiom footprint will print exactly {propext, Classical.choice, Quot.sound, OrdinaryLineBounds_CsimaSawyer_Melchior} — a CITATION_ANCHORED stamp, strictly weaker than an unconditional close.",
+ "gate": {
+  "passed": false,
+  "reason": "KERNEL_FAILED",
+  "detail": "the LAP file did not compile (exit 1)"
+ },
+ "kernel_result": {
+  "status": "UNVERIFIED",
+  "file": "oracle/frontier_formalizer/cable/theorems/lap_erdos101-campaign-001-R001-close.lean",
+  "backend": "wsl",
+  "project": "/root/erdosfire-bench/proofs",
+  "needsMathlib": true,
+  "exitCode": 1,
+  "seconds": 248.2,
+  "declarations": [
+   {
+    "declaration": "msl_erdos101_campaign_001_R001_close",
+    "clean": true,
+    "axioms": []
+   }
+  ],
+  "errors": [
+   "/tmp/oracle_lean_IakGtjQH.lean:7:51: error: typeclass instance problem is stuck",
+   "/tmp/oracle_lean_IakGtjQH.lean:14:80: error: unexpected token 'in'; expected ','",
+   "/tmp/oracle_lean_IakGtjQH.lean:16:47: error: unexpected token 'theorem'; expected term",
+   "/tmp/oracle_lean_IakGtjQH.lean:16:146: error(lean.unknownIdentifier): Unknown identifier `Line`",
+   "/tmp/oracle_lean_IakGtjQH.lean:16:218: error(lean.unknownIdentifier): Unknown identifier `refine`",
+   "/tmp/oracle_lean_IakGtjQH.lean:16:235: error: unexpected token ';'; expected command"
+  ]
+ },
+ "seconds": 251.4,
+ "law": "CLOSED_CONDITIONAL_ON_CITATION is NOT TARGET_CLOSED. The kernel checked the IMPLICATION from the assumed theorem; it did not check the assumed theorem. Confirm `axiom_statement_lean` against `citation.verbatim`, and confirm that the cited theorem exists in that form, before this is cited as a result.",
+ "timestamp": "2026-09-01T19:51:38Z"
+}

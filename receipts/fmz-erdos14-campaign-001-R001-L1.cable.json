@@ -1,0 +1,65 @@
+{
+ "schema": "oracle.msl.cable.v1",
+ "id": "fmz-erdos14-campaign-001-R001-L1",
+ "spec": {
+  "id": "fmz-erdos14-campaign-001-R001-L1",
+  "imports": "none",
+  "definitions": "-- Checkable fragment of L1: the RESIDUAL and CLAIM components of the\n-- fail-closed certificate spec of packet 432be429739c835b, as total Bool\n-- functions. Rationals are pairs (num : Int, den : Nat), den > 0; all\n-- comparisons in exact integer arithmetic via cross-multiplication with\n-- explicit Nat->Int casts (no floats, no Classical, no Real).\n\nstructure Rat where\n  num : Int\n  den : Nat\n\ndef Rat.valid (r : Rat) : Bool := r.den > 0\n\ndef Rat.le (a b : Rat) : Bool :=\n  a.num * (b.den : Int) <= b.num * (a.den : Int)\n\nstructure Interval where\n  lo : Rat\n  hi : Rat\n  hasValue : Bool\n  value : Rat\n\ndef intervalValid (iv : Interval) : Bool :=\n  Rat.valid iv.lo && Rat.valid iv.hi && Rat.valid iv.value\n    && Rat.le iv.lo iv.hi\n    && (!iv.hasValue || (Rat.le iv.lo iv.value && Rat.le iv.value iv.hi))\n\ndef bindsAll (claim : List Nat) (names : List Nat) : Bool :=\n  names.all (fun n => claim.contains n)\n\ndef claimWellFormed (claim : List Nat) (names : List Nat) : Bool :=\n  !claim.isEmpty && bindsAll claim names\n\ndef certValid (iv : Interval) (claim : List Nat) (names : List Nat) : Bool :=\n  intervalValid iv && claimWellFormed claim names\n\ndef goodCert : Interval :=\n  { lo := { num := 3, den := 2 }, hi := { num := 3, den := 2 },\n    hasValue := true, value := { num := 3, den := 2 } }\n\ndef goodInterval : Interval :=\n  { lo := { num := 1, den := 2 }, hi := { num := 3, den := 2 },\n    hasValue := true, value := { num := 3, den := 4 } }\n\ndef badDen : Interval :=\n  { lo := { num := 1, den := 0 }, hi := { num := 1, den := 1 },\n    hasValue := false, value := { num := 0, den := 1 } }\n\ndef badOrder : Interval :=\n  { lo := { num := 3, den := 2 }, hi := { num := 1, den := 2 },\n    hasValue := false, value := { num := 0, den := 1 } }\n\ndef badContain : Interval :=\n  { lo := { num := 1, den := 2 }, hi := { num := 3, den := 2 },\n    hasValue := true, value := { num := 5, den := 3 } }\n\ndef check_spec : Bool :=\n  certValid goodCert [1, 2] [1, 2]\n  && certValid goodInterval [7] [7]\n  && !certValid badDen [1] [1]\n  && !certValid badOrder [1] [1]\n  && !certValid badContain [1] [1]\n  && !certValid goodCert [] [1]\n  && !certValid goodCert [1] [1, 2]",
+  "conclusion": "check_spec = true",
+  "proof": "by decide"
+ },
+ "formal_status": "KERNEL_FAILED",
+ "events": [
+  "((supplied proof)) RAW[tmpgptd1qn7.lean:9:10: error: `Rat` has already been declared]",
+  "((supplied proof)) RAW[tmpgptd1qn7.lean:47:10: error: could not synthesize default value for field 'den_nz' of 'Rat' using tactics]",
+  "((supplied proof)) REFUTED.DECIDABLE[decide proved the negation \u2014 this one IS a refutation]"
+ ],
+ "axioms": [
+  "sorryAx"
+ ],
+ "attempts": [
+  {
+   "tactic": "(supplied proof)",
+   "status": "UNVERIFIED",
+   "seconds": 41.1,
+   "errors": [
+    "tmpgptd1qn7.lean:9:10: error: `Rat` has already been declared",
+    "tmpgptd1qn7.lean:47:10: error: could not synthesize default value for field 'den_nz' of 'Rat' using tactics",
+    "tmpgptd1qn7.lean:47:10: error: Tactic `decide` proved that the proposition"
+   ],
+   "exitCode": 1,
+   "resource_limit": null
+  }
+ ],
+ "budget_history": [
+  {
+   "tier_seconds": 900.0,
+   "outcome": "REFUTED_DECIDABLE"
+  }
+ ],
+ "kernel_result": {
+  "status": "UNVERIFIED",
+  "file": "oracle/frontier_formalizer/cable/theorems/msl_fmz-erdos14-campaign-001-R001-L1.lean",
+  "backend": "windows",
+  "project": "C:\\Users\\jared\\Local Sites\\woocommerce-enterprise\\oracle\\math\\EG411Formal",
+  "needsMathlib": false,
+  "exitCode": 1,
+  "seconds": 41.1,
+  "declarations": [
+   {
+    "declaration": "msl_fmz_erdos14_campaign_001_R001_L1",
+    "clean": false,
+    "axioms": [
+     "sorryAx"
+    ]
+   }
+  ],
+  "errors": [
+   "tmpgptd1qn7.lean:9:10: error: `Rat` has already been declared",
+   "tmpgptd1qn7.lean:47:10: error: could not synthesize default value for field 'den_nz' of 'Rat' using tactics",
+   "tmpgptd1qn7.lean:47:10: error: Tactic `decide` proved that the proposition"
+  ]
+ },
+ "lean_result_block": "LEAN_RESULT fmz-erdos14-campaign-001-R001-L1\n  FORMAL_STATUS KERNEL_FAILED\n  FILE oracle/frontier_formalizer/cable/theorems/msl_fmz-erdos14-campaign-001-R001-L1.lean\n  THEOREMS msl_fmz_erdos14_campaign_001_R001_L1\n  BACKEND windows\n  AXIOMS sorryAx\n  TACTIC (supplied proof)\n  BUDGET 900s:REFUTED_DECIDABLE\n  FAILURE ((supplied proof)) RAW[tmpgptd1qn7.lean:9:10: error: `Rat` has already been declared]; ((supplied proof)) RAW[tmpgptd1qn7.lean:47:10: error: could not synthesize default value for field 'den_nz' of 'Rat' using tactics]; ((supplied proof)) REFUTED.DECIDABLE[decide proved the negation \u2014 this one IS a refutation]\n  LAW KERNEL_FAILED does not refute the claim \u2014 the FAILURE line names what actually broke",
+ "timestamp": "2026-09-01T23:25:07Z"
+}

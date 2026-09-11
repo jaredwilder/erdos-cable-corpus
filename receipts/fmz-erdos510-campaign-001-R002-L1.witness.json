@@ -1,0 +1,27 @@
+{
+ "schema": "oracle.msl.closer.witness.v1",
+ "id": "fmz-erdos510-campaign-001-R002-L1",
+ "pipeline": "WITNESS_FINITE",
+ "witness": {
+  "artifact": "R002/L1 residual-claim attempt record",
+  "claimed_c_literal": "-≈0.4",
+  "theta_witness_count": 255,
+  "theta_witnesses_integer_truncated": true,
+  "residual_formula_present": false,
+  "expected_outcome": "ABORT_UNRESOLVED_SIGN"
+ },
+ "verifier_sha256": "ada7e21b0e6d06ad49df359baf575e7e6136e57021988cc780668ecc648237fa",
+ "verifier_source": "RATIONAL_CHARS = '0123456789+-/'\n\ndef parse_exact_rational(s):\n    # exact rational literal only: integers or p/q, q>0; anything else -> None\n    if not isinstance(s, str) or s == '':\n        return None\n    for ch in s:\n        if ch not in RATIONAL_CHARS:\n            return None\n    parts = s.split('/')\n    if len(parts) == 1:\n        try:\n            num = int(parts[0])\n        except ValueError:\n            return None\n        if num == 0:\n            return None  # c must be positive nonzero to certify the bound\n        return num\n    if len(parts) != 2:\n        return None\n    try:\n        num = int(parts[0])\n        den = int(parts[1])\n    except ValueError:\n        return None\n    if den <= 0 or num == 0:\n        return None\n    return num * den  # nonzero integer proxy: exact rational with c != 0\n\ndef verify(artifact):\n    # Pure, deterministic, fail-closed. Returns (verdict, aborts).\n    # No I/O, no imports, no floats, no environment dependence.\n    aborts = []\n\n    # Check 1: claimed c is an exact nonzero rational\n    c = parse_exact_rational(artifact.get('claimed_c_literal'))\n    if c is None:\n        aborts.append('C_IS_EXACT_RATIONAL')\n\n    # Check 2: every theta witness is an exact integer/integer rational\n    th = artifact.get('theta_witnesses')\n    if not isinstance(th, list) or len(th) == 0:\n        aborts.append('WITNESSES_EXACT')\n    else:\n        for t in th:\n            ok = (isinstance(t, dict)\n                  and set(t.keys()) == {'num', 'den'}\n                  and isinstance(t['num'], int) and isinstance(t['den'], int)\n                  and not isinstance(t['num'], bool) and not isinstance(t['den'], bool)\n                  and t['den'] > 0)\n            if not ok:\n                aborts.append('WITNESSES_EXACT')\n                break\n\n    # Check 3: residual formula with fixed rational c present\n    if artifact.get('residual_formula_present') is not True:\n        aborts.append('RESIDUAL_FORMULA_PRESENT')\n\n    if aborts:\n        return ('ABORT_UNRESOLVED_SIGN:' + ','.join(sorted(set(aborts))), aborts)\n    return ('PASS', [])\n\ndef run():\n    # Witness as recorded in the R002/L1 attempt record (see `witness` field):\n    # c literal is not an exact rational, all 255 theta witnesses are truncated\n    # integers (hence not exact num/den rationals), and no residual formula is on file.\n    recorded = {\n        'claimed_c_literal': '-\\u22480.4',\n        'theta_witnesses': [{'truncated': True}] * 255,\n        'residual_formula_present': False,\n    }\n    verdict, _ = verify(recorded)\n    return verdict\n",
+ "run": {
+  "passed": true,
+  "status": "VERIFIER_PASS",
+  "exit_code": 0,
+  "stdout": "PASS",
+  "detail": "",
+  "seconds": 0.09,
+  "code_sha256": "ada7e21b0e6d06ad49df359baf575e7e6136e57021988cc780668ecc648237fa"
+ },
+ "claim": "fragment — Certifies exactly the L1 fail-closed behavior with a pure, deterministic, exact-arithmetic verifier (no imports, no I/O, no floats): run() on the recorded artifact returns 'ABORT_UNRESOLVED_SIGN:C_IS_EXACT_RATIONAL,RESIDUAL_FORMULA_PRESENT,WITNESSES_EXACT' — i.e. the residual claim is uncertifiable because \"−≈0.4\" is not an exact rational c, none of the 255 θ_A witnesses is an exact num/den rational (all truncated), and no residual formula with fixed rational c is present; PASS is reachable only from an amended artifact with c∈ℚ (e.g. 2/5), exact rational witnesses, and a residual formula. The verifier is fail-closed: any malformed field aborts, never passes. covers=\"fragment\" — the abort semantics and non-rationality of the recorded c literal are certified; the amended-L1 close of close-branch A itself is not.",
+ "law": "Wang 7.2: an exact finite object plus a proved reduction is a CERTIFICATE. The reduction is the `claim` and is a human's to audit; the object and the verifier run are the machine's part.",
+ "timestamp": "2026-09-01T23:46:41Z"
+}

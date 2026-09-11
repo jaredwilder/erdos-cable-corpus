@@ -1,0 +1,119 @@
+{
+ "schema": "oracle.msl.cable.v1",
+ "id": "r55-nest-extract",
+ "spec": {
+  "id": "r55-nest-extract",
+  "imports": "none",
+  "set_options": [
+   "set_option maxRecDepth 20000",
+   "set_option maxHeartbeats 40000000"
+  ],
+  "definitions": "def S : List Nat := [1,2,3,5,7,10,13,15,16,17,24,25,26,28,31,34,36,38,39,40]\n\n/-- the circulant adjacency, normalised so it depends only on residues and is therefore\n    total on the naturals -/\ndef adj (i j : Nat) : Bool := ((i % 41 + 41 - j % 41) % 41) \u2208 S\n\n/-- symmetry on RESIDUES, decided over all 1681 pairs -/\ntheorem symm_res :\n    (List.range 41).all (fun a => (List.range 41).all (fun b =>\n      (((a + 41 - b) % 41) \u2208 S) == (((b + 41 - a) % 41) \u2208 S))) = true := by decide\n\n/-- lifting that to a statement about every pair of naturals -/\ntheorem adj_symm (x y : Nat) : adj x y = adj y x := by\n  have hx : x % 41 < 41 := Nat.mod_lt _ (by decide)\n  have hy : y % 41 < 41 := Nat.mod_lt _ (by decide)\n  have h := List.all_eq_true.mp symm_res (x % 41) (List.mem_range.mpr hx)\n  have h2 := List.all_eq_true.mp h (y % 41) (List.mem_range.mpr hy)\n  unfold adj\n  simpa using h2\n\n/-- and the reflexive case, which the campaign's witness needs to be loop-free -/\ntheorem adj_irrefl (x : Nat) : adj x x = false := by\n  unfold adj\n  have : (x % 41 + 41 - x % 41) % 41 = 0 := by\n    have hx : x % 41 < 41 := Nat.mod_lt _ (by decide)\n    omega\n  rw [this]\n  decide\n\ndef IsClique (e : Nat \u2192 Nat \u2192 Bool) (L : List Nat) : Prop :=\n  \u2200 a \u2208 L, \u2200 b \u2208 L, a \u2260 b \u2192 e a b = true\n\ndef IsIndep (e : Nat \u2192 Nat \u2192 Bool) (L : List Nat) : Prop :=\n  \u2200 a \u2208 L, \u2200 b \u2208 L, a \u2260 b \u2192 e a b = false\n\ndef nadj (i j : Nat) : Bool := (i % 41 != j % 41) && (! adj i j)\n\n/-- the global Ramsey property of the order-41 witness, as a guarded nest.  KERNEL-CHECKED\n    separately as `r55-global-ramsey-41`; restated here over the residue-normalised adjacency. -/\ndef noMono5 (e : Nat \u2192 Nat \u2192 Bool) : Bool :=\n  (List.range 41).all fun a => (List.range 41).all fun b => (! (a < b)) || (! e a b) ||\n    ((List.range 41).all fun c => (! (b < c)) || (! e a c) || (! e b c) ||\n      ((List.range 41).all fun d => (! (c < d)) || (! e a d) || (! e b d) || (! e c d) ||\n        ((List.range 41).all fun f => (! (d < f)) || (! e a f) || (! e b f) || (! e c f) || (! e d f))))\n\ntheorem witness_noMono5 : noMono5 adj = true := by decide\ntheorem witness_noMono5_c : noMono5 nadj = true := by decide\n\n/-- extracting one instance of the nest at a strictly increasing 5-tuple below 41 -/\ntheorem nest_at (e : Nat \u2192 Nat \u2192 Bool) (h : noMono5 e = true)\n    (a b c d f : Nat) (ha : a < 41) (hb : b < 41) (hc : c < 41) (hd : d < 41) (hf : f < 41)\n    (hab : a < b) (hbc : b < c) (hcd : c < d) (hdf : d < f) :\n    ! (e a b && e a c && e b c && e a d && e b d && e c d && e a f && e b f && e c f && e d f) = true := by\n  have h1 := List.all_eq_true.mp h a (List.mem_range.mpr ha)\n  have h2 := List.all_eq_true.mp (by simpa [hab] using h1) b (List.mem_range.mpr hb)\n  by_cases hEab : e a b = true\n  \u00b7 have h3 := List.all_eq_true.mp (by simpa [hab, hEab] using h2) c (List.mem_range.mpr hc)\n    by_cases hEac : e a c = true\n    \u00b7 by_cases hEbc : e b c = true\n      \u00b7 have h4 := List.all_eq_true.mp (by simpa [hbc, hEac, hEbc] using h3) d (List.mem_range.mpr hd)\n        by_cases hEad : e a d = true\n        \u00b7 by_cases hEbd : e b d = true\n          \u00b7 by_cases hEcd : e c d = true\n            \u00b7 have h5 := List.all_eq_true.mp\n                (by simpa [hcd, hEad, hEbd, hEcd] using h4) f (List.mem_range.mpr hf)\n              simp [hdf, hEab, hEac, hEbc, hEad, hEbd, hEcd] at h5 \u22a2\n              simp [h5]\n            \u00b7 simp [hEcd]\n          \u00b7 simp [hEbd]\n        \u00b7 simp [hEad]\n      \u00b7 simp [hEbc]\n    \u00b7 simp [hEac]\n  \u00b7 simp [hEab]",
+  "hypotheses": [],
+  "conclusion": "adj 0 1 = true",
+  "proof": "by decide"
+ },
+ "formal_status": "KERNEL_FAILED",
+ "events": [
+  "((supplied proof)) RAW[tmpo2vkvjn7.lean:59:37: error: Type mismatch: After simplification, term]",
+  "((supplied proof)) RAW[tmpo2vkvjn7.lean:71:14: error: `simp` made no progress]"
+ ],
+ "axioms": [
+  "Quot.sound",
+  "propext",
+  "sorryAx"
+ ],
+ "attempts": [
+  {
+   "tactic": "(supplied proof)",
+   "status": "UNVERIFIED",
+   "seconds": 44.9,
+   "errors": [
+    "tmpo2vkvjn7.lean:59:37: error: Type mismatch: After simplification, term",
+    "tmpo2vkvjn7.lean:71:14: error: `simp` made no progress"
+   ],
+   "exitCode": 1,
+   "resource_limit": null
+  }
+ ],
+ "budget_history": [
+  {
+   "tier_seconds": 120.0,
+   "outcome": "KERNEL_FAILED"
+  }
+ ],
+ "kernel_result": {
+  "status": "UNVERIFIED",
+  "file": "oracle/frontier_formalizer/cable/theorems/msl_r55-nest-extract.lean",
+  "backend": "windows",
+  "project": "C:\\Users\\jared\\Local Sites\\woocommerce-enterprise\\oracle\\math\\EG411Formal",
+  "needsMathlib": false,
+  "exitCode": 1,
+  "seconds": 44.9,
+  "declarations": [
+   {
+    "declaration": "symm_res",
+    "clean": true,
+    "axioms": [
+     "propext",
+     "Quot.sound"
+    ]
+   },
+   {
+    "declaration": "adj_symm",
+    "clean": true,
+    "axioms": [
+     "propext",
+     "Quot.sound"
+    ]
+   },
+   {
+    "declaration": "adj_irrefl",
+    "clean": true,
+    "axioms": [
+     "propext",
+     "Quot.sound"
+    ]
+   },
+   {
+    "declaration": "witness_noMono5",
+    "clean": true,
+    "axioms": [
+     "propext",
+     "Quot.sound"
+    ]
+   },
+   {
+    "declaration": "witness_noMono5_c",
+    "clean": true,
+    "axioms": [
+     "propext",
+     "Quot.sound"
+    ]
+   },
+   {
+    "declaration": "nest_at",
+    "clean": false,
+    "axioms": [
+     "propext",
+     "sorryAx",
+     "Quot.sound"
+    ]
+   },
+   {
+    "declaration": "msl_r55_nest_extract",
+    "clean": true,
+    "axioms": [
+     "propext",
+     "Quot.sound"
+    ]
+   }
+  ],
+  "errors": [
+   "tmpo2vkvjn7.lean:59:37: error: Type mismatch: After simplification, term",
+   "tmpo2vkvjn7.lean:71:14: error: `simp` made no progress"
+  ]
+ },
+ "lean_result_block": "LEAN_RESULT r55-nest-extract\n  FORMAL_STATUS KERNEL_FAILED\n  FILE oracle/frontier_formalizer/cable/theorems/msl_r55-nest-extract.lean\n  THEOREMS msl_r55_nest_extract\n  BACKEND windows\n  AXIOMS Quot.sound, propext, sorryAx\n  TACTIC (supplied proof)\n  BUDGET 120s:KERNEL_FAILED\n  FAILURE ((supplied proof)) RAW[tmpo2vkvjn7.lean:59:37: error: Type mismatch: After simplification, term]; ((supplied proof)) RAW[tmpo2vkvjn7.lean:71:14: error: `simp` made no progress]\n  LAW KERNEL_FAILED does not refute the claim \u2014 the FAILURE line names what actually broke",
+ "timestamp": "2026-09-04T16:52:52Z"
+}

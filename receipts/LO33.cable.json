@@ -1,0 +1,48 @@
+{
+ "schema": "oracle.msl.cable.v1",
+ "id": "LO33",
+ "spec": {
+  "id": "LO33",
+  "conclusion": "((List.range (459)).filter (fun m => m > 175 && [20, 24, 27, 28, 30, 32, 36, 40, 42, 44, 45, 48, 50, 52, 54, 56, 60, 63, 64, 66, 68, 70, 72, 75, 76, 78, 80, 81, 84, 88, 90, 96, 98, 99, 100, 102, 104, 105, 108, 110, 112, 114, 117, 120, 125, 126, 128, 130, 132, 135, 136, 140, 144, 147, 150, 152, 153, 154, 156, 160, 162, 165, 168, 170, 171, 175].any (fun k => m % k == 0))).length < [20, 24, 27, 28, 30, 32, 36, 40, 42, 44, 45, 48, 50, 52, 54, 56, 60, 63, 64, 66, 68, 70, 72, 75, 76, 78, 80, 81, 84, 88, 90, 96, 98, 99, 100, 102, 104, 105, 108, 110, 112, 114, 117, 120, 125, 126, 128, 130, 132, 135, 136, 140, 144, 147, 150, 152, 153, 154, 156, 160, 162, 165, 168, 170, 171, 175].length",
+  "proof": "by decide",
+  "imports": "Mathlib"
+ },
+ "formal_status": "KERNEL_CHECKED",
+ "events": [],
+ "axioms": [],
+ "attempts": [
+  {
+   "tactic": "(supplied proof)",
+   "status": "VERIFIED",
+   "seconds": 41.8,
+   "errors": [],
+   "exitCode": 0,
+   "resource_limit": null
+  }
+ ],
+ "budget_history": [
+  {
+   "tier_seconds": 120.0,
+   "outcome": "KERNEL_CHECKED"
+  }
+ ],
+ "kernel_result": {
+  "status": "VERIFIED",
+  "file": "oracle/frontier_formalizer/cable/theorems/msl_LO33.lean",
+  "backend": "wsl",
+  "project": "/root/erdosfire-bench/proofs",
+  "needsMathlib": true,
+  "exitCode": 0,
+  "seconds": 32.8,
+  "declarations": [
+   {
+    "declaration": "msl_LO33",
+    "clean": true,
+    "axioms": []
+   }
+  ],
+  "errors": []
+ },
+ "lean_result_block": "LEAN_RESULT LO33\n  FORMAL_STATUS KERNEL_CHECKED\n  FILE oracle/frontier_formalizer/cable/theorems/msl_LO33.lean\n  THEOREMS msl_LO33\n  BACKEND wsl\n  AXIOMS -\n  TACTIC (supplied proof)\n  BUDGET 120s:KERNEL_CHECKED\n  FAILURE NONE",
+ "timestamp": "2026-09-03T19:39:26Z"
+}

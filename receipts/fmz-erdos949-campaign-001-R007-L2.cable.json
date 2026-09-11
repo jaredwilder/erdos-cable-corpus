@@ -1,0 +1,49 @@
+{
+ "schema": "oracle.msl.cable.v1",
+ "id": "fmz-erdos949-campaign-001-R007-L2",
+ "spec": {
+  "id": "fmz-erdos949-campaign-001-R007-L2",
+  "imports": "none",
+  "definitions": "-- Rationals scaled by 2; S = {3/2, 5/2} encoded as {3, 5}; A = 2Z, A+A = 4Z.\ndef S : List Nat := [3, 5]\n\ndef sumFree : Bool :=\n  S.all (fun a => S.all (fun b => S.all (fun c => a + b != c)))\n\ndef disjointFromA : Bool :=\n  S.all (fun s => s % 2 != 0)\n\ndef sumAvoidsS : Bool :=\n  S.all (fun s => s % 4 != 0)\n\ndef check_witness : Bool :=\n  sumFree && disjointFromA && sumAvoidsS",
+  "conclusion": "check_witness = true",
+  "proof": "by decide"
+ },
+ "formal_status": "KERNEL_CHECKED",
+ "events": [],
+ "axioms": [],
+ "attempts": [
+  {
+   "tactic": "(supplied proof)",
+   "status": "VERIFIED",
+   "seconds": 2.1,
+   "errors": [],
+   "exitCode": 0,
+   "resource_limit": null
+  }
+ ],
+ "budget_history": [
+  {
+   "tier_seconds": 900.0,
+   "outcome": "KERNEL_CHECKED"
+  }
+ ],
+ "kernel_result": {
+  "status": "VERIFIED",
+  "file": "oracle/frontier_formalizer/cable/theorems/msl_fmz-erdos949-campaign-001-R007-L2.lean",
+  "backend": "windows",
+  "project": "C:\\Users\\jared\\Local Sites\\woocommerce-enterprise\\oracle\\math\\EG411Formal",
+  "needsMathlib": false,
+  "exitCode": 0,
+  "seconds": 2.1,
+  "declarations": [
+   {
+    "declaration": "msl_fmz_erdos949_campaign_001_R007_L2",
+    "clean": true,
+    "axioms": []
+   }
+  ],
+  "errors": []
+ },
+ "lean_result_block": "LEAN_RESULT fmz-erdos949-campaign-001-R007-L2\n  FORMAL_STATUS KERNEL_CHECKED\n  FILE oracle/frontier_formalizer/cable/theorems/msl_fmz-erdos949-campaign-001-R007-L2.lean\n  THEOREMS msl_fmz_erdos949_campaign_001_R007_L2\n  BACKEND windows\n  AXIOMS -\n  TACTIC (supplied proof)\n  BUDGET 900s:KERNEL_CHECKED\n  FAILURE NONE",
+ "timestamp": "2026-09-01T20:38:00Z"
+}

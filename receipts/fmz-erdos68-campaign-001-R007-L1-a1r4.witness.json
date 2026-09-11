@@ -1,0 +1,40 @@
+{
+ "schema": "oracle.msl.closer.witness.v1",
+ "id": "fmz-erdos68-campaign-001-R007-L1-a1r4",
+ "pipeline": "WITNESS_FINITE",
+ "witness": {
+  "N": 12,
+  "denominators": [
+   1,
+   5,
+   23,
+   119,
+   719,
+   5039,
+   40319,
+   362879,
+   3628799,
+   39916799,
+   479001599,
+   6227020799
+  ],
+  "tail_num": 28,
+  "tail_den": 81177379200,
+  "interval_low_10_11": 125349875606,
+  "interval_high_10_11": 125349875607
+ },
+ "verifier_sha256": "dda76264bc886271d9867237468729ca604447330ce9b9ac829dbe64b8ca0557",
+ "verifier_source": "# Standalone, stdlib-only (fractions/math), fail-closed: raises on ANY failed check.\n# verify(witness) is the entrypoint; no filesystem, no network, no print, no subprocess.\nfrom fractions import Fraction\nfrom math import factorial, gcd\n\nclass VerificationError(Exception):\n    pass\n\ndef verify(witness):\n    N = witness['N']\n    if N != 12:\n        raise VerificationError('N != 12')\n    denoms = [factorial(n) - 1 for n in range(2, N + 1)]\n    if denoms != witness['denominators']:\n        raise VerificationError('denominator list mismatch')\n    for i in range(len(denoms)):\n        for j in range(i + 1, len(denoms)):\n            if gcd(denoms[i], denoms[j]) != 1:\n                raise VerificationError('pairwise coprimality failed: (%d, %d)' % (denoms[i], denoms[j]))\n    L = sum(Fraction(1, d) for d in denoms)\n    tail = Fraction(2 * (N + 2), (N + 1) * factorial(N + 1))\n    if tail != Fraction(witness['tail_num'], witness['tail_den']):\n        raise VerificationError('tail bound value mismatch')\n    if not (tail < Fraction(3, factorial(N + 1))):\n        raise VerificationError('tail bound inequality failed')\n    if not (L * 10**11 > witness['interval_low_10_11']):\n        raise VerificationError('lower interval endpoint failed')\n    if not ((L + tail) * 10**11 < witness['interval_high_10_11']):\n        raise VerificationError('upper interval endpoint failed')\n    return True",
+ "run": {
+  "passed": false,
+  "status": "VERIFIER_FAIL",
+  "exit_code": 1,
+  "stdout": "",
+  "detail": "VerificationError: denominator list mismatch",
+  "seconds": 0.11,
+  "code_sha256": "dda76264bc886271d9867237468729ca604447330ce9b9ac829dbe64b8ca0557"
+ },
+ "claim": "Certifies exactly the L1 finite fragment via a fail-closed verify(witness) entrypoint that raises on any failed check: the 12 numbers {n!-1 : 2<=n<=12} are pairwise coprime, the tail sum_{n>=13} 1/(n!-1) is exactly bounded by 28/81177379200 < 3/13!, and S = sum_{n>=2} 1/(n!-1) lies strictly in (125349875606, 125349875607)/10^11. No claim beyond the N<=12 finite clause; irrationality of S is NOT claimed.",
+ "law": "Wang 7.2: an exact finite object plus a proved reduction is a CERTIFICATE. The reduction is the `claim` and is a human's to audit; the object and the verifier run are the machine's part.",
+ "timestamp": "2026-09-02T02:22:24Z"
+}

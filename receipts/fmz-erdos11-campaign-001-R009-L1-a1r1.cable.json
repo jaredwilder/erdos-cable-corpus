@@ -1,0 +1,63 @@
+{
+ "schema": "oracle.msl.cable.v1",
+ "id": "fmz-erdos11-campaign-001-R009-L1-a1r1",
+ "spec": {
+  "id": "fmz-erdos11-campaign-001-R009-L1-a1r1",
+  "imports": "none",
+  "definitions": "def sqfreeCheck (k : Nat) : Bool :=\n  k != 0 && ((List.range 64).all fun d => k % ((d + 2) * (d + 2)) != 0)\n\ndef okWit (n l : Nat) : Option (Nat \u00d7 Nat) :=\n  if n - 2 ^ l != 0 && sqfreeCheck (n - 2 ^ l) && (n - 2 ^ l) + 2 ^ l == n then some (n - 2 ^ l, l) else none\n\ndef findWit (n : Nat) : Option (Nat \u00d7 Nat) :=\n  (List.range 13).findSome? (okWit n)\n\ndef checkAll : Bool :=\n  (List.range 2047).all fun i => (findWit (3 + 2 * i)).isSome\n\ndef witIs (n k l : Nat) : Bool :=\n  match findWit n with\n  | some (a, b) => a == k && b == l\n  | none => false\n\ndef certificate : Bool :=\n  checkAll && witIs 77 73 2 && witIs 101 97 2\n\ntheorem R009_L1_certificate : certificate = true := by native_decide",
+  "conclusion": "certificate = true",
+  "proof": "by native_decide"
+ },
+ "formal_status": "KERNEL_FAILED",
+ "events": [
+  "RAW[exit 0 with no captured error line]"
+ ],
+ "axioms": [
+  "R009_L1_certificate._native.native_decide.ax_1_1",
+  "msl_fmz_erdos11_campaign_001_R009_L1_a1r1._native.native_decide.ax_1_1"
+ ],
+ "attempts": [
+  {
+   "tactic": "(supplied proof)",
+   "status": "UNVERIFIED",
+   "seconds": 33.9,
+   "errors": [],
+   "exitCode": 0,
+   "resource_limit": null
+  }
+ ],
+ "budget_history": [
+  {
+   "tier_seconds": 900.0,
+   "outcome": "KERNEL_FAILED"
+  }
+ ],
+ "kernel_result": {
+  "status": "UNVERIFIED",
+  "file": "oracle/frontier_formalizer/cable/theorems/msl_fmz-erdos11-campaign-001-R009-L1-a1r1.lean",
+  "backend": "windows",
+  "project": "C:\\Users\\jared\\Local Sites\\woocommerce-enterprise\\oracle\\math\\EG411Formal",
+  "needsMathlib": false,
+  "exitCode": 0,
+  "seconds": 33.9,
+  "declarations": [
+   {
+    "declaration": "R009_L1_certificate",
+    "clean": false,
+    "axioms": [
+     "R009_L1_certificate._native.native_decide.ax_1_1"
+    ]
+   },
+   {
+    "declaration": "msl_fmz_erdos11_campaign_001_R009_L1_a1r1",
+    "clean": false,
+    "axioms": [
+     "msl_fmz_erdos11_campaign_001_R009_L1_a1r1._native.native_decide.ax_1_1"
+    ]
+   }
+  ],
+  "errors": []
+ },
+ "lean_result_block": "LEAN_RESULT fmz-erdos11-campaign-001-R009-L1-a1r1\n  FORMAL_STATUS KERNEL_FAILED\n  FILE oracle/frontier_formalizer/cable/theorems/msl_fmz-erdos11-campaign-001-R009-L1-a1r1.lean\n  THEOREMS msl_fmz_erdos11_campaign_001_R009_L1_a1r1\n  BACKEND windows\n  AXIOMS R009_L1_certificate._native.native_decide.ax_1_1, msl_fmz_erdos11_campaign_001_R009_L1_a1r1._native.native_decide.ax_1_1\n  TACTIC (supplied proof)\n  BUDGET 900s:KERNEL_FAILED\n  FAILURE RAW[exit 0 with no captured error line]\n  LAW KERNEL_FAILED does not refute the claim \u2014 the FAILURE line names what actually broke",
+ "timestamp": "2026-09-02T01:45:28Z"
+}

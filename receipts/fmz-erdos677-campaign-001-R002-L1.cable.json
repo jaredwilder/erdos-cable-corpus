@@ -1,0 +1,49 @@
+{
+ "schema": "oracle.msl.cable.v1",
+ "id": "fmz-erdos677-campaign-001-R002-L1",
+ "spec": {
+  "id": "fmz-erdos677-campaign-001-R002-L1",
+  "imports": "none",
+  "definitions": "def M1 (n : Nat) : Nat := n + 1\n\ndef check_injective (bound : Nat) : Bool :=\n  List.all (List.range (bound + 1)) fun n =>\n    List.all (List.range (bound + 1)) fun m =>\n      if M1 n = M1 m then n = m else True\n\ndef check_strict (bound : Nat) : Bool :=\n  List.all (List.range bound) fun n => M1 n < M1 (n + 1)",
+  "conclusion": "check_injective 64 = true \u2227 check_strict 64 = true",
+  "proof": "by decide"
+ },
+ "formal_status": "KERNEL_CHECKED",
+ "events": [],
+ "axioms": [],
+ "attempts": [
+  {
+   "tactic": "(supplied proof)",
+   "status": "VERIFIED",
+   "seconds": 2.5,
+   "errors": [],
+   "exitCode": 0,
+   "resource_limit": null
+  }
+ ],
+ "budget_history": [
+  {
+   "tier_seconds": 900.0,
+   "outcome": "KERNEL_CHECKED"
+  }
+ ],
+ "kernel_result": {
+  "status": "VERIFIED",
+  "file": "oracle/frontier_formalizer/cable/theorems/msl_fmz-erdos677-campaign-001-R002-L1.lean",
+  "backend": "windows",
+  "project": "C:\\Users\\jared\\Local Sites\\woocommerce-enterprise\\oracle\\math\\EG411Formal",
+  "needsMathlib": false,
+  "exitCode": 0,
+  "seconds": 2.5,
+  "declarations": [
+   {
+    "declaration": "msl_fmz_erdos677_campaign_001_R002_L1",
+    "clean": true,
+    "axioms": []
+   }
+  ],
+  "errors": []
+ },
+ "lean_result_block": "LEAN_RESULT fmz-erdos677-campaign-001-R002-L1\n  FORMAL_STATUS KERNEL_CHECKED\n  FILE oracle/frontier_formalizer/cable/theorems/msl_fmz-erdos677-campaign-001-R002-L1.lean\n  THEOREMS msl_fmz_erdos677_campaign_001_R002_L1\n  BACKEND windows\n  AXIOMS -\n  TACTIC (supplied proof)\n  BUDGET 900s:KERNEL_CHECKED\n  FAILURE NONE",
+ "timestamp": "2026-09-01T21:20:15Z"
+}

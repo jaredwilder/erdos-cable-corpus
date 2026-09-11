@@ -1,0 +1,49 @@
+{
+ "schema": "oracle.msl.closer.lap.v1",
+ "id": "fmz-erdos291-campaign-001-R002-L1",
+ "pipeline": "CITATION_ANCHORED",
+ "lean_file": "oracle/frontier_formalizer/cable/theorems/lap_fmz-erdos291-campaign-001-R002-L1.lean",
+ "theorem": "msl_fmz_erdos291_campaign_001_R002_L1",
+ "axiom_name": "PublishedTheorem_EswarathasanLevine1991",
+ "axiom_statement_lean": "∀ (p : Nat), Nat.Prime p → ∀ (n : Nat),\n  (p ∣ (H n).num) ↔ (Finset.sum (Finset.Icc 1 (n / p)) (fun k => ((↑((H (n / p)).den : Nat))⁻¹ * ↑((H (n / p)).num) : ZMod p) * 0 + Hp p (n / p)) = 0)",
+ "citation": {
+  "source": "J. Eswarathasan and E. Levine, 'p-integral harmonic sums', Discrete Mathematics 91 (1991), 249–257.",
+  "theorem_number": "Lemma characterizing N_p (n ∉ N_p iff H_{⌊n/p⌋} ≡ 0 mod p), §2",
+  "verbatim": "HOLDER GATE — the verbatim quotation of the Eswarathasan–Levine lemma has NOT been verified against the published text by this packet. Per the fail-closed rule, this field must be replaced with the exact quoted sentence from Discrete Math. 91 (1991) 249–257 before kernel check; if the paper does not state the criterion in the form used by the axiom, the obligation FAILS at citation verification and is not a close.",
+  "url_or_doi": "doi:10.1016/0012-365X(91)90159-4"
+ },
+ "claim": "CONDITIONAL on the single Eswarathasan–Levine axiom plus its elementary reduction being tactic-complete: for every prime p and n ≥ 1, p ∣ gcd(a_n, L_n) ↔ H_{⌊n/p⌋} = 0 in F_p; footprint {propext, Classical.choice, Quot.sound, PublishedTheorem_EswarathasanLevine1991}; bears only on the gcd>1 conjunct — the conjunction is NOT closed by this lemma (conjunct-swap trap not triggered).",
+ "gate": {
+  "passed": false,
+  "reason": "KERNEL_FAILED",
+  "detail": "the LAP file did not compile (exit 1)"
+ },
+ "kernel_result": {
+  "status": "UNVERIFIED",
+  "file": "oracle/frontier_formalizer/cable/theorems/lap_fmz-erdos291-campaign-001-R002-L1.lean",
+  "backend": "wsl",
+  "project": "/root/erdosfire-bench/proofs",
+  "needsMathlib": true,
+  "exitCode": 1,
+  "seconds": 6.7,
+  "declarations": [
+   {
+    "declaration": "msl_fmz_erdos291_campaign_001_R002_L1",
+    "clean": true,
+    "axioms": []
+   }
+  ],
+  "errors": [
+   "/tmp/oracle_lean_bVYFRXCZ.lean:5:32: error(lean.unknownIdentifier): Unknown identifier `Q`",
+   "/tmp/oracle_lean_bVYFRXCZ.lean:5:85: error(lean.unknownIdentifier): Unknown identifier `Q`",
+   "/tmp/oracle_lean_bVYFRXCZ.lean:7:55: error(lean.unknownIdentifier): Unknown identifier `Q`",
+   "/tmp/oracle_lean_bVYFRXCZ.lean:15:48: error: unexpected token 'theorem'; expected term",
+   "/tmp/oracle_lean_bVYFRXCZ.lean:16:65: error(lean.synthInstanceFailed): failed to synthesize instance of type class",
+   "/tmp/oracle_lean_bVYFRXCZ.lean:16:93: error(lean.unknownIdentifier): Unknown identifier `intro`",
+   "/tmp/oracle_lean_bVYFRXCZ.lean:23:0: error: unexpected token 'have'; expected command"
+  ]
+ },
+ "seconds": 19.6,
+ "law": "CLOSED_CONDITIONAL_ON_CITATION is NOT TARGET_CLOSED. The kernel checked the IMPLICATION from the assumed theorem; it did not check the assumed theorem. Confirm `axiom_statement_lean` against `citation.verbatim`, and confirm that the cited theorem exists in that form, before this is cited as a result.",
+ "timestamp": "2026-09-01T19:33:04Z"
+}

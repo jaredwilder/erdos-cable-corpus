@@ -1,0 +1,104 @@
+{
+ "schema": "oracle.msl.cable.v1",
+ "id": "erdos595-star-k219s-v3-2026-09-05",
+ "spec": {
+  "id": "erdos595-star-k219s-v3-2026-09-05",
+  "imports": "Mathlib",
+  "definitions": "namespace Erdos595Star\n\nvariable {V : Type*}\n\ndef star (G : SimpleGraph V) (v : V) : SimpleGraph V :=\n  SimpleGraph.fromRel (fun x y => x = v \u2227 G.Adj x y)\n\ntheorem star_adj_endpoint (G : SimpleGraph V) (v : V) :\n    \u2200 x y : V, (star G v).Adj x y \u2192 x = v \u2228 y = v := by\n  intro x y h\n  simp only [star, SimpleGraph.fromRel_adj] at h\n  rcases h with \u27e8-, \u27e8hx, -\u27e9 | \u27e8hy, -\u27e9\u27e9\n  \u00b7 exact Or.inl hx\n  \u00b7 exact Or.inr hy\n\ntheorem star_le (G : SimpleGraph V) (v : V) : star G v \u2264 G := by\n  intro x y h\n  simp only [star, SimpleGraph.fromRel_adj] at h\n  rcases h with \u27e8-, \u27e8-, ha\u27e9 | \u27e8-, ha\u27e9\u27e9\n  \u00b7 exact ha\n  \u00b7 exact ha.symm\n\ntheorem star_cliqueFree (G : SimpleGraph V) (v : V) : (star G v).CliqueFree 3 := by\n  classical\n  intro s hs\n  obtain \u27e8a, b, c, hab, hac, hbc, hset\u27e9 := Finset.card_eq_three.mp hs.2\n  subst hset\n  have key := star_adj_endpoint G v\n  by_cases hav : a = v\n  \u00b7 have h1 := key b c (hs.1 (by simp) (by simp) hbc)\n    rcases h1 with hbv | hcv\n    \u00b7 exact hab (hav.trans hbv.symm)\n    \u00b7 exact hac (hav.trans hcv.symm)\n  \u00b7 by_cases hbv : b = v\n    \u00b7 have h1 := key a c (hs.1 (by simp) (by simp) hac)\n      rcases h1 with h | h\n      \u00b7 exact hav h\n      \u00b7 exact hbc (hbv.trans h.symm)\n    \u00b7 have h1 := key a b (hs.1 (by simp) (by simp) hab)\n      rcases h1 with h | h\n      \u00b7 exact hav h\n      \u00b7 exact hbv h\n\ntheorem star_edgeSet_uncountable (G : SimpleGraph V) (v : V)\n    (h : \u00ac (G.neighborSet v).Countable) : \u00ac (star G v).edgeSet.Countable := by\n  intro hc\n  apply h\n  have hinj : Function.Injective (fun u : V => s(v, u)) := fun u u' he => Sym2.congr_right.mp he\n  have hpre : G.neighborSet v \u2286 (fun u : V => s(v, u)) \u207b\u00b9' (star G v).edgeSet := by\n    intro u hu\n    have hne : v \u2260 u := G.ne_of_adj hu\n    exact (star G v).mem_edgeSet.mpr (by\n      simp only [star, SimpleGraph.fromRel_adj]\n      exact \u27e8hne, Or.inl \u27e8rfl, hu\u27e9\u27e9)\n  exact ((hc.preimage hinj).mono hpre)\n\nend Erdos595Star",
+  "hypotheses": [
+   "{V : Type*}",
+   "(G : SimpleGraph V)",
+   "(v : V)",
+   "(h : \u00ac (G.neighborSet v).Countable)"
+  ],
+  "conclusion": "\u2203 H : SimpleGraph V, H \u2264 G \u2227 H.CliqueFree 3 \u2227 \u00ac H.edgeSet.Countable",
+  "proof": "by exact \u27e8Erdos595Star.star G v, Erdos595Star.star_le G v, Erdos595Star.star_cliqueFree G v, Erdos595Star.star_edgeSet_uncountable G v h\u27e9"
+ },
+ "formal_status": "KERNEL_FAILED",
+ "events": [
+  "((supplied proof)) TYPE.FAIL MISMATCH[/tmp/oracle_lean_DRCOMh6Z.lean:58:26: error: Application type mismatch: The argument]"
+ ],
+ "axioms": [
+  "Classical.choice",
+  "Quot.sound",
+  "propext",
+  "sorryAx"
+ ],
+ "attempts": [
+  {
+   "tactic": "(supplied proof)",
+   "status": "UNVERIFIED",
+   "seconds": 47.6,
+   "errors": [
+    "/tmp/oracle_lean_DRCOMh6Z.lean:58:26: error: Application type mismatch: The argument"
+   ],
+   "exitCode": 1,
+   "resource_limit": null
+  }
+ ],
+ "budget_history": [
+  {
+   "tier_seconds": 120.0,
+   "outcome": "KERNEL_FAILED"
+  }
+ ],
+ "kernel_result": {
+  "status": "UNVERIFIED",
+  "file": "oracle/frontier_formalizer/cable/theorems/msl_erdos595-star-k219s-v3-2026-09-05.lean",
+  "backend": "wsl",
+  "project": "/root/erdosfire-bench/proofs",
+  "needsMathlib": true,
+  "exitCode": 1,
+  "seconds": 36.6,
+  "declarations": [
+   {
+    "declaration": "star_adj_endpoint",
+    "clean": true,
+    "axioms": [
+     "propext"
+    ]
+   },
+   {
+    "declaration": "star_le",
+    "clean": true,
+    "axioms": [
+     "propext"
+    ]
+   },
+   {
+    "declaration": "star_cliqueFree",
+    "clean": true,
+    "axioms": [
+     "propext",
+     "Classical.choice",
+     "Quot.sound"
+    ]
+   },
+   {
+    "declaration": "star_edgeSet_uncountable",
+    "clean": false,
+    "axioms": [
+     "propext",
+     "sorryAx",
+     "Classical.choice",
+     "Quot.sound"
+    ]
+   },
+   {
+    "declaration": "msl_erdos595_star_k219s_v3_2026_09_05",
+    "clean": false,
+    "axioms": [
+     "propext",
+     "sorryAx",
+     "Classical.choice",
+     "Quot.sound"
+    ]
+   }
+  ],
+  "errors": [
+   "/tmp/oracle_lean_DRCOMh6Z.lean:58:26: error: Application type mismatch: The argument"
+  ]
+ },
+ "lean_result_block": "LEAN_RESULT erdos595-star-k219s-v3-2026-09-05\n  FORMAL_STATUS KERNEL_FAILED\n  FILE oracle/frontier_formalizer/cable/theorems/msl_erdos595-star-k219s-v3-2026-09-05.lean\n  THEOREMS msl_erdos595_star_k219s_v3_2026_09_05\n  BACKEND wsl\n  AXIOMS Classical.choice, Quot.sound, propext, sorryAx\n  TACTIC (supplied proof)\n  BUDGET 120s:KERNEL_FAILED\n  FAILURE ((supplied proof)) TYPE.FAIL MISMATCH[/tmp/oracle_lean_DRCOMh6Z.lean:58:26: error: Application type mismatch: The argument]\n  LAW KERNEL_FAILED does not refute the claim \u2014 the FAILURE line names what actually broke",
+ "timestamp": "2026-09-05T17:23:10Z"
+}

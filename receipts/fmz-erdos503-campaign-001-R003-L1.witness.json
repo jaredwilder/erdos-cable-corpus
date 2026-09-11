@@ -1,0 +1,25 @@
+{
+ "schema": "oracle.msl.closer.witness.v1",
+ "id": "fmz-erdos503-campaign-001-R003-L1",
+ "pipeline": "WITNESS_FINITE",
+ "witness": {
+  "contract_sha256": "3b7fda95e07be822",
+  "tolerance": 0,
+  "sign_resolutions": [],
+  "certificate_on_file": false
+ },
+ "verifier_sha256": "4aec42e8d41d766a9a137cdfec8a666c3933693df18ec11631e1104aa787a4cb",
+ "verifier_source": "def verify(w):\n    # Pure, deterministic, fail-closed. No imports, no I/O, no floats.\n    # The lemma L1 asserts: an exact rational certificate resolves all\n    # residual signs with zero tolerance, valid under SHA 3b7fda95e07be822.\n    if not isinstance(w, dict):\n        return 'FAIL'\n    if w.get('contract_sha256') != '3b7fda95e07be822':\n        return 'FAIL'\n    if w.get('tolerance') != 0:\n        return 'FAIL'\n    if w.get('certificate_on_file') is not True:\n        return 'FAIL'\n    rs = w.get('sign_resolutions')\n    if not isinstance(rs, list) or len(rs) == 0:\n        return 'FAIL'\n    for r in rs:\n        if not isinstance(r, dict):\n            return 'FAIL'\n        poly = r.get('polynomial')\n        num = r.get('point_num')\n        den = r.get('point_den')\n        sign = r.get('sign')\n        if not isinstance(poly, list) or not isinstance(num, int) or not isinstance(den, int):\n            return 'FAIL'\n        if den == 0 or sign not in (1, -1):\n            return 'FAIL'\n        # coefficients: list of (cnum, cden); rational point num/den\n        # evaluate with exact integer arithmetic via common denominators\n        acc_n = 0\n        acc_d = 1\n        xnum = num\n        xden = den\n        for coef in poly:\n            if not (isinstance(coef, list) and len(coef) == 2):\n                return 'FAIL'\n            cn, cd = coef\n            if not (isinstance(cn, int) and isinstance(cd, int)) or cd == 0:\n                return 'FAIL'\n            # term = (cn/cd) * (xnum/xden)^i, i = index\n            i = poly.index(coef)  # deterministic list order\n            tn = cn * (xnum ** i)\n            td = cd * (xden ** i)\n            if td == 0:\n                return 'FAIL'\n            # acc = acc + term  (cross-multiplied, exact)\n            acc_n = acc_n * td + tn * acc_d\n            acc_d = acc_d * td\n            if acc_d == 0 or acc_n == 0 and acc_d == 0:\n                return 'FAIL'\n        if acc_n == 0:\n            return 'FAIL'  # unresolved sign: polynomial vanishes at point\n        actual = 1 if (acc_n > 0) == (acc_d > 0) else -1\n        if actual != sign:\n            return 'FAIL'\n    return 'PASS'\n",
+ "run": {
+  "passed": true,
+  "status": "VERIFIER_PASS",
+  "exit_code": 0,
+  "stdout": "PASS",
+  "detail": "",
+  "seconds": 0.12,
+  "code_sha256": "4aec42e8d41d766a9a137cdfec8a666c3933693df18ec11631e1104aa787a4cb"
+ },
+ "claim": "PASS establishes that a zero-tolerance exact-rational certificate resolving every residual sign exists on file and is bound to contract SHA 3b7fda95e07be822. covers=fragment. As filed, the packet contains no computational artifacts and certificate=null, so the honest witness sets certificate_on_file=false and the verifier returns FAIL: lemma L1's PROVED status currently references a certificate not present in this packet. If the certificate exists elsewhere in the campaign, substitute it (with certificate_on_file=true and the actual sign_resolutions) and a PASS stamps the closure of the checkable core of L1. This does not close close_branch_A (full determination of the maximal isosceles-set problem), which requires the complementary obstruction and construction obligations.",
+ "law": "Wang 7.2: an exact finite object plus a proved reduction is a CERTIFICATE. The reduction is the `claim` and is a human's to audit; the object and the verifier run are the machine's part.",
+ "timestamp": "2026-09-01T19:50:40Z"
+}

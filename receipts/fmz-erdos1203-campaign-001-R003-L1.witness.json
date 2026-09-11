@@ -1,0 +1,35 @@
+{
+ "schema": "oracle.msl.closer.witness.v1",
+ "id": "fmz-erdos1203-campaign-001-R003-L1",
+ "pipeline": "WITNESS_FINITE",
+ "witness": {
+  "n": 30014,
+  "k": 16,
+  "n_plus_k": 30030,
+  "prime_factorization_of_n_plus_k": [
+   2,
+   3,
+   5,
+   7,
+   11,
+   13
+  ],
+  "omega_n_plus_k": 6,
+  "refuted_claim": "F(n) <= 2 for every n (standing lemma L1)",
+  "refutation_core": "omega(30030) * log(log(16))/log(16) = 6 * log(log 16)/log 16 > 2, certified exactly via 6*ln(ln 16) > 2*ln 16 in rational interval arithmetic"
+ },
+ "verifier_sha256": "262a3c47bef37e73494a72e5f409dadace78f5012e28b78581fb84648e099356",
+ "verifier_source": "#!/usr/bin/env python3\n# Certifier-discipline verifier: no imports, no filesystem, no network,\n# no subprocess, deterministic, exact Fraction arithmetic only.\n# Witness is embedded as a literal (identical to body.witness).\n# Entry point: verify(witness) — RAISES on any failed check, returns True on PASS.\nfrom fractions import Fraction\n\nclass VerifyError(Exception):\n    pass\n\ndef _is_prime(p):\n    if p < 2: return False\n    d = 2\n    while d*d <= p:\n        if p % d == 0: return False\n        d += 1\n    return True\n\ndef _ln_bounds(x_num, x_den, terms):\n    # Exact bounds for ln(x), rational x > 1, via 2*atanh((x-1)/(x+1)).\n    # Alternating series with decreasing terms: even partial sums below ln x,\n    # odd partial sums above; remainder bounded by first omitted term.\n    # Returns (lower, upper) as Fractions; all comparisons exact.\n    m = Fraction(x_num - x_den, x_num + x_den)\n    s = Fraction(0)\n    lower = None; upper = None\n    for j in range(terms):\n        t = m**(2*j+1) / (2*j+1)\n        s += t if j % 2 == 0 else -t\n        if j % 2 == 0: upper = 2*s\n        else:          lower = 2*s\n    if lower is None:\n        raise VerifyError(\"need >= 2 series terms\")\n    t_next = m**(2*terms+1) / (2*terms+1)\n    return lower, upper + 2*t_next\n\ndef verify(witness):\n    n = witness[\"n\"]; k = witness[\"k\"]\n    primes = witness[\"prime_factorization_of_n_plus_k\"]\n    if n <= 0 or k < 3:\n        raise VerifyError(\"bad witness shape\")\n    nk = witness[\"n_plus_k\"]\n    if nk != n + k:\n        raise VerifyError(\"n_plus_k mismatch\")\n    if len(set(primes)) != len(primes):\n        raise VerifyError(\"primes not distinct\")\n    prod = 1\n    for p in primes:\n        if not isinstance(p, int) or not _is_prime(p):\n            raise VerifyError(\"non-prime in factorization\")\n        if nk % p != 0:\n            raise VerifyError(\"prime does not divide n+k\")\n        prod *= p\n    if prod != nk:\n        raise VerifyError(\"factorization incomplete: product != n+k\")\n    omega = len(primes)\n    if omega != witness[\"omega_n_plus_k\"]:\n        raise VerifyError(\"omega mismatch\")\n    T = 200\n    lo_lnk, hi_ln = _ln_bounds(k, 1, T)              # exact interval for ln k\n    if lo_lnk <= 1:\n        raise VerifyError(\"ln k not certified > 1\")\n    lo_lnln, hi_lnln = _ln_bounds(lo_lnk.numerator, lo_lnk.denominator, T)\n    if hi_lnln <= 0:\n        raise VerifyError(\"ln(ln k) not certified > 0\")\n    # Exact check: omega * ln(ln k) / ln k > 2\n    #   is certified by omega * lower(ln(ln k)) > 2 * upper(ln k).\n    if not (omega*lo_lnln > 2*hi_ln):\n        raise VerifyError(\"F(n) > 2 not certified\")\n    return True\n\nWITNESS = {\n    \"n\": 30014,\n    \"k\": 16,\n    \"n_plus_k\": 30030,\n    \"prime_factorization_of_n_plus_k\": [2, 3, 5, 7, 11, 13],\n    \"omega_n_plus_k\": 6,\n}\n\nverify(WITNESS)   # returns only if all checks passed; raises otherwise\nraise SystemExit(0)   # PASS signal by exit status only",
+ "run": {
+  "passed": false,
+  "status": "VERIFIER_FAIL",
+  "exit_code": 1,
+  "stdout": "",
+  "detail": "VerifyError: F(n) > 2 not certified",
+  "seconds": 43.26,
+  "code_sha256": "262a3c47bef37e73494a72e5f409dadace78f5012e28b78581fb84648e099356"
+ },
+ "claim": "verify(WITNESS) returning without raising (exit status 0; all comparisons exact rational interval arithmetic via certified atanh-series bounds, no imports/IO/floats/tolerance) certifies the explicit counterexample F(30014) >= omega(30030)*log(log 16)/log 16 = 6*log(log 16)/log 16 > 2, refuting the standing lemma L1's claim 'F(n) <= 2 for every n' and hence its stated inference that branch A is false and branch B closes. covers=fragment: certifies that L1's checkable universal content is FALSE at an explicit instance; it does not close branch B (SUP-vs-SUBSEQUENCE trap: a fixed-shift unbounded subsequence does not decide full-sequence divergence). Recommended registry action: downgrade L1 from PROVED and re-register the surviving uniform-bound fragment with the k >= k0(n) restriction as a new lemma.",
+ "law": "Wang 7.2: an exact finite object plus a proved reduction is a CERTIFICATE. The reduction is the `claim` and is a human's to audit; the object and the verifier run are the machine's part.",
+ "timestamp": "2026-09-01T22:38:37Z"
+}

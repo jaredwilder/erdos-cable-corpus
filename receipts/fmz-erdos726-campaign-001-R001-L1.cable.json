@@ -1,0 +1,59 @@
+{
+ "schema": "oracle.msl.cable.v1",
+ "id": "fmz-erdos726-campaign-001-R001-L1",
+ "spec": {
+  "id": "fmz-erdos726-campaign-001-R001-L1",
+  "imports": "none",
+  "definitions": "def isPrime (n : Nat) : Bool :=\n  if n < 2 then false\n  else (List.range (n - 2 + 1)).all (fun d => d + 2 = n \u2228 n % (d + 2) \u2260 0)\n\ndef primesInWindow (n : Nat) : List Nat :=\n  (List.range (2*n/3 + 1)).filter (fun p => isPrime p && p > n/2)\n\ndef scaledSum (n scale : Nat) : Nat :=\n  (primesInWindow n).foldl (fun acc p => acc + scale / p) 0\n\ndef checkL1 (n scale bound : Nat) : Bool :=\n  scaledSum n scale \u2264 bound",
+  "conclusion": "checkL1 1000 1000000 200000 = true",
+  "proof": "by decide"
+ },
+ "formal_status": "KERNEL_FAILED",
+ "events": [
+  "((supplied proof)) RAW[tmpwbatn7zo.lean:16:90: error: maximum recursion depth has been reached]"
+ ],
+ "axioms": [
+  "sorryAx"
+ ],
+ "attempts": [
+  {
+   "tactic": "(supplied proof)",
+   "status": "UNVERIFIED",
+   "seconds": 4.5,
+   "errors": [
+    "tmpwbatn7zo.lean:16:90: error: maximum recursion depth has been reached"
+   ],
+   "exitCode": 1,
+   "resource_limit": "maximum recursion depth"
+  }
+ ],
+ "budget_history": [
+  {
+   "tier_seconds": 900.0,
+   "outcome": "UNDECIDED_RESOURCE[maximum recursion depth]"
+  }
+ ],
+ "kernel_result": {
+  "status": "UNVERIFIED",
+  "file": "oracle/frontier_formalizer/cable/theorems/msl_fmz-erdos726-campaign-001-R001-L1.lean",
+  "backend": "windows",
+  "project": "C:\\Users\\jared\\Local Sites\\woocommerce-enterprise\\oracle\\math\\EG411Formal",
+  "needsMathlib": false,
+  "exitCode": 1,
+  "seconds": 4.5,
+  "declarations": [
+   {
+    "declaration": "msl_fmz_erdos726_campaign_001_R001_L1",
+    "clean": false,
+    "axioms": [
+     "sorryAx"
+    ]
+   }
+  ],
+  "errors": [
+   "tmpwbatn7zo.lean:16:90: error: maximum recursion depth has been reached"
+  ]
+ },
+ "lean_result_block": "LEAN_RESULT fmz-erdos726-campaign-001-R001-L1\n  FORMAL_STATUS KERNEL_FAILED\n  FILE oracle/frontier_formalizer/cable/theorems/msl_fmz-erdos726-campaign-001-R001-L1.lean\n  THEOREMS msl_fmz_erdos726_campaign_001_R001_L1\n  BACKEND windows\n  AXIOMS sorryAx\n  TACTIC (supplied proof)\n  BUDGET 900s:UNDECIDED_RESOURCE[maximum recursion depth]\n  FAILURE ((supplied proof)) RAW[tmpwbatn7zo.lean:16:90: error: maximum recursion depth has been reached]\n  LAW KERNEL_FAILED does not refute the claim \u2014 the FAILURE line names what actually broke\n  LAW BUDGET_EXHAUSTED is an UNDECIDED question, not a failed proof \u2014 the machine stopped, the mathematics did not answer",
+ "timestamp": "2026-09-01T21:48:31Z"
+}

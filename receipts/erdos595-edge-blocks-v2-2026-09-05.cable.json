@@ -1,0 +1,86 @@
+{
+ "schema": "oracle.msl.cable.v1",
+ "id": "erdos595-edge-blocks-v2-2026-09-05",
+ "spec": {
+  "id": "erdos595-edge-blocks-v2-2026-09-05",
+  "imports": "Mathlib",
+  "definitions": "namespace Erdos595EB\n\nvariable {V I : Type*}\n\ndef Coverable (G : SimpleGraph V) : Prop :=\n  \u2203 H : \u2115 \u2192 SimpleGraph V, (\u2200 n, H n \u2264 G) \u2227 (\u2200 n, (H n).CliqueFree 3) \u2227\n    G.edgeSet \u2286 \u22c3 n, (H n).edgeSet\n\ntheorem cliqueFree_three_iff (G : SimpleGraph V) :\n    G.CliqueFree 3 \u2194 \u2200 x y z : V, G.Adj x y \u2192 G.Adj y z \u2192 G.Adj x z \u2192 False := by\n  classical\n  constructor\n  \u00b7 intro hG x y z hxy hyz hxz\n    exact hG {x, y, z} (SimpleGraph.is3Clique_triple_iff.mpr \u27e8hxy, hxz, hyz\u27e9)\n  \u00b7 intro h s hs\n    obtain \u27e8x, y, z, hxy, hxz, hyz, hset\u27e9 := Finset.card_eq_three.mp hs.2\n    subst hset\n    exact h x y z (hs.1 (by simp) (by simp) hxy) (hs.1 (by simp) (by simp) hyz)\n      (hs.1 (by simp) (by simp) hxz)\n\ntheorem coverable_of_edge_blocks (G : SimpleGraph V) (q : Sym2 V \u2192 I)\n    (K : I \u2192 \u2115 \u2192 SimpleGraph V)\n    (hle : \u2200 i n, K i n \u2264 G)\n    (hfree : \u2200 i n, (K i n).CliqueFree 3)\n    (hblock : \u2200 i n x y, (K i n).Adj x y \u2192 q s(x, y) = i)\n    (htri : \u2200 x y z : V, G.Adj x y \u2192 G.Adj y z \u2192 G.Adj x z \u2192\n      q s(x, y) = q s(y, z) \u2227 q s(x, z) = q s(y, z))\n    (hcov : \u2200 x y : V, G.Adj x y \u2192 \u2203 n, (K (q s(x, y)) n).Adj x y) : Coverable G := by\n  classical\n  refine \u27e8fun n => SimpleGraph.fromEdgeSet (\u22c3 i, (K i n).edgeSet), ?_, ?_, ?_\u27e9\n  \u00b7 intro n x y h\n    rw [SimpleGraph.fromEdgeSet_adj] at h\n    obtain \u27e8i, hi\u27e9 := Set.mem_iUnion.mp h.1\n    exact hle i n ((K i n).mem_edgeSet.mp hi)\n  \u00b7 intro n\n    rw [cliqueFree_three_iff]\n    intro x y z hxy hyz hxz\n    rw [SimpleGraph.fromEdgeSet_adj] at hxy hyz hxz\n    obtain \u27e8i, hi\u27e9 := Set.mem_iUnion.mp hxy.1\n    obtain \u27e8j, hj\u27e9 := Set.mem_iUnion.mp hyz.1\n    obtain \u27e8k, hk\u27e9 := Set.mem_iUnion.mp hxz.1\n    have ai : (K i n).Adj x y := (K i n).mem_edgeSet.mp hi\n    have aj : (K j n).Adj y z := (K j n).mem_edgeSet.mp hj\n    have ak : (K k n).Adj x z := (K k n).mem_edgeSet.mp hk\n    have e1 : q s(x, y) = i := hblock i n x y ai\n    have e2 : q s(y, z) = j := hblock j n y z aj\n    have e3 : q s(x, z) = k := hblock k n x z ak\n    obtain \u27e8t1, t2\u27e9 := htri x y z (hle i n ai) (hle j n aj) (hle k n ak)\n    have hji : j = i := by rw [\u2190 e2, \u2190 t1, e1]\n    have hki : k = i := by rw [\u2190 e3, t2, e2, hji]\n    rw [hji] at aj\n    rw [hki] at ak\n    exact (cliqueFree_three_iff (K i n)).mp (hfree i n) x y z ai aj ak\n  \u00b7 intro e he\n    induction e using Sym2.ind with\n    | _ x y =>\n      have hGadj : G.Adj x y := G.mem_edgeSet.mp he\n      obtain \u27e8n, hn\u27e9 := hcov x y hGadj\n      refine Set.mem_iUnion.mpr \u27e8n, ?_\u27e9\n      rw [SimpleGraph.edgeSet_fromEdgeSet]\n      refine \u27e8Set.mem_iUnion.mpr \u27e8q s(x, y), (K (q s(x, y)) n).mem_edgeSet.mpr hn\u27e9, ?_\u27e9\n      exact fun hd => (G.not_isDiag_of_mem_edgeSet he) hd\n\nend Erdos595EB",
+  "hypotheses": [
+   "{V I : Type*}",
+   "(G : SimpleGraph V)",
+   "(q : Sym2 V \u2192 I)",
+   "(K : I \u2192 \u2115 \u2192 SimpleGraph V)",
+   "(hle : \u2200 i n, K i n \u2264 G)",
+   "(hfree : \u2200 i n, (K i n).CliqueFree 3)",
+   "(hblock : \u2200 i n x y, (K i n).Adj x y \u2192 q s(x, y) = i)",
+   "(htri : \u2200 x y z : V, G.Adj x y \u2192 G.Adj y z \u2192 G.Adj x z \u2192 q s(x, y) = q s(y, z) \u2227 q s(x, z) = q s(y, z))",
+   "(hcov : \u2200 x y : V, G.Adj x y \u2192 \u2203 n, (K (q s(x, y)) n).Adj x y)"
+  ],
+  "conclusion": "Erdos595EB.Coverable G",
+  "proof": "by exact Erdos595EB.coverable_of_edge_blocks G q K hle hfree hblock htri hcov"
+ },
+ "formal_status": "KERNEL_CHECKED",
+ "events": [],
+ "axioms": [
+  "Classical.choice",
+  "Quot.sound",
+  "propext"
+ ],
+ "attempts": [
+  {
+   "tactic": "(supplied proof)",
+   "status": "VERIFIED",
+   "seconds": 119.2,
+   "errors": [],
+   "exitCode": 0,
+   "resource_limit": null
+  }
+ ],
+ "budget_history": [
+  {
+   "tier_seconds": 120.0,
+   "outcome": "KERNEL_CHECKED"
+  }
+ ],
+ "kernel_result": {
+  "status": "VERIFIED",
+  "file": "oracle/frontier_formalizer/cable/theorems/msl_erdos595-edge-blocks-v2-2026-09-05.lean",
+  "backend": "wsl",
+  "project": "/root/erdosfire-bench/proofs",
+  "needsMathlib": true,
+  "exitCode": 0,
+  "seconds": 100.5,
+  "declarations": [
+   {
+    "declaration": "cliqueFree_three_iff",
+    "clean": true,
+    "axioms": [
+     "propext",
+     "Classical.choice",
+     "Quot.sound"
+    ]
+   },
+   {
+    "declaration": "coverable_of_edge_blocks",
+    "clean": true,
+    "axioms": [
+     "propext",
+     "Classical.choice",
+     "Quot.sound"
+    ]
+   },
+   {
+    "declaration": "msl_erdos595_edge_blocks_v2_2026_09_05",
+    "clean": true,
+    "axioms": [
+     "propext",
+     "Classical.choice",
+     "Quot.sound"
+    ]
+   }
+  ],
+  "errors": []
+ },
+ "lean_result_block": "LEAN_RESULT erdos595-edge-blocks-v2-2026-09-05\n  FORMAL_STATUS KERNEL_CHECKED\n  FILE oracle/frontier_formalizer/cable/theorems/msl_erdos595-edge-blocks-v2-2026-09-05.lean\n  THEOREMS msl_erdos595_edge_blocks_v2_2026_09_05\n  BACKEND wsl\n  AXIOMS Classical.choice, Quot.sound, propext\n  TACTIC (supplied proof)\n  BUDGET 120s:KERNEL_CHECKED\n  FAILURE NONE",
+ "timestamp": "2026-09-06T10:13:54Z"
+}

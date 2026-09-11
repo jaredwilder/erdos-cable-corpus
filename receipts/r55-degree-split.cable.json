@@ -1,0 +1,123 @@
+{
+ "schema": "oracle.msl.cable.v1",
+ "id": "r55-degree-split",
+ "spec": {
+  "id": "r55-degree-split",
+  "imports": "none",
+  "set_options": [
+   "set_option maxRecDepth 20000"
+  ],
+  "definitions": "def deg (e : Nat \u2192 Nat \u2192 Bool) (v : Nat) (V : List Nat) : Nat := (V.filter (e v)).length\n\ndef degSumOn (e : Nat \u2192 Nat \u2192 Bool) (L W : List Nat) : Nat :=\n  (L.map (fun v => deg e v W)).sum\n\ntheorem deg_cons_self (e : Nat \u2192 Nat \u2192 Bool) (a : Nat) (t : List Nat) (h : e a a = false) :\n    deg e a (a :: t) = deg e a t := by\n  unfold deg; simp [List.filter_cons, h]\n\ntheorem deg_cons_other (e : Nat \u2192 Nat \u2192 Bool) (a v : Nat) (t : List Nat) :\n    deg e v (a :: t) = (if e v a = true then 1 else 0) + deg e v t := by\n  unfold deg\n  by_cases h : e v a = true\n  \u00b7 simp [List.filter_cons, h]; omega\n  \u00b7 simp [List.filter_cons, h]\n\n/-- summing a pointwise sum splits -/\ntheorem sum_map_add (f g : Nat \u2192 Nat) : \u2200 L : List Nat,\n    (L.map (fun v => f v + g v)).sum = (L.map f).sum + (L.map g).sum := by\n  intro L; induction L with\n  | nil => simp\n  | cons a t ih => simp [ih]; omega\n\n/-- an indicator sum counts the filter -/\ntheorem sum_indicator (p : Nat \u2192 Bool) : \u2200 L : List Nat,\n    (L.map (fun v => if p v = true then 1 else 0)).sum = (L.filter p).length := by\n  intro L; induction L with\n  | nil => simp\n  | cons a t ih =>\n    by_cases h : p a = true\n    \u00b7 simp [List.filter_cons, h, ih]; omega\n    \u00b7 simp [List.filter_cons, h, ih]\n\n/-- symmetry lets the incoming count be read as the outgoing degree -/\ntheorem filter_symm (e : Nat \u2192 Nat \u2192 Bool) (hs : \u2200 x y, e x y = e y x) (a : Nat) :\n    \u2200 L : List Nat, (L.filter (fun v => e v a)).length = deg e a L := by\n  intro L\n  unfold deg\n  have : (fun v => e v a) = (e a) := by funext v; exact hs v a\n  rw [this]\n\n/-- \u2b50 THE HANDSHAKE, over vertex lists: for a symmetric relation that is loop-free on the\n    list, the degree sum is TWICE the degree sum of the tail plus twice a vertex degree \u2014\n    hence even, by induction. -/\ntheorem degSum_even (e : Nat \u2192 Nat \u2192 Bool) (hs : \u2200 x y, e x y = e y x) :\n    \u2200 L : List Nat, (\u2200 v \u2208 L, e v v = false) \u2192 degSumOn e L L % 2 = 0 := by\n  intro L\n  induction L with\n  | nil => intro _; simp [degSumOn]\n  | cons a t ih =>\n    intro hloop\n    have hself : e a a = false := hloop a (by simp)\n    have htail : \u2200 v \u2208 t, e v v = false := fun v hv => hloop v (by simp [hv])\n    have hih := ih htail\n    have hstep : degSumOn e (a :: t) (a :: t) = 2 * deg e a t + degSumOn e t t := by\n      unfold degSumOn\n      simp only [List.map_cons, List.sum_cons]\n      rw [deg_cons_self e a t hself]\n      have hmap : (t.map (fun v => deg e v (a :: t)))\n                = (t.map (fun v => (if e v a = true then 1 else 0) + deg e v t)) := by\n        apply List.map_congr_left\n        intro v _\n        exact deg_cons_other e a v t\n      rw [hmap, sum_map_add (fun v => if e v a = true then 1 else 0) (fun v => deg e v t) t,\n          sum_indicator (fun v => e v a) t, filter_symm e hs a t]\n      omega\n    rw [hstep]\n    omega\n\ntheorem degSum_even_control : degSumOn (fun a b => a != b) [0,1,2] [0,1,2] = 6 := by decide\n\n/-- the complement degree, with the vertex itself excluded -/\ndef ndeg (e : Nat \u2192 Nat \u2192 Bool) (v : Nat) (V : List Nat) : Nat :=\n  (V.filter (fun u => (v != u) && ! e v u)).length\n\n/-- in a duplicate-free list containing v, the elements other than v number one fewer -/\ntheorem count_others (v : Nat) : \u2200 L : List Nat, L.Nodup \u2192 v \u2208 L \u2192\n    (L.filter (fun u => v != u)).length = L.length - 1 := by\n  intro L\n  induction L with\n  | nil => intro _ h; simp at h\n  | cons a t ih =>\n    intro hnd hmem\n    rcases List.mem_cons.mp hmem with rfl | hv\n    \u00b7 have hnot : v \u2209 t := (List.nodup_cons.mp hnd).1\n      have : (t.filter (fun u => v != u)) = t := by\n        apply List.filter_eq_self.mpr\n        intro x hx\n        simp only [bne_iff_ne, ne_eq, decide_eq_true_eq]\n        intro hxe; exact hnot (hxe \u25b8 hx)\n      simp [List.filter_cons, this]\n    \u00b7 have hnd' : t.Nodup := (List.nodup_cons.mp hnd).2\n      have hne : v \u2260 a := by\n        intro he; exact (List.nodup_cons.mp hnd).1 (he \u25b8 hv)\n      have hlen : 1 \u2264 t.length := by\n        cases t with\n        | nil => simp at hv\n        | cons _ _ => simp\n      simp [List.filter_cons, hne, ih hnd' hv]\n      omega\n\n/-- so the two degrees split the rest of the list exactly -/\ntheorem deg_split (e : Nat \u2192 Nat \u2192 Bool) (v : Nat) : \u2200 L : List Nat, L.Nodup \u2192 v \u2208 L \u2192\n    e v v = false \u2192 deg e v L + ndeg e v L = L.length - 1 := by\n  intro L hnd hmem hloop\n  unfold deg ndeg\n  have hsplit : \u2200 M : List Nat,\n      (M.filter (e v)).length + (M.filter (fun u => (v != u) && ! e v u)).length\n        = (M.filter (fun u => v != u)).length := by\n    intro M\n    induction M with\n    | nil => simp\n    | cons a t ih =>\n      by_cases hva : v = a\n      \u00b7 subst hva\n        simp [List.filter_cons, hloop, ih]\n      \u00b7 by_cases hea : e v a = true\n        \u00b7 simp [List.filter_cons, hea, hva, ih]; omega\n        \u00b7 simp [List.filter_cons, hea, hva, ih]; omega\n  rw [hsplit L, count_others v L hnd hmem]",
+  "hypotheses": [],
+  "conclusion": "degSumOn (fun a b => a != b) [0,1,2] [0,1,2] = 6",
+  "proof": "by decide"
+ },
+ "formal_status": "KERNEL_CHECKED",
+ "events": [],
+ "axioms": [
+  "Quot.sound",
+  "propext"
+ ],
+ "attempts": [
+  {
+   "tactic": "(supplied proof)",
+   "status": "VERIFIED",
+   "seconds": 3.4,
+   "errors": [],
+   "exitCode": 0,
+   "resource_limit": null
+  }
+ ],
+ "budget_history": [
+  {
+   "tier_seconds": 120.0,
+   "outcome": "KERNEL_CHECKED"
+  }
+ ],
+ "kernel_result": {
+  "status": "VERIFIED",
+  "file": "oracle/frontier_formalizer/cable/theorems/msl_r55-degree-split.lean",
+  "backend": "windows",
+  "project": "C:\\Users\\jared\\Local Sites\\woocommerce-enterprise\\oracle\\math\\EG411Formal",
+  "needsMathlib": false,
+  "exitCode": 0,
+  "seconds": 3.4,
+  "declarations": [
+   {
+    "declaration": "deg_cons_self",
+    "clean": true,
+    "axioms": [
+     "propext"
+    ]
+   },
+   {
+    "declaration": "deg_cons_other",
+    "clean": true,
+    "axioms": [
+     "propext",
+     "Quot.sound"
+    ]
+   },
+   {
+    "declaration": "sum_map_add",
+    "clean": true,
+    "axioms": [
+     "propext",
+     "Quot.sound"
+    ]
+   },
+   {
+    "declaration": "sum_indicator",
+    "clean": true,
+    "axioms": [
+     "propext",
+     "Quot.sound"
+    ]
+   },
+   {
+    "declaration": "filter_symm",
+    "clean": true,
+    "axioms": [
+     "Quot.sound"
+    ]
+   },
+   {
+    "declaration": "degSum_even",
+    "clean": true,
+    "axioms": [
+     "propext",
+     "Quot.sound"
+    ]
+   },
+   {
+    "declaration": "degSum_even_control",
+    "clean": true,
+    "axioms": []
+   },
+   {
+    "declaration": "count_others",
+    "clean": true,
+    "axioms": [
+     "propext",
+     "Quot.sound"
+    ]
+   },
+   {
+    "declaration": "deg_split",
+    "clean": true,
+    "axioms": [
+     "propext",
+     "Quot.sound"
+    ]
+   },
+   {
+    "declaration": "msl_r55_degree_split",
+    "clean": true,
+    "axioms": []
+   }
+  ],
+  "errors": []
+ },
+ "lean_result_block": "LEAN_RESULT r55-degree-split\n  FORMAL_STATUS KERNEL_CHECKED\n  FILE oracle/frontier_formalizer/cable/theorems/msl_r55-degree-split.lean\n  THEOREMS msl_r55_degree_split\n  BACKEND windows\n  AXIOMS Quot.sound, propext\n  TACTIC (supplied proof)\n  BUDGET 120s:KERNEL_CHECKED\n  FAILURE NONE",
+ "timestamp": "2026-09-04T17:45:37Z"
+}

@@ -1,0 +1,55 @@
+{
+ "schema": "oracle.msl.cable.v1",
+ "id": "fmz-erdos1142-campaign-001-R005-L1-a1r3",
+ "spec": {
+  "id": "fmz-erdos1142-campaign-001-R005-L1-a1r3",
+  "imports": "Mathlib",
+  "definitions": "-- no auxiliary definitions",
+  "conclusion": "\u2200 k : \u2115, 3 \u2264 k \u2192 \u00ac Nat.Prime (2 * k - 2)",
+  "proof": "by\n  intro k hk hp\n  have hlt : 2 < 2 * k - 2 := by\n    omega\n  have hdiv : 2 \u2223 2 * k - 2 := by\n    refine \u27e8k - 1, ?_\u27e9\n    omega\n  have hone : 2 = 1 :=\n    (Nat.prime_def_lt.mp hp).2 2 hlt hdiv\n  omega"
+ },
+ "formal_status": "KERNEL_CHECKED",
+ "events": [],
+ "axioms": [
+  "Quot.sound",
+  "propext"
+ ],
+ "attempts": [
+  {
+   "tactic": "(supplied proof)",
+   "status": "VERIFIED",
+   "seconds": 7.2,
+   "errors": [],
+   "exitCode": 0,
+   "resource_limit": null
+  }
+ ],
+ "budget_history": [
+  {
+   "tier_seconds": 900.0,
+   "outcome": "KERNEL_CHECKED"
+  }
+ ],
+ "kernel_result": {
+  "status": "VERIFIED",
+  "file": "oracle/frontier_formalizer/cable/theorems/msl_fmz-erdos1142-campaign-001-R005-L1-a1r3.lean",
+  "backend": "wsl",
+  "project": "/root/erdosfire-bench/proofs",
+  "needsMathlib": true,
+  "exitCode": 0,
+  "seconds": 4.1,
+  "declarations": [
+   {
+    "declaration": "msl_fmz_erdos1142_campaign_001_R005_L1_a1r3",
+    "clean": true,
+    "axioms": [
+     "propext",
+     "Quot.sound"
+    ]
+   }
+  ],
+  "errors": []
+ },
+ "lean_result_block": "LEAN_RESULT fmz-erdos1142-campaign-001-R005-L1-a1r3\n  FORMAL_STATUS KERNEL_CHECKED\n  FILE oracle/frontier_formalizer/cable/theorems/msl_fmz-erdos1142-campaign-001-R005-L1-a1r3.lean\n  THEOREMS msl_fmz_erdos1142_campaign_001_R005_L1_a1r3\n  BACKEND wsl\n  AXIOMS Quot.sound, propext\n  TACTIC (supplied proof)\n  BUDGET 900s:KERNEL_CHECKED\n  FAILURE NONE",
+ "timestamp": "2026-09-02T01:55:30Z"
+}

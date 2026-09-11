@@ -1,0 +1,58 @@
+{
+ "schema": "oracle.msl.cable.v1",
+ "id": "LO14",
+ "spec": {
+  "id": "LO14",
+  "conclusion": "((List.range (1376)).filter (fun m => m > 500 && [81, 84, 90, 96, 108, 112, 120, 126, 132, 135, 140, 144, 150, 156, 176, 189, 198, 200, 210, 225, 234, 294, 297, 315, 330, 350, 351, 375, 390, 392, 440, 441, 462, 490, 495, 500].any (fun k => m % k == 0))).length < [81, 84, 90, 96, 108, 112, 120, 126, 132, 135, 140, 144, 150, 156, 176, 189, 198, 200, 210, 225, 234, 294, 297, 315, 330, 350, 351, 375, 390, 392, 440, 441, 462, 490, 495, 500].length",
+  "proof": "by decide",
+  "imports": "Mathlib"
+ },
+ "formal_status": "KERNEL_FAILED",
+ "events": [
+  "((supplied proof)) RAW[/tmp/oracle_lean_Rnli9BFO.lean:5:473: error: maximum recursion depth has been reached]"
+ ],
+ "axioms": [
+  "sorryAx"
+ ],
+ "attempts": [
+  {
+   "tactic": "(supplied proof)",
+   "status": "UNVERIFIED",
+   "seconds": 45.1,
+   "errors": [
+    "/tmp/oracle_lean_Rnli9BFO.lean:5:473: error: maximum recursion depth has been reached"
+   ],
+   "exitCode": 1,
+   "resource_limit": "maximum recursion depth"
+  }
+ ],
+ "budget_history": [
+  {
+   "tier_seconds": 120.0,
+   "outcome": "UNDECIDED_RESOURCE[maximum recursion depth]"
+  }
+ ],
+ "kernel_result": {
+  "status": "UNVERIFIED",
+  "file": "oracle/frontier_formalizer/cable/theorems/msl_LO14.lean",
+  "backend": "wsl",
+  "project": "/root/erdosfire-bench/proofs",
+  "needsMathlib": true,
+  "exitCode": 1,
+  "seconds": 34.1,
+  "declarations": [
+   {
+    "declaration": "msl_LO14",
+    "clean": false,
+    "axioms": [
+     "sorryAx"
+    ]
+   }
+  ],
+  "errors": [
+   "/tmp/oracle_lean_Rnli9BFO.lean:5:473: error: maximum recursion depth has been reached"
+  ]
+ },
+ "lean_result_block": "LEAN_RESULT LO14\n  FORMAL_STATUS KERNEL_FAILED\n  FILE oracle/frontier_formalizer/cable/theorems/msl_LO14.lean\n  THEOREMS msl_LO14\n  BACKEND wsl\n  AXIOMS sorryAx\n  TACTIC (supplied proof)\n  BUDGET 120s:UNDECIDED_RESOURCE[maximum recursion depth]\n  FAILURE ((supplied proof)) RAW[/tmp/oracle_lean_Rnli9BFO.lean:5:473: error: maximum recursion depth has been reached]\n  LAW KERNEL_FAILED does not refute the claim \u2014 the FAILURE line names what actually broke\n  LAW BUDGET_EXHAUSTED is an UNDECIDED question, not a failed proof \u2014 the machine stopped, the mathematics did not answer",
+ "timestamp": "2026-09-03T19:33:05Z"
+}

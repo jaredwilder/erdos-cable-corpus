@@ -1,0 +1,74 @@
+{
+ "schema": "oracle.msl.cable.v1",
+ "id": "r55-binomial-grid",
+ "spec": {
+  "id": "r55-binomial-grid",
+  "imports": "none",
+  "set_options": [
+   "set_option maxRecDepth 20000",
+   "set_option maxHeartbeats 40000000"
+  ],
+  "definitions": "def B : Nat \u2192 Nat \u2192 Nat\n  | 0, _ => 1\n  | _, 0 => 1\n  | (s+1), (t+1) => B s (t+1) + B (s+1) t\ndef C : Nat \u2192 Nat \u2192 Nat\n  | _, 0 => 1\n  | 0, (_+1) => 0\n  | (n+1), (k+1) => C n k + C n (k+1)\ndef grid : List Nat := List.range 12\ndef identityHolds : Bool :=\n  grid.all fun s => grid.all fun t => B s t == C (s + t) s\ndef anchors : Bool :=\n  (B 4 4 == 70) && (C 8 4 == 70) && (B 3 4 == 35) && (2 * B 3 4 == 70)\n  && (B 0 7 == 1) && (B 7 0 == 1)\ndef control : Bool := (B 4 4 != 69) && (C 8 4 != 71) && (C 8 3 == 56)\ndef binomialOK : Bool := identityHolds && anchors && control",
+  "hypotheses": [],
+  "conclusion": "binomialOK = true",
+  "proof": "by decide"
+ },
+ "formal_status": "KERNEL_FAILED",
+ "events": [
+  "((supplied proof)) RAW[tmp7mmmj6qb.lean:19:4: error: `control` has already been declared]",
+  "((supplied proof)) TYPE.FAIL MISMATCH[tmp7mmmj6qb.lean:20:53: error: Application type mismatch: The argument]",
+  "((supplied proof)) RAW[tmp7mmmj6qb.lean:22:57: error: Tactic `decide` failed for proposition]"
+ ],
+ "axioms": [
+  "Quot.sound",
+  "propext",
+  "sorryAx"
+ ],
+ "attempts": [
+  {
+   "tactic": "(supplied proof)",
+   "status": "UNVERIFIED",
+   "seconds": 13.1,
+   "errors": [
+    "tmp7mmmj6qb.lean:19:4: error: `control` has already been declared",
+    "tmp7mmmj6qb.lean:20:53: error: Application type mismatch: The argument",
+    "tmp7mmmj6qb.lean:22:57: error: Tactic `decide` failed for proposition"
+   ],
+   "exitCode": 1,
+   "resource_limit": null
+  }
+ ],
+ "budget_history": [
+  {
+   "tier_seconds": 120.0,
+   "outcome": "KERNEL_FAILED"
+  }
+ ],
+ "kernel_result": {
+  "status": "UNVERIFIED",
+  "file": "oracle/frontier_formalizer/cable/theorems/msl_r55-binomial-grid.lean",
+  "backend": "windows",
+  "project": "C:\\Users\\jared\\Local Sites\\woocommerce-enterprise\\oracle\\math\\EG411Formal",
+  "needsMathlib": false,
+  "exitCode": 1,
+  "seconds": 13.1,
+  "declarations": [
+   {
+    "declaration": "msl_r55_binomial_grid",
+    "clean": false,
+    "axioms": [
+     "propext",
+     "sorryAx",
+     "Quot.sound"
+    ]
+   }
+  ],
+  "errors": [
+   "tmp7mmmj6qb.lean:19:4: error: `control` has already been declared",
+   "tmp7mmmj6qb.lean:20:53: error: Application type mismatch: The argument",
+   "tmp7mmmj6qb.lean:22:57: error: Tactic `decide` failed for proposition"
+  ]
+ },
+ "lean_result_block": "LEAN_RESULT r55-binomial-grid\n  FORMAL_STATUS KERNEL_FAILED\n  FILE oracle/frontier_formalizer/cable/theorems/msl_r55-binomial-grid.lean\n  THEOREMS msl_r55_binomial_grid\n  BACKEND windows\n  AXIOMS Quot.sound, propext, sorryAx\n  TACTIC (supplied proof)\n  BUDGET 120s:KERNEL_FAILED\n  FAILURE ((supplied proof)) RAW[tmp7mmmj6qb.lean:19:4: error: `control` has already been declared]; ((supplied proof)) TYPE.FAIL MISMATCH[tmp7mmmj6qb.lean:20:53: error: Application type mismatch: The argument]; ((supplied proof)) RAW[tmp7mmmj6qb.lean:22:57: error: Tactic `decide` failed for proposition]\n  LAW KERNEL_FAILED does not refute the claim \u2014 the FAILURE line names what actually broke",
+ "timestamp": "2026-09-04T16:06:33Z"
+}

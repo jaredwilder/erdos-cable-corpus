@@ -1,0 +1,63 @@
+{
+ "schema": "oracle.msl.cable.v1",
+ "id": "erdos595-component-reduction",
+ "spec": {
+  "id": "erdos595-component-reduction",
+  "imports": "Mathlib",
+  "definitions": "open SimpleGraph in\ndef IsUTF {V : Type} (I : Type) (G : SimpleGraph V) : Prop :=\n  \u2203 H : I \u2192 SimpleGraph V, (\u2200 i, (H i).CliqueFree 3) \u2227 G = \u2a06 i, H i",
+  "hypotheses": [
+   "{V I K : Type}",
+   "(G : SimpleGraph V)",
+   "(part : V \u2192 K)",
+   "(H : K \u2192 I \u2192 SimpleGraph V)"
+  ],
+  "conclusion": "(\u2200 a b : V, G.Adj a b \u2192 part a = part b) \u2192 (\u2200 k i, (H k i).CliqueFree 3) \u2192 (\u2200 k i a b, (H k i).Adj a b \u2192 part a = k) \u2192 (\u2200 a b : V, G.Adj a b \u2192 \u2203 i, (H (part a) i).Adj a b) \u2192 (\u2200 k i, H k i \u2264 G) \u2192 IsUTF I G",
+  "proof": "by\n  classical\n  intro hsep hfree hin hcov hle\n  refine \u27e8fun i => \u2a06 k : K, H k i, ?_, ?_\u27e9\n  \u00b7 intro i t ht\n    obtain \u27e8hcl, hcard\u27e9 := ht\n    obtain \u27e8a, b, d, hab, had, hbd, hteq\u27e9 := Finset.card_eq_three.mp hcard\n    have ha : a \u2208 t := by rw [hteq]; simp\n    have hb : b \u2208 t := by rw [hteq]; simp\n    have hd : d \u2208 t := by rw [hteq]; simp\n    obtain \u27e8k1, e1\u27e9 := SimpleGraph.iSup_adj.mp (hcl ha hb hab)\n    obtain \u27e8k2, e2\u27e9 := SimpleGraph.iSup_adj.mp (hcl ha hd had)\n    obtain \u27e8k3, e3\u27e9 := SimpleGraph.iSup_adj.mp (hcl hb hd hbd)\n    have p1 : part a = k1 := hin k1 i a b e1\n    have p2 : part a = k2 := hin k2 i a d e2\n    have p3 : part b = k3 := hin k3 i b d e3\n    have pb : part b = k1 := hin k1 i b a e1.symm\n    have hk12 : k1 = k2 := p1.symm.trans p2\n    have hk13 : k1 = k3 := pb.symm.trans p3\n    subst hk12\n    subst hk13\n    exact hfree k1 i {a, b, d} (SimpleGraph.is3Clique_triple_iff.mpr \u27e8e1, e2, e3\u27e9)\n  \u00b7 ext a b\n    rw [SimpleGraph.iSup_adj]\n    constructor\n    \u00b7 intro hab\n      obtain \u27e8i, hi\u27e9 := hcov a b hab\n      exact \u27e8i, SimpleGraph.iSup_adj.mpr \u27e8part a, hi\u27e9\u27e9\n    \u00b7 rintro \u27e8i, hi\u27e9\n      obtain \u27e8k, hk\u27e9 := SimpleGraph.iSup_adj.mp hi\n      exact hle k i hk"
+ },
+ "formal_status": "KERNEL_CHECKED",
+ "events": [],
+ "axioms": [
+  "Classical.choice",
+  "Quot.sound",
+  "propext"
+ ],
+ "attempts": [
+  {
+   "tactic": "(supplied proof)",
+   "status": "VERIFIED",
+   "seconds": 47.6,
+   "errors": [],
+   "exitCode": 0,
+   "resource_limit": null
+  }
+ ],
+ "budget_history": [
+  {
+   "tier_seconds": 120.0,
+   "outcome": "KERNEL_CHECKED"
+  }
+ ],
+ "kernel_result": {
+  "status": "VERIFIED",
+  "file": "oracle/frontier_formalizer/cable/theorems/msl_erdos595-component-reduction.lean",
+  "backend": "wsl",
+  "project": "/root/erdosfire-bench/proofs",
+  "needsMathlib": true,
+  "exitCode": 0,
+  "seconds": 36.8,
+  "declarations": [
+   {
+    "declaration": "msl_erdos595_component_reduction",
+    "clean": true,
+    "axioms": [
+     "propext",
+     "Classical.choice",
+     "Quot.sound"
+    ]
+   }
+  ],
+  "errors": []
+ },
+ "lean_result_block": "LEAN_RESULT erdos595-component-reduction\n  FORMAL_STATUS KERNEL_CHECKED\n  FILE oracle/frontier_formalizer/cable/theorems/msl_erdos595-component-reduction.lean\n  THEOREMS msl_erdos595_component_reduction\n  BACKEND wsl\n  AXIOMS Classical.choice, Quot.sound, propext\n  TACTIC (supplied proof)\n  BUDGET 120s:KERNEL_CHECKED\n  FAILURE NONE",
+ "timestamp": "2026-09-06T11:33:06Z"
+}

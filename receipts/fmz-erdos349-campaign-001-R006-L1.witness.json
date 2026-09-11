@@ -1,0 +1,84 @@
+{
+ "schema": "oracle.msl.closer.witness.v1",
+ "id": "fmz-erdos349-campaign-001-R006-L1",
+ "pipeline": "WITNESS_FINITE",
+ "witness": {
+  "note": "Narrowed fragment of L1, checked by a standalone verifier with no imports, no floats, no I/O, and no exception-based control flow (the previous failure mode: a try/except could mask a failed check). Rationals are integer pairs with exact cross-multiplication comparisons; the malformed-enclosure check uses a boolean flag, never a caught exception. verify() raises SystemExit(1) on any failed check; normal return = all checks passed. Float-literal inputs are represented at the interface by the tagged string 'FLOAT_LITERAL', exercising the lemma's float-rejection clause exactly.",
+  "cases": [
+   {
+    "kind": "exact",
+    "num": 7,
+    "den": 5,
+    "expected": "POSITIVE"
+   },
+   {
+    "kind": "exact",
+    "num": -13,
+    "den": 3,
+    "expected": "NEGATIVE"
+   },
+   {
+    "kind": "exact",
+    "num": 0,
+    "den": 1,
+    "expected": "ABORT"
+   },
+   {
+    "kind": "interval",
+    "lo_num": 11,
+    "lo_den": 10,
+    "hi_num": 6,
+    "hi_den": 5,
+    "expected": "POSITIVE"
+   },
+   {
+    "kind": "interval",
+    "lo_num": -7,
+    "lo_den": 2,
+    "hi_num": -10,
+    "hi_den": 3,
+    "expected": "NEGATIVE"
+   },
+   {
+    "kind": "interval",
+    "lo_num": -1,
+    "lo_den": 2,
+    "hi_num": 1,
+    "hi_den": 2,
+    "expected": "ABORT"
+   },
+   {
+    "kind": "interval",
+    "lo_num": 0,
+    "lo_den": 1,
+    "hi_num": 3,
+    "hi_den": 7,
+    "expected": "ABORT"
+   },
+   {
+    "kind": "float_literal",
+    "repr": "FLOAT_LITERAL",
+    "expected": "ABORT"
+   },
+   {
+    "kind": "decimal_string",
+    "s": "1/10000000000000000000000000000",
+    "expected": "POSITIVE"
+   }
+  ]
+ },
+ "verifier_sha256": "753b8d8df3faf50e45711925503127ab512219c9aaba025d3ddfd53849142290",
+ "verifier_source": "# Standalone verifier for a finite fragment of L1.\n# No imports. Exact integer arithmetic only (rationals as (num, den>0),\n# compared by cross-multiplication). No floats, no filesystem, no network,\n# no printing, no caught exceptions. Fail closed: verify() raises\n# SystemExit(1) on any failed check; a normal return means all checks passed.\n\ndef _norm(num, den):\n    if type(num) is not int or type(den) is not int:\n        raise SystemExit(1)\n    if den == 0:\n        raise SystemExit(1)\n    if den < 0:\n        num = -num\n        den = -den\n    return num, den\n\ndef _sgn(num, den):\n    # exact sign of num/den via cross-multiplication against 0/1\n    left = num * 1\n    right = 0 * den\n    if left > right:\n        return 1\n    if left < right:\n        return -1\n    return 0\n\ndef sign_exact(num, den):\n    num, den = _norm(num, den)\n    c = _sgn(num, den)\n    if c > 0:\n        return 'POSITIVE'\n    if c < 0:\n        return 'NEGATIVE'\n    return 'ABORT'  # zero residual: nonzero sign not certifiable -> abort\n\ndef sign_interval(lo_num, lo_den, hi_num, hi_den):\n    lo_num, lo_den = _norm(lo_num, lo_den)\n    hi_num, hi_den = _norm(hi_num, hi_den)\n    # enclosure must be well formed: lo <= hi, exact cross-multiplication\n    if (lo_num * hi_den) > (hi_num * lo_den):\n        return 'MALFORMED'\n    lo_s = _sgn(lo_num, lo_den)\n    hi_s = _sgn(hi_num, hi_den)\n    if lo_s > 0:\n        return 'POSITIVE'\n    if hi_s < 0:\n        return 'NEGATIVE'\n    return 'ABORT'  # zero-straddling or touching zero -> abort per lemma\n\ndef check_case(c):\n    k = c['kind']\n    if k == 'exact':\n        return sign_exact(c['num'], c['den'])\n    if k == 'interval':\n        r = sign_interval(c['lo_num'], c['lo_den'], c['hi_num'], c['hi_den'])\n        if r == 'MALFORMED':\n            raise SystemExit(1)\n        return r\n    if k == 'float_literal':\n        if c['repr'] != 'FLOAT_LITERAL':\n            raise SystemExit(1)\n        return 'ABORT'  # float-literal input: abort per lemma\n    if k == 'decimal_string':\n        s = c['s']\n        if 'e' in s or 'E' in s or '.' in s:\n            raise SystemExit(1)  # exact integer-fraction form only\n        parts = s.split('/')\n        if len(parts) != 2:\n            raise SystemExit(1)\n        return sign_exact(int(parts[0]), int(parts[1]))\n    raise SystemExit(1)\n\ndef verify(witness):\n    cases = witness['cases']\n    if len(cases) != 9:\n        raise SystemExit(1)\n    for c in cases:\n        if check_case(c) != c['expected']:\n            raise SystemExit(1)\n    # direct checks of the sign logic, exact arithmetic only\n    if sign_exact(7, 5) != 'POSITIVE':\n        raise SystemExit(1)\n    if sign_exact(-13, 3) != 'NEGATIVE':\n        raise SystemExit(1)\n    if sign_exact(0, 1) != 'ABORT':\n        raise SystemExit(1)\n    if sign_interval(11, 10, 6, 5) != 'POSITIVE':\n        raise SystemExit(1)\n    if sign_interval(-7, 2, -10, 3) != 'NEGATIVE':\n        raise SystemExit(1)\n    if sign_interval(-1, 2, 1, 2) != 'ABORT':\n        raise SystemExit(1)\n    if sign_interval(0, 1, 3, 7) != 'ABORT':\n        raise SystemExit(1)\n    if sign_interval(-10, 3, -7, 2) != 'NEGATIVE':\n        raise SystemExit(1)\n    # malformed enclosure must be reported, via flag, never a caught exception\n    if sign_interval(3, 1, 2, 1) != 'MALFORMED':\n        raise SystemExit(1)\n\nWITNESS = {\n 'cases': [\n  {'kind': 'exact', 'num': 7, 'den': 5, 'expected': 'POSITIVE'},\n  {'kind': 'exact', 'num': -13, 'den': 3, 'expected': 'NEGATIVE'},\n  {'kind': 'exact', 'num': 0, 'den': 1, 'expected': 'ABORT'},\n  {'kind': 'interval', 'lo_num': 11, 'lo_den': 10, 'hi_num': 6, 'hi_den': 5, 'expected': 'POSITIVE'},\n  {'kind': 'interval', 'lo_num': -7, 'lo_den': 2, 'hi_num': -10, 'hi_den': 3, 'expected': 'NEGATIVE'},\n  {'kind': 'interval', 'lo_num': -1, 'lo_den': 2, 'hi_num': 1, 'hi_den': 2, 'expected': 'ABORT'},\n  {'kind': 'interval', 'lo_num': 0, 'lo_den': 1, 'hi_num': 3, 'hi_den': 7, 'expected': 'ABORT'},\n  {'kind': 'float_literal', 'repr': 'FLOAT_LITERAL', 'expected': 'ABORT'},\n  {'kind': 'decimal_string', 's': '1/10000000000000000000000000000', 'expected': 'POSITIVE'}\n ]\n}\n\nverify(WITNESS)",
+ "run": {
+  "passed": false,
+  "status": "VERIFIER_FAIL",
+  "exit_code": 1,
+  "stdout": "",
+  "detail": "",
+  "seconds": 0.1,
+  "code_sha256": "753b8d8df3faf50e45711925503127ab512219c9aaba025d3ddfd53849142290"
+ },
+ "claim": "A standalone verifier (no imports, no floats, no I/O, exact integer/rational arithmetic via cross-multiplication, no exception-based control flow, fail-closed verify() entrypoint that raises SystemExit(1) on any failed check) confirms a finite fragment of L1 on an explicit embedded test suite: exact rational evaluation certifies nonzero residual sign, rational interval enclosures certify sign off zero, and the abort clauses fire on zero residuals, zero-straddling/touching intervals, malformed enclosures, and float-literal inputs. covers=fragment.",
+ "law": "Wang 7.2: an exact finite object plus a proved reduction is a CERTIFICATE. The reduction is the `claim` and is a human's to audit; the object and the verifier run are the machine's part.",
+ "timestamp": "2026-09-01T21:48:53Z"
+}

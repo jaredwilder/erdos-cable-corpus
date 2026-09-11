@@ -1,0 +1,69 @@
+{
+ "schema": "oracle.msl.cable.v1",
+ "id": "fmz-erdos1212-campaign-001-R006-L1-a1r1",
+ "spec": {
+  "id": "fmz-erdos1212-campaign-001-R006-L1-a1r1",
+  "imports": "Mathlib",
+  "definitions": "def Valid (p : \u2115 \u00d7 \u2115) : Prop := 1 < p.1 \u2227 1 < p.2 \u2227 Nat.gcd p.1 p.2 = 1 \u2227 (\u00ac p.1.Prime \u2228 \u00ac p.2.Prime)\n\ndef Adj (p q : \u2115 \u00d7 \u2115) : Prop := (p.1 = q.1 \u2227 (p.2 = q.2 + 1 \u2228 q.2 = p.2 + 1)) \u2228 (p.2 = q.2 \u2227 (p.1 = q.1 + 1 \u2228 q.1 = p.1 + 1))",
+  "conclusion": "\u2200 q : \u2115 \u00d7 \u2115, Adj (2, 9) q \u2192 \u00ac Valid q",
+  "proof": "by\n  intro q hAdj hValid\n  rcases q with \u27e8x, y\u27e9\n  unfold Adj at hAdj\n  unfold Valid at hValid\n  rcases hValid with \u27e8hx, hy, hg, hcomp\u27e9\n  rcases hAdj with hAdj | hAdj\n  \u00b7 rcases hAdj with \u27e8h2, hY\u27e9\n    rcases hY with hY | hY\n    \u00b7 have hy8 : y = 8 := by omega\n      subst x\n      subst y\n      norm_num at hg\n    \u00b7 have hy10 : y = 10 := by omega\n      subst x\n      subst y\n      norm_num at hg\n  \u00b7 rcases hAdj with \u27e8h9, hX\u27e9\n    rcases hX with hX | hX\n    \u00b7 have hx1 : x = 1 := by omega\n      subst x\n      omega\n    \u00b7 have hx3 : x = 3 := by omega\n      subst x\n      subst y\n      norm_num at hg"
+ },
+ "formal_status": "KERNEL_FAILED",
+ "events": [
+  "((supplied proof)) RAW[/tmp/oracle_lean_tHtZG5UI.lean:19:6: error: Tactic `subst` failed: did not find equation for eliminating 'x']",
+  "((supplied proof)) RAW[/tmp/oracle_lean_tHtZG5UI.lean:23:6: error: Tactic `subst` failed: did not find equation for eliminating 'x']",
+  "((supplied proof)) RAW[/tmp/oracle_lean_tHtZG5UI.lean:33:6: error: Tactic `subst` failed: did not find equation for eliminating 'y']"
+ ],
+ "axioms": [
+  "Quot.sound",
+  "propext",
+  "sorryAx"
+ ],
+ "attempts": [
+  {
+   "tactic": "(supplied proof)",
+   "status": "UNVERIFIED",
+   "seconds": 20.2,
+   "errors": [
+    "/tmp/oracle_lean_tHtZG5UI.lean:19:6: error: Tactic `subst` failed: did not find equation for eliminating 'x'",
+    "/tmp/oracle_lean_tHtZG5UI.lean:23:6: error: Tactic `subst` failed: did not find equation for eliminating 'x'",
+    "/tmp/oracle_lean_tHtZG5UI.lean:33:6: error: Tactic `subst` failed: did not find equation for eliminating 'y'"
+   ],
+   "exitCode": 1,
+   "resource_limit": null
+  }
+ ],
+ "budget_history": [
+  {
+   "tier_seconds": 900.0,
+   "outcome": "KERNEL_FAILED"
+  }
+ ],
+ "kernel_result": {
+  "status": "UNVERIFIED",
+  "file": "oracle/frontier_formalizer/cable/theorems/msl_fmz-erdos1212-campaign-001-R006-L1-a1r1.lean",
+  "backend": "wsl",
+  "project": "/root/erdosfire-bench/proofs",
+  "needsMathlib": true,
+  "exitCode": 1,
+  "seconds": 14.3,
+  "declarations": [
+   {
+    "declaration": "msl_fmz_erdos1212_campaign_001_R006_L1_a1r1",
+    "clean": false,
+    "axioms": [
+     "propext",
+     "sorryAx",
+     "Quot.sound"
+    ]
+   }
+  ],
+  "errors": [
+   "/tmp/oracle_lean_tHtZG5UI.lean:19:6: error: Tactic `subst` failed: did not find equation for eliminating 'x'",
+   "/tmp/oracle_lean_tHtZG5UI.lean:23:6: error: Tactic `subst` failed: did not find equation for eliminating 'x'",
+   "/tmp/oracle_lean_tHtZG5UI.lean:33:6: error: Tactic `subst` failed: did not find equation for eliminating 'y'"
+  ]
+ },
+ "lean_result_block": "LEAN_RESULT fmz-erdos1212-campaign-001-R006-L1-a1r1\n  FORMAL_STATUS KERNEL_FAILED\n  FILE oracle/frontier_formalizer/cable/theorems/msl_fmz-erdos1212-campaign-001-R006-L1-a1r1.lean\n  THEOREMS msl_fmz_erdos1212_campaign_001_R006_L1_a1r1\n  BACKEND wsl\n  AXIOMS Quot.sound, propext, sorryAx\n  TACTIC (supplied proof)\n  BUDGET 900s:KERNEL_FAILED\n  FAILURE ((supplied proof)) RAW[/tmp/oracle_lean_tHtZG5UI.lean:19:6: error: Tactic `subst` failed: did not find equation for eliminating 'x']; ((supplied proof)) RAW[/tmp/oracle_lean_tHtZG5UI.lean:23:6: error: Tactic `subst` failed: did not find equation for eliminating 'x']; ((supplied proof)) RAW[/tmp/oracle_lean_tHtZG5UI.lean:33:6: error: Tactic `subst` failed: did not find equation for eliminating 'y']\n  LAW KERNEL_FAILED does not refute the claim \u2014 the FAILURE line names what actually broke",
+ "timestamp": "2026-09-02T01:42:07Z"
+}

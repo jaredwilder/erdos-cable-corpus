@@ -1,0 +1,406 @@
+{
+ "schema": "oracle.msl.cable.v1",
+ "id": "erdos595-library",
+ "produced_by": "direct WSL lean run through oracle/kbk/engine/lean_bridge._run_lean_wsl",
+ "campaign": "msl-595 FLAGSHIP epoch 16",
+ "target": "Erdos #595 - the consolidated structure library",
+ "file": "oracle/evidence/erdos595/lean/Erdos595Library.lean",
+ "file_sha256": "02d860d83141fd9c48ed9bc9d37093f47a03c8ee958fdf5df7f5d74bb91830c1",
+ "formal_status": "KERNEL_CHECKED",
+ "kernel_result": {
+  "status": "VERIFIED",
+  "backend": "wsl",
+  "exitCode": 0,
+  "log": "oracle/evidence/erdos595/lean/library-run.log",
+  "declarations": [
+   {
+    "declaration": "Erdos595Lib.erdos595_compactness_T26",
+    "clean": true,
+    "axioms": [
+     "propext",
+     "Classical.choice",
+     "Quot.sound"
+    ]
+   },
+   {
+    "declaration": "Erdos595Lib.erdos595_finite_obstruction_T27",
+    "clean": true,
+    "axioms": [
+     "propext",
+     "Classical.choice",
+     "Quot.sound"
+    ]
+   },
+   {
+    "declaration": "Erdos595Lib.erdos595_countable_core_T28",
+    "clean": true,
+    "axioms": [
+     "propext",
+     "Classical.choice",
+     "Quot.sound"
+    ]
+   },
+   {
+    "declaration": "Erdos595Lib.erdos595_countable_blindness",
+    "clean": true,
+    "axioms": [
+     "propext",
+     "Classical.choice",
+     "Quot.sound"
+    ]
+   },
+   {
+    "declaration": "Erdos595Lib.erdos595_bipartite_level_down",
+    "clean": true,
+    "axioms": [
+     "propext",
+     "Classical.choice",
+     "Quot.sound"
+    ]
+   },
+   {
+    "declaration": "Erdos595Lib.erdos595_arrow_form",
+    "clean": true,
+    "axioms": [
+     "propext",
+     "Classical.choice",
+     "Quot.sound"
+    ]
+   },
+   {
+    "declaration": "Erdos595Lib.erdos595_proper_edge_colouring",
+    "clean": true,
+    "axioms": [
+     "propext",
+     "Classical.choice",
+     "Quot.sound"
+    ]
+   },
+   {
+    "declaration": "Erdos595Lib.erdos595_neighbourhood_bound",
+    "clean": true,
+    "axioms": [
+     "propext",
+     "Classical.choice",
+     "Quot.sound"
+    ]
+   },
+   {
+    "declaration": "Erdos595Lib.erdos595_tc_le_tau",
+    "clean": true,
+    "axioms": [
+     "propext",
+     "Classical.choice",
+     "Quot.sound"
+    ]
+   },
+   {
+    "declaration": "Erdos595Lib.erdos595_chi_le_two_pow_tau",
+    "clean": true,
+    "axioms": [
+     "propext",
+     "Classical.choice",
+     "Quot.sound"
+    ]
+   },
+   {
+    "declaration": "Erdos595Lib.erdos595_upper_neighbourhood_bound",
+    "clean": true,
+    "axioms": [
+     "propext",
+     "Classical.choice",
+     "Quot.sound"
+    ]
+   },
+   {
+    "declaration": "Erdos595Lib.erdos595_countable_lower_neighbourhood",
+    "clean": true,
+    "axioms": [
+     "propext",
+     "Classical.choice",
+     "Quot.sound"
+    ]
+   },
+   {
+    "declaration": "Erdos595Lib.erdos595_ordering_bound_general",
+    "clean": true,
+    "axioms": [
+     "propext",
+     "Classical.choice",
+     "Quot.sound"
+    ]
+   },
+   {
+    "declaration": "Erdos595Lib.erdos595_successor_cardinal_bound",
+    "clean": true,
+    "axioms": [
+     "propext",
+     "Classical.choice",
+     "Quot.sound"
+    ]
+   },
+   {
+    "declaration": "Erdos595Lib.erdos595_tc_le_tau_general",
+    "clean": true,
+    "axioms": [
+     "propext",
+     "Classical.choice",
+     "Quot.sound"
+    ]
+   },
+   {
+    "declaration": "Erdos595Lib.erdos595_cone_two_layers",
+    "clean": true,
+    "axioms": [
+     "propext",
+     "Classical.choice",
+     "Quot.sound"
+    ]
+   },
+   {
+    "declaration": "Erdos595Lib.erdos595_link_independence",
+    "clean": true,
+    "axioms": [
+     "propext",
+     "Classical.choice",
+     "Quot.sound"
+    ]
+   },
+   {
+    "declaration": "Erdos595Lib.erdos595_subadditivity",
+    "clean": true,
+    "axioms": [
+     "propext",
+     "Classical.choice",
+     "Quot.sound"
+    ]
+   },
+   {
+    "declaration": "Erdos595Lib.erdos595_hereditary_dispersion",
+    "clean": true,
+    "axioms": [
+     "propext",
+     "Classical.choice",
+     "Quot.sound"
+    ]
+   },
+   {
+    "declaration": "Erdos595Lib.erdos595_triangle_adjacency",
+    "clean": true,
+    "axioms": [
+     "propext",
+     "Classical.choice",
+     "Quot.sound"
+    ]
+   },
+   {
+    "declaration": "Erdos595Lib.erdos595_triangle_adjacency_general",
+    "clean": true,
+    "axioms": [
+     "propext",
+     "Classical.choice",
+     "Quot.sound"
+    ]
+   },
+   {
+    "declaration": "Erdos595Lib.erdos595_transversal_ceiling",
+    "clean": true,
+    "axioms": [
+     "propext",
+     "Classical.choice",
+     "Quot.sound"
+    ]
+   },
+   {
+    "declaration": "Erdos595Lib.erdos595_locally_countable_component",
+    "clean": true,
+    "axioms": [
+     "propext",
+     "Classical.choice",
+     "Quot.sound"
+    ]
+   },
+   {
+    "declaration": "Erdos595Lib.erdos595_countable_links",
+    "clean": true,
+    "axioms": [
+     "propext",
+     "Classical.choice",
+     "Quot.sound"
+    ]
+   },
+   {
+    "declaration": "Erdos595Lib.erdos595_dispersion_crosscheck",
+    "clean": true,
+    "axioms": [
+     "propext",
+     "Classical.choice",
+     "Quot.sound"
+    ]
+   },
+   {
+    "declaration": "Erdos595Lib.erdos595_vertex_partition_bound",
+    "clean": true,
+    "axioms": [
+     "propext",
+     "Classical.choice",
+     "Quot.sound"
+    ]
+   },
+   {
+    "declaration": "Erdos595Lib.erdos595_countable_dominating",
+    "clean": true,
+    "axioms": [
+     "propext",
+     "Classical.choice",
+     "Quot.sound"
+    ]
+   },
+   {
+    "declaration": "Erdos595Lib.erdos595_dominating_general",
+    "clean": true,
+    "axioms": [
+     "propext",
+     "Classical.choice",
+     "Quot.sound"
+    ]
+   },
+   {
+    "declaration": "Erdos595Lib.erdos595_interference_bound",
+    "clean": true,
+    "axioms": [
+     "propext",
+     "Classical.choice",
+     "Quot.sound"
+    ]
+   },
+   {
+    "declaration": "Erdos595Lib.erdos595_component_reduction",
+    "clean": true,
+    "axioms": [
+     "propext",
+     "Classical.choice",
+     "Quot.sound"
+    ]
+   },
+   {
+    "declaration": "Erdos595Lib.erdos595_top_vertex_bound",
+    "clean": true,
+    "axioms": [
+     "propext",
+     "Classical.choice",
+     "Quot.sound"
+    ]
+   },
+   {
+    "declaration": "Erdos595Lib.erdos595_monotone_general",
+    "clean": true,
+    "axioms": [
+     "propext",
+     "Classical.choice",
+     "Quot.sound"
+    ]
+   },
+   {
+    "declaration": "Erdos595Lib.erdos595_continuum_blindness",
+    "clean": true,
+    "axioms": [
+     "propext",
+     "Classical.choice",
+     "Quot.sound"
+    ]
+   },
+   {
+    "declaration": "Erdos595Lib.erdos595_power_blindness_general",
+    "clean": true,
+    "axioms": [
+     "propext",
+     "Classical.choice",
+     "Quot.sound"
+    ]
+   },
+   {
+    "declaration": "Erdos595Lib.erdos595_partition_lower_bound",
+    "clean": true,
+    "axioms": [
+     "propext",
+     "Classical.choice",
+     "Quot.sound"
+    ]
+   },
+   {
+    "declaration": "Erdos595Lib.erdos595_reindex",
+    "clean": true,
+    "axioms": [
+     "propext",
+     "Classical.choice",
+     "Quot.sound"
+    ]
+   },
+   {
+    "declaration": "Erdos595Lib.erdos595_proper_binary_cover",
+    "clean": true,
+    "axioms": [
+     "propext",
+     "Classical.choice",
+     "Quot.sound"
+    ]
+   },
+   {
+    "declaration": "Erdos595Lib.erdos595_colour_interface",
+    "clean": true,
+    "axioms": [
+     "propext",
+     "Classical.choice",
+     "Quot.sound"
+    ]
+   },
+   {
+    "declaration": "Erdos595Lib.erdos595_pair_colouring_criterion",
+    "clean": true,
+    "axioms": [
+     "propext",
+     "Classical.choice",
+     "Quot.sound"
+    ]
+   },
+   {
+    "declaration": "Erdos595Lib.erdos595_k16_three_cover",
+    "clean": true,
+    "axioms": [
+     "propext",
+     "Classical.choice",
+     "Quot.sound"
+    ]
+   },
+   {
+    "declaration": "Erdos595Lib.erdos595_c17_two_cover",
+    "clean": true,
+    "axioms": [
+     "propext",
+     "Classical.choice",
+     "Quot.sound"
+    ]
+   },
+   {
+    "declaration": "Erdos595Lib.erdos595_c17_k4free",
+    "clean": true,
+    "axioms": [
+     "propext",
+     "Classical.choice",
+     "Quot.sound"
+    ]
+   }
+  ],
+  "errors": []
+ },
+ "axioms": [
+  "propext",
+  "Classical.choice",
+  "Quot.sound"
+ ],
+ "sorry_count": 0,
+ "theorem_count": 42,
+ "covers": "FRAGMENT",
+ "not_covered": "the flagship existence question itself"
+}

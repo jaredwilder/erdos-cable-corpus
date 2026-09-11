@@ -1,0 +1,40 @@
+{
+ "schema": "oracle.msl.closer.witness.v1",
+ "id": "fmz-erdos406-campaign-001-R002-certifier",
+ "pipeline": "WITNESS_FINITE",
+ "witness": {
+  "description": "Finite witness set for the exact rational verifier, embedded as a pure-Python literal. Verifier recomputes 2^n exactly by integer arithmetic, derives ternary digits by divmod, and fails closed on any non-integer, negative, bool, or duplicated exponent. No imports, no I/O, no floats.",
+  "entries": [
+   {
+    "n": 0,
+    "expected": true
+   },
+   {
+    "n": 2,
+    "expected": true
+   },
+   {
+    "n": 8,
+    "expected": true
+   },
+   {
+    "n": 10,
+    "expected": false
+   }
+  ]
+ },
+ "verifier_sha256": "b568f886a9010c2757576507a7b15bc10eca16206cce4e368de3c4b0b6a377bf",
+ "verifier_source": "def verify(witness):\n    # pure function: returns True only if every required property is exactly verified\n    try:\n        entries = witness['entries']\n        seen = set()\n        for e in entries:\n            n = e['n']\n            expected = e['expected']\n            if not isinstance(expected, bool):\n                return False\n            if not isinstance(n, int) or isinstance(n, bool):\n                return False  # non-integer: fail closed\n            if n < 0:\n                return False  # unresolved sign: fail closed\n            if n in seen:\n                return False  # duplicate exponent\n            seen.add(n)\n            v = 2 ** n  # exact integer arithmetic\n            m = v\n            digits = []\n            if m == 0:\n                digits = [0]\n            while m > 0:\n                digits.append(m % 3)\n                m = m // 3\n            got = True\n            for d in digits:\n                if d == 2:\n                    got = False\n                elif d not in (0, 1):\n                    return False  # impossible for base 3; fail closed\n            if got != expected:\n                return False\n        return True\n    except Exception:\n        return False\n\nWITNESS = {'entries': [\n    {'n': 0, 'expected': True},\n    {'n': 2, 'expected': True},\n    {'n': 8, 'expected': True},\n    {'n': 10, 'expected': False}\n]}\n\nRESULT = verify(WITNESS)  # must be True for PASS\n",
+ "run": {
+  "passed": true,
+  "status": "VERIFIER_PASS",
+  "exit_code": 0,
+  "stdout": "PASS",
+  "detail": "",
+  "seconds": 0.17,
+  "code_sha256": "b568f886a9010c2757576507a7b15bc10eca16206cce4e368de3c4b0b6a377bf"
+ },
+ "claim": "FRAGMENT: certifies the checkable core of lemma 'certifier' — a deterministic, offline, fail-closed verifier in pure CPython stdlib (no imports, no I/O, no floats, no network, no filesystem) exists; it recomputes 2^n exactly by integer division, derives ternary digits exactly, aborts (returns False) on any non-integer, negative, bool-typed, or duplicated exponent, and returns True only when every expected {0,1}-ternary verdict is exactly confirmed (including the negative case n=10: 1024 = 1101221_3 contains digit 2). RESULT == True on the embedded witness. Does NOT close close-branch A; covers='fragment'.",
+ "law": "Wang 7.2: an exact finite object plus a proved reduction is a CERTIFICATE. The reduction is the `claim` and is a human's to audit; the object and the verifier run are the machine's part.",
+ "timestamp": "2026-09-01T20:17:39Z"
+}

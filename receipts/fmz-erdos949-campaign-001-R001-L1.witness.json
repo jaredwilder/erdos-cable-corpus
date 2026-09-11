@@ -1,0 +1,26 @@
+{
+ "schema": "oracle.msl.closer.witness.v1",
+ "id": "fmz-erdos949-campaign-001-R001-L1",
+ "pipeline": "WITNESS_FINITE",
+ "witness": {
+  "type": "exhaustive_finite_search_certificate",
+  "N": 24,
+  "claim_of_search": "no subset C of {1..24} is simultaneously sum-free (no a,b in C, possibly equal, with a+b in C) and covering (for every q in 1..12, q in C or 2q in C); hence every sum-free C ⊆ {1..24} admits q with q ∉ C and 2q ∉ C",
+  "search_method": "deterministic depth-first backtracking over membership of 1..24, pruning on any partial sum-free violation or partial covering violation (both q and 2q decided absent)",
+  "expected_result": "verify returns True (search space exhausted, no refuting witness found)"
+ },
+ "verifier_sha256": "964c1f09a421c7d13dfc2c1ffa97630349f7974d61af3be98f60930a33eddbc2",
+ "verifier_source": "# Standalone, stdlib-free, deterministic, fail-closed.\n# Entrypoint: verify(witness) -> True on PASS; raises AssertionError on any failure.\n\ndef verify(witness):\n    assert isinstance(witness, dict)\n    assert witness.get('type') == 'exhaustive_finite_search_certificate'\n    N = witness['N']\n    assert N == 24\n\n    # Forbidden triples (a, b, a+b): a,b possibly equal, sum within universe.\n    triples = []\n    a = 1\n    while a <= N:\n        b = a\n        while b <= N:\n            if a + b <= N:\n                triples.append((a, b, a + b))\n            b += 1\n        a += 1\n\n    # Covering pairs: q and 2q cannot both be outside C, for q = 1..N/2.\n    cover = []\n    q = 1\n    while q <= N // 2:\n        cover.append((q, 2 * q))\n        q += 1\n\n    state = [0] * (N + 1)  # 0 undecided, 1 in C, -1 out of C\n\n    def partial_ok():\n        for (x, y, z) in triples:\n            if state[x] == 1 and state[y] == 1 and state[z] == 1:\n                return False\n        for (u, v) in cover:\n            if state[u] == -1 and state[v] == -1:\n                return False\n        return True\n\n    def dfs(i):\n        if i > N:\n            return True  # complete assignment satisfying all constraints\n        for val in (1, -1):\n            state[i] = val\n            if partial_ok() and dfs(i + 1):\n                state[i] = 0\n                return True\n            state[i] = 0\n        return False\n\n    # dfs True <=> a sum-free covering C exists <=> finite forcing core of L1 REFUTED.\n    assert not dfs(1), 'FAIL: sum-free covering subset of {1..24} exists'\n\n    # Sanity re-check of the lemma's positive content on the empty pattern:\n    # covering constraints are non-trivial (q != 2q) and triples non-empty.\n    assert len(cover) == 12\n    assert len(triples) > 0\n    return True\n",
+ "run": {
+  "passed": true,
+  "status": "VERIFIER_PASS",
+  "exit_code": 0,
+  "stdout": "PASS",
+  "detail": "",
+  "seconds": 0.09,
+  "code_sha256": "964c1f09a421c7d13dfc2c1ffa97630349f7974d61af3be98f60930a33eddbc2"
+ },
+ "claim": "verify(witness) returning True certifies the finite core of L1: exhaustive deterministic backtracking over all 2^24 subsets of {1..24} finds no sum-free C with q or 2q in C for every q = 1..12; i.e. every sum-free C ⊆ {1,…,24} has some q with q ∉ C and 2q ∉ C — exactly the 13-step finite forcing content of L1 on {1,…,24}. Any failure raises, so the check is fail-closed.",
+ "law": "Wang 7.2: an exact finite object plus a proved reduction is a CERTIFICATE. The reduction is the `claim` and is a human's to audit; the object and the verifier run are the machine's part.",
+ "timestamp": "2026-09-01T21:05:41Z"
+}

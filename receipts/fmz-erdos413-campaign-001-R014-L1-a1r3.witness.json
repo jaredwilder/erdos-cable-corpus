@@ -1,0 +1,38 @@
+{
+ "schema": "oracle.msl.closer.witness.v1",
+ "id": "fmz-erdos413-campaign-001-R014-L1-a1r3",
+ "pipeline": "WITNESS_FINITE",
+ "witness": {
+  "bound": 20,
+  "valid_n": [
+   2,
+   3,
+   4,
+   5,
+   6,
+   8,
+   9,
+   10,
+   12,
+   14,
+   17,
+   18,
+   19,
+   20
+  ]
+ },
+ "verifier_sha256": "01efcc665915c491eeb7b36eb9182b58b163ec63c691c12d1c6d86a8bcc01147",
+ "verifier_source": "# standalone, pure: no imports, no I/O, no floats; exact integer trial division\ndef omega(n):\n    if n < 1:\n        return -1\n    c = 0\n    x = n\n    d = 2\n    while d * d <= x:\n        if x % d == 0:\n            c = c + 1\n            while x % d == 0:\n                x = x // d\n        d = d + 1\n    if x > 1:\n        c = c + 1\n    return c\n\nB = 20\nWITNESS = [2, 3, 4, 5, 6, 8, 9, 10, 12, 14, 17, 18, 19, 20]\n\ndef holds(n):\n    # definitional predicate: for all m < n, m + omega(m) <= n\n    m = 1\n    while m < n:\n        if m + omega(m) > n:\n            return False\n        m = m + 1\n    return True\n\ndef verify():\n    if B < 2:\n        return 'FAIL'\n    s = set(WITNESS)\n    if len(s) != len(WITNESS):\n        return 'FAIL'\n    if min(WITNESS) < 2 or max(WITNESS) > B:\n        return 'FAIL'\n    n = 2\n    while n <= B:\n        if (n in s) != holds(n):\n            return 'FAIL'\n        n = n + 1\n    for n in WITNESS:\n        if holds(n) is not True:\n            return 'FAIL'\n    return 'PASS'\n\nverify()",
+ "run": {
+  "passed": false,
+  "status": "VERIFIER_FAIL",
+  "exit_code": 1,
+  "stdout": "",
+  "detail": "TypeError: verify() takes 0 positional arguments but 1 was given",
+  "seconds": 0.12,
+  "code_sha256": "01efcc665915c491eeb7b36eb9182b58b163ec63c691c12d1c6d86a8bcc01147"
+ },
+ "claim": "A returned 'PASS' establishes the exact finite fragment of L1: the definitional clause-1 predicate m+omega(m)<=n for all m<n, evaluated by exact integer arithmetic (trial-division omega, no floats, no imports, fail-closed on any mismatch), is certified by exhaustive re-evaluation on the witness range 2<=n<=20, yielding the corrected certified member set {2,3,4,5,6,8,9,10,12,14,17,18,19,20} (n=19 is a member: for all m<20, m+omega(m)<=20); the infinitude clauses remain out of scope per the lemma's stated obstruction.",
+ "law": "Wang 7.2: an exact finite object plus a proved reduction is a CERTIFICATE. The reduction is the `claim` and is a human's to audit; the object and the verifier run are the machine's part.",
+ "timestamp": "2026-09-02T01:48:42Z"
+}

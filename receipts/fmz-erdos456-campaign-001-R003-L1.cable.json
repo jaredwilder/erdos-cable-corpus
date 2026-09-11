@@ -1,0 +1,49 @@
+{
+ "schema": "oracle.msl.cable.v1",
+ "id": "fmz-erdos456-campaign-001-R003-L1",
+ "spec": {
+  "id": "fmz-erdos456-campaign-001-R003-L1",
+  "imports": "none",
+  "definitions": "-- L1 asserts three exactly-decidable absence-facts about the frozen\n-- packet record with sha 2a675ae82c68664c. We bind that record as a finite\n-- structure of strings (the only load-bearing fields per the lemma) and define\n-- a total Bool-valued check of each absence-fact, plus the conjunction.\n\nstructure PacketRecord where\n  sha        : String\n  reduction  : String\n  has_mn_pn_defs : Bool\n  census_value_count : Nat\n\ndef frozen : PacketRecord :=\n  { sha := \"2a675ae82c68664c\"\n    reduction := \"none\"\n    has_mn_pn_defs := false\n    census_value_count := 0 }\n\n-- Absence-fact 1: reduction field is exactly \"none\".\ndef check_no_reduction (p : PacketRecord) : Bool := p.reduction = \"none\"\n\n-- Absence-fact 2: no m_n / p_n definitions present.\ndef check_no_mn_pn_defs (p : PacketRecord) : Bool := !(p.has_mn_pn_defs)\n\n-- Absence-fact 3: no 29-value census present (census is empty, i.e. not 29 values).\ndef check_no_census (p : PacketRecord) : Bool := p.census_value_count \u2260 29 \u2227 p.census_value_count = 0\n\ndef check_abort_certificate (p : PacketRecord) : Bool :=\n  check_no_reduction p && check_no_mn_pn_defs p && check_no_census p",
+  "conclusion": "check_abort_certificate frozen = true \u2227 frozen.sha = \"2a675ae82c68664c\"",
+  "proof": "by decide"
+ },
+ "formal_status": "KERNEL_CHECKED",
+ "events": [],
+ "axioms": [],
+ "attempts": [
+  {
+   "tactic": "(supplied proof)",
+   "status": "VERIFIED",
+   "seconds": 2.2,
+   "errors": [],
+   "exitCode": 0,
+   "resource_limit": null
+  }
+ ],
+ "budget_history": [
+  {
+   "tier_seconds": 900.0,
+   "outcome": "KERNEL_CHECKED"
+  }
+ ],
+ "kernel_result": {
+  "status": "VERIFIED",
+  "file": "oracle/frontier_formalizer/cable/theorems/msl_fmz-erdos456-campaign-001-R003-L1.lean",
+  "backend": "windows",
+  "project": "C:\\Users\\jared\\Local Sites\\woocommerce-enterprise\\oracle\\math\\EG411Formal",
+  "needsMathlib": false,
+  "exitCode": 0,
+  "seconds": 2.2,
+  "declarations": [
+   {
+    "declaration": "msl_fmz_erdos456_campaign_001_R003_L1",
+    "clean": true,
+    "axioms": []
+   }
+  ],
+  "errors": []
+ },
+ "lean_result_block": "LEAN_RESULT fmz-erdos456-campaign-001-R003-L1\n  FORMAL_STATUS KERNEL_CHECKED\n  FILE oracle/frontier_formalizer/cable/theorems/msl_fmz-erdos456-campaign-001-R003-L1.lean\n  THEOREMS msl_fmz_erdos456_campaign_001_R003_L1\n  BACKEND windows\n  AXIOMS -\n  TACTIC (supplied proof)\n  BUDGET 900s:KERNEL_CHECKED\n  FAILURE NONE",
+ "timestamp": "2026-09-01T23:45:38Z"
+}

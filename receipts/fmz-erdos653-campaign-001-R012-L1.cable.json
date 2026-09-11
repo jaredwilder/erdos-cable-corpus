@@ -1,0 +1,59 @@
+{
+ "schema": "oracle.msl.cable.v1",
+ "id": "fmz-erdos653-campaign-001-R012-L1",
+ "spec": {
+  "id": "fmz-erdos653-campaign-001-R012-L1",
+  "imports": "none",
+  "definitions": "-- Fragment of L1 certified here: the exact-integer bijection claim that the\n-- pairwise-distance set of the collinear AP configuration x_k = (k,0), k=0..n-1,\n-- is exactly {1,...,n-1}, for every n in 2..200 (the verifier-certified range of L1).\n\ndef dists (i n : Nat) : List Nat :=\n  (List.range n).filterMap (fun j =>\n    if j = i then none else some (if j < i then i - j else j - i))\n\ndef allDists (n : Nat) : List Nat :=\n  ((List.range n).flatMap (fun i => dists i n)).eraseDups\n\ndef expected (n : Nat) : List Nat := (List.range (n-1)).map (fun k => k + 1)\n\ndef check (n : Nat) : Bool := allDists n == expected n\n\ndef checkRange : Bool :=\n  ((List.range 199).all (fun k => check (k + 2)))",
+  "conclusion": "checkRange = true",
+  "proof": "by decide"
+ },
+ "formal_status": "KERNEL_FAILED",
+ "events": [
+  "((supplied proof)) RAW[tmpwbt6lmsg.lean:21:73: error: maximum recursion depth has been reached]"
+ ],
+ "axioms": [
+  "sorryAx"
+ ],
+ "attempts": [
+  {
+   "tactic": "(supplied proof)",
+   "status": "UNVERIFIED",
+   "seconds": 2.9,
+   "errors": [
+    "tmpwbt6lmsg.lean:21:73: error: maximum recursion depth has been reached"
+   ],
+   "exitCode": 1,
+   "resource_limit": "maximum recursion depth"
+  }
+ ],
+ "budget_history": [
+  {
+   "tier_seconds": 900.0,
+   "outcome": "UNDECIDED_RESOURCE[maximum recursion depth]"
+  }
+ ],
+ "kernel_result": {
+  "status": "UNVERIFIED",
+  "file": "oracle/frontier_formalizer/cable/theorems/msl_fmz-erdos653-campaign-001-R012-L1.lean",
+  "backend": "windows",
+  "project": "C:\\Users\\jared\\Local Sites\\woocommerce-enterprise\\oracle\\math\\EG411Formal",
+  "needsMathlib": false,
+  "exitCode": 1,
+  "seconds": 2.9,
+  "declarations": [
+   {
+    "declaration": "msl_fmz_erdos653_campaign_001_R012_L1",
+    "clean": false,
+    "axioms": [
+     "sorryAx"
+    ]
+   }
+  ],
+  "errors": [
+   "tmpwbt6lmsg.lean:21:73: error: maximum recursion depth has been reached"
+  ]
+ },
+ "lean_result_block": "LEAN_RESULT fmz-erdos653-campaign-001-R012-L1\n  FORMAL_STATUS KERNEL_FAILED\n  FILE oracle/frontier_formalizer/cable/theorems/msl_fmz-erdos653-campaign-001-R012-L1.lean\n  THEOREMS msl_fmz_erdos653_campaign_001_R012_L1\n  BACKEND windows\n  AXIOMS sorryAx\n  TACTIC (supplied proof)\n  BUDGET 900s:UNDECIDED_RESOURCE[maximum recursion depth]\n  FAILURE ((supplied proof)) RAW[tmpwbt6lmsg.lean:21:73: error: maximum recursion depth has been reached]\n  LAW KERNEL_FAILED does not refute the claim \u2014 the FAILURE line names what actually broke\n  LAW BUDGET_EXHAUSTED is an UNDECIDED question, not a failed proof \u2014 the machine stopped, the mathematics did not answer",
+ "timestamp": "2026-09-01T23:55:23Z"
+}

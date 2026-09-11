@@ -1,0 +1,21 @@
+{
+ "id": "erdos595-L595-03-04-amalgamation",
+ "status": "KERNEL_CHECKED",
+ "backend": "wsl",
+ "mission": "ERDOS595_MSL_DIRECT_CLOSE_MISSION section 8, L595-03 and L595-04",
+ "file": "oracle/evidence/erdos595/lean/Erdos595Library.lean",
+ "file_sha256": "5545a5515b22a8a0f3d38e7ab300e85aefac06fdf6b3b9c3a6078815c8dbfec3",
+ "declarations_checked": 47,
+ "errors": 0,
+ "returncode": 0,
+ "seconds": 238.5,
+ "new_theorems": {
+  "Erdos595Lib.erdos595_rooted_amalgam": "propext, Classical.choice, Quot.sound",
+  "Erdos595Lib.erdos595_directed_union_safe": "propext, Classical.choice, Quot.sound"
+ },
+ "dirty": [],
+ "repairs": [
+  "Finset.exists_ne_of_one_lt_card absent in this Mathlib; replaced by an explicit two-vertex case split",
+  "clique membership is a Set coercion, not a Finset membership; simp set changed to the coe lemmas"
+ ]
+}

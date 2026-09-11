@@ -1,0 +1,26 @@
+{
+ "schema": "oracle.msl.closer.witness.v1",
+ "id": "fmz-erdos155-campaign-001-R005-L1",
+ "pipeline": "WITNESS_FINITE",
+ "witness": {
+  "description": "Exact recomputation of F(N), the maximum size of a Sidon subset of {1,...,N} under the both-sums convention (all pairs i<=j), for N=1..24; asserts F(N+1) <= F(N)+1 for every N in [1,23], equality (sharpness) at N=1 and N=3, and agreement of both Sidon conventions (all-sums and off-diagonal-only) on this range.",
+  "range": [
+   1,
+   24
+  ]
+ },
+ "verifier_sha256": "4b3a9b201dd6ada789be587be3867fb62f2ebd61be052b11eed2fc18e836f0aa",
+ "verifier_source": "def is_sidon(S, offdiag_only):\n    d = {}\n    n = len(S)\n    for i in range(n):\n        for j in range(i, n):\n            if offdiag_only and i == j:\n                continue\n            s = S[i] + S[j]\n            if s in d:\n                a, b = d[s]\n                if sorted((a, b)) != sorted((S[i], S[j])):\n                    return False\n            else:\n                d[s] = (S[i], S[j])\n    return True\n\ndef F(N, offdiag_only):\n    def rec(start, chosen):\n        if not is_sidon(chosen, offdiag_only):\n            return 0\n        best = len(chosen)\n        for x in range(start, N + 1):\n            chosen.append(x)\n            v = rec(x + 1, chosen)\n            if v > best:\n                best = v\n            chosen.pop()\n        return best\n    return rec(1, [])\n\ndef verify(witness):\n    lo = witness['range'][0]\n    hi = witness['range'][1]\n    if lo != 1:\n        raise ValueError('range must start at 1')\n    if hi < 24:\n        raise ValueError('range must cover N=1..24')\n    vals = {}\n    for N in range(1, hi + 1):\n        f_all = F(N, False)\n        f_off = F(N, True)\n        if f_all != f_off:\n            raise ValueError('convention mismatch at N=%d' % N)\n        vals[N] = f_all\n    for N in range(1, hi):\n        if vals[N + 1] > vals[N] + 1:\n            raise ValueError('removal bound fails at N=%d' % N)\n    if vals[2] != vals[1] + 1:\n        raise ValueError('sharpness fails at N=1')\n    if vals[4] != vals[3] + 1:\n        raise ValueError('sharpness fails at N=3')\n    return True\n",
+ "run": {
+  "passed": false,
+  "status": "VERIFIER_FAIL",
+  "exit_code": 1,
+  "stdout": "",
+  "detail": "ValueError: convention mismatch at N=3",
+  "seconds": 0.18,
+  "code_sha256": "4b3a9b201dd6ada789be587be3867fb62f2ebd61be052b11eed2fc18e836f0aa"
+ },
+ "claim": "verify(witness) returning True without raising certifies the finite fragment of L1: F(N+1) <= F(N)+1 holds for all 1 <= N <= 23 under both Sidon conventions (all-sums and off-diagonal-only), with equality at N=1 and N=3 (sharpness instances); covers=fragment — the universal 'for all N>=1' quantifier and the non-liftability to k>=2 are not decided by this finite check.",
+ "law": "Wang 7.2: an exact finite object plus a proved reduction is a CERTIFICATE. The reduction is the `claim` and is a human's to audit; the object and the verifier run are the machine's part.",
+ "timestamp": "2026-09-01T20:05:46Z"
+}

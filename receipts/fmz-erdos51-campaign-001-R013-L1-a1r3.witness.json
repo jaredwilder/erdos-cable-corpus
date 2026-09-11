@@ -1,0 +1,41 @@
+{
+ "schema": "oracle.msl.closer.witness.v1",
+ "id": "fmz-erdos51-campaign-001-R013-L1-a1r3",
+ "pipeline": "WITNESS_FINITE",
+ "witness": {
+  "primorials": [
+   2,
+   6,
+   30,
+   210,
+   2310,
+   30030,
+   510510
+  ],
+  "k_values": [
+   1,
+   2,
+   3,
+   4,
+   5,
+   6,
+   7
+  ],
+  "claim_scope": "for m = product of first k primes (k=1..7), the least positive n with phi(n)=m equals m itself (min(pre(phi(m))) = primorial), certified by exact integer arithmetic, fail-closed",
+  "side_result": "at a=480: phi(2310)=480 exactly (exact side data point)"
+ },
+ "verifier_sha256": "4e14a2d78371a774008e2af97cfd17f6bab0b054b9ab29f1c1855728d46a3818",
+ "verifier_source": "# pure Python, no imports, no I/O, deterministic, exact integer arithmetic, fail-closed\n\ndef verify(witness):\n    primorials = witness['primorials']\n    k_values = witness['k_values']\n    assert len(primorials) == len(k_values)\n\n    def factorint_exact(n):\n        assert n >= 2\n        f = {}\n        d = 2\n        while d * d <= n:\n            while n % d == 0:\n                f[d] = f.get(d, 0) + 1\n                n = n // d\n            d += 1\n        if n > 1:\n            f[n] = f.get(n, 0) + 1\n        for e in f.values():\n            assert e >= 1\n        return f\n\n    def phi(n):\n        if n == 1:\n            return 1\n        r = n\n        for p, e in factorint_exact(n).items():\n            assert r % p == 0\n            r = r // p * (p - 1)\n        assert r >= 1\n        return r\n\n    def first_k_primes(k):\n        primes = []\n        c = 2\n        while len(primes) < k:\n            is_prime = True\n            for p in primes:\n                if p * p > c:\n                    break\n                if c % p == 0:\n                    is_prime = False\n                    break\n            if is_prime and all(c % p != 0 for p in primes):\n                primes.append(c)\n            c += 1\n        return primes\n\n    for k, m_expected in zip(k_values, primorials):\n        primes = first_k_primes(k)\n        assert len(primes) == k\n        m = 1\n        for p in primes:\n            m *= p\n        assert m == m_expected, 'primorial mismatch at k=%d' % k\n        # exhaustive enumeration justified by proved bound phi(n) >= sqrt(n/2) => n <= 2*m^2\n        bound = 2 * m * m\n        least = None\n        for n in range(1, bound + 1):\n            if phi(n) == m:\n                least = n\n                break\n        assert least is not None, 'no preimage in window at k=%d' % k\n        assert least == m, 'min preimage != primorial at k=%d' % k\n\n    assert phi(2310) == 480, 'phi(2310) != 480'\n    return True",
+ "run": {
+  "passed": false,
+  "status": "VERIFIER_FAIL",
+  "exit_code": 1,
+  "stdout": "",
+  "detail": "AssertionError: min preimage != primorial at k=1",
+  "seconds": 0.08,
+  "code_sha256": "4e14a2d78371a774008e2af97cfd17f6bab0b054b9ab29f1c1855728d46a3818"
+ },
+ "claim": "Exact-integer, fail-closed verification that for each primorial m in {2,6,30,210,2310,30030,510510} the least n with phi(n)=m equals m (exhaustive enumeration justified by the proved bound n <= 2*phi(m)^2), plus the exact certificate phi(2310)=480 — certifying the finite computational core of lemma L1 (certified_numerics fragment of R013); this does NOT close close_branch_A.",
+ "law": "Wang 7.2: an exact finite object plus a proved reduction is a CERTIFICATE. The reduction is the `claim` and is a human's to audit; the object and the verifier run are the machine's part.",
+ "timestamp": "2026-09-02T02:12:30Z"
+}

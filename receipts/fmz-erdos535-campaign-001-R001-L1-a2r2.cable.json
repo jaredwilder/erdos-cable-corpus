@@ -1,0 +1,65 @@
+{
+ "schema": "oracle.msl.cable.v1",
+ "id": "fmz-erdos535-campaign-001-R001-L1-a2r2",
+ "spec": {
+  "id": "fmz-erdos535-campaign-001-R001-L1-a2r2",
+  "imports": "none",
+  "definitions": "def peq (a b c : Nat) : Bool :=\n  Nat.gcd a b == Nat.gcd a c && Nat.gcd a b == Nat.gcd b c\n-- exact B\u00e9zout/gcd divisibility: g divides both a and b (g*(a/g)=a, g*(b/g)=b)\ndef bezoutExact (a b : Nat) : Bool :=\n  let g := Nat.gcd a b\n  g * (a / g) == a && g * (b / g) == b\n-- normalization to primitive reps: divide out the common gcd of all three\ndef primNorm (a b c : Nat) : Nat \u00d7 Nat \u00d7 Nat :=\n  let n := Nat.gcd a (Nat.gcd b c)\n  (a / n, b / n, c / n)\n-- biconditional: pairwise-gcd-equality is invariant under primitive normalization\n-- and normalization is itself Bezout-exact; fail-closed (any mismatch => false)\ndef tripleOK (a b c : Nat) : Bool :=\n  let (a', b', c') := primNorm a b c\n  peq a' b' c' == peq a b c && bezoutExact a b && bezoutExact b c && bezoutExact a' b'\n-- FRAGMENT 1: all 220 unordered triples with 1 <= i <= j <= k <= 12\ndef trips : List (Nat \u00d7 Nat \u00d7 Nat) :=\n  (List.range 12).flatMap fun i =>\n  (List.range 12 - i).flatMap fun j =>\n  (List.range 12 - i - j).map fun k => (i+1, i+j+1, i+j+k+1)\ndef tripCheck : Bool := trips.all (fun t => tripleOK t.1 t.2.1 t.2.2) && trips.length == 220\n-- FRAGMENT 2: f_3(6) = 3 \u2014 every 4-subset of {1..6} contains a triple with equal\n-- pairwise gcds, and the set {2,3,5} (a 3-subset) has no such triple\ndef subs4 : List (List Nat) :=\n  (List.range 64).filterMap fun m =>\n    let s := ((List.range 6).filter fun i => (m >>> i) % 2 == 1).map (\u00b7 + 1)\n    if s.length == 4 then some s else none\ndef hasBad (s : List Nat) : Bool :=\n  (s.filterSublists.any fun t => t.length == 3 &&\n    match t with\n    | [a, b, c] => peq a b c\n    | _ => false)\ndef f3lower : Bool := subs4.all hasBad && subs4.length == 15\ndef f3upper : Bool := !peq 2 3 5\ndef witness36 : Bool := f3lower && f3upper",
+  "conclusion": "tripCheck = true \u2227 witness36 = true",
+  "proof": "by native_decide"
+ },
+ "formal_status": "KERNEL_FAILED",
+ "events": [
+  "((supplied proof)) TYPE.FAIL INSTANCE[tmpc4bl9xt4.lean:21:3: error(lean.synthInstanceFailed): failed to synthesize instance of type class]",
+  "((supplied proof)) RAW[tmpc4bl9xt4.lean:31:5: error(lean.invalidField): Invalid field `filterSublists`: The environment does not contain `List.filterSublists`, so it is not possible t]",
+  "((supplied proof)) RAW[tmpc4bl9xt4.lean:39:96: error: Tactic `native_decide` failed: Could not evaluate decidable instance. Error: cannot evaluate code because '_private.Init.Data.Lis]"
+ ],
+ "axioms": [
+  "sorryAx"
+ ],
+ "attempts": [
+  {
+   "tactic": "(supplied proof)",
+   "status": "UNVERIFIED",
+   "seconds": 2.1,
+   "errors": [
+    "tmpc4bl9xt4.lean:21:3: error(lean.synthInstanceFailed): failed to synthesize instance of type class",
+    "tmpc4bl9xt4.lean:31:5: error(lean.invalidField): Invalid field `filterSublists`: The environment does not contain `List.filterSublists`, so it is not possible to project the field `filterSublists` from an expression",
+    "tmpc4bl9xt4.lean:39:96: error: Tactic `native_decide` failed: Could not evaluate decidable instance. Error: cannot evaluate code because '_private.Init.Data.List.Impl.0.List.flatMapTR.go._at_.trips.spec_0' uses 'sorry' and/or contains errors"
+   ],
+   "exitCode": 1,
+   "resource_limit": null
+  }
+ ],
+ "budget_history": [
+  {
+   "tier_seconds": 900.0,
+   "outcome": "KERNEL_FAILED"
+  }
+ ],
+ "kernel_result": {
+  "status": "UNVERIFIED",
+  "file": "oracle/frontier_formalizer/cable/theorems/msl_fmz-erdos535-campaign-001-R001-L1-a2r2.lean",
+  "backend": "windows",
+  "project": "C:\\Users\\jared\\Local Sites\\woocommerce-enterprise\\oracle\\math\\EG411Formal",
+  "needsMathlib": false,
+  "exitCode": 1,
+  "seconds": 2.1,
+  "declarations": [
+   {
+    "declaration": "msl_fmz_erdos535_campaign_001_R001_L1_a2r2",
+    "clean": false,
+    "axioms": [
+     "sorryAx"
+    ]
+   }
+  ],
+  "errors": [
+   "tmpc4bl9xt4.lean:21:3: error(lean.synthInstanceFailed): failed to synthesize instance of type class",
+   "tmpc4bl9xt4.lean:31:5: error(lean.invalidField): Invalid field `filterSublists`: The environment does not contain `List.filterSublists`, so it is not possible to project the field `filterSublists` from an expression",
+   "tmpc4bl9xt4.lean:39:96: error: Tactic `native_decide` failed: Could not evaluate decidable instance. Error: cannot evaluate code because '_private.Init.Data.List.Impl.0.List.flatMapTR.go._at_.trips.spec_0' uses 'sorry' and/or contains errors"
+  ]
+ },
+ "lean_result_block": "LEAN_RESULT fmz-erdos535-campaign-001-R001-L1-a2r2\n  FORMAL_STATUS KERNEL_FAILED\n  FILE oracle/frontier_formalizer/cable/theorems/msl_fmz-erdos535-campaign-001-R001-L1-a2r2.lean\n  THEOREMS msl_fmz_erdos535_campaign_001_R001_L1_a2r2\n  BACKEND windows\n  AXIOMS sorryAx\n  TACTIC (supplied proof)\n  BUDGET 900s:KERNEL_FAILED\n  FAILURE ((supplied proof)) TYPE.FAIL INSTANCE[tmpc4bl9xt4.lean:21:3: error(lean.synthInstanceFailed): failed to synthesize instance of type class]; ((supplied proof)) RAW[tmpc4bl9xt4.lean:31:5: error(lean.invalidField): Invalid field `filterSublists`: The environment does not contain `List.filterSublists`, so it is not possible t]; ((supplied proof)) RAW[tmpc4bl9xt4.lean:39:96: error: Tactic `native_decide` failed: Could not evaluate decidable instance. Error: cannot evaluate code because '_private.Init.Data.Lis]\n  LAW KERNEL_FAILED does not refute the claim \u2014 the FAILURE line names what actually broke",
+ "timestamp": "2026-09-02T02:17:47Z"
+}

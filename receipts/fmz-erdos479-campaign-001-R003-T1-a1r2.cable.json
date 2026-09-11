@@ -1,0 +1,49 @@
+{
+ "schema": "oracle.msl.cable.v1",
+ "id": "fmz-erdos479-campaign-001-R003-T1-a1r2",
+ "spec": {
+  "id": "fmz-erdos479-campaign-001-R003-T1-a1r2",
+  "imports": "none",
+  "definitions": "def witnessOk (a : Nat) : Bool := (2^(2^a)) % (2^a) == 0\ndef check_range : Bool := (List.range 7).all (fun a => witnessOk a)",
+  "conclusion": "check_range = true",
+  "proof": "by decide"
+ },
+ "formal_status": "KERNEL_CHECKED",
+ "events": [],
+ "axioms": [],
+ "attempts": [
+  {
+   "tactic": "(supplied proof)",
+   "status": "VERIFIED",
+   "seconds": 48.4,
+   "errors": [],
+   "exitCode": 0,
+   "resource_limit": null
+  }
+ ],
+ "budget_history": [
+  {
+   "tier_seconds": 900.0,
+   "outcome": "KERNEL_CHECKED"
+  }
+ ],
+ "kernel_result": {
+  "status": "VERIFIED",
+  "file": "oracle/frontier_formalizer/cable/theorems/msl_fmz-erdos479-campaign-001-R003-T1-a1r2.lean",
+  "backend": "windows",
+  "project": "C:\\Users\\jared\\Local Sites\\woocommerce-enterprise\\oracle\\math\\EG411Formal",
+  "needsMathlib": false,
+  "exitCode": 0,
+  "seconds": 48.4,
+  "declarations": [
+   {
+    "declaration": "msl_fmz_erdos479_campaign_001_R003_T1_a1r2",
+    "clean": true,
+    "axioms": []
+   }
+  ],
+  "errors": []
+ },
+ "lean_result_block": "LEAN_RESULT fmz-erdos479-campaign-001-R003-T1-a1r2\n  FORMAL_STATUS KERNEL_CHECKED\n  FILE oracle/frontier_formalizer/cable/theorems/msl_fmz-erdos479-campaign-001-R003-T1-a1r2.lean\n  THEOREMS msl_fmz_erdos479_campaign_001_R003_T1_a1r2\n  BACKEND windows\n  AXIOMS -\n  TACTIC (supplied proof)\n  BUDGET 900s:KERNEL_CHECKED\n  FAILURE NONE",
+ "timestamp": "2026-09-02T01:01:45Z"
+}

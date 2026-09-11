@@ -1,0 +1,27 @@
+{
+ "schema": "oracle.msl.closer.witness.v1",
+ "id": "fmz-erdos1137-campaign-001-R009-L001-a1r4",
+ "pipeline": "WITNESS_FINITE",
+ "witness": {
+  "embedded": true,
+  "range": [
+   1,
+   200
+  ],
+  "convention": "p_1=2,3,5,...; d_n = p_{n+1}-p_n for n>=1; d_0=0 (finite-prefix convention, affects only the n=1 term); R(x) = max_{1<=n<x} d_n d_{n-1} / (max_{1<=n<x} d_n)^2, exact Fractions."
+ },
+ "verifier_sha256": "4ee9ff37b4bdfbc4b5343849268f9e439722cb73ba85df3e88b3314a2750db02",
+ "verifier_source": "#!/usr/bin/env python3\n# L001 (NARROWED FRAGMENT) verifier: exact rational, fail-closed, deterministic.\n# Entry point: verify(witness) raises on ANY failed check; returns True on pass.\n# Certifies ONLY: R(x) <= 1 for every integer x in [1,200] under the frozen convention.\nfrom fractions import Fraction\n\ndef verify(witness):\n    if witness.get(\"embedded\") is not True:\n        raise RuntimeError(\"FAIL: witness marker missing\")\n    if tuple(witness[\"range\"]) != (1, 200):\n        raise RuntimeError(\"FAIL: range mismatch\")\n\n    def primes_upto(N):\n        if N < 2:\n            raise RuntimeError(\"FAIL: bad prime bound\")\n        sieve = [True]*(N+1)\n        sieve[0] = sieve[1] = False\n        i = 2\n        while i*i <= N:\n            if sieve[i]:\n                for j in range(i*i, N+1, i):\n                    sieve[j] = False\n            i += 1\n        return [k for k in range(2, N+1) if sieve[k]]\n\n    P = primes_upto(3000)\n    if len(P) < 202:\n        raise RuntimeError(\"FAIL: insufficient primes\")\n    d = [0]*len(P)\n    for n in range(1, len(P)):\n        d[n] = P[n] - P[n-1]\n\n    def R(x):\n        ns = [n for n in range(1, x) if n < len(d)]\n        if not ns:\n            raise RuntimeError(\"FAIL: empty window at x=%d\" % x)\n        M1 = max(Fraction(d[n]) for n in ns)\n        if M1 <= 0:\n            raise RuntimeError(\"FAIL: nonpositive max gap\")\n        M2 = max(Fraction(d[n]) * Fraction(d[n-1]) for n in ns)\n        return M2 / (M1*M1)\n\n    for x in range(1, 201):\n        if R(x) > Fraction(1):\n            raise RuntimeError(\"FAIL: R(%d) > 1\" % x)\n    return True\n\nverify({\"embedded\": True, \"range\": [1, 200]})\n",
+ "run": {
+  "passed": false,
+  "status": "VERIFIER_FAIL",
+  "exit_code": 1,
+  "stdout": "",
+  "detail": "RuntimeError: FAIL: empty window at x=1",
+  "seconds": 0.16,
+  "code_sha256": "4ee9ff37b4bdfbc4b5343849268f9e439722cb73ba85df3e88b3314a2750db02"
+ },
+ "claim": "NARROWED FRAGMENT (covers=fragment). verify(witness) returning True establishes exactly: R(x) <= 1 as an exact rational inequality for every integer x in [1,200] under the frozen convention. DEFECT ON RECORD against the rest of L001: direct exact computation under the stated convention gives R(14) = 24/36 = 2/3 (not 1/2) and R(100) = 56/324 = 14/81 (not 9/16) — the lemma's recorded identity values R(14)=1/2 and R(100)=9/16 are contradicted by the verifier's arithmetic (M1(14)=6, M2(14)=24; M1(100)=18 at d_99=541-523, M2(100)=56 at d_30*d_29=14*4) and were therefore dropped from the certificate. The inequality half is the true, machine-checkable content; the identity half fails sanity under every natural index convention checked.",
+ "law": "Wang 7.2: an exact finite object plus a proved reduction is a CERTIFICATE. The reduction is the `claim` and is a human's to audit; the object and the verifier run are the machine's part.",
+ "timestamp": "2026-09-02T01:55:21Z"
+}

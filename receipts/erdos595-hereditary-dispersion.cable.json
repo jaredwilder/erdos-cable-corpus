@@ -1,0 +1,62 @@
+{
+ "schema": "oracle.msl.cable.v1",
+ "id": "erdos595-hereditary-dispersion",
+ "spec": {
+  "id": "erdos595-hereditary-dispersion",
+  "imports": "Mathlib",
+  "definitions": "open SimpleGraph in\ndef IsProperC {V : Type} (G : SimpleGraph V) {C : Type} (f : V \u2192 C) : Prop :=\n  \u2200 a b : V, G.Adj a b \u2192 f a \u2260 f b",
+  "hypotheses": [
+   "{V C I : Type}",
+   "(P : SimpleGraph V \u2192 Prop)",
+   "(G : SimpleGraph V)"
+  ],
+  "conclusion": "(\u2200 H\u2081 H\u2082 : SimpleGraph V, H\u2081 \u2264 H\u2082 \u2192 P H\u2082 \u2192 P H\u2081) \u2192 (\u2200 H : SimpleGraph V, H \u2264 G \u2192 P H \u2192 \u2203 f : V \u2192 C, IsProperC H f) \u2192 (\u2200 f : V \u2192 (I \u2192 C), \u00ac IsProperC G f) \u2192 \u00ac \u2203 H : I \u2192 SimpleGraph V, (\u2200 i, P (H i)) \u2227 G = \u2a06 i, H i",
+  "proof": "by\n  classical\n  intro hP htau hchi\n  rintro \u27e8H, hHP, hEq\u27e9\n  have hle : \u2200 i, H i \u2264 G := by\n    intro i\n    rw [hEq]\n    exact le_iSup H i\n  choose f hf using fun i => htau (H i) (hle i) (hHP i)\n  refine hchi (fun v => fun i => f i v) ?_\n  intro a b hab hcon\n  rw [hEq, SimpleGraph.iSup_adj] at hab\n  obtain \u27e8i, hi\u27e9 := hab\n  exact hf i a b hi (congrFun hcon i)"
+ },
+ "formal_status": "KERNEL_CHECKED",
+ "events": [],
+ "axioms": [
+  "Classical.choice",
+  "Quot.sound",
+  "propext"
+ ],
+ "attempts": [
+  {
+   "tactic": "(supplied proof)",
+   "status": "VERIFIED",
+   "seconds": 63.1,
+   "errors": [],
+   "exitCode": 0,
+   "resource_limit": null
+  }
+ ],
+ "budget_history": [
+  {
+   "tier_seconds": 120.0,
+   "outcome": "KERNEL_CHECKED"
+  }
+ ],
+ "kernel_result": {
+  "status": "VERIFIED",
+  "file": "oracle/frontier_formalizer/cable/theorems/msl_erdos595-hereditary-dispersion.lean",
+  "backend": "wsl",
+  "project": "/root/erdosfire-bench/proofs",
+  "needsMathlib": true,
+  "exitCode": 0,
+  "seconds": 50.8,
+  "declarations": [
+   {
+    "declaration": "msl_erdos595_hereditary_dispersion",
+    "clean": true,
+    "axioms": [
+     "propext",
+     "Classical.choice",
+     "Quot.sound"
+    ]
+   }
+  ],
+  "errors": []
+ },
+ "lean_result_block": "LEAN_RESULT erdos595-hereditary-dispersion\n  FORMAL_STATUS KERNEL_CHECKED\n  FILE oracle/frontier_formalizer/cable/theorems/msl_erdos595-hereditary-dispersion.lean\n  THEOREMS msl_erdos595_hereditary_dispersion\n  BACKEND wsl\n  AXIOMS Classical.choice, Quot.sound, propext\n  TACTIC (supplied proof)\n  BUDGET 120s:KERNEL_CHECKED\n  FAILURE NONE",
+ "timestamp": "2026-09-06T10:34:58Z"
+}

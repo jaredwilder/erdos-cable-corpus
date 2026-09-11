@@ -1,0 +1,62 @@
+{
+ "schema": "oracle.msl.cable.v1",
+ "id": "fmz-erdos101-campaign-001-R001-L1",
+ "spec": {
+  "id": "fmz-erdos101-campaign-001-R001-L1",
+  "imports": "none",
+  "definitions": "def onLine (a b c : Int \u00d7 Int) : Bool :=\n  (b.1 - a.1) * (c.2 - a.2) - (b.2 - a.2) * (c.1 - a.1) = 0\n\ndef lineSize (pts : List (Int \u00d7 Int)) (a b : Int \u00d7 Int) : Nat :=\n  (pts.filter (fun c => onLine a b c)).length\n\ndef pairsExact (pts : List (Int \u00d7 Int)) (k : Nat) : Nat :=\n  ((pts.flatMap (fun a => pts.filterMap (fun b =>\n    if a \u2260 b \u2227 lineSize pts a b = k then some () else none))).length) / 2\n\ndef ptsW : List (Int \u00d7 Int) := [(0,0), (1,0), (2,0), (3,0), (0,1), (1,2)]\n\ndef check : Bool :=\n  let n := ptsW.length\n  let p2 := pairsExact ptsW 2\n  let p4 := pairsExact ptsW 4\n  let p5 := pairsExact ptsW 5\n  let t2 := p2 / 2\n  let t4 := p4 / 6\n  n = 6 \u2227 p2 = 18 \u2227 p4 = 12 \u2227 p5 = 0 \u2227\n  t2 = 9 \u2227 t4 = 1 \u2227 t4 \u2264 t2 \u2227 (t2 : \u2115) * 2 \u2265 n \u2227 t2 \u2265 3 + t4",
+  "conclusion": "check = true",
+  "proof": "by decide"
+ },
+ "formal_status": "KERNEL_FAILED",
+ "events": [
+  "((supplied proof)) TYPE.FAIL NEED[\u2115]",
+  "((supplied proof)) REFUTED.DECIDABLE[decide proved the negation \u2014 this one IS a refutation]"
+ ],
+ "axioms": [
+  "sorryAx"
+ ],
+ "attempts": [
+  {
+   "tactic": "(supplied proof)",
+   "status": "UNVERIFIED",
+   "seconds": 22.6,
+   "errors": [
+    "tmpcr6ntjc9.lean:23:36: error(lean.unknownIdentifier): Unknown identifier `\u2115`",
+    "tmpcr6ntjc9.lean:25:68: error: Tactic `decide` proved that the proposition"
+   ],
+   "exitCode": 1,
+   "resource_limit": null
+  }
+ ],
+ "budget_history": [
+  {
+   "tier_seconds": 900.0,
+   "outcome": "REFUTED_DECIDABLE"
+  }
+ ],
+ "kernel_result": {
+  "status": "UNVERIFIED",
+  "file": "oracle/frontier_formalizer/cable/theorems/msl_fmz-erdos101-campaign-001-R001-L1.lean",
+  "backend": "windows",
+  "project": "C:\\Users\\jared\\Local Sites\\woocommerce-enterprise\\oracle\\math\\EG411Formal",
+  "needsMathlib": false,
+  "exitCode": 1,
+  "seconds": 22.6,
+  "declarations": [
+   {
+    "declaration": "msl_fmz_erdos101_campaign_001_R001_L1",
+    "clean": false,
+    "axioms": [
+     "sorryAx"
+    ]
+   }
+  ],
+  "errors": [
+   "tmpcr6ntjc9.lean:23:36: error(lean.unknownIdentifier): Unknown identifier `\u2115`",
+   "tmpcr6ntjc9.lean:25:68: error: Tactic `decide` proved that the proposition"
+  ]
+ },
+ "lean_result_block": "LEAN_RESULT fmz-erdos101-campaign-001-R001-L1\n  FORMAL_STATUS KERNEL_FAILED\n  FILE oracle/frontier_formalizer/cable/theorems/msl_fmz-erdos101-campaign-001-R001-L1.lean\n  THEOREMS msl_fmz_erdos101_campaign_001_R001_L1\n  BACKEND windows\n  AXIOMS sorryAx\n  TACTIC (supplied proof)\n  BUDGET 900s:REFUTED_DECIDABLE\n  FAILURE ((supplied proof)) TYPE.FAIL NEED[\u2115]; ((supplied proof)) REFUTED.DECIDABLE[decide proved the negation \u2014 this one IS a refutation]\n  LAW KERNEL_FAILED does not refute the claim \u2014 the FAILURE line names what actually broke",
+ "timestamp": "2026-09-01T19:59:16Z"
+}

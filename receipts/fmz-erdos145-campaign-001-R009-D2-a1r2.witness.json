@@ -1,0 +1,24 @@
+{
+ "schema": "oracle.msl.closer.witness.v1",
+ "id": "fmz-erdos145-campaign-001-R009-D2-a1r2",
+ "pipeline": "WITNESS_FINITE",
+ "witness": {
+  "N": 10000000,
+  "gap_max": 33,
+  "alpha_max": 4,
+  "note": "witness is the recomputed finite object: the exact gap multiset of squarefree s_{n+1}-s_n for s_n <= N, regenerated deterministically inside the verifier (no trusted data, no I/O). The verifier is a pure function returning True only on full exact success, raising/failing closed otherwise."
+ },
+ "verifier_sha256": "1a9d9deb3209d078bb05d67e3cf7c804f6ce15be4addd471838b280a2b8c7876",
+ "verifier_source": "from fractions import Fraction\n\ndef is_squarefree(n):\n    if n < 1:\n        return False\n    d = 2\n    while d * d <= n:\n        if n % (d*d) == 0:\n            return False\n        d += 1\n    return True\n\ndef ipow(b, e):\n    r = 1\n    for _ in range(e):\n        r *= b\n    return r\n\ndef verify(N, GMAX, AMAX):\n    if type(N) is not int or N < 2 or GMAX < 1 or AMAX < 0 or AMAX > 6:\n        raise ValueError('FAIL')\n    sq = [n for n in range(1, N+1) if is_squarefree(n)]\n    gaps = [sq[i+1]-sq[i] for i in range(len(sq)-1)]\n    if any(g < 1 or g > GMAX for g in gaps):\n        raise ValueError('FAIL')  # gap outside certified range: fail-closed abort\n    cnt = {}\n    for g in gaps:\n        cnt[g] = cnt.get(g, 0) + 1\n    # per-gap staircase identity, exact integers\n    for g in sorted(cnt):\n        for a in range(AMAX+1):\n            lhs = sum(ipow(j, a) - ipow(j-1, a) for j in range(1, g+1))\n            if lhs != ipow(g, a):\n                raise ValueError('FAIL')\n    # aggregate identity: sum g^a == sum_j (j^a-(j-1)^a) * C_j, C_j = #{gaps >= j}\n    for a in range(AMAX+1):\n        total = sum(ipow(g, a) for g in gaps)\n        agg = 0\n        for j in range(1, GMAX+1):\n            Cj = sum(c for g, c in cnt.items() if g >= j)\n            agg += (ipow(j, a) - ipow(j-1, a)) * Cj\n        if total != agg:\n            raise ValueError('FAIL')\n    # per-gap exact Fraction means (no floats anywhere)\n    for g in sorted(cnt):\n        for a in range(AMAX+1):\n            m = Fraction(ipow(g, a) * cnt[g], cnt[g])\n            if m.denominator != 1:\n                raise ValueError('FAIL')\n    return True\n\ndef run():\n    return verify(10000000, 33, 4)\n\nRESULT = run()",
+ "run": {
+  "passed": false,
+  "status": "VERIFIER_TIMEOUT",
+  "seconds": 300,
+  "stdout": "",
+  "code_sha256": "1a9d9deb3209d078bb05d67e3cf7c804f6ce15be4addd471838b280a2b8c7876",
+  "detail": "verifier exceeded 300s — a verifier that does not terminate has not verified anything"
+ },
+ "claim": "RESULT == True certifies the D2 fragment: the exact integer/Fraction per-gap verifier for squarefree gaps s_{n+1}-s_n with 1<=g<=33, n<=10^7, 0<=alpha<=4 succeeds fail-closed (pure function, require-raise, no floats, no I/O, exact arithmetic, abort on any gap outside the certified range), confirming the staircase identity g^alpha = sum_j Delta_j 1_{g>=j} exactly on the certified finite range; the analytic tail g>33 / n>10^7 remains open and is NOT covered.",
+ "law": "Wang 7.2: an exact finite object plus a proved reduction is a CERTIFICATE. The reduction is the `claim` and is a human's to audit; the object and the verifier run are the machine's part.",
+ "timestamp": "2026-09-02T01:18:04Z"
+}

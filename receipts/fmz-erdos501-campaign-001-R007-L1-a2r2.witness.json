@@ -1,0 +1,76 @@
+{
+ "schema": "oracle.msl.closer.witness.v1",
+ "id": "fmz-erdos501-campaign-001-R007-L1-a2r2",
+ "pipeline": "WITNESS_FINITE",
+ "witness": {
+  "encoding": "size-3-forbidding finite surrogate",
+  "graphs": [
+   {
+    "name": "C5_complement",
+    "n": 5,
+    "edges": [
+     [
+      0,
+      2
+     ],
+     [
+      0,
+      3
+     ],
+     [
+      1,
+      3
+     ],
+     [
+      1,
+      4
+     ],
+     [
+      2,
+      4
+     ]
+    ],
+    "claimed_witness": [
+     0,
+     2
+    ]
+   },
+   {
+    "name": "directed_3_cycle",
+    "n": 3,
+    "directed_edges": [
+     [
+      0,
+      1
+     ],
+     [
+      1,
+      2
+     ],
+     [
+      2,
+      0
+     ]
+    ],
+    "claimed_witness": [
+     0,
+     1
+    ]
+   }
+  ]
+ },
+ "verifier_sha256": "9491680e2b7427bd17298b96d8076b9b1de6aa1d556e1fbf792ad135083a0927",
+ "verifier_source": "def verify():\n    # Fail-closed, deterministic, integer-only, no imports, no I/O.\n    # Returns True only if every required property is exactly verified;\n    # any mismatch raises (abort), never returns True.\n    W = {\n        'encoding': 'size-3-forbidding finite surrogate',\n        'graphs': [\n            {'name': 'C5_complement', 'n': 5,\n             'edges': [(0, 2), (0, 3), (1, 3), (1, 4), (2, 4)],\n             'claimed_witness': (0, 2)},\n            {'name': 'directed_3_cycle', 'n': 3,\n             'directed_edges': [(0, 1), (1, 2), (2, 0)],\n             'claimed_witness': (0, 1)}\n        ]\n    }\n    if W['encoding'] != 'size-3-forbidding finite surrogate':\n        raise AssertionError('encoding mismatch')\n    if len(W['graphs']) != 2:\n        raise AssertionError('expected exactly 2 graphs')\n    for g in W['graphs']:\n        n = g['n']\n        edges = g.get('edges', [])\n        dedges = g.get('directed_edges', [])\n        if not isinstance(n, int) or n <= 0:\n            raise AssertionError('bad n')\n        if len(edges) + len(dedges) == 0:\n            raise AssertionError('no edges given')\n        if len(edges) > 0 and len(dedges) > 0:\n            raise AssertionError('ambiguous encoding')\n        und = len(dedges) == 0\n        es = set(frozenset(e) for e in edges) if und else \\\n             set(tuple(d) for d in dedges)\n        if und and any(len(e) != 2 for e in es):\n            raise AssertionError('bad edge')\n        if not und and any(a == b for a, b in es):\n            raise AssertionError('bad directed edge')\n        def is_ind(s):\n            pairs = [(a, b) for a in s for b in s if a != b]\n            if und:\n                return all(frozenset(p) not in es for p in pairs)\n            return all(p not in es for p in pairs)\n        # enumerate ALL subsets; alpha must be exactly 2\n        best = 0\n        for k in range(n + 1):\n            for s in _combs(n, k):\n                if is_ind(s) and len(s) > best:\n                    best = len(s)\n        if best != 2:\n            raise AssertionError('alpha %d != 2 in %s' % (best, g['name']))\n        # no independent triple (size-3 forbidding)\n        for s in _combs(n, 3):\n            if is_ind(s):\n                raise AssertionError('independent triple in %s' % g['name'])\n        # claimed witness must be an independent set of size 2\n        w = g['claimed_witness']\n        if len(set(w)) != 2 or not is_ind(set(w)):\n            raise AssertionError('bad witness in %s' % g['name'])\n    return True\n\ndef _combs(n, k):\n    # exact integer enumeration of k-subsets of {0..n-1}, deterministic order\n    out = []\n    def rec(start, acc):\n        if len(acc) == k:\n            out.append(frozenset(acc))\n            return\n        for i in range(start, n):\n            acc.append(i)\n            rec(i + 1, acc)\n            acc.pop()\n    if 0 <= k <= n:\n        rec(0, [])\n    return out\n\nverify()",
+ "run": {
+  "passed": false,
+  "status": "VERIFIER_FAIL",
+  "exit_code": 1,
+  "stdout": "",
+  "detail": "AssertionError: bad witness in C5_complement",
+  "seconds": 0.09,
+  "code_sha256": "9491680e2b7427bd17298b96d8076b9b1de6aa1d556e1fbf792ad135083a0927"
+ },
+ "claim": "A PASS establishes exactly the finite content of standing lemma L1: exhaustive 2^5/2^3 enumeration, integer-only and fail-closed, certifies the alpha=2 extremizers (C5-complement witness {0,2} and directed-3-cycle witness) under the size-3-forbidding encoding, strictly on the finite surrogate with no outer-measure transfer claimed; covers=\"fragment\".",
+ "law": "Wang 7.2: an exact finite object plus a proved reduction is a CERTIFICATE. The reduction is the `claim` and is a human's to audit; the object and the verifier run are the machine's part.",
+ "timestamp": "2026-09-02T02:10:49Z"
+}

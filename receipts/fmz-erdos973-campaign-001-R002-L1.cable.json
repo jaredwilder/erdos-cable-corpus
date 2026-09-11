@@ -1,0 +1,49 @@
+{
+ "schema": "oracle.msl.cable.v1",
+ "id": "fmz-erdos973-campaign-001-R002-L1",
+ "spec": {
+  "id": "fmz-erdos973-campaign-001-R002-L1",
+  "imports": "none",
+  "definitions": "def check_sqrt2_interval : Bool :=\n  (1414213^2 < 2000000000000) && (2000000000000 < 1414214^2)\n-- Exact Nat arithmetic: with 10^6 denominators on both sides of the strict\n-- inequality 1414213/10^6 < \u221a2 < 1414214/10^6, cross-multiplication by 10^12\n-- (a positive integer) preserves strict inequality, so the rational interval\n-- claim is equivalent to the two integer inequalities above. No floats, no\n-- tolerance, no Classical choice: the Bool expression is total and computable.",
+  "conclusion": "check_sqrt2_interval = true",
+  "proof": "by decide"
+ },
+ "formal_status": "KERNEL_CHECKED",
+ "events": [],
+ "axioms": [],
+ "attempts": [
+  {
+   "tactic": "(supplied proof)",
+   "status": "VERIFIED",
+   "seconds": 2.2,
+   "errors": [],
+   "exitCode": 0,
+   "resource_limit": null
+  }
+ ],
+ "budget_history": [
+  {
+   "tier_seconds": 900.0,
+   "outcome": "KERNEL_CHECKED"
+  }
+ ],
+ "kernel_result": {
+  "status": "VERIFIED",
+  "file": "oracle/frontier_formalizer/cable/theorems/msl_fmz-erdos973-campaign-001-R002-L1.lean",
+  "backend": "windows",
+  "project": "C:\\Users\\jared\\Local Sites\\woocommerce-enterprise\\oracle\\math\\EG411Formal",
+  "needsMathlib": false,
+  "exitCode": 0,
+  "seconds": 2.2,
+  "declarations": [
+   {
+    "declaration": "msl_fmz_erdos973_campaign_001_R002_L1",
+    "clean": true,
+    "axioms": []
+   }
+  ],
+  "errors": []
+ },
+ "lean_result_block": "LEAN_RESULT fmz-erdos973-campaign-001-R002-L1\n  FORMAL_STATUS KERNEL_CHECKED\n  FILE oracle/frontier_formalizer/cable/theorems/msl_fmz-erdos973-campaign-001-R002-L1.lean\n  THEOREMS msl_fmz_erdos973_campaign_001_R002_L1\n  BACKEND windows\n  AXIOMS -\n  TACTIC (supplied proof)\n  BUDGET 900s:KERNEL_CHECKED\n  FAILURE NONE",
+ "timestamp": "2026-09-01T21:37:42Z"
+}

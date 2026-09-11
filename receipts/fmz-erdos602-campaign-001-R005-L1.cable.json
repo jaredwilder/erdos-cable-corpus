@@ -1,0 +1,55 @@
+{
+ "schema": "oracle.msl.cable.v1",
+ "id": "fmz-erdos602-campaign-001-R005-L1",
+ "spec": {
+  "id": "fmz-erdos602-campaign-001-R005-L1",
+  "imports": "none",
+  "definitions": "def F : List (List Nat) :=\n  [[12,112,13,113,14,114,1,11],\n   [12,112,23,123,24,124,2,22],\n   [13,113,23,123,34,134,3,33],\n   [14,114,24,124,34,134,4,44]]\n-- private (red) points x1..x4 and extra (blue) points y1..y4\ndef reds : List Nat := [1,2,3,4]\ndef col (p : Nat) : Nat := if p \u2208 reds then 1 else 0\ndef interSize (A B : List Nat) : Nat := (A.filter (\u00b7 \u2208 B)).length\ndef pairwiseNe1 : Bool :=\n  F.all (fun A => F.all (fun B => A = B \u2228 interSize A B \u2260 1))\ndef hasRed (A : List Nat) : Bool := A.any (fun p => col p = 1)\ndef hasBlue (A : List Nat) : Bool := A.any (fun p => col p = 0)\ndef coloringGood : Bool := F.all (fun A => hasRed A && hasBlue A)\n-- the greedy finite-core lemma, instantiated: for this explicit family the\n-- private-point construction yields a 2-colouring with no monochromatic member",
+  "conclusion": "pairwiseNe1 = true \u2227 coloringGood = true \u2227 (\u2200 A \u2208 F, A.length > 0)",
+  "proof": "by decide"
+ },
+ "formal_status": "KERNEL_CHECKED",
+ "events": [],
+ "axioms": [
+  "Quot.sound",
+  "propext"
+ ],
+ "attempts": [
+  {
+   "tactic": "(supplied proof)",
+   "status": "VERIFIED",
+   "seconds": 3.5,
+   "errors": [],
+   "exitCode": 0,
+   "resource_limit": null
+  }
+ ],
+ "budget_history": [
+  {
+   "tier_seconds": 900.0,
+   "outcome": "KERNEL_CHECKED"
+  }
+ ],
+ "kernel_result": {
+  "status": "VERIFIED",
+  "file": "oracle/frontier_formalizer/cable/theorems/msl_fmz-erdos602-campaign-001-R005-L1.lean",
+  "backend": "windows",
+  "project": "C:\\Users\\jared\\Local Sites\\woocommerce-enterprise\\oracle\\math\\EG411Formal",
+  "needsMathlib": false,
+  "exitCode": 0,
+  "seconds": 3.5,
+  "declarations": [
+   {
+    "declaration": "msl_fmz_erdos602_campaign_001_R005_L1",
+    "clean": true,
+    "axioms": [
+     "propext",
+     "Quot.sound"
+    ]
+   }
+  ],
+  "errors": []
+ },
+ "lean_result_block": "LEAN_RESULT fmz-erdos602-campaign-001-R005-L1\n  FORMAL_STATUS KERNEL_CHECKED\n  FILE oracle/frontier_formalizer/cable/theorems/msl_fmz-erdos602-campaign-001-R005-L1.lean\n  THEOREMS msl_fmz_erdos602_campaign_001_R005_L1\n  BACKEND windows\n  AXIOMS Quot.sound, propext\n  TACTIC (supplied proof)\n  BUDGET 900s:KERNEL_CHECKED\n  FAILURE NONE",
+ "timestamp": "2026-09-01T20:27:18Z"
+}

@@ -1,0 +1,49 @@
+{
+ "schema": "oracle.msl.cable.v1",
+ "id": "fmz-erdos341-campaign-001-R005-L1",
+ "spec": {
+  "id": "fmz-erdos341-campaign-001-R005-L1",
+  "imports": "none",
+  "definitions": "-- Finite-content fragment of L1 (erdos486 R005/L1, adapted): for finite A={a_1<...<a_k}\n-- with 0 < a_i <= N, the dyadic encoding x_A = m/2^N with m = \u03a3 2^(N\u2212a_i) is exact and\n-- x_A \u2208 (0,1). Pure Lean 4 core, no dependencies: sortedness checked by recursion.\n\ndef strictlySorted : List Nat \u2192 Bool\n  | [] => true\n  | [_] => true\n  | a :: b :: rest => (a < b) && strictlySorted (b :: rest)\n\ndef admissible (A : List Nat) (N : Nat) : Bool :=\n  strictlySorted A && A.all (fun a => 0 < a && a \u2264 N)\n\ndef mOf (A : List Nat) (N : Nat) : Nat :=\n  A.foldl (fun m a => m + 2 ^ (N - a)) 0\n\ndef encodingSound (A : List Nat) (N : Nat) : Bool :=\n  admissible A N && mOf A N < 2 ^ N\n-- Admissibility makes the summands 2^(N\u2212a_i) pairwise distinct powers of two, so\n-- m = \u03a3 2^(N\u2212a_i) is the exact numerator of x_A in the binary place-encoding, and\n-- m < 2^N certifies 0 < x_A < 1 exactly.",
+  "conclusion": "encodingSound [1, 3, 4] 6 = true && encodingSound [2, 5, 7] 9 = true && encodingSound [1, 2, 3] 3 = true && encodingSound [4] 4 = true && encodingSound [] 1 = true",
+  "proof": "by decide"
+ },
+ "formal_status": "KERNEL_CHECKED",
+ "events": [],
+ "axioms": [],
+ "attempts": [
+  {
+   "tactic": "(supplied proof)",
+   "status": "VERIFIED",
+   "seconds": 3.2,
+   "errors": [],
+   "exitCode": 0,
+   "resource_limit": null
+  }
+ ],
+ "budget_history": [
+  {
+   "tier_seconds": 900.0,
+   "outcome": "KERNEL_CHECKED"
+  }
+ ],
+ "kernel_result": {
+  "status": "VERIFIED",
+  "file": "oracle/frontier_formalizer/cable/theorems/msl_fmz-erdos341-campaign-001-R005-L1.lean",
+  "backend": "windows",
+  "project": "C:\\Users\\jared\\Local Sites\\woocommerce-enterprise\\oracle\\math\\EG411Formal",
+  "needsMathlib": false,
+  "exitCode": 0,
+  "seconds": 3.2,
+  "declarations": [
+   {
+    "declaration": "msl_fmz_erdos341_campaign_001_R005_L1",
+    "clean": true,
+    "axioms": []
+   }
+  ],
+  "errors": []
+ },
+ "lean_result_block": "LEAN_RESULT fmz-erdos341-campaign-001-R005-L1\n  FORMAL_STATUS KERNEL_CHECKED\n  FILE oracle/frontier_formalizer/cable/theorems/msl_fmz-erdos341-campaign-001-R005-L1.lean\n  THEOREMS msl_fmz_erdos341_campaign_001_R005_L1\n  BACKEND windows\n  AXIOMS -\n  TACTIC (supplied proof)\n  BUDGET 900s:KERNEL_CHECKED\n  FAILURE NONE",
+ "timestamp": "2026-09-01T23:37:57Z"
+}

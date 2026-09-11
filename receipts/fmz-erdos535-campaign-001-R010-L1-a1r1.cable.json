@@ -1,0 +1,67 @@
+{
+ "schema": "oracle.msl.cable.v1",
+ "id": "fmz-erdos535-campaign-001-R010-L1-a1r1",
+ "spec": {
+  "id": "fmz-erdos535-campaign-001-R010-L1-a1r1",
+  "imports": "none",
+  "definitions": "def gcd : Nat -> Nat -> Nat\n  | 0, m => m\n  | (Nat.succ k), m => gcd (m % (k+1)) (k+1)\n\n-- pairwise condition: all pairwise gcds of the chosen set are distinct\n-- (any two distinct pairs having equal gcd is forbidden)\ndef pairwiseGcdsDistinct (s : List Nat) : Bool :=\n  let ps := (List.range s.length).flatMap\n    (fun i => (List.range s.length).filterMap\n      (fun j => if i < j then some (gcd (s.getD i 0) (s.getD j 0)) else none))\n  ps.eraseDups.length == ps.length\n\ndef subsets : List Nat -> List (List Nat)\n  | [] => [[]]\n  | x :: xs => let rest := subsets xs\n               rest ++ rest.map (fun t => x :: t)\n\n-- f_3(n) = max size of a subset of [n] with distinct pairwise gcds\ndef fval (n : Nat) : Nat :=\n  (subsets (List.range 1 (n+1))).filter pairwiseGcdsDistinct\n    |>.foldl (fun acc s => max acc s.length) 0\n\ndef checkL1 : Bool :=\n  fval 3 == 2 && fval 4 == 3 && fval 5 == 3 && fval 6 == 3",
+  "conclusion": "checkL1 = true",
+  "proof": "by decide"
+ },
+ "formal_status": "KERNEL_FAILED",
+ "events": [
+  "((supplied proof)) RAW[tmpv0j_l_36.lean:3:4: error: fail to show termination for]",
+  "((supplied proof)) SYNTAX.FAIL[tmpv0j_l_36.lean:22:12: error: Function expected at]",
+  "((supplied proof)) RAW[tmpv0j_l_36.lean:28:75: error: Tactic `decide` failed for proposition]"
+ ],
+ "axioms": [
+  "propext",
+  "sorryAx"
+ ],
+ "attempts": [
+  {
+   "tactic": "(supplied proof)",
+   "status": "UNVERIFIED",
+   "seconds": 2.2,
+   "errors": [
+    "tmpv0j_l_36.lean:3:4: error: fail to show termination for",
+    "tmpv0j_l_36.lean:22:12: error: Function expected at",
+    "tmpv0j_l_36.lean:28:75: error: Tactic `decide` failed for proposition"
+   ],
+   "exitCode": 1,
+   "resource_limit": null
+  }
+ ],
+ "budget_history": [
+  {
+   "tier_seconds": 900.0,
+   "outcome": "KERNEL_FAILED"
+  }
+ ],
+ "kernel_result": {
+  "status": "UNVERIFIED",
+  "file": "oracle/frontier_formalizer/cable/theorems/msl_fmz-erdos535-campaign-001-R010-L1-a1r1.lean",
+  "backend": "windows",
+  "project": "C:\\Users\\jared\\Local Sites\\woocommerce-enterprise\\oracle\\math\\EG411Formal",
+  "needsMathlib": false,
+  "exitCode": 1,
+  "seconds": 2.2,
+  "declarations": [
+   {
+    "declaration": "msl_fmz_erdos535_campaign_001_R010_L1_a1r1",
+    "clean": false,
+    "axioms": [
+     "propext",
+     "sorryAx"
+    ]
+   }
+  ],
+  "errors": [
+   "tmpv0j_l_36.lean:3:4: error: fail to show termination for",
+   "tmpv0j_l_36.lean:22:12: error: Function expected at",
+   "tmpv0j_l_36.lean:28:75: error: Tactic `decide` failed for proposition"
+  ]
+ },
+ "lean_result_block": "LEAN_RESULT fmz-erdos535-campaign-001-R010-L1-a1r1\n  FORMAL_STATUS KERNEL_FAILED\n  FILE oracle/frontier_formalizer/cable/theorems/msl_fmz-erdos535-campaign-001-R010-L1-a1r1.lean\n  THEOREMS msl_fmz_erdos535_campaign_001_R010_L1_a1r1\n  BACKEND windows\n  AXIOMS propext, sorryAx\n  TACTIC (supplied proof)\n  BUDGET 900s:KERNEL_FAILED\n  FAILURE ((supplied proof)) RAW[tmpv0j_l_36.lean:3:4: error: fail to show termination for]; ((supplied proof)) SYNTAX.FAIL[tmpv0j_l_36.lean:22:12: error: Function expected at]; ((supplied proof)) RAW[tmpv0j_l_36.lean:28:75: error: Tactic `decide` failed for proposition]\n  LAW KERNEL_FAILED does not refute the claim \u2014 the FAILURE line names what actually broke",
+ "timestamp": "2026-09-02T02:18:06Z"
+}

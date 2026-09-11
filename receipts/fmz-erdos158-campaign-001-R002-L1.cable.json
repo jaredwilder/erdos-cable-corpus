@@ -1,0 +1,59 @@
+{
+ "schema": "oracle.msl.cable.v1",
+ "id": "fmz-erdos158-campaign-001-R002-L1",
+ "spec": {
+  "id": "fmz-erdos158-campaign-001-R002-L1",
+  "imports": "none",
+  "definitions": "def F : Nat := 7\ndef g : Nat := 3\n-- g is a primitive root mod 7: its powers 3^0..3^5 mod 7 are 1,3,2,6,4,5.\ndef powG (a : Nat) : Nat := (3^(a%6)) % 7\n-- Bose\u2013Chowla elements: g^a - g mod 7\ndef bcSet : List Nat := (List.range 6).map (fun a => (powG a + 7 - 3) % 7)\n-- multiset equality on length-2 lists via erase-cancelation\ndef multisetEq (u v : List Nat) : Bool :=\n  (u.foldr (fun x acc => acc.erase x) v).isEmpty && (v.foldr (fun x acc => acc.erase x) u).isEmpty\ndef checkQuad : Nat -> Nat -> Nat -> Nat -> Bool\n  | b1, b2, b3, b4 =>\n    if powG (b1+b2) == powG (b3+b4) then\n      multisetEq [b1%6, b2%6] [b3%6, b4%6]\n    else true\ndef checkAll : Bool :=\n  (List.range 6).all (fun b1 =>\n   (List.range 6).all (fun b2 =>\n    (List.range 6).all (fun b3 =>\n     (List.range 6).all (fun b4 => checkQuad b1 b2 b3 b4))))\ndef checkDistinct : Bool := (bcSet.eraseDups).length == bcSet.length",
+  "conclusion": "checkAll = true && checkDistinct = true",
+  "proof": "by decide"
+ },
+ "formal_status": "KERNEL_FAILED",
+ "events": [
+  "((supplied proof)) REFUTED.DECIDABLE[decide proved the negation \u2014 this one IS a refutation]"
+ ],
+ "axioms": [
+  "sorryAx"
+ ],
+ "attempts": [
+  {
+   "tactic": "(supplied proof)",
+   "status": "UNVERIFIED",
+   "seconds": 2.3,
+   "errors": [
+    "tmp2x689j5a.lean:24:95: error: Tactic `decide` proved that the proposition"
+   ],
+   "exitCode": 1,
+   "resource_limit": null
+  }
+ ],
+ "budget_history": [
+  {
+   "tier_seconds": 900.0,
+   "outcome": "REFUTED_DECIDABLE"
+  }
+ ],
+ "kernel_result": {
+  "status": "UNVERIFIED",
+  "file": "oracle/frontier_formalizer/cable/theorems/msl_fmz-erdos158-campaign-001-R002-L1.lean",
+  "backend": "windows",
+  "project": "C:\\Users\\jared\\Local Sites\\woocommerce-enterprise\\oracle\\math\\EG411Formal",
+  "needsMathlib": false,
+  "exitCode": 1,
+  "seconds": 2.3,
+  "declarations": [
+   {
+    "declaration": "msl_fmz_erdos158_campaign_001_R002_L1",
+    "clean": false,
+    "axioms": [
+     "sorryAx"
+    ]
+   }
+  ],
+  "errors": [
+   "tmp2x689j5a.lean:24:95: error: Tactic `decide` proved that the proposition"
+  ]
+ },
+ "lean_result_block": "LEAN_RESULT fmz-erdos158-campaign-001-R002-L1\n  FORMAL_STATUS KERNEL_FAILED\n  FILE oracle/frontier_formalizer/cable/theorems/msl_fmz-erdos158-campaign-001-R002-L1.lean\n  THEOREMS msl_fmz_erdos158_campaign_001_R002_L1\n  BACKEND windows\n  AXIOMS sorryAx\n  TACTIC (supplied proof)\n  BUDGET 900s:REFUTED_DECIDABLE\n  FAILURE ((supplied proof)) REFUTED.DECIDABLE[decide proved the negation \u2014 this one IS a refutation]\n  LAW KERNEL_FAILED does not refute the claim \u2014 the FAILURE line names what actually broke",
+ "timestamp": "2026-09-01T21:14:06Z"
+}

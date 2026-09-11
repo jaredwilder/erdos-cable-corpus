@@ -1,0 +1,53 @@
+{
+ "schema": "oracle.msl.cable.v1",
+ "id": "fmz-erdos25-campaign-001-R003-L1",
+ "spec": {
+  "id": "fmz-erdos25-campaign-001-R003-L1",
+  "imports": "Mathlib",
+  "definitions": "inductive GateInput where\n  | absent\n  | present (value : Bool)\n\ndef gate : GateInput \u2192 GateInput \u2192 Option Bool\n  | GateInput.absent, GateInput.absent => none\n  | GateInput.absent, GateInput.present _ => some false\n  | GateInput.present _, GateInput.absent => some false\n  | GateInput.present _, GateInput.present _ => some true",
+  "conclusion": "\u2200 reduction residual : GateInput,\n    gate reduction residual = none \u2194\n      reduction = GateInput.absent \u2227 residual = GateInput.absent",
+  "proof": "by\n  intro reduction residual\n  cases reduction <;> cases residual <;> simp [gate]"
+ },
+ "formal_status": "KERNEL_CHECKED",
+ "events": [],
+ "axioms": [
+  "propext"
+ ],
+ "attempts": [
+  {
+   "tactic": "(supplied proof)",
+   "status": "VERIFIED",
+   "seconds": 6.0,
+   "errors": [],
+   "exitCode": 0,
+   "resource_limit": null
+  }
+ ],
+ "budget_history": [
+  {
+   "tier_seconds": 900.0,
+   "outcome": "KERNEL_CHECKED"
+  }
+ ],
+ "kernel_result": {
+  "status": "VERIFIED",
+  "file": "oracle/frontier_formalizer/cable/theorems/msl_fmz-erdos25-campaign-001-R003-L1.lean",
+  "backend": "wsl",
+  "project": "/root/erdosfire-bench/proofs",
+  "needsMathlib": true,
+  "exitCode": 0,
+  "seconds": 3.4,
+  "declarations": [
+   {
+    "declaration": "msl_fmz_erdos25_campaign_001_R003_L1",
+    "clean": true,
+    "axioms": [
+     "propext"
+    ]
+   }
+  ],
+  "errors": []
+ },
+ "lean_result_block": "LEAN_RESULT fmz-erdos25-campaign-001-R003-L1\n  FORMAL_STATUS KERNEL_CHECKED\n  FILE oracle/frontier_formalizer/cable/theorems/msl_fmz-erdos25-campaign-001-R003-L1.lean\n  THEOREMS msl_fmz_erdos25_campaign_001_R003_L1\n  BACKEND wsl\n  AXIOMS propext\n  TACTIC (supplied proof)\n  BUDGET 900s:KERNEL_CHECKED\n  FAILURE NONE",
+ "timestamp": "2026-09-01T23:12:22Z"
+}

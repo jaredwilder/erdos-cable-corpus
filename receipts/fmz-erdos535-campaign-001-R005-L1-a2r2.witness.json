@@ -1,0 +1,27 @@
+{
+ "schema": "oracle.msl.closer.witness.v1",
+ "id": "fmz-erdos535-campaign-001-R005-L1-a2r2",
+ "pipeline": "WITNESS_FINITE",
+ "witness": {
+  "N_max": 8,
+  "domain": [
+   1,
+   64
+  ],
+  "r_min": 3
+ },
+ "verifier_sha256": "148c930d41a0d0c8e7b26538185bad4c446cc7f7c69f32620c9ae9ea3df12e5f",
+ "verifier_source": "def verify(witness):\n    # fail-closed; exact integer arithmetic only; deterministic; no I/O\n    if not isinstance(witness, dict):\n        return 'FAIL'\n    if witness.get('N_max') != 8:\n        return 'FAIL'\n    if witness.get('r_min') != 3:\n        return 'FAIL'\n    if witness.get('domain') != list(range(1, 65)):\n        return 'FAIL'\n\n    def gcd(a, b):\n        while b != 0:\n            a, b = b, a % b\n        return a\n\n    checked = [0]\n\n    def extend(chain):\n        r_target = chain[0]  # unused placeholder\n\n    def rec(chain, r):\n        if len(chain) == r:\n            checked[0] = checked[0] + 1\n            x1 = chain[0]\n            x2 = chain[1]\n            xr = chain[r - 1]\n            if gcd(x1, xr) != x1:\n                return False\n            if gcd(x2, xr) != x2:\n                return False\n            if x1 == x2:\n                return False\n            return True\n        last = chain[-1]\n        m = last\n        while m <= 64:\n            if m % last == 0:\n                if not rec(chain + [m], r):\n                    return False\n            m = m + last\n        return True\n\n    for r in range(3, 9):\n        for x1 in range(1, 65):\n            if not rec([x1], r):\n                return 'FAIL'\n    if checked[0] == 0:\n        return 'FAIL'\n    return 'PASS'\n",
+ "run": {
+  "passed": true,
+  "status": "VERIFIER_PASS",
+  "exit_code": 0,
+  "stdout": "PASS",
+  "detail": "",
+  "seconds": 0.08,
+  "code_sha256": "148c930d41a0d0c8e7b26538185bad4c446cc7f7c69f32620c9ae9ea3df12e5f"
+ },
+ "claim": "verify(witness) returns 'PASS' exactly when every divisibility chain x1|x2|...|xr with 3<=r<=8 and all xi in {1,...,64} satisfies gcd(x1,xr)=x1, gcd(x2,xr)=x2, and x1!=x2 (stdlib-equivalent exact gcd). covers='fragment': this certifies the exhaustive computational leg of L1 over the declared finite range, fail-closed; the uniform-in-N implication is elementary arithmetic (xi|xr forces gcd(x1,xr)=x1 and gcd(x2,xr)=x2; strict divisibility x1|x2 with x2>x1 forces x1!=x2).",
+ "law": "Wang 7.2: an exact finite object plus a proved reduction is a CERTIFICATE. The reduction is the `claim` and is a human's to audit; the object and the verifier run are the machine's part.",
+ "timestamp": "2026-09-02T02:14:26Z"
+}

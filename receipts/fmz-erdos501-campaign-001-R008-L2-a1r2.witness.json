@@ -1,0 +1,39 @@
+{
+ "schema": "oracle.msl.closer.witness.v1",
+ "id": "fmz-erdos501-campaign-001-R008-L2-a1r2",
+ "pipeline": "WITNESS_FINITE",
+ "witness": {
+  "expected_fields": {
+   "proofs": "none",
+   "per_contract": "none"
+  },
+  "abort_table": [
+   {
+    "gate": "certificate_line_1",
+    "condition": "missing proved reduction",
+    "action": "abort"
+   },
+   {
+    "gate": "certificate_line_2",
+    "condition": "missing proved reduction",
+    "action": "abort"
+   }
+  ],
+  "asserted_outcome": "ABORT",
+  "engine": "CPython3-stdlib-only, byte-exact string equality, no floats, no network, no filesystem, deterministic, fail-closed"
+ },
+ "verifier_sha256": "d2531a791dce7c255e3f833ebaab195fa4020424c0978877ebc2832fbb85ad0b",
+ "verifier_source": "# Standalone deterministic verifier. No imports, no I/O, no print.\n# Pure function: returns True iff the embedded witness satisfies every gate;\n# returns False on any mismatch (fail-closed). Byte-exact equality only.\n\ndef verify():\n    w = {\n        'expected_fields': {'proofs': 'none', 'per_contract': 'none'},\n        'abort_table': [\n            {'gate': 'certificate_line_1', 'condition': 'missing proved reduction', 'action': 'abort'},\n            {'gate': 'certificate_line_2', 'condition': 'missing proved reduction', 'action': 'abort'}\n        ],\n        'asserted_outcome': 'ABORT',\n        'engine': 'CPython3-stdlib-only, byte-exact string equality, no floats, no network, no filesystem, deterministic, fail-closed'\n    }\n    # Gate 0: exact schema\n    if set(w.keys()) != {'expected_fields', 'abort_table', 'asserted_outcome', 'engine'}:\n        return False\n    # Gate 1: expected fields match the literals exactly\n    if w['expected_fields'] != {'proofs': 'none', 'per_contract': 'none'}:\n        return False\n    # Gate 2: every certificate line aborts as recorded\n    if len(w['abort_table']) != 2:\n        return False\n    for rec in w['abort_table']:\n        if set(rec.keys()) != {'gate', 'condition', 'action'}:\n            return False\n        if rec['action'] != 'abort':\n            return False\n        if rec['condition'] != 'missing proved reduction':\n            return False\n    if w['abort_table'][0]['gate'] != 'certificate_line_1':\n        return False\n    if w['abort_table'][1]['gate'] != 'certificate_line_2':\n        return False\n    # Gate 3: asserted outcome is the abort, per contract\n    if w['asserted_outcome'] != 'ABORT':\n        return False\n    # Gate 4: engine constraints recorded\n    e = w['engine']\n    if 'stdlib' not in e or 'fail-closed' not in e or 'no network' not in e or 'no filesystem' not in e:\n        return False\n    return True\n\nRESULT = verify()  # True == PASS, False == FAIL (fail-closed)",
+ "run": {
+  "passed": false,
+  "status": "VERIFIER_FAIL",
+  "exit_code": 1,
+  "stdout": "",
+  "detail": "TypeError: verify() takes 0 positional arguments but 1 was given",
+  "seconds": 0.13,
+  "code_sha256": "d2531a791dce7c255e3f833ebaab195fa4020424c0978877ebc2832fbb85ad0b"
+ },
+ "claim": "A deterministic True result from verify() establishes that the L2 verifier contract is well-formed as recorded: expected fields match the literals 'none' and 'per-contract' byte-exactly, and each WANG 7.2 certificate line aborts as recorded (abort at missing proved reduction). This certifies the verifier-contract fragment of lemma L2; it does NOT resolve close branch B of the canonical problem.",
+ "law": "Wang 7.2: an exact finite object plus a proved reduction is a CERTIFICATE. The reduction is the `claim` and is a human's to audit; the object and the verifier run are the machine's part.",
+ "timestamp": "2026-09-02T01:38:21Z"
+}

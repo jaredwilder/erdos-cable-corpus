@@ -1,0 +1,53 @@
+{
+ "schema": "oracle.msl.cable.v1",
+ "id": "fmz-erdos1055-campaign-001-R011-L1-a1r1",
+ "spec": {
+  "id": "fmz-erdos1055-campaign-001-R011-L1-a1r1",
+  "imports": "Mathlib",
+  "definitions": "def TotalOn400 (f : \u2115 \u2192 \u2115) : Prop := \u2200 q, q.Prime \u2192 q \u2264 400 \u2192 \u2203 n, f q = n\n\ndef MatchesAnchors (f : \u2115 \u2192 \u2115) : Prop := f 13 = 2 \u2227 f 37 = 3 \u2227 f 73 = 4\n\ndef L1Statement : Prop := \u2203 f1 f2 : \u2115 \u2192 \u2115, TotalOn400 f1 \u2227 TotalOn400 f2 \u2227 MatchesAnchors f1 \u2227 MatchesAnchors f2 \u2227 f1 2 \u2260 f2 2",
+  "conclusion": "L1Statement",
+  "proof": "by\n  let f1 : \u2115 \u2192 \u2115 := fun p => if p = 13 then 2 else if p = 37 then 3 else if p = 73 then 4 else 0\n  let f2 : \u2115 \u2192 \u2115 := fun p => if p = 13 then 2 else if p = 37 then 3 else if p = 73 then 4 else 500 + p\n  refine \u27e8f1, f2, ?_\u27e9\n  have htotal1 : TotalOn400 f1 := by\n    intro q hq hq400\n    exact \u27e8f1 q, rfl\u27e9\n  have htotal2 : TotalOn400 f2 := by\n    intro q hq hq400\n    exact \u27e8f2 q, rfl\u27e9\n  have hmatch1 : MatchesAnchors f1 := by\n    dsimp [MatchesAnchors, f1]\n    norm_num\n  have hmatch2 : MatchesAnchors f2 := by\n    dsimp [MatchesAnchors, f2]\n    norm_num\n  have hdiff : f1 2 \u2260 f2 2 := by\n    dsimp [f1, f2]\n    norm_num\n  exact \u27e8htotal1, htotal2, hmatch1, hmatch2, hdiff\u27e9"
+ },
+ "formal_status": "KERNEL_CHECKED",
+ "events": [],
+ "axioms": [
+  "propext"
+ ],
+ "attempts": [
+  {
+   "tactic": "(supplied proof)",
+   "status": "VERIFIED",
+   "seconds": 70.3,
+   "errors": [],
+   "exitCode": 0,
+   "resource_limit": null
+  }
+ ],
+ "budget_history": [
+  {
+   "tier_seconds": 900.0,
+   "outcome": "KERNEL_CHECKED"
+  }
+ ],
+ "kernel_result": {
+  "status": "VERIFIED",
+  "file": "oracle/frontier_formalizer/cable/theorems/msl_fmz-erdos1055-campaign-001-R011-L1-a1r1.lean",
+  "backend": "wsl",
+  "project": "/root/erdosfire-bench/proofs",
+  "needsMathlib": true,
+  "exitCode": 0,
+  "seconds": 52.2,
+  "declarations": [
+   {
+    "declaration": "msl_fmz_erdos1055_campaign_001_R011_L1_a1r1",
+    "clean": true,
+    "axioms": [
+     "propext"
+    ]
+   }
+  ],
+  "errors": []
+ },
+ "lean_result_block": "LEAN_RESULT fmz-erdos1055-campaign-001-R011-L1-a1r1\n  FORMAL_STATUS KERNEL_CHECKED\n  FILE oracle/frontier_formalizer/cable/theorems/msl_fmz-erdos1055-campaign-001-R011-L1-a1r1.lean\n  THEOREMS msl_fmz_erdos1055_campaign_001_R011_L1_a1r1\n  BACKEND wsl\n  AXIOMS propext\n  TACTIC (supplied proof)\n  BUDGET 900s:KERNEL_CHECKED\n  FAILURE NONE",
+ "timestamp": "2026-09-02T01:34:44Z"
+}

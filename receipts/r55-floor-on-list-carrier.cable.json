@@ -1,0 +1,159 @@
+{
+ "schema": "oracle.msl.cable.v1",
+ "id": "r55-floor-on-list-carrier",
+ "spec": {
+  "id": "r55-floor-on-list-carrier",
+  "imports": "none",
+  "set_options": [
+   "set_option maxRecDepth 20000",
+   "set_option maxHeartbeats 40000000"
+  ],
+  "definitions": "def S : List Nat := [1,2,3,5,7,10,13,15,16,17,24,25,26,28,31,34,36,38,39,40]\ndef adj (i j : Nat) : Bool := ((i % 41 + 41 - j % 41) % 41) \u2208 S\ndef nadj (i j : Nat) : Bool := (i % 41 != j % 41) && (! adj i j)\n\ntheorem symm_res :\n    (List.range 41).all (fun a => (List.range 41).all (fun b =>\n      (((a + 41 - b) % 41) \u2208 S) == (((b + 41 - a) % 41) \u2208 S))) = true := by decide\n\ntheorem adj_symm (x y : Nat) : adj x y = adj y x := by\n  have hx : x % 41 < 41 := Nat.mod_lt _ (by decide)\n  have hy : y % 41 < 41 := Nat.mod_lt _ (by decide)\n  have h := List.all_eq_true.mp symm_res (x % 41) (List.mem_range.mpr hx)\n  have h2 := List.all_eq_true.mp h (y % 41) (List.mem_range.mpr hy)\n  unfold adj\n  simpa using h2\n\ntheorem nadj_symm (x y : Nat) : nadj x y = nadj y x := by\n  unfold nadj\n  rw [adj_symm x y]\n  by_cases h : x % 41 = y % 41 <;> simp [h, Nat.ne_of_gt, eq_comm]\n\ndef gnest (e : Nat \u2192 Nat \u2192 Bool) : Bool :=\n  (List.range 41).all fun a => (List.range 41).all fun b => (! (a < b)) || (! e a b) ||\n    ((List.range 41).all fun c => (! (b < c)) || (! e a c) || (! e b c) ||\n      ((List.range 41).all fun d => (! (c < d)) || (! e a d) || (! e b d) || (! e c d) ||\n        ((List.range 41).all fun f => (! (d < f)) || (! e a f) || (! e b f) || (! e c f) || (! e d f))))\n\ntheorem gnest_adj : gnest adj = true := by decide\ntheorem gnest_nadj : gnest nadj = true := by decide\n\ntheorem gextract (e : Nat \u2192 Nat \u2192 Bool) (h : gnest e = true)\n    (a b c d f : Nat) (ha : a < 41) (hb : b < 41) (hc : c < 41) (hd : d < 41) (hf : f < 41)\n    (hab : a < b) (hbc : b < c) (hcd : c < d) (hdf : d < f)\n    (p1 : e a b = true) (p2 : e a c = true) (p3 : e b c = true)\n    (p4 : e a d = true) (p5 : e b d = true) (p6 : e c d = true)\n    (p7 : e a f = true) (p8 : e b f = true) (p9 : e c f = true) (p10 : e d f = true) :\n    False := by\n  have h1 := List.all_eq_true.mp h a (List.mem_range.mpr ha)\n  have h2 := List.all_eq_true.mp h1 b (List.mem_range.mpr hb)\n  simp only [hab, decide_true, Bool.not_true, p1, Bool.false_or] at h2\n  have h3 := List.all_eq_true.mp h2 c (List.mem_range.mpr hc)\n  simp only [hbc, decide_true, Bool.not_true, p2, p3, Bool.false_or] at h3\n  have h4 := List.all_eq_true.mp h3 d (List.mem_range.mpr hd)\n  simp only [hcd, decide_true, Bool.not_true, p4, p5, p6, Bool.false_or] at h4\n  have h5 := List.all_eq_true.mp h4 f (List.mem_range.mpr hf)\n  simp only [hdf, decide_true, Bool.not_true, p7, p8, p9, p10, Bool.false_or] at h5\n  exact Bool.noConfusion h5\n\ndef IsClique (e : Nat \u2192 Nat \u2192 Bool) (L : List Nat) : Prop :=\n  \u2200 a \u2208 L, \u2200 b \u2208 L, a \u2260 b \u2192 e a b = true\n\ndef IsIndep (e : Nat \u2192 Nat \u2192 Bool) (L : List Nat) : Prop :=\n  \u2200 a \u2208 L, \u2200 b \u2208 L, a \u2260 b \u2192 e a b = false\n\ndef ArrowsOn (e : Nat \u2192 Nat \u2192 Bool) (V : List Nat) (s t : Nat) : Prop :=\n  (\u2203 K : List Nat, K.Sublist V \u2227 K.length = s \u2227 IsClique e K) \u2228\n  (\u2203 K : List Nat, K.Sublist V \u2227 K.length = t \u2227 IsIndep e K)\n\ndef Suffices (m s t : Nat) : Prop :=\n  \u2200 (e : Nat \u2192 Nat \u2192 Bool), (\u2200 x y, e x y = e y x) \u2192\n    \u2200 V : List Nat, m \u2264 V.length \u2192 ArrowsOn e V s t\n\ntheorem sub_range_lt {n : Nat} {K : List Nat} (h : K.Sublist (List.range n)) :\n    \u2200 x \u2208 K, x < n := by\n  intro x hx; exact List.mem_range.mp (h.subset hx)\n\ntheorem sub_range_pairwise {n : Nat} {K : List Nat} (h : K.Sublist (List.range n)) :\n    K.Pairwise (\u00b7 < \u00b7) := List.Pairwise.sublist h List.pairwise_lt_range\n\ntheorem len5 {K : List Nat} (h : K.length = 5) : \u2203 a b c d f, K = [a, b, c, d, f] := by\n  match K, h with\n  | [a, b, c, d, f], _ => exact \u27e8a, b, c, d, f, rfl\u27e9\n\ntheorem pw5 {a b c d f : Nat} (h : ([a,b,c,d,f] : List Nat).Pairwise (\u00b7 < \u00b7)) :\n    a < b \u2227 b < c \u2227 c < d \u2227 d < f := by\n  simp [List.pairwise_cons] at h\n  omega\n\n/-- \u2b50 THE FLOOR, ON THE SAME CARRIER AS THE CEILING.\n    41 vertices do NOT suffice for (5,5): the order-41 circulant is the counterexample. -/\ntheorem not_suffices_41 : \u00ac Suffices 41 5 5 := by\n  intro hS\n  have hlen : 41 \u2264 (List.range 41).length := by simp\n  rcases hS adj adj_symm (List.range 41) hlen with \u27e8K, hsub, hlk, hcl\u27e9 | \u27e8K, hsub, hlk, hind\u27e9\n  \u00b7 obtain \u27e8a, b, c, d, f, rfl\u27e9 := len5 hlk\n    obtain \u27e8hab, hbc, hcd, hdf\u27e9 := pw5 (sub_range_pairwise hsub)\n    have hb5 := sub_range_lt hsub\n    exact gextract adj gnest_adj a b c d f\n      (hb5 a (by simp)) (hb5 b (by simp)) (hb5 c (by simp)) (hb5 d (by simp)) (hb5 f (by simp))\n      hab hbc hcd hdf\n      (hcl a (by simp) b (by simp) (by omega)) (hcl a (by simp) c (by simp) (by omega))\n      (hcl b (by simp) c (by simp) (by omega)) (hcl a (by simp) d (by simp) (by omega))\n      (hcl b (by simp) d (by simp) (by omega)) (hcl c (by simp) d (by simp) (by omega))\n      (hcl a (by simp) f (by simp) (by omega)) (hcl b (by simp) f (by simp) (by omega))\n      (hcl c (by simp) f (by simp) (by omega)) (hcl d (by simp) f (by simp) (by omega))\n  \u00b7 obtain \u27e8a, b, c, d, f, rfl\u27e9 := len5 hlk\n    obtain \u27e8hab, hbc, hcd, hdf\u27e9 := pw5 (sub_range_pairwise hsub)\n    have hb5 := sub_range_lt hsub\n    have hn : \u2200 x \u2208 ([a,b,c,d,f] : List Nat), \u2200 y \u2208 ([a,b,c,d,f] : List Nat), x \u2260 y \u2192\n        nadj x y = true := by\n      intro x hx y hy hxy\n      have := hind x hx y hy hxy\n      have hxl := hb5 x hx\n      have hyl := hb5 y hy\n      simp [nadj, this, Nat.mod_eq_of_lt hxl, Nat.mod_eq_of_lt hyl, hxy]\n    exact gextract nadj gnest_nadj a b c d f\n      (hb5 a (by simp)) (hb5 b (by simp)) (hb5 c (by simp)) (hb5 d (by simp)) (hb5 f (by simp))\n      hab hbc hcd hdf\n      (hn a (by simp) b (by simp) (by omega)) (hn a (by simp) c (by simp) (by omega))\n      (hn b (by simp) c (by simp) (by omega)) (hn a (by simp) d (by simp) (by omega))\n      (hn b (by simp) d (by simp) (by omega)) (hn c (by simp) d (by simp) (by omega))\n      (hn a (by simp) f (by simp) (by omega)) (hn b (by simp) f (by simp) (by omega))\n      (hn c (by simp) f (by simp) (by omega)) (hn d (by simp) f (by simp) (by omega))",
+  "hypotheses": [],
+  "conclusion": "adj 0 1 = true",
+  "proof": "by decide"
+ },
+ "formal_status": "KERNEL_FAILED",
+ "events": [
+  "((supplied proof)) RAW[tmpw9kiwdls.lean:24:35: error: `simp` made no progress]"
+ ],
+ "axioms": [
+  "Classical.choice",
+  "Quot.sound",
+  "propext",
+  "sorryAx"
+ ],
+ "attempts": [
+  {
+   "tactic": "(supplied proof)",
+   "status": "UNVERIFIED",
+   "seconds": 62.3,
+   "errors": [
+    "tmpw9kiwdls.lean:24:35: error: `simp` made no progress"
+   ],
+   "exitCode": 1,
+   "resource_limit": null
+  }
+ ],
+ "budget_history": [
+  {
+   "tier_seconds": 120.0,
+   "outcome": "KERNEL_FAILED"
+  }
+ ],
+ "kernel_result": {
+  "status": "UNVERIFIED",
+  "file": "oracle/frontier_formalizer/cable/theorems/msl_r55-floor-on-list-carrier.lean",
+  "backend": "windows",
+  "project": "C:\\Users\\jared\\Local Sites\\woocommerce-enterprise\\oracle\\math\\EG411Formal",
+  "needsMathlib": false,
+  "exitCode": 1,
+  "seconds": 62.2,
+  "declarations": [
+   {
+    "declaration": "symm_res",
+    "clean": true,
+    "axioms": [
+     "propext",
+     "Quot.sound"
+    ]
+   },
+   {
+    "declaration": "adj_symm",
+    "clean": true,
+    "axioms": [
+     "propext",
+     "Quot.sound"
+    ]
+   },
+   {
+    "declaration": "nadj_symm",
+    "clean": false,
+    "axioms": [
+     "propext",
+     "sorryAx",
+     "Quot.sound"
+    ]
+   },
+   {
+    "declaration": "gnest_adj",
+    "clean": true,
+    "axioms": [
+     "propext",
+     "Quot.sound"
+    ]
+   },
+   {
+    "declaration": "gnest_nadj",
+    "clean": true,
+    "axioms": [
+     "propext",
+     "Quot.sound"
+    ]
+   },
+   {
+    "declaration": "gextract",
+    "clean": true,
+    "axioms": [
+     "propext",
+     "Quot.sound"
+    ]
+   },
+   {
+    "declaration": "sub_range_lt",
+    "clean": true,
+    "axioms": [
+     "propext",
+     "Quot.sound"
+    ]
+   },
+   {
+    "declaration": "sub_range_pairwise",
+    "clean": true,
+    "axioms": [
+     "propext",
+     "Classical.choice",
+     "Quot.sound"
+    ]
+   },
+   {
+    "declaration": "len5",
+    "clean": true,
+    "axioms": [
+     "propext"
+    ]
+   },
+   {
+    "declaration": "pw5",
+    "clean": true,
+    "axioms": [
+     "propext",
+     "Classical.choice",
+     "Quot.sound"
+    ]
+   },
+   {
+    "declaration": "not_suffices_41",
+    "clean": true,
+    "axioms": [
+     "propext",
+     "Classical.choice",
+     "Quot.sound"
+    ]
+   },
+   {
+    "declaration": "msl_r55_floor_on_list_carrier",
+    "clean": true,
+    "axioms": [
+     "propext",
+     "Quot.sound"
+    ]
+   }
+  ],
+  "errors": [
+   "tmpw9kiwdls.lean:24:35: error: `simp` made no progress"
+  ]
+ },
+ "lean_result_block": "LEAN_RESULT r55-floor-on-list-carrier\n  FORMAL_STATUS KERNEL_FAILED\n  FILE oracle/frontier_formalizer/cable/theorems/msl_r55-floor-on-list-carrier.lean\n  THEOREMS msl_r55_floor_on_list_carrier\n  BACKEND windows\n  AXIOMS Classical.choice, Quot.sound, propext, sorryAx\n  TACTIC (supplied proof)\n  BUDGET 120s:KERNEL_FAILED\n  FAILURE ((supplied proof)) RAW[tmpw9kiwdls.lean:24:35: error: `simp` made no progress]\n  LAW KERNEL_FAILED does not refute the claim \u2014 the FAILURE line names what actually broke",
+ "timestamp": "2026-09-04T17:21:52Z"
+}

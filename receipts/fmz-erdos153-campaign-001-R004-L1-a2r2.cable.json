@@ -1,0 +1,49 @@
+{
+ "schema": "oracle.msl.cable.v1",
+ "id": "fmz-erdos153-campaign-001-R004-L1-a2r2",
+ "spec": {
+  "id": "fmz-erdos153-campaign-001-R004-L1-a2r2",
+  "imports": "none",
+  "definitions": "-- Explicit pair sums of A = [0,1,4,10] over pairs i<=j, listed literally\n-- (0+0,0+1,0+4,0+10,1+1,1+4,1+10,4+4,4+10,10+10)\ndef sumsA : List Nat := [0, 1, 4, 10, 2, 5, 11, 8, 14, 20]\n\ndef sortedSumsA : List Nat := [0, 1, 2, 4, 5, 8, 10, 11, 14, 20]\n\ndef allDistinct : Bool :=\n  sumsA.length == (sumsA.eraseDups).length\n\ndef tIsTen : Bool := sumsA.length == 10\n\ndef pairsFormula : Bool := 4 * (4 + 1) / 2 == 10\n\ndef checkL1 : Bool := allDistinct && tIsTen && pairsFormula",
+  "conclusion": "checkL1 = true \u2227 sumsA.length = 10 \u2227 (sumsA.eraseDups).length = 10",
+  "proof": "by decide"
+ },
+ "formal_status": "KERNEL_CHECKED",
+ "events": [],
+ "axioms": [],
+ "attempts": [
+  {
+   "tactic": "(supplied proof)",
+   "status": "VERIFIED",
+   "seconds": 19.7,
+   "errors": [],
+   "exitCode": 0,
+   "resource_limit": null
+  }
+ ],
+ "budget_history": [
+  {
+   "tier_seconds": 900.0,
+   "outcome": "KERNEL_CHECKED"
+  }
+ ],
+ "kernel_result": {
+  "status": "VERIFIED",
+  "file": "oracle/frontier_formalizer/cable/theorems/msl_fmz-erdos153-campaign-001-R004-L1-a2r2.lean",
+  "backend": "windows",
+  "project": "C:\\Users\\jared\\Local Sites\\woocommerce-enterprise\\oracle\\math\\EG411Formal",
+  "needsMathlib": false,
+  "exitCode": 0,
+  "seconds": 19.7,
+  "declarations": [
+   {
+    "declaration": "msl_fmz_erdos153_campaign_001_R004_L1_a2r2",
+    "clean": true,
+    "axioms": []
+   }
+  ],
+  "errors": []
+ },
+ "lean_result_block": "LEAN_RESULT fmz-erdos153-campaign-001-R004-L1-a2r2\n  FORMAL_STATUS KERNEL_CHECKED\n  FILE oracle/frontier_formalizer/cable/theorems/msl_fmz-erdos153-campaign-001-R004-L1-a2r2.lean\n  THEOREMS msl_fmz_erdos153_campaign_001_R004_L1_a2r2\n  BACKEND windows\n  AXIOMS -\n  TACTIC (supplied proof)\n  BUDGET 900s:KERNEL_CHECKED\n  FAILURE NONE",
+ "timestamp": "2026-09-02T01:58:45Z"
+}

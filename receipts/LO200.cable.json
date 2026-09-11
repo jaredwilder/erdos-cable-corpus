@@ -1,0 +1,58 @@
+{
+ "schema": "oracle.msl.cable.v1",
+ "id": "LO200",
+ "spec": {
+  "id": "LO200",
+  "conclusion": "((List.range (200+339)).filter (fun m => m > 200 && [32,36,40,48,52,54,56,60,64,72,80,84,88,90,96,104,108,112,120,126,128,130,132,140,144,150,156,160,162,168,176,180,182,189,192,195,196,198,200].any (fun k => m % k == 0))).length < [32,36,40,48,52,54,56,60,64,72,80,84,88,90,96,104,108,112,120,126,128,130,132,140,144,150,156,160,162,168,176,180,182,189,192,195,196,198,200].length",
+  "proof": "by decide",
+  "imports": "Mathlib"
+ },
+ "formal_status": "KERNEL_FAILED",
+ "events": [
+  "((supplied proof)) RAW[/tmp/oracle_lean_blVV7YO7.lean:5:409: error: maximum recursion depth has been reached]"
+ ],
+ "axioms": [
+  "sorryAx"
+ ],
+ "attempts": [
+  {
+   "tactic": "(supplied proof)",
+   "status": "UNVERIFIED",
+   "seconds": 62.4,
+   "errors": [
+    "/tmp/oracle_lean_blVV7YO7.lean:5:409: error: maximum recursion depth has been reached"
+   ],
+   "exitCode": 1,
+   "resource_limit": "maximum recursion depth"
+  }
+ ],
+ "budget_history": [
+  {
+   "tier_seconds": 120.0,
+   "outcome": "UNDECIDED_RESOURCE[maximum recursion depth]"
+  }
+ ],
+ "kernel_result": {
+  "status": "UNVERIFIED",
+  "file": "oracle/frontier_formalizer/cable/theorems/msl_LO200.lean",
+  "backend": "wsl",
+  "project": "/root/erdosfire-bench/proofs",
+  "needsMathlib": true,
+  "exitCode": 1,
+  "seconds": 52.3,
+  "declarations": [
+   {
+    "declaration": "msl_LO200",
+    "clean": false,
+    "axioms": [
+     "sorryAx"
+    ]
+   }
+  ],
+  "errors": [
+   "/tmp/oracle_lean_blVV7YO7.lean:5:409: error: maximum recursion depth has been reached"
+  ]
+ },
+ "lean_result_block": "LEAN_RESULT LO200\n  FORMAL_STATUS KERNEL_FAILED\n  FILE oracle/frontier_formalizer/cable/theorems/msl_LO200.lean\n  THEOREMS msl_LO200\n  BACKEND wsl\n  AXIOMS sorryAx\n  TACTIC (supplied proof)\n  BUDGET 120s:UNDECIDED_RESOURCE[maximum recursion depth]\n  FAILURE ((supplied proof)) RAW[/tmp/oracle_lean_blVV7YO7.lean:5:409: error: maximum recursion depth has been reached]\n  LAW KERNEL_FAILED does not refute the claim \u2014 the FAILURE line names what actually broke\n  LAW BUDGET_EXHAUSTED is an UNDECIDED question, not a failed proof \u2014 the machine stopped, the mathematics did not answer",
+ "timestamp": "2026-09-03T19:58:00Z"
+}

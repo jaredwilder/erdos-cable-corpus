@@ -1,0 +1,49 @@
+{
+ "schema": "oracle.msl.cable.v1",
+ "id": "fmz-erdos196-campaign-001-R007-L1",
+ "spec": {
+  "id": "fmz-erdos196-campaign-001-R007-L1",
+  "imports": "none",
+  "definitions": "-- Minimal, total, kernel-decidable encoding of the enumerable fragment of L1.\n-- Each standing absence recorded by L1 is a Boolean flag; the artifact register is\n-- the empty list, so its length is the literal 0.\n\n-- checker source: absent from packet-as-supplied (pointer WANG-SOURCE.md \u00a712.4 only)\ndef checker_source_present : Bool := false\n-- object-level spec: absent ('per contract' defers to content-opaque SHA fde72aaa9665474d)\ndef object_level_spec_present : Bool := false\n-- witness permutation list: absent\ndef witness_permutation_present : Bool := false\n-- analytic reduction recorded as 'none'\ndef analytic_reduction_is_none : Bool := true\n-- computational artifacts on file: empty register\ndef artifact_count : Nat := 0\n\ndef check_L1 : Bool :=\n  checker_source_present == false\n  && object_level_spec_present == false\n  && witness_permutation_present == false\n  && analytic_reduction_is_none == true\n  && (artifact_count == 0)",
+  "conclusion": "check_L1 = true",
+  "proof": "by decide"
+ },
+ "formal_status": "KERNEL_CHECKED",
+ "events": [],
+ "axioms": [],
+ "attempts": [
+  {
+   "tactic": "(supplied proof)",
+   "status": "VERIFIED",
+   "seconds": 2.3,
+   "errors": [],
+   "exitCode": 0,
+   "resource_limit": null
+  }
+ ],
+ "budget_history": [
+  {
+   "tier_seconds": 900.0,
+   "outcome": "KERNEL_CHECKED"
+  }
+ ],
+ "kernel_result": {
+  "status": "VERIFIED",
+  "file": "oracle/frontier_formalizer/cable/theorems/msl_fmz-erdos196-campaign-001-R007-L1.lean",
+  "backend": "windows",
+  "project": "C:\\Users\\jared\\Local Sites\\woocommerce-enterprise\\oracle\\math\\EG411Formal",
+  "needsMathlib": false,
+  "exitCode": 0,
+  "seconds": 2.3,
+  "declarations": [
+   {
+    "declaration": "msl_fmz_erdos196_campaign_001_R007_L1",
+    "clean": true,
+    "axioms": []
+   }
+  ],
+  "errors": []
+ },
+ "lean_result_block": "LEAN_RESULT fmz-erdos196-campaign-001-R007-L1\n  FORMAL_STATUS KERNEL_CHECKED\n  FILE oracle/frontier_formalizer/cable/theorems/msl_fmz-erdos196-campaign-001-R007-L1.lean\n  THEOREMS msl_fmz_erdos196_campaign_001_R007_L1\n  BACKEND windows\n  AXIOMS -\n  TACTIC (supplied proof)\n  BUDGET 900s:KERNEL_CHECKED\n  FAILURE NONE",
+ "timestamp": "2026-09-01T22:32:36Z"
+}

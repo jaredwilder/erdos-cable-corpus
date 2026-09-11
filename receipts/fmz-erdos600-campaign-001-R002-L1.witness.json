@@ -1,0 +1,46 @@
+{
+ "schema": "oracle.msl.closer.witness.v1",
+ "id": "fmz-erdos600-campaign-001-R002-L1",
+ "pipeline": "WITNESS_FINITE",
+ "witness": {
+  "n": 6,
+  "packing_triples": [
+   [
+    0,
+    1,
+    2
+   ],
+   [
+    0,
+    3,
+    4
+   ],
+   [
+    1,
+    3,
+    5
+   ],
+   [
+    2,
+    4,
+    5
+   ]
+  ],
+  "claimed_max_counterexample_edges": 12,
+  "claimed_e6_2": 13
+ },
+ "verifier_sha256": "b2cdb4164cddfd9abde64cce8b05705826b097646a78afcf443f79658e943dc1",
+ "verifier_source": "# Standalone deterministic verifier. Python 3, NO imports, NO filesystem, NO network, NO print. Entry point: verify(witness) — RAISES AssertionError on any failed check, returns True on full PASS. Fail-closed. Exact integer arithmetic only.\n# Repair note: previous version computed the threshold e(n,2) with a vacuous-truth bug (for m<3 the universal condition holds vacuously, giving e_val=0). Fixed: the threshold is computed only over m>=3 and required to hold for ALL m in [e_val, C(n,2)] (monotone window), and cross-checked as max_counterexample + 1.\n\ndef _combinations(iterable, r):\n    pool = tuple(iterable)\n    if r > len(pool):\n        return\n    indices = list(range(r))\n    yield tuple(pool[i] for i in indices)\n    while True:\n        for i in reversed(range(r)):\n            if indices[i] != i + len(pool) - r:\n                break\n        else:\n            return\n        indices[i] += 1\n        for j in range(i+1, r):\n            indices[j] = indices[j-1] + 1\n        yield tuple(pool[i] for i in indices)\n\ndef _pairs(t):\n    a, b, c = t\n    return [(a, b), (a, c), (b, c)]\n\ndef _triangles(N, edges):\n    S = set(edges)\n    tri = []\n    for i in range(N):\n        for j in range(i+1, N):\n            for k in range(j+1, N):\n                if (i, j) in S and (i, k) in S and (j, k) in S:\n                    tri.append((i, j, k))\n    return tri\n\ndef _counts(N, edges, tri):\n    S = set(edges)\n    cnts = {}\n    for e in S:\n        c = 0\n        for t in tri:\n            if e in _pairs(t):\n                c += 1\n        cnts[e] = c\n    return cnts\n\ndef verify(witness):\n    n = witness['n']\n    trips = [tuple(t) for t in witness['packing_triples']]\n    claimed_max = witness['claimed_max_counterexample_edges']\n    claimed_e = witness['claimed_e6_2']\n\n    # 1. packing validity: valid triples, pairwise edge-disjoint\n    assert n >= 3\n    assert len(trips) == 4\n    seen = set()\n    for t in trips:\n        assert len(t) == 3\n        assert all(isinstance(v, int) and 0 <= v < n for v in t)\n        assert len(set(t)) == 3\n        for p in _pairs(t):\n            assert p not in seen\n            seen.add(p)\n    assert len(seen) == 3 * len(trips)\n    assert 3 * len(trips) == claimed_max\n\n    allE = [(i, j) for i in range(n) for j in range(i+1, n)]\n    total = len(allE)\n\n    # 2. exhaustive: max edges of a graph on n vertices with every edge in EXACTLY one triangle\n    best = -1\n    for m in range(total, 2, -1):\n        found = False\n        for combo in _combinations(allE, m):\n            cnts = _counts(n, combo, _triangles(n, combo))\n            if all(v == 1 for v in cnts.values()):\n                found = True\n                break\n        if found:\n            best = m\n            break\n    assert best == claimed_max\n\n    # 3. exhaustive threshold: e(n,2) = min m >= 3 such that EVERY m-edge graph with all\n    #    edges in >=1 triangle has an edge in >=2 triangles, AND this holds for every\n    #    m' in [m, total] (no vacuous small-m artifact)\n    e_val = -1\n    for m in range(3, total + 1):\n        ok = True\n        for mp in range(m, total + 1):\n            for combo in _combinations(allE, mp):\n                cnts = _counts(n, combo, _triangles(n, combo))\n                if all(v >= 1 for v in cnts.values()) and not any(v >= 2 for v in cnts.values()):\n                    ok = False\n                    break\n            if not ok:\n                break\n        if ok:\n            e_val = m\n            break\n    assert e_val == claimed_e\n    assert e_val == best + 1\n\n    return True\n\n_WITNESS = {\n    'n': 6,\n    'packing_triples': [[0, 1, 2], [0, 3, 4], [1, 3, 5], [2, 4, 5]],\n    'claimed_max_counterexample_edges': 12,\n    'claimed_e6_2': 13\n}\n\nverify(_WITNESS)\n",
+ "run": {
+  "passed": false,
+  "status": "VERIFIER_FAIL",
+  "exit_code": 1,
+  "stdout": "",
+  "detail": "AssertionError",
+  "seconds": 0.34,
+  "code_sha256": "b2cdb4164cddfd9abde64cce8b05705826b097646a78afcf443f79658e943dc1"
+ },
+ "claim": "CERTIFIED FRAGMENT: verify(witness) returning True establishes, by exhaustive enumeration of all 2^15 graphs on 6 vertices with exact integer arithmetic, that (i) the exhibited 4-block 2-(6,3,1) packing is valid and (ii) the maximum edge count of a graph whose edges each lie in exactly one triangle is 12 = 3 x packing size, and (iii) e(6,2)=13 as the non-vacuous threshold (property verified to hold for all m in [13,15] and to fail at m=12). This certifies concretely the L1 identification max-counterexample = 3 x max-packing and the threshold definition of e(.,2). The asymptotic clause e(n,2)/n^2 -> 1/6 (Keevash/Rodl) and both canonical limit clauses are NOT certified: covers=fragment.",
+ "law": "Wang 7.2: an exact finite object plus a proved reduction is a CERTIFICATE. The reduction is the `claim` and is a human's to audit; the object and the verifier run are the machine's part.",
+ "timestamp": "2026-09-01T21:33:53Z"
+}

@@ -1,0 +1,69 @@
+{
+ "schema": "oracle.msl.cable.v1",
+ "id": "erdos595-transversal-duality",
+ "produced_by": "box run; receipt written by hand from the kernel log, NOT by msl_lean_cable.py",
+ "campaign": "msl-595 FLAGSHIP epoch 11",
+ "target": "Erdos #595 flagship, packet cards T04/T05/T06 transversal duality in source vocabulary",
+ "file": "oracle/evidence/erdos595/lean/Erdos595Transversal.lean",
+ "file_sha256": "a052297b1e075b67a7c58efa2a45665f85f814deece83b88de29c17aebcfc640",
+ "formal_status": "KERNEL_CHECKED",
+ "kernel_result": {
+  "status": "VERIFIED",
+  "backend": "box root@51.158.234.15 /root/formalizer/proofs, Mathlib 919544d4, toolchain v4.31.0-rc1",
+  "command": "lake env lean /root/peer/msl-595/Erdos595Transversal.lean",
+  "exitCode": 0,
+  "log": "oracle/evidence/erdos595/lean/kernel-transversal-2026-09-05.log",
+  "declarations": [
+   {
+    "declaration": "Erdos595T.cliqueFree_of_no_triangle",
+    "clean": true,
+    "axioms": [
+     "propext",
+     "Classical.choice",
+     "Quot.sound"
+    ]
+   },
+   {
+    "declaration": "Erdos595T.countableUnion_iff_transversals",
+    "clean": true,
+    "axioms": [
+     "propext",
+     "Classical.choice",
+     "Quot.sound"
+    ]
+   },
+   {
+    "declaration": "Erdos595T.witness_iff_countably_centered",
+    "clean": true,
+    "axioms": [
+     "propext",
+     "Classical.choice",
+     "Quot.sound"
+    ]
+   }
+  ],
+  "errors": []
+ },
+ "axioms": [
+  "propext",
+  "Classical.choice",
+  "Quot.sound"
+ ],
+ "sorry_count": 0,
+ "attempts": [
+  {
+   "tactic": "first pass",
+   "status": "FAILED",
+   "errors": [
+    "TYPE.FAIL INSTANCE[DecidableEq V] on the Finset triple literal"
+   ]
+  },
+  {
+   "tactic": "classical at the head of the equivalence",
+   "status": "VERIFIED",
+   "errors": []
+  }
+ ],
+ "covers": "FRAGMENT",
+ "not_covered": "the flagship existence question itself; this is an exact reformulation, not a decision"
+}

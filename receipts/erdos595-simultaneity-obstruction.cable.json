@@ -1,0 +1,21 @@
+{
+ "id": "erdos595-simultaneity-obstruction",
+ "status": "KERNEL_CHECKED",
+ "backend": "wsl",
+ "mission": "ERDOS595_MSL_DIRECT_CLOSE_MISSION - bottleneck BN38, the simultaneity tension",
+ "file": "oracle/evidence/erdos595/lean/Erdos595Library.lean",
+ "file_sha256": "52211ce4dd2e04d53cd117b8e8cde657c29d1d795d1615a169b638d60337d9ce",
+ "declarations_checked": 48,
+ "errors": 0,
+ "returncode": 0,
+ "seconds": 157.0,
+ "new_theorems": {
+  "Erdos595Lib.erdos595_designated_per_index_fails": "propext, Classical.choice, Quot.sound"
+ },
+ "dirty": [],
+ "typed_failures_this_round": [
+  "attempt 1: process died with empty output after 49.8s - a sixteen-branch first-combinator over the clique cases; recorded as an instrument limit, not a mathematical fact",
+  "attempt 2: unknown constant SimpleGraph.is4Clique_iff - absent in this Mathlib revision",
+  "attempt 3: uniform adjacency helper plus card_eq_four - accepted"
+ ]
+}

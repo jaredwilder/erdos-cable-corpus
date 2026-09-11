@@ -1,0 +1,53 @@
+{
+ "schema": "oracle.msl.cable.v1",
+ "id": "fmz-erdos155-campaign-001-R004-L1",
+ "spec": {
+  "id": "fmz-erdos155-campaign-001-R004-L1",
+  "imports": "none",
+  "definitions": "-- Decidable fragment of L1, narrowed for kernel reduction: N \u2264 4, k \u2264 2.\n-- Claim checked: for all A \u2282 [1,N], B \u2282 [N+1,N+k], if A\u222aB is Sidon and |A| > k,\n-- then every difference b-a (b\u2208B, a\u2208A, a<b) has multiplicity \u2264 1.\n\ndef sums : List Nat \u2192 List Nat\n  | [] => []\n  | s => s.flatMap fun x => s.flatMap fun y => if x \u2264 y then [x+y] else []\n\ndef sidon (s : List Nat) : Bool :=\n  (sums s).eraseDups.length == (sums s).length\n\ndef rangeTo (n : Nat) : List Nat :=\n  List.range n |>.map Nat.succ\n\ndef subsets : List Nat \u2192 List (List Nat)\n  | [] => [[]]\n  | x :: xs => (subsets xs).flatMap fun s => [s, x :: s]\n\ndef diffs (A B : List Nat) : List Nat :=\n  B.flatMap fun b => A.flatMap fun a => if a < b then [b - a] else []\n\ndef multOK (l : List Nat) : Bool :=\n  l.all fun d => l.count d \u2264 1\n\ndef check (N k : Nat) : Bool :=\n  (subsets (rangeTo N)).all fun A =>\n    (subsets (List.range k |>.map fun i => N + 1 + i)).all fun B =>\n      !(sidon (A ++ B) && A.length > k) || multOK (diffs A B)",
+  "conclusion": "check 4 2 = true",
+  "proof": "by decide"
+ },
+ "formal_status": "KERNEL_CHECKED",
+ "events": [],
+ "axioms": [
+  "propext"
+ ],
+ "attempts": [
+  {
+   "tactic": "(supplied proof)",
+   "status": "VERIFIED",
+   "seconds": 2.6,
+   "errors": [],
+   "exitCode": 0,
+   "resource_limit": null
+  }
+ ],
+ "budget_history": [
+  {
+   "tier_seconds": 900.0,
+   "outcome": "KERNEL_CHECKED"
+  }
+ ],
+ "kernel_result": {
+  "status": "VERIFIED",
+  "file": "oracle/frontier_formalizer/cable/theorems/msl_fmz-erdos155-campaign-001-R004-L1.lean",
+  "backend": "windows",
+  "project": "C:\\Users\\jared\\Local Sites\\woocommerce-enterprise\\oracle\\math\\EG411Formal",
+  "needsMathlib": false,
+  "exitCode": 0,
+  "seconds": 2.6,
+  "declarations": [
+   {
+    "declaration": "msl_fmz_erdos155_campaign_001_R004_L1",
+    "clean": true,
+    "axioms": [
+     "propext"
+    ]
+   }
+  ],
+  "errors": []
+ },
+ "lean_result_block": "LEAN_RESULT fmz-erdos155-campaign-001-R004-L1\n  FORMAL_STATUS KERNEL_CHECKED\n  FILE oracle/frontier_formalizer/cable/theorems/msl_fmz-erdos155-campaign-001-R004-L1.lean\n  THEOREMS msl_fmz_erdos155_campaign_001_R004_L1\n  BACKEND windows\n  AXIOMS propext\n  TACTIC (supplied proof)\n  BUDGET 900s:KERNEL_CHECKED\n  FAILURE NONE",
+ "timestamp": "2026-09-01T19:39:59Z"
+}

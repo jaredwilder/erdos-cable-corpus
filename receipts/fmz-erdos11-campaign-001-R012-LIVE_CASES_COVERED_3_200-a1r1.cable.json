@@ -1,0 +1,61 @@
+{
+ "schema": "oracle.msl.cable.v1",
+ "id": "fmz-erdos11-campaign-001-R012-LIVE_CASES_COVERED_3_200-a1r1",
+ "spec": {
+  "id": "fmz-erdos11-campaign-001-R012-LIVE_CASES_COVERED_3_200-a1r1",
+  "imports": "none",
+  "definitions": "def Nat.sqfree : Nat -> Bool\n  | 0 => false\n  | 1 => true\n  | n => (List.range (n+1)).all (fun d => d*d != 0 && (d*d \u2223 n) -> !((d*d)*(d*d) \u2223 n) || d*d == 1) -- replaced below by exact def\ndef squarefree (n : Nat) : Bool :=\n  n != 0 && (List.range (n+2)).all (fun d => !(d*d \u2223 n) || d == 1)\ndef isPow2 (n : Nat) : Bool := n != 0 && (n &&& (n-1)) == 0\ndef hasWitness (n : Nat) : Bool :=\n  (List.range (Nat.log2 n + 1)).any (fun l => isPow2 (2^l) && n > 2^l && squarefree (n - 2^l))\ndef checkRange : Bool :=\n  (List.range 99).all (fun i =>\n    let n := 2*i + 3\n    if squarefree (n-1) then true else hasWitness n)\ndef maxLrecord : Nat :=\n  (List.range 99).foldl (fun acc i =>\n    let n := 2*i + 3\n    if squarefree (n-1) then acc else\n      acc.max ((List.range (Nat.log2 n + 1)).filter (fun l => n > 2^l && squarefree (n - 2^l)).foldl max 0)) 0",
+  "conclusion": "checkRange = true",
+  "proof": "by native_decide"
+ },
+ "formal_status": "KERNEL_FAILED",
+ "events": [
+  "((supplied proof)) RAW[tmp9zok4zwj.lean:20:95: error(lean.invalidField): Invalid field `foldl`: The environment does not contain `Function.foldl`, so it is not possible to project the]"
+ ],
+ "axioms": [
+  "msl_fmz_erdos11_campaign_001_R012_LIVE_CASES_COVERED_3_200_a1r1._native.native_decide.ax_1_1",
+  "propext"
+ ],
+ "attempts": [
+  {
+   "tactic": "(supplied proof)",
+   "status": "UNVERIFIED",
+   "seconds": 3.2,
+   "errors": [
+    "tmp9zok4zwj.lean:20:95: error(lean.invalidField): Invalid field `foldl`: The environment does not contain `Function.foldl`, so it is not possible to project the field `foldl` from an expression"
+   ],
+   "exitCode": 1,
+   "resource_limit": null
+  }
+ ],
+ "budget_history": [
+  {
+   "tier_seconds": 900.0,
+   "outcome": "KERNEL_FAILED"
+  }
+ ],
+ "kernel_result": {
+  "status": "UNVERIFIED",
+  "file": "oracle/frontier_formalizer/cable/theorems/msl_fmz-erdos11-campaign-001-R012-LIVE_CASES_COVERED_3_200-a1r1.lean",
+  "backend": "windows",
+  "project": "C:\\Users\\jared\\Local Sites\\woocommerce-enterprise\\oracle\\math\\EG411Formal",
+  "needsMathlib": false,
+  "exitCode": 1,
+  "seconds": 3.2,
+  "declarations": [
+   {
+    "declaration": "msl_fmz_erdos11_campaign_001_R012_LIVE_CASES_COVERED_3_200_a1r1",
+    "clean": false,
+    "axioms": [
+     "propext",
+     "msl_fmz_erdos11_campaign_001_R012_LIVE_CASES_COVERED_3_200_a1r1._native.native_decide.ax_1_1"
+    ]
+   }
+  ],
+  "errors": [
+   "tmp9zok4zwj.lean:20:95: error(lean.invalidField): Invalid field `foldl`: The environment does not contain `Function.foldl`, so it is not possible to project the field `foldl` from an expression"
+  ]
+ },
+ "lean_result_block": "LEAN_RESULT fmz-erdos11-campaign-001-R012-LIVE_CASES_COVERED_3_200-a1r1\n  FORMAL_STATUS KERNEL_FAILED\n  FILE oracle/frontier_formalizer/cable/theorems/msl_fmz-erdos11-campaign-001-R012-LIVE_CASES_COVERED_3_200-a1r1.lean\n  THEOREMS msl_fmz_erdos11_campaign_001_R012_LIVE_CASES_COVERED_3_200_a1r1\n  BACKEND windows\n  AXIOMS msl_fmz_erdos11_campaign_001_R012_LIVE_CASES_COVERED_3_200_a1r1._native.native_decide.ax_1_1, propext\n  TACTIC (supplied proof)\n  BUDGET 900s:KERNEL_FAILED\n  FAILURE ((supplied proof)) RAW[tmp9zok4zwj.lean:20:95: error(lean.invalidField): Invalid field `foldl`: The environment does not contain `Function.foldl`, so it is not possible to project the]\n  LAW KERNEL_FAILED does not refute the claim \u2014 the FAILURE line names what actually broke",
+ "timestamp": "2026-09-02T01:21:23Z"
+}

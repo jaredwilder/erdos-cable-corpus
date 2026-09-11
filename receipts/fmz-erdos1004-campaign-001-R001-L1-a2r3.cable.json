@@ -1,0 +1,69 @@
+{
+ "schema": "oracle.msl.cable.v1",
+ "id": "fmz-erdos1004-campaign-001-R001-L1-a2r3",
+ "spec": {
+  "id": "fmz-erdos1004-campaign-001-R001-L1-a2r3",
+  "imports": "Mathlib",
+  "definitions": "def sumFromOne (n : Nat) : Nat := \u2211 k in Finset.Icc 1 n, k",
+  "conclusion": "\u2200 n : Nat, 1 \u2264 n \u2192 sumFromOne n = n * (n + 1) / 2",
+  "proof": "by\n  intro n hn\n  induction n with\n  | zero => omega\n  | succ n ih =>\n      by_cases h : n = 0\n      \u00b7 subst h\n        decide\n      \u00b7 have hn' : 1 \u2264 n := by omega\n        rw [sumFromOne, Finset.sum_Icc_succ_top hn']\n        rw [ih hn']\n        omega"
+ },
+ "formal_status": "KERNEL_FAILED",
+ "events": [
+  "((supplied proof)) SYNTAX.FAIL[/tmp/oracle_lean_N6Shxepf.lean:5:37: error: unexpected token 'in'; expected ',']",
+  "((supplied proof)) RAW[/tmp/oracle_lean_N6Shxepf.lean:14:8: error: Tactic `decide` failed for proposition]",
+  "((supplied proof)) TYPE.FAIL MISMATCH[/tmp/oracle_lean_N6Shxepf.lean:16:48: error: Application type mismatch: The argument]"
+ ],
+ "axioms": [
+  "Quot.sound",
+  "propext",
+  "sorryAx"
+ ],
+ "attempts": [
+  {
+   "tactic": "(supplied proof)",
+   "status": "UNVERIFIED",
+   "seconds": 78.9,
+   "errors": [
+    "/tmp/oracle_lean_N6Shxepf.lean:5:37: error: unexpected token 'in'; expected ','",
+    "/tmp/oracle_lean_N6Shxepf.lean:14:8: error: Tactic `decide` failed for proposition",
+    "/tmp/oracle_lean_N6Shxepf.lean:16:48: error: Application type mismatch: The argument"
+   ],
+   "exitCode": 1,
+   "resource_limit": null
+  }
+ ],
+ "budget_history": [
+  {
+   "tier_seconds": 900.0,
+   "outcome": "KERNEL_FAILED"
+  }
+ ],
+ "kernel_result": {
+  "status": "UNVERIFIED",
+  "file": "oracle/frontier_formalizer/cable/theorems/msl_fmz-erdos1004-campaign-001-R001-L1-a2r3.lean",
+  "backend": "wsl",
+  "project": "/root/erdosfire-bench/proofs",
+  "needsMathlib": true,
+  "exitCode": 1,
+  "seconds": 63.9,
+  "declarations": [
+   {
+    "declaration": "msl_fmz_erdos1004_campaign_001_R001_L1_a2r3",
+    "clean": false,
+    "axioms": [
+     "propext",
+     "sorryAx",
+     "Quot.sound"
+    ]
+   }
+  ],
+  "errors": [
+   "/tmp/oracle_lean_N6Shxepf.lean:5:37: error: unexpected token 'in'; expected ','",
+   "/tmp/oracle_lean_N6Shxepf.lean:14:8: error: Tactic `decide` failed for proposition",
+   "/tmp/oracle_lean_N6Shxepf.lean:16:48: error: Application type mismatch: The argument"
+  ]
+ },
+ "lean_result_block": "LEAN_RESULT fmz-erdos1004-campaign-001-R001-L1-a2r3\n  FORMAL_STATUS KERNEL_FAILED\n  FILE oracle/frontier_formalizer/cable/theorems/msl_fmz-erdos1004-campaign-001-R001-L1-a2r3.lean\n  THEOREMS msl_fmz_erdos1004_campaign_001_R001_L1_a2r3\n  BACKEND wsl\n  AXIOMS Quot.sound, propext, sorryAx\n  TACTIC (supplied proof)\n  BUDGET 900s:KERNEL_FAILED\n  FAILURE ((supplied proof)) SYNTAX.FAIL[/tmp/oracle_lean_N6Shxepf.lean:5:37: error: unexpected token 'in'; expected ',']; ((supplied proof)) RAW[/tmp/oracle_lean_N6Shxepf.lean:14:8: error: Tactic `decide` failed for proposition]; ((supplied proof)) TYPE.FAIL MISMATCH[/tmp/oracle_lean_N6Shxepf.lean:16:48: error: Application type mismatch: The argument]\n  LAW KERNEL_FAILED does not refute the claim \u2014 the FAILURE line names what actually broke",
+ "timestamp": "2026-09-02T09:20:29Z"
+}

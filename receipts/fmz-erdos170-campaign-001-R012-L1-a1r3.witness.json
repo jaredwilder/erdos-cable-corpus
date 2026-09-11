@@ -1,0 +1,26 @@
+{
+ "schema": "oracle.msl.closer.witness.v1",
+ "id": "fmz-erdos170-campaign-001-R012-L1-a1r3",
+ "pipeline": "WITNESS_FINITE",
+ "witness": {
+  "range": {
+   "N_min": 1,
+   "N_max": 1000000
+  },
+  "claim_formula": "r(N) = ceil((1+sqrt(1+8N))/2) = min{k : C(k,2) >= N}"
+ },
+ "verifier_sha256": "1f51ad353dcb7bf1384d03dec60ed314e93becb0b381310a4e6a3fbdd4c1485e",
+ "verifier_source": "from math import isqrt\n\ndef ceil_div(a, b):\n    return -((-a) // b)\n\ndef r_formula(N):\n    # exact integer value of ceil((1+sqrt(1+8N))/2)\n    d = 1 + 8 * N\n    s = isqrt(d)\n    if s * s == d:\n        return ceil_div(1 + s, 2)\n    else:\n        return ceil_div(1 + s + 1, 2)\n\ndef r_min(N):\n    k = 1\n    while k * (k - 1) // 2 < N:\n        k += 1\n    return k\n\ndef verify(witness):\n    n_min = witness[\"range\"][\"N_min\"]\n    n_max = witness[\"range\"][\"N_max\"]\n    if n_min != 1 or n_max != 1000000:\n        raise ValueError(\"bad range\")\n    if witness[\"claim_formula\"] != \"r(N) = ceil((1+sqrt(1+8N))/2) = min{k : C(k,2) >= N}\":\n        raise ValueError(\"claim formula mismatch\")\n    for N in range(n_min, n_max + 1):\n        rf = r_formula(N)\n        if rf != r_min(N):\n            raise ValueError(\"formula != min at N=%d\" % N)\n        if not ((rf - 1) * (rf - 2) // 2 < N):\n            raise ValueError(\"lower direction fails at N=%d\" % N)\n        if not (rf * (rf - 1) // 2 >= N):\n            raise ValueError(\"upper direction fails at N=%d\" % N)\n",
+ "run": {
+  "passed": true,
+  "status": "VERIFIER_PASS",
+  "exit_code": 0,
+  "stdout": "PASS",
+  "detail": "",
+  "seconds": 55.62,
+  "code_sha256": "1f51ad353dcb7bf1384d03dec60ed314e93becb0b381310a4e6a3fbdd4c1485e"
+ },
+ "claim": "verify(witness) raises on any failure and returns normally iff for every N in 1..1000000 the exact integer ceil((1+sqrt(1+8N))/2) equals min{k : C(k,2)>=N}, with both inequalities C(r-1,2)<N<=C(r,2) strictly directed. Only exact integer arithmetic; no filesystem, network, or I/O. covers=fragment: the analytic reduction (family on m points witnessing F(N)<=m forces C(m,2)>=N, hence m>=r) remains the open analytic component.",
+ "law": "Wang 7.2: an exact finite object plus a proved reduction is a CERTIFICATE. The reduction is the `claim` and is a human's to audit; the object and the verifier run are the machine's part.",
+ "timestamp": "2026-09-02T02:00:25Z"
+}

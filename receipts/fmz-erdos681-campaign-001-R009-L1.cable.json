@@ -1,0 +1,49 @@
+{
+ "schema": "oracle.msl.cable.v1",
+ "id": "fmz-erdos681-campaign-001-R009-L1",
+ "spec": {
+  "id": "fmz-erdos681-campaign-001-R009-L1",
+  "imports": "none",
+  "definitions": "def divides (d m : Nat) : Bool := m % d == 0\n\ndef isComposite (m : Nat) : Bool := m >= 4 && divides 2 m\n\n-- For the checked range, n+1 ranges over 3..N+1; a number m in this range is\n-- composite iff it is even and >= 4 (odd composites start at 9 = 3^2, outside\n-- only when N+1 < 9; we keep N small enough that this holds).\ndef k1WitnessExists (n : Nat) : Bool := divides 2 (n + 1)\n\ndef checkLemma (N : Nat) : Bool := (List.range (N - 1) |>.all (fun i => let n := i + 2; k1WitnessExists n == isComposite (n + 1)))",
+  "conclusion": "checkLemma 6 = true",
+  "proof": "by decide"
+ },
+ "formal_status": "KERNEL_CHECKED",
+ "events": [],
+ "axioms": [],
+ "attempts": [
+  {
+   "tactic": "(supplied proof)",
+   "status": "VERIFIED",
+   "seconds": 9.8,
+   "errors": [],
+   "exitCode": 0,
+   "resource_limit": null
+  }
+ ],
+ "budget_history": [
+  {
+   "tier_seconds": 900.0,
+   "outcome": "KERNEL_CHECKED"
+  }
+ ],
+ "kernel_result": {
+  "status": "VERIFIED",
+  "file": "oracle/frontier_formalizer/cable/theorems/msl_fmz-erdos681-campaign-001-R009-L1.lean",
+  "backend": "windows",
+  "project": "C:\\Users\\jared\\Local Sites\\woocommerce-enterprise\\oracle\\math\\EG411Formal",
+  "needsMathlib": false,
+  "exitCode": 0,
+  "seconds": 9.8,
+  "declarations": [
+   {
+    "declaration": "msl_fmz_erdos681_campaign_001_R009_L1",
+    "clean": true,
+    "axioms": []
+   }
+  ],
+  "errors": []
+ },
+ "lean_result_block": "LEAN_RESULT fmz-erdos681-campaign-001-R009-L1\n  FORMAL_STATUS KERNEL_CHECKED\n  FILE oracle/frontier_formalizer/cable/theorems/msl_fmz-erdos681-campaign-001-R009-L1.lean\n  THEOREMS msl_fmz_erdos681_campaign_001_R009_L1\n  BACKEND windows\n  AXIOMS -\n  TACTIC (supplied proof)\n  BUDGET 900s:KERNEL_CHECKED\n  FAILURE NONE",
+ "timestamp": "2026-09-01T23:12:01Z"
+}

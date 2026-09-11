@@ -1,0 +1,55 @@
+{
+ "schema": "oracle.msl.cable.v1",
+ "id": "fmz-erdos145-campaign-001-R010-L1-a1r1",
+ "spec": {
+  "id": "fmz-erdos145-campaign-001-R010-L1-a1r1",
+  "imports": "none",
+  "definitions": "import Lean\n\n-- A1(N) = sum_{n=1}^{N} 1/n^2 as an exact rational\ndef A1 (N : Nat) : Rat :=\n  (List.range N |>.foldl (fun acc k => acc + 1 / ((k+1)*(k+1) : Nat) : Rat) 0)\n\n-- Outward-rounded rational enclosure of pi^2/6 from the Basel series with\n-- an exact geometric tail bound: tail after N terms < 1/N (integral test),\n-- so lo = A1(N), hi = A1(N) + 1/N strictly encloses pi^2/6.\ndef piSq6Lo (N : Nat) : Rat := A1 N\ndef piSq6Hi (N : Nat) : Rat := A1 N + 1 / (N : Rat)\n\n-- Fragment check 1: the tail bound is strictly directed, i.e. the enclosure\n-- is nonempty and its width equals 1/N for the chosen N.\ndef checkEnclosure (N : Nat) : Bool :=\n  piSq6Lo N < piSq6Hi N && piSq6Hi N - piSq6Lo N == 1 / (N : Rat)\n\n-- Fragment check 2: monotone bracketing \u2014 each partial sum lies below the\n-- enclosure and the next partial sum stays inside (telescoping/step sanity,\n-- exact Fraction arithmetic, no floats).\ndef checkStep (N : Nat) : Bool :=\n  A1 N <= piSq6Hi N && A1 (N+1) <= piSq6Hi N && piSq6Lo N <= A1 (N+1)\n\n-- Concrete decidable instance range (fragment of the N=1..1e6 sweep):\ndef checkRange : Bool :=\n  (List.range 200).all (fun k => checkEnclosure (k+1) && checkStep (k+1))\n\ndef checkWitness : Bool :=\n  checkRange && checkEnclosure 1000000",
+  "conclusion": "checkWitness = true",
+  "proof": "by native_decide"
+ },
+ "formal_status": "KERNEL_FAILED",
+ "events": [
+  "((supplied proof)) RAW[tmp48bw1drx.lean:3:0: error: invalid 'import' command, it must be used in the beginning of the file]"
+ ],
+ "axioms": [],
+ "attempts": [
+  {
+   "tactic": "(supplied proof)",
+   "status": "UNVERIFIED",
+   "seconds": 2.3,
+   "errors": [
+    "tmp48bw1drx.lean:3:0: error: invalid 'import' command, it must be used in the beginning of the file"
+   ],
+   "exitCode": 1,
+   "resource_limit": null
+  }
+ ],
+ "budget_history": [
+  {
+   "tier_seconds": 900.0,
+   "outcome": "KERNEL_FAILED"
+  }
+ ],
+ "kernel_result": {
+  "status": "UNVERIFIED",
+  "file": "oracle/frontier_formalizer/cable/theorems/msl_fmz-erdos145-campaign-001-R010-L1-a1r1.lean",
+  "backend": "windows",
+  "project": "C:\\Users\\jared\\Local Sites\\woocommerce-enterprise\\oracle\\math\\EG411Formal",
+  "needsMathlib": false,
+  "exitCode": 1,
+  "seconds": 2.3,
+  "declarations": [
+   {
+    "declaration": "msl_fmz_erdos145_campaign_001_R010_L1_a1r1",
+    "clean": false,
+    "axioms": []
+   }
+  ],
+  "errors": [
+   "tmp48bw1drx.lean:3:0: error: invalid 'import' command, it must be used in the beginning of the file"
+  ]
+ },
+ "lean_result_block": "LEAN_RESULT fmz-erdos145-campaign-001-R010-L1-a1r1\n  FORMAL_STATUS KERNEL_FAILED\n  FILE oracle/frontier_formalizer/cable/theorems/msl_fmz-erdos145-campaign-001-R010-L1-a1r1.lean\n  THEOREMS msl_fmz_erdos145_campaign_001_R010_L1_a1r1\n  BACKEND windows\n  AXIOMS -\n  TACTIC (supplied proof)\n  BUDGET 900s:KERNEL_FAILED\n  FAILURE ((supplied proof)) RAW[tmp48bw1drx.lean:3:0: error: invalid 'import' command, it must be used in the beginning of the file]\n  LAW KERNEL_FAILED does not refute the claim \u2014 the FAILURE line names what actually broke",
+ "timestamp": "2026-09-02T01:30:25Z"
+}

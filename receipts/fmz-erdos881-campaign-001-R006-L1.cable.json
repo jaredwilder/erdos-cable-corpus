@@ -1,0 +1,49 @@
+{
+ "schema": "oracle.msl.cable.v1",
+ "id": "fmz-erdos881-campaign-001-R006-L1",
+ "spec": {
+  "id": "fmz-erdos881-campaign-001-R006-L1",
+  "imports": "none",
+  "definitions": "-- B = {2^m : m >= 3}; complement C = \u2115\\B (positive naturals that are not such powers).\ndef bigPow2 (n : Nat) : Bool := n >= 8 && 2 ^ (Nat.log2 n) == n\n\ndef inC (n : Nat) : Bool := 1 <= n && !bigPow2 n\n\n-- Decidable check: n is in C or is a sum of two elements of C, searched over a bounded box.\ndef isSum2Box (n box : Nat) : Bool :=\n  inC n || (List.range (box + 1)).any (fun a =>\n    inC a && n > a && inC (n - a))\n\ndef checkAll (bound box : Nat) : Bool :=\n  (List.range bound).all (fun i => isSum2Box (i + 1) box)",
+  "conclusion": "checkAll 200 200 = true",
+  "proof": "by decide"
+ },
+ "formal_status": "KERNEL_CHECKED",
+ "events": [],
+ "axioms": [],
+ "attempts": [
+  {
+   "tactic": "(supplied proof)",
+   "status": "VERIFIED",
+   "seconds": 2.2,
+   "errors": [],
+   "exitCode": 0,
+   "resource_limit": null
+  }
+ ],
+ "budget_history": [
+  {
+   "tier_seconds": 900.0,
+   "outcome": "KERNEL_CHECKED"
+  }
+ ],
+ "kernel_result": {
+  "status": "VERIFIED",
+  "file": "oracle/frontier_formalizer/cable/theorems/msl_fmz-erdos881-campaign-001-R006-L1.lean",
+  "backend": "windows",
+  "project": "C:\\Users\\jared\\Local Sites\\woocommerce-enterprise\\oracle\\math\\EG411Formal",
+  "needsMathlib": false,
+  "exitCode": 0,
+  "seconds": 2.2,
+  "declarations": [
+   {
+    "declaration": "msl_fmz_erdos881_campaign_001_R006_L1",
+    "clean": true,
+    "axioms": []
+   }
+  ],
+  "errors": []
+ },
+ "lean_result_block": "LEAN_RESULT fmz-erdos881-campaign-001-R006-L1\n  FORMAL_STATUS KERNEL_CHECKED\n  FILE oracle/frontier_formalizer/cable/theorems/msl_fmz-erdos881-campaign-001-R006-L1.lean\n  THEOREMS msl_fmz_erdos881_campaign_001_R006_L1\n  BACKEND windows\n  AXIOMS -\n  TACTIC (supplied proof)\n  BUDGET 900s:KERNEL_CHECKED\n  FAILURE NONE",
+ "timestamp": "2026-09-01T21:55:20Z"
+}

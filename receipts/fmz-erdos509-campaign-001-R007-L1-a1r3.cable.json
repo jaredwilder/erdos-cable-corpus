@@ -1,0 +1,73 @@
+{
+ "schema": "oracle.msl.cable.v1",
+ "id": "fmz-erdos509-campaign-001-R007-L1-a1r3",
+ "spec": {
+  "id": "fmz-erdos509-campaign-001-R007-L1-a1r3",
+  "imports": "none",
+  "definitions": "-- Fixed-center (\u00b11) cover check with radii in hundredths.\n-- A fixed-center cover D(1,r1) \u222a D(-1,r2) must cover the obstruction points\n-- z = 1 (dists 0 and 2), z = -1 (dists 2 and 0), z = 0 (dists 1 and 1),\n-- all in hundredths: pure \u2115 arithmetic.\ndef coversFixed (r1 r2 : \u2115) : Bool :=\n  ((r1 \u2265 0) || (r2 \u2265 200)) &&\n  ((r2 \u2265 0) || (r1 \u2265 200)) &&\n  ((r1 \u2265 100) || (r2 \u2265 100))\n\ndef total (r1 r2 : \u2115) : \u2115 := r1 + r2\n\ndef checkOptimal : Bool :=\n  -- covering constraint is exactly: r1 \u2265 100 \u2228 r2 \u2265 100 (from z=0)\n  (coversFixed 100 100 = true) &&\n  (coversFixed 100 0 = true) &&\n  (coversFixed 0 100 = true) &&\n  (coversFixed 99 0 = false) &&\n  (coversFixed 0 99 = false) &&\n  (coversFixed 50 49 = false) &&\n  -- the z=0 obstruction point alone forces total \u2265 200 hundredths = 2:\n  (\u2200' nothing) == Bool.true ||\n  (total 100 0 = 200) &&\n  (total 0 100 = 200) &&\n  -- minimal admissible total at fixed centers is exactly 200:\n  (coversFixed 99 99 = false) &&\n  (coversFixed 100 100 = true)\n",
+  "conclusion": "checkOptimal = true",
+  "proof": "by decide"
+ },
+ "formal_status": "KERNEL_FAILED",
+ "events": [
+  "((supplied proof)) TYPE.FAIL NEED[\u2115]",
+  "((supplied proof)) RAW[tmp8rdqu5oi.lean:23:7: error: missing end of character literal]",
+  "((supplied proof)) RAW[tmp8rdqu5oi.lean:30:80: error: Tactic `decide` failed for proposition]"
+ ],
+ "axioms": [
+  "sorryAx"
+ ],
+ "attempts": [
+  {
+   "tactic": "(supplied proof)",
+   "status": "UNVERIFIED",
+   "seconds": 2.1,
+   "errors": [
+    "tmp8rdqu5oi.lean:7:25: error(lean.unknownIdentifier): Unknown identifier `\u2115`",
+    "tmp8rdqu5oi.lean:7:25: error(lean.unknownIdentifier): Unknown identifier `\u2115`",
+    "tmp8rdqu5oi.lean:12:19: error(lean.unknownIdentifier): Unknown identifier `\u2115`",
+    "tmp8rdqu5oi.lean:12:19: error(lean.unknownIdentifier): Unknown identifier `\u2115`",
+    "tmp8rdqu5oi.lean:12:24: error(lean.unknownIdentifier): Unknown identifier `\u2115`",
+    "tmp8rdqu5oi.lean:23:7: error: missing end of character literal",
+    "tmp8rdqu5oi.lean:30:80: error: Tactic `decide` failed for proposition"
+   ],
+   "exitCode": 1,
+   "resource_limit": null
+  }
+ ],
+ "budget_history": [
+  {
+   "tier_seconds": 900.0,
+   "outcome": "KERNEL_FAILED"
+  }
+ ],
+ "kernel_result": {
+  "status": "UNVERIFIED",
+  "file": "oracle/frontier_formalizer/cable/theorems/msl_fmz-erdos509-campaign-001-R007-L1-a1r3.lean",
+  "backend": "windows",
+  "project": "C:\\Users\\jared\\Local Sites\\woocommerce-enterprise\\oracle\\math\\EG411Formal",
+  "needsMathlib": false,
+  "exitCode": 1,
+  "seconds": 2.1,
+  "declarations": [
+   {
+    "declaration": "msl_fmz_erdos509_campaign_001_R007_L1_a1r3",
+    "clean": false,
+    "axioms": [
+     "sorryAx"
+    ]
+   }
+  ],
+  "errors": [
+   "tmp8rdqu5oi.lean:7:25: error(lean.unknownIdentifier): Unknown identifier `\u2115`",
+   "tmp8rdqu5oi.lean:7:25: error(lean.unknownIdentifier): Unknown identifier `\u2115`",
+   "tmp8rdqu5oi.lean:12:19: error(lean.unknownIdentifier): Unknown identifier `\u2115`",
+   "tmp8rdqu5oi.lean:12:19: error(lean.unknownIdentifier): Unknown identifier `\u2115`",
+   "tmp8rdqu5oi.lean:12:24: error(lean.unknownIdentifier): Unknown identifier `\u2115`",
+   "tmp8rdqu5oi.lean:23:7: error: missing end of character literal",
+   "tmp8rdqu5oi.lean:30:80: error: Tactic `decide` failed for proposition"
+  ]
+ },
+ "lean_result_block": "LEAN_RESULT fmz-erdos509-campaign-001-R007-L1-a1r3\n  FORMAL_STATUS KERNEL_FAILED\n  FILE oracle/frontier_formalizer/cable/theorems/msl_fmz-erdos509-campaign-001-R007-L1-a1r3.lean\n  THEOREMS msl_fmz_erdos509_campaign_001_R007_L1_a1r3\n  BACKEND windows\n  AXIOMS sorryAx\n  TACTIC (supplied proof)\n  BUDGET 900s:KERNEL_FAILED\n  FAILURE ((supplied proof)) TYPE.FAIL NEED[\u2115]; ((supplied proof)) RAW[tmp8rdqu5oi.lean:23:7: error: missing end of character literal]; ((supplied proof)) RAW[tmp8rdqu5oi.lean:30:80: error: Tactic `decide` failed for proposition]\n  LAW KERNEL_FAILED does not refute the claim \u2014 the FAILURE line names what actually broke",
+ "timestamp": "2026-09-02T02:14:15Z"
+}

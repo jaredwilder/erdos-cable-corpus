@@ -1,0 +1,47 @@
+{
+ "schema": "oracle.msl.closer.witness.v1",
+ "id": "fmz-erdos1-campaign-001-R003-L1",
+ "pipeline": "WITNESS_FINITE",
+ "witness": {
+  "description": "Finite instance exercising the exact rational verifier of L1: exact cross-multiplied integer comparison decides subset-sum distinctness; no floats, no imports, no I/O. Witness is embedded and passed to verify(witness), which RAISES on any failed check. No exception = PASS.",
+  "positive_instance": {
+   "N": 10,
+   "A": [
+    2,
+    3,
+    7
+   ],
+   "expected": "DISTINCT"
+  },
+  "negative_control": {
+   "N": 10,
+   "A": [
+    2,
+    3,
+    5
+   ],
+   "expected": "NOT_DISTINCT",
+   "collision": "2 + 3 = 5"
+  },
+  "abort_control": {
+   "N": 0,
+   "A": [],
+   "expected": "ABORT",
+   "reason": "N = 0 outside contract scope (N != 0 required); verifier must fail closed, not silently pass"
+  }
+ },
+ "verifier_sha256": "94de62f4433485177e62472cc199da10da335d54062fda86b466851d84a149ce",
+ "verifier_source": "#!/usr/bin/env python3\n# Exact rational verifier for lemma L1, finite scope.\n# Discipline: no imports, no print, no open, no filesystem, no network,\n# deterministic, exact integer arithmetic only, fail closed.\n# Entrypoint: verify(witness) — raises on any failed check; returns on PASS.\n\ndef subset_sums(A):\n    sums = [0]\n    for a in A:\n        sums = sums + [s + a for s in sums]\n    return sums\n\ndef cross_mult_distinct(A):\n    # Each integer sum s is represented as the exact rational (s, 1).\n    # (a, b) != (c, d) for b, d > 0 iff a*d != c*b (cross-multiplied,\n    # exact integer comparison). Any non-positive denominator is an\n    # unresolved sign: return None -> abort.\n    fracs = [(s, 1) for s in subset_sums(A)]\n    n = len(fracs)\n    for i in range(n):\n        for j in range(i + 1, n):\n            a, b = fracs[i]\n            c, d = fracs[j]\n            if b <= 0 or d <= 0:\n                return None\n            if a * d == c * b:\n                return False\n    return True\n\ndef check_instance(inst):\n    # returns 'DISTINCT', 'NOT_DISTINCT', or 'ABORT'; raises on anomaly\n    N = inst['N']\n    A = inst['A']\n    if type(N) is not int:\n        raise ValueError('N not int')\n    if N <= 0:\n        if inst['expected'] != 'ABORT':\n            raise ValueError('out-of-scope N not marked ABORT')\n        return 'ABORT'\n    if type(A) is not list or len(A) == 0:\n        raise ValueError('A malformed')\n    for x in A:\n        if type(x) is not int or x < 1 or x > N:\n            raise ValueError('element outside [1, N]')\n    if len(set(A)) != len(A):\n        raise ValueError('duplicate elements')\n    d = cross_mult_distinct(A)\n    if d is None:\n        if inst['expected'] != 'ABORT':\n            raise ValueError('unresolved sign not marked ABORT')\n        return 'ABORT'\n    if d is True:\n        if inst['expected'] != 'DISTINCT':\n            raise ValueError('distinctness mismatch')\n        return 'DISTINCT'\n    if inst['expected'] != 'NOT_DISTINCT':\n        raise ValueError('collision mismatch')\n    return 'NOT_DISTINCT'\n\ndef verify(witness):\n    results = []\n    for key in ('positive_instance', 'negative_control', 'abort_control'):\n        results.append(check_instance(witness[key]))\n    if results != ['DISTINCT', 'NOT_DISTINCT', 'ABORT']:\n        raise ValueError('instance verdicts do not match required pattern')\n    return results\n\nWITNESS = {\n    'positive_instance': {'N': 10, 'A': [2, 3, 7], 'expected': 'DISTINCT'},\n    'negative_control': {'N': 10, 'A': [2, 3, 5], 'expected': 'NOT_DISTINCT'},\n    'abort_control': {'N': 0, 'A': [], 'expected': 'ABORT'}\n}\n\nverify(WITNESS)\n",
+ "run": {
+  "passed": true,
+  "status": "VERIFIER_PASS",
+  "exit_code": 0,
+  "stdout": "PASS",
+  "detail": "",
+  "seconds": 0.15,
+  "code_sha256": "94de62f4433485177e62472cc199da10da335d54062fda86b466851d84a149ce"
+ },
+ "claim": "verify(WITNESS) returning without exception establishes the finite-scope content of L1: the verifier decides subset-sum distinctness by exact cross-multiplied integer comparison, is deterministic and float-free, accepts a genuinely distinct instance, rejects a colliding one, and fails closed (raises) on the out-of-scope N = 0 case — the fail-closed/deterministic/float-free properties of L1 demonstrated on a finite instance with no imports, no I/O, and no environment dependence.",
+ "law": "Wang 7.2: an exact finite object plus a proved reduction is a CERTIFICATE. The reduction is the `claim` and is a human's to audit; the object and the verifier run are the machine's part.",
+ "timestamp": "2026-09-01T19:27:29Z"
+}

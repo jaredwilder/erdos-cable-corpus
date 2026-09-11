@@ -1,0 +1,53 @@
+{
+ "schema": "oracle.msl.cable.v1",
+ "id": "fmz-erdos197-campaign-001-R006-L1",
+ "spec": {
+  "id": "fmz-erdos197-campaign-001-R006-L1",
+  "imports": "none",
+  "definitions": "def W1 : List Nat := [1,5,3,7,2,6,4,8]\ndef W2 : List Nat := [7,2,4,8,3,6,1,5]\n\ndef IsPerm (w : List Nat) : Bool :=\n  w.length = 8 && (List.range 8).all (fun n => w.elem (n+1)) && w.all (fun v => 1 <= v && v <= 8)\n\n-- no i < j < k with w[i],w[j],w[k] in arithmetic progression (order-sensitive)\ndef NoPosAP (w : List Nat) : Bool :=\n  (List.range w.length).all (fun i =>\n   (List.range w.length).all (fun j =>\n    (List.range w.length).all (fun k =>\n     !(i < j && j < k && 2 * (w.getD j 0) = w.getD i 0 + w.getD k 0))))\n\n-- no three positions forming an AP whose values also form an AP (set-to-set)\ndef NoSetAP (w : List Nat) : Bool :=\n  (List.range w.length).all (fun i =>\n   (List.range w.length).all (fun j =>\n    (List.range w.length).all (fun k =>\n     !(i < k && i + k = 2 * j && 2 * (w.getD j 0) = w.getD i 0 + w.getD k 0))))\n\ndef check_witnesses : Bool :=\n  IsPerm W1 && IsPerm W2 && NoPosAP W1 && NoSetAP W2",
+  "conclusion": "check_witnesses = true",
+  "proof": "by decide"
+ },
+ "formal_status": "KERNEL_CHECKED",
+ "events": [],
+ "axioms": [
+  "propext"
+ ],
+ "attempts": [
+  {
+   "tactic": "(supplied proof)",
+   "status": "VERIFIED",
+   "seconds": 2.1,
+   "errors": [],
+   "exitCode": 0,
+   "resource_limit": null
+  }
+ ],
+ "budget_history": [
+  {
+   "tier_seconds": 900.0,
+   "outcome": "KERNEL_CHECKED"
+  }
+ ],
+ "kernel_result": {
+  "status": "VERIFIED",
+  "file": "oracle/frontier_formalizer/cable/theorems/msl_fmz-erdos197-campaign-001-R006-L1.lean",
+  "backend": "windows",
+  "project": "C:\\Users\\jared\\Local Sites\\woocommerce-enterprise\\oracle\\math\\EG411Formal",
+  "needsMathlib": false,
+  "exitCode": 0,
+  "seconds": 2.1,
+  "declarations": [
+   {
+    "declaration": "msl_fmz_erdos197_campaign_001_R006_L1",
+    "clean": true,
+    "axioms": [
+     "propext"
+    ]
+   }
+  ],
+  "errors": []
+ },
+ "lean_result_block": "LEAN_RESULT fmz-erdos197-campaign-001-R006-L1\n  FORMAL_STATUS KERNEL_CHECKED\n  FILE oracle/frontier_formalizer/cable/theorems/msl_fmz-erdos197-campaign-001-R006-L1.lean\n  THEOREMS msl_fmz_erdos197_campaign_001_R006_L1\n  BACKEND windows\n  AXIOMS propext\n  TACTIC (supplied proof)\n  BUDGET 900s:KERNEL_CHECKED\n  FAILURE NONE",
+ "timestamp": "2026-09-01T23:40:27Z"
+}

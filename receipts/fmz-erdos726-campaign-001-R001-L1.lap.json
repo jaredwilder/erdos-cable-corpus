@@ -1,0 +1,55 @@
+{
+ "schema": "oracle.msl.closer.lap.v1",
+ "id": "fmz-erdos726-campaign-001-R001-L1",
+ "pipeline": "CITATION_ANCHORED",
+ "lean_file": "oracle/frontier_formalizer/cable/theorems/lap_fmz-erdos726-campaign-001-R001-L1.lean",
+ "theorem": "msl_fmz_erdos726_campaign_001_R001_L1",
+ "axiom_name": "Mertens_PrimeSum_Harmonic",
+ "axiom_statement_lean": "∀ ε > 0, ∃ N : ℝ, ∀ x : ℝ, N ≤ x → |∑ p ∈ Nat.primes.filter (fun p => (p:ℝ) ≤ x), 1/(p:ℝ) - Real.log (Real.log x)| < ε",
+ "citation": {
+  "source": "Mertens (1874), 'Ein Beitrag zur analytischen Zahlentheorie', Journal für die reine und angewandte Mathematik 78; standard modern form also in Montgomery–Vaughan, Multiplicative Number Theory I, Theorem 2.2",
+  "theorem_number": "Mertens' third theorem, harmonic prime-sum form",
+  "verbatim": "∑_{p≤x} 1/p = log log x + B₁ + o(1) as x → ∞, where B₁ is the Mertens constant; equivalently ∑_{p≤x} 1/p − log log x → B₁.",
+  "url_or_doi": "https://gdz.sub.uni-goettingen.de/id/PPN243919689_0078"
+ },
+ "claim": "Certifies the checkable fragment of L1: the large-prime tail ∑_{n/2<p≤2n/3} 1/p = o(1) as n→∞, derived from Mertens' harmonic prime-sum theorem declared as the single axiom Mertens_PrimeSum_Harmonic. The clause 'main term over p≤n/2 still open' is a status remark, not mathematical content, and is NOT covered.",
+ "gate": {
+  "passed": false,
+  "reason": "KERNEL_FAILED",
+  "detail": "the LAP file did not compile (exit 1)"
+ },
+ "kernel_result": {
+  "status": "UNVERIFIED",
+  "file": "oracle/frontier_formalizer/cable/theorems/lap_fmz-erdos726-campaign-001-R001-L1.lean",
+  "backend": "wsl",
+  "project": "/root/erdosfire-bench/proofs",
+  "needsMathlib": true,
+  "exitCode": 1,
+  "seconds": 203.5,
+  "declarations": [
+   {
+    "declaration": "msl_fmz_erdos726_campaign_001_R001_L1",
+    "clean": false,
+    "axioms": [
+     "propext",
+     "sorryAx",
+     "Classical.choice",
+     "Quot.sound"
+    ]
+   }
+  ],
+  "errors": [
+   "/tmp/oracle_lean_L4TYqCdS.lean:5:35: error(lean.unknownIdentifier): Unknown constant `Nat.primes.filter`",
+   "/tmp/oracle_lean_L4TYqCdS.lean:8:44: error(lean.unknownIdentifier): Unknown constant `Nat.primes.filter`",
+   "/tmp/oracle_lean_L4TYqCdS.lean:10:173: error: unexpected token 'lemma'; expected term",
+   "/tmp/oracle_lean_L4TYqCdS.lean:10:178: error: unexpected token ','; expected identifier",
+   "/tmp/oracle_lean_L4TYqCdS.lean:23:13: error: unexpected token ':'; expected identifier",
+   "/tmp/oracle_lean_L4TYqCdS.lean:23:26: error: unexpected token '`'; expected ':=', 'where' or '|'",
+   "/tmp/oracle_lean_L4TYqCdS.lean:23:184: error: unexpected token ';'; expected identifier",
+   "/tmp/oracle_lean_L4TYqCdS.lean:23:193: error: unexpected token ','; expected ':'"
+  ]
+ },
+ "seconds": 217.0,
+ "law": "CLOSED_CONDITIONAL_ON_CITATION is NOT TARGET_CLOSED. The kernel checked the IMPLICATION from the assumed theorem; it did not check the assumed theorem. Confirm `axiom_statement_lean` against `citation.verbatim`, and confirm that the cited theorem exists in that form, before this is cited as a result.",
+ "timestamp": "2026-09-01T21:27:51Z"
+}

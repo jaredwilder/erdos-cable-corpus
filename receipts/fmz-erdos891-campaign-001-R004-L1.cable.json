@@ -1,0 +1,66 @@
+{
+ "schema": "oracle.msl.cable.v1",
+ "id": "fmz-erdos891-campaign-001-R004-L1",
+ "spec": {
+  "id": "fmz-erdos891-campaign-001-R004-L1",
+  "imports": "none",
+  "definitions": "partial def omega : Nat -> Nat | 0 => 0 | 1 => 0 | n+2 =>\n  (match (2 : Nat) with | p => if p * p > n+2 then 1 else if p \u2223 (n+2) then 1 + omega ((n+2)/p) else omega (n+2) ... )\n-- concrete decidable form used in the check:\ndef factorCount (n : Nat) : Nat :=\n  let rec go (m d acc : Nat) : Nat :=\n    if d * d > m then (if m > 1 then acc + 1 else acc)\n    else if d \u2223 m then go (m / d) d (acc + 1) else go m (d+1) acc\n  termination_by go m _ _ => m\n  if n <= 1 then 0 else go n 2 0\n\ndef check (n : Nat) : Bool :=\n  -- the interval [n, n+6) contains an integer m with 4 \u2223 m and \u03a9(m) \u2265 3\n  (List.range 6).any (fun j =>\n    let m := n + j\n    4 \u2223 m && factorCount m >= 3)",
+  "conclusion": "(List.range (10000 - 9 + 1)).all (fun i => check (9 + i)) = true",
+  "proof": "by native_decide"
+ },
+ "formal_status": "KERNEL_FAILED",
+ "events": [
+  "((supplied proof)) SYNTAX.FAIL[tmponsoncpd.lean:4:2: error: expected alternative right-hand-side to start in a column greater than or equal to the corresponding '|']",
+  "((supplied proof)) RAW[tmponsoncpd.lean:10:2: error: 4 parameters bound in `termination_by`, but the body of factorCount.go only binds 0 parameters. (Since Lean v4.6.0, the `terminati]"
+ ],
+ "axioms": [
+  "msl_fmz_erdos891_campaign_001_R004_L1._native.native_decide.ax_1_1",
+  "propext",
+  "sorryAx"
+ ],
+ "attempts": [
+  {
+   "tactic": "(supplied proof)",
+   "status": "UNVERIFIED",
+   "seconds": 2.0,
+   "errors": [
+    "tmponsoncpd.lean:4:2: error: expected alternative right-hand-side to start in a column greater than or equal to the corresponding '|'",
+    "tmponsoncpd.lean:10:2: error: 4 parameters bound in `termination_by`, but the body of factorCount.go only binds 0 parameters. (Since Lean v4.6.0, the `termination_by` clause no longer expects the function name here.)"
+   ],
+   "exitCode": 1,
+   "resource_limit": null
+  }
+ ],
+ "budget_history": [
+  {
+   "tier_seconds": 900.0,
+   "outcome": "KERNEL_FAILED"
+  }
+ ],
+ "kernel_result": {
+  "status": "UNVERIFIED",
+  "file": "oracle/frontier_formalizer/cable/theorems/msl_fmz-erdos891-campaign-001-R004-L1.lean",
+  "backend": "windows",
+  "project": "C:\\Users\\jared\\Local Sites\\woocommerce-enterprise\\oracle\\math\\EG411Formal",
+  "needsMathlib": false,
+  "exitCode": 1,
+  "seconds": 2.0,
+  "declarations": [
+   {
+    "declaration": "msl_fmz_erdos891_campaign_001_R004_L1",
+    "clean": false,
+    "axioms": [
+     "propext",
+     "sorryAx",
+     "msl_fmz_erdos891_campaign_001_R004_L1._native.native_decide.ax_1_1"
+    ]
+   }
+  ],
+  "errors": [
+   "tmponsoncpd.lean:4:2: error: expected alternative right-hand-side to start in a column greater than or equal to the corresponding '|'",
+   "tmponsoncpd.lean:10:2: error: 4 parameters bound in `termination_by`, but the body of factorCount.go only binds 0 parameters. (Since Lean v4.6.0, the `termination_by` clause no longer expects the function name here.)"
+  ]
+ },
+ "lean_result_block": "LEAN_RESULT fmz-erdos891-campaign-001-R004-L1\n  FORMAL_STATUS KERNEL_FAILED\n  FILE oracle/frontier_formalizer/cable/theorems/msl_fmz-erdos891-campaign-001-R004-L1.lean\n  THEOREMS msl_fmz_erdos891_campaign_001_R004_L1\n  BACKEND windows\n  AXIOMS msl_fmz_erdos891_campaign_001_R004_L1._native.native_decide.ax_1_1, propext, sorryAx\n  TACTIC (supplied proof)\n  BUDGET 900s:KERNEL_FAILED\n  FAILURE ((supplied proof)) SYNTAX.FAIL[tmponsoncpd.lean:4:2: error: expected alternative right-hand-side to start in a column greater than or equal to the corresponding '|']; ((supplied proof)) RAW[tmponsoncpd.lean:10:2: error: 4 parameters bound in `termination_by`, but the body of factorCount.go only binds 0 parameters. (Since Lean v4.6.0, the `terminati]\n  LAW KERNEL_FAILED does not refute the claim \u2014 the FAILURE line names what actually broke",
+ "timestamp": "2026-09-02T00:01:04Z"
+}

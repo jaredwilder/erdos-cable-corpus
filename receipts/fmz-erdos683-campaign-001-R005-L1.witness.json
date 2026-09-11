@@ -1,0 +1,25 @@
+{
+ "schema": "oracle.msl.closer.witness.v1",
+ "id": "fmz-erdos683-campaign-001-R005-L1",
+ "pipeline": "WITNESS_FINITE",
+ "witness": {
+  "n_max": 2000,
+  "convention": "P(1) := 1 (applies only at k=n where C(n,n)=1); all other values use exact largest prime factor",
+  "asserted_property": "For every 1 <= k <= n <= 2000: P(C(n,k)) >= min(n-k+1, k)",
+  "method": "Every prime divisor of C(n,k) is <= n, so P(C(n,k)) >= bound iff some prime p >= bound divides C(n,k), checked exactly via Legendre's formula for v_p(C(n,k)) — no huge-number trial division, fully deterministic, exact integer arithmetic."
+ },
+ "verifier_sha256": "4fab3cb436f8343394ebc4998e0d16bb4f7e21280f079e538765becd9c9f390b",
+ "verifier_source": "# Standalone, import-free, deterministic, fail-closed.\n# Entry point: verify(witness) -- raises on ANY failed check; returns True on PASS.\n# No filesystem, no network, no floats, no output side effects.\n\ndef legendre(m, p):\n    # exact v_p(m!)\n    assert m >= 0 and p >= 2\n    s = 0\n    q = p\n    while q <= m:\n        s += m // q\n        q *= p\n    return s\n\ndef v_binom(n, k, p):\n    # exact exponent of p in C(n,k)\n    return legendre(n, p) - legendre(k, p) - legendre(n - k, p)\n\ndef sieve(N):\n    assert N >= 2\n    is_c = [False] * (N + 1)\n    primes = []\n    d = 2\n    while d <= N:\n        if not is_c[d]:\n            primes.append(d)\n            m = d * d\n            while m <= N:\n                is_c[m] = True\n                m += d\n        d += 1\n    return primes\n\ndef verify(witness):\n    assert isinstance(witness, dict)\n    n_max = witness['n_max']\n    assert isinstance(n_max, int) and 2 <= n_max\n    assert witness['convention'] == 'P(1) := 1 (applies only at k=n where C(n,n)=1); all other values use exact largest prime factor'\n    assert witness['asserted_property'] == 'For every 1 <= k <= n <= 2000: P(C(n,k)) >= min(n-k+1, k)'\n    assert n_max == 2000\n    primes = sieve(n_max)\n    assert primes[-1] <= n_max\n    checked = 0\n    for n in range(1, n_max + 1):\n        for k in range(1, n + 1):\n            bound = min(n - k + 1, k)\n            assert bound >= 1\n            if bound == 1:\n                checked += 1\n                continue  # trivially satisfied for any C(n,k) >= 1 (P >= 1)\n            assert bound >= 2\n            # every prime factor of C(n,k) is <= n; P >= bound iff some prime p\n            # in [bound, n] has v_binom(n,k,p) > 0\n            ok = False\n            for p in primes:\n                if p < bound:\n                    continue\n                if p > n:\n                    break\n                if v_binom(n, k, p) > 0:\n                    ok = True\n                    break\n            assert ok  # fail-closed: abort immediately on first violation\n            checked += 1\n    assert checked == n_max * (n_max + 1) // 2\n    return True  # PASS: zero violations, exact integer arithmetic only\n",
+ "run": {
+  "passed": true,
+  "status": "VERIFIER_PASS",
+  "exit_code": 0,
+  "stdout": "PASS",
+  "detail": "",
+  "seconds": 2.93,
+  "code_sha256": "4fab3cb436f8343394ebc4998e0d16bb4f7e21280f079e538765becd9c9f390b"
+ },
+ "claim": "verify(witness) returning True without raising establishes: for every 1<=k<=n<=2000, the largest prime factor P(C(n,k)) (with P(1):=1 at k=n) satisfies P(C(n,k)) >= min(n-k+1, k), in exact integer arithmetic via Legendre valuations with zero violations — the finite computational fragment of L1. covers=fragment (the all-n Sylvester statement itself is standing proved mathematics, not re-certified by this finite run).",
+ "law": "Wang 7.2: an exact finite object plus a proved reduction is a CERTIFICATE. The reduction is the `claim` and is a human's to audit; the object and the verifier run are the machine's part.",
+ "timestamp": "2026-09-01T23:56:07Z"
+}

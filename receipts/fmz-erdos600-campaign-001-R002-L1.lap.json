@@ -1,0 +1,48 @@
+{
+ "schema": "oracle.msl.closer.lap.v1",
+ "id": "fmz-erdos600-campaign-001-R002-L1",
+ "pipeline": "CITATION_ANCHORED",
+ "lean_file": "oracle/frontier_formalizer/cable/theorems/lap_fmz-erdos600-campaign-001-R002-L1.lean",
+ "theorem": "msl_fmz_erdos600_campaign_001_R002_L1",
+ "axiom_name": "PublishedTheorem_Rodl1985",
+ "axiom_statement_lean": "∀ ε > (0:ℚ), ∃ N : ℕ, ∀ n ≥ N, |(D n : ℚ) - n*(n-1)/6| < ε * n*(n-1)",
+ "citation": {
+  "source": "V. Rödl, 'On a packing and covering problem', European Journal of Combinatorics 6 (1985), pp. 69–78",
+  "theorem_number": "Main Theorem (packing version)",
+  "verbatim": "For fixed integers k > l ≥ 1 the maximum number D(n, k, l) of blocks in a k-uniform hypergraph on n vertices in which every l-subset of vertices is contained in at most one block satisfies D(n, k, l) = (1 − o(1)) · C(n, l)/C(k, l) as n → ∞.",
+  "url_or_doi": "doi:10.1016/S0195-6698(85)80025-8"
+ },
+ "claim": "CONDITIONAL on the Rödl 1985 packing theorem (exactly one axiom) plus the route's PROVED identity e(n,2) = D(n,3,2) taken as a Lean hypothesis: e(n,2)/(n(n−1)) → 1/6, fixing the r = 2 baseline. The two canonical limit clauses (r-growth of the difference and of the ratio) are NOT covered.",
+ "gate": {
+  "passed": false,
+  "reason": "KERNEL_FAILED",
+  "detail": "the LAP file did not compile (exit 1)"
+ },
+ "kernel_result": {
+  "status": "UNVERIFIED",
+  "file": "oracle/frontier_formalizer/cable/theorems/lap_fmz-erdos600-campaign-001-R002-L1.lean",
+  "backend": "wsl",
+  "project": "/root/erdosfire-bench/proofs",
+  "needsMathlib": true,
+  "exitCode": 1,
+  "seconds": 160.3,
+  "declarations": [
+   {
+    "declaration": "msl_fmz_erdos600_campaign_001_R002_L1",
+    "clean": true,
+    "axioms": []
+   }
+  ],
+  "errors": [
+   "/tmp/oracle_lean_z3ov9DWE.lean:16:47: error: Invalid projection: Projections extract constructor fields for one-constructor inductive types. The expression",
+   "/tmp/oracle_lean_z3ov9DWE.lean:16:58: error: Invalid projection: Projections extract constructor fields for one-constructor inductive types. The expression",
+   "/tmp/oracle_lean_z3ov9DWE.lean:16:69: error: Invalid projection: Projections extract constructor fields for one-constructor inductive types. The expression",
+   "/tmp/oracle_lean_z3ov9DWE.lean:19:0: error: unexpected identifier; expected command",
+   "/tmp/oracle_lean_z3ov9DWE.lean:24:48: error: unexpected token 'theorem'; expected term",
+   "/tmp/oracle_lean_z3ov9DWE.lean:25:18: error: unexpected token '('; expected ':=', 'where' or '|'"
+  ]
+ },
+ "seconds": 177.8,
+ "law": "CLOSED_CONDITIONAL_ON_CITATION is NOT TARGET_CLOSED. The kernel checked the IMPLICATION from the assumed theorem; it did not check the assumed theorem. Confirm `axiom_statement_lean` against `citation.verbatim`, and confirm that the cited theorem exists in that form, before this is cited as a result.",
+ "timestamp": "2026-09-01T21:48:12Z"
+}

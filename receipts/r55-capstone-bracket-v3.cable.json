@@ -1,0 +1,291 @@
+{
+ "schema": "oracle.msl.cable.v1",
+ "id": "r55-capstone-bracket-v3",
+ "spec": {
+  "id": "r55-capstone-bracket-v3",
+  "imports": "none",
+  "set_options": [
+   "set_option maxRecDepth 20000",
+   "set_option maxHeartbeats 40000000"
+  ],
+  "definitions": "def S : List Nat := [1,2,3,5,7,10,13,15,16,17,24,25,26,28,31,34,36,38,39,40]\ndef adj (i j : Nat) : Bool := ((i % 41 + 41 - j % 41) % 41) \u2208 S\ndef nadj (i j : Nat) : Bool := ! adj i j\n\ntheorem symm_res :\n    (List.range 41).all (fun a => (List.range 41).all (fun b =>\n      (((a + 41 - b) % 41) \u2208 S) == (((b + 41 - a) % 41) \u2208 S))) = true := by decide\n\ntheorem adj_symm (x y : Nat) : adj x y = adj y x := by\n  have hx : x % 41 < 41 := Nat.mod_lt _ (by decide)\n  have hy : y % 41 < 41 := Nat.mod_lt _ (by decide)\n  have h := List.all_eq_true.mp symm_res (x % 41) (List.mem_range.mpr hx)\n  have h2 := List.all_eq_true.mp h (y % 41) (List.mem_range.mpr hy)\n  unfold adj\n  simpa using h2\n\ntheorem nadj_symm (x y : Nat) : nadj x y = nadj y x := by\n  unfold nadj; rw [adj_symm x y]\n\ndef gnest (e : Nat \u2192 Nat \u2192 Bool) : Bool :=\n  (List.range 41).all fun a => (List.range 41).all fun b => (! (a < b)) || (! e a b) ||\n    ((List.range 41).all fun c => (! (b < c)) || (! e a c) || (! e b c) ||\n      ((List.range 41).all fun d => (! (c < d)) || (! e a d) || (! e b d) || (! e c d) ||\n        ((List.range 41).all fun f => (! (d < f)) || (! e a f) || (! e b f) || (! e c f) || (! e d f))))\n\ntheorem gnest_adj : gnest adj = true := by decide\ntheorem gnest_nadj : gnest nadj = true := by decide\n\ntheorem gextract (e : Nat \u2192 Nat \u2192 Bool) (h : gnest e = true)\n    (a b c d f : Nat) (ha : a < 41) (hb : b < 41) (hc : c < 41) (hd : d < 41) (hf : f < 41)\n    (hab : a < b) (hbc : b < c) (hcd : c < d) (hdf : d < f)\n    (p1 : e a b = true) (p2 : e a c = true) (p3 : e b c = true)\n    (p4 : e a d = true) (p5 : e b d = true) (p6 : e c d = true)\n    (p7 : e a f = true) (p8 : e b f = true) (p9 : e c f = true) (p10 : e d f = true) :\n    False := by\n  have h1 := List.all_eq_true.mp h a (List.mem_range.mpr ha)\n  have h2 := List.all_eq_true.mp h1 b (List.mem_range.mpr hb)\n  simp only [hab, decide_true, Bool.not_true, p1, Bool.false_or] at h2\n  have h3 := List.all_eq_true.mp h2 c (List.mem_range.mpr hc)\n  simp only [hbc, decide_true, Bool.not_true, p2, p3, Bool.false_or] at h3\n  have h4 := List.all_eq_true.mp h3 d (List.mem_range.mpr hd)\n  simp only [hcd, decide_true, Bool.not_true, p4, p5, p6, Bool.false_or] at h4\n  have h5 := List.all_eq_true.mp h4 f (List.mem_range.mpr hf)\n  simp only [hdf, decide_true, Bool.not_true, p7, p8, p9, p10, Bool.false_or] at h5\n  exact Bool.noConfusion h5\n\ndef IsClique (e : Nat \u2192 Nat \u2192 Bool) (L : List Nat) : Prop :=\n  \u2200 a \u2208 L, \u2200 b \u2208 L, a \u2260 b \u2192 e a b = true\n\ndef IsIndep (e : Nat \u2192 Nat \u2192 Bool) (L : List Nat) : Prop :=\n  \u2200 a \u2208 L, \u2200 b \u2208 L, a \u2260 b \u2192 e a b = false\n\ndef ArrowsOn (e : Nat \u2192 Nat \u2192 Bool) (V : List Nat) (s t : Nat) : Prop :=\n  (\u2203 K : List Nat, K.Sublist V \u2227 K.length = s \u2227 IsClique e K) \u2228\n  (\u2203 K : List Nat, K.Sublist V \u2227 K.length = t \u2227 IsIndep e K)\n\ndef Suffices (m s t : Nat) : Prop :=\n  \u2200 (e : Nat \u2192 Nat \u2192 Bool), (\u2200 x y, e x y = e y x) \u2192\n    \u2200 V : List Nat, m \u2264 V.length \u2192 ArrowsOn e V s t\n\ntheorem sub_range_lt {n : Nat} {K : List Nat} (h : K.Sublist (List.range n)) :\n    \u2200 x \u2208 K, x < n := by\n  intro x hx; exact List.mem_range.mp (h.subset hx)\n\ntheorem sub_range_pairwise {n : Nat} {K : List Nat} (h : K.Sublist (List.range n)) :\n    K.Pairwise (\u00b7 < \u00b7) := List.Pairwise.sublist h List.pairwise_lt_range\n\ntheorem len5 {K : List Nat} (h : K.length = 5) : \u2203 a b c d f, K = [a, b, c, d, f] := by\n  match K, h with\n  | [a, b, c, d, f], _ => exact \u27e8a, b, c, d, f, rfl\u27e9\n\ntheorem pw5 {a b c d f : Nat} (h : ([a,b,c,d,f] : List Nat).Pairwise (\u00b7 < \u00b7)) :\n    a < b \u2227 b < c \u2227 c < d \u2227 d < f := by\n  simp [List.pairwise_cons] at h\n  omega\n\n/-- \u2b50 THE FLOOR, ON THE SAME CARRIER AS THE CEILING.\n    41 vertices do NOT suffice for (5,5): the order-41 circulant is the counterexample. -/\ntheorem not_suffices_41 : \u00ac Suffices 41 5 5 := by\n  intro hS\n  have hlen : 41 \u2264 (List.range 41).length := by simp\n  rcases hS adj adj_symm (List.range 41) hlen with \u27e8K, hsub, hlk, hcl\u27e9 | \u27e8K, hsub, hlk, hind\u27e9\n  \u00b7 obtain \u27e8a, b, c, d, f, rfl\u27e9 := len5 hlk\n    obtain \u27e8hab, hbc, hcd, hdf\u27e9 := pw5 (sub_range_pairwise hsub)\n    have hb5 := sub_range_lt hsub\n    exact gextract adj gnest_adj a b c d f\n      (hb5 a (by simp)) (hb5 b (by simp)) (hb5 c (by simp)) (hb5 d (by simp)) (hb5 f (by simp))\n      hab hbc hcd hdf\n      (hcl a (by simp) b (by simp) (by omega)) (hcl a (by simp) c (by simp) (by omega))\n      (hcl b (by simp) c (by simp) (by omega)) (hcl a (by simp) d (by simp) (by omega))\n      (hcl b (by simp) d (by simp) (by omega)) (hcl c (by simp) d (by simp) (by omega))\n      (hcl a (by simp) f (by simp) (by omega)) (hcl b (by simp) f (by simp) (by omega))\n      (hcl c (by simp) f (by simp) (by omega)) (hcl d (by simp) f (by simp) (by omega))\n  \u00b7 obtain \u27e8a, b, c, d, f, rfl\u27e9 := len5 hlk\n    obtain \u27e8hab, hbc, hcd, hdf\u27e9 := pw5 (sub_range_pairwise hsub)\n    have hb5 := sub_range_lt hsub\n    have hn : \u2200 x \u2208 ([a,b,c,d,f] : List Nat), \u2200 y \u2208 ([a,b,c,d,f] : List Nat), x \u2260 y \u2192\n        nadj x y = true := by\n      intro x hx y hy hxy\n      simp [nadj, hind x hx y hy hxy]\n    exact gextract nadj gnest_nadj a b c d f\n      (hb5 a (by simp)) (hb5 b (by simp)) (hb5 c (by simp)) (hb5 d (by simp)) (hb5 f (by simp))\n      hab hbc hcd hdf\n      (hn a (by simp) b (by simp) (by omega)) (hn a (by simp) c (by simp) (by omega))\n      (hn b (by simp) c (by simp) (by omega)) (hn a (by simp) d (by simp) (by omega))\n      (hn b (by simp) d (by simp) (by omega)) (hn c (by simp) d (by simp) (by omega))\n      (hn a (by simp) f (by simp) (by omega)) (hn b (by simp) f (by simp) (by omega))\n      (hn c (by simp) f (by simp) (by omega)) (hn d (by simp) f (by simp) (by omega))\n\ntheorem extend_clique (e : Nat \u2192 Nat \u2192 Bool) (hsymm : \u2200 x y, e x y = e y x)\n    (v : Nat) (K : List Nat) (hadj : \u2200 x \u2208 K, e v x = true) (hK : IsClique e K) :\n    IsClique e (v :: K) := by\n  intro a ha b hb hab\n  rcases List.mem_cons.mp ha with rfl | ha'\n  \u00b7 rcases List.mem_cons.mp hb with rfl | hb'\n    \u00b7 exact absurd rfl hab\n    \u00b7 exact hadj b hb'\n  \u00b7 rcases List.mem_cons.mp hb with rfl | hb'\n    \u00b7 rw [hsymm]; exact hadj a ha'\n    \u00b7 exact hK a ha' b hb' hab\n\ntheorem extend_indep (e : Nat \u2192 Nat \u2192 Bool) (hsymm : \u2200 x y, e x y = e y x)\n    (v : Nat) (K : List Nat) (hadj : \u2200 x \u2208 K, e v x = false) (hK : IsIndep e K) :\n    IsIndep e (v :: K) := by\n  intro a ha b hb hab\n  rcases List.mem_cons.mp ha with rfl | ha'\n  \u00b7 rcases List.mem_cons.mp hb with rfl | hb'\n    \u00b7 exact absurd rfl hab\n    \u00b7 exact hadj b hb'\n  \u00b7 rcases List.mem_cons.mp hb with rfl | hb'\n    \u00b7 rw [hsymm]; exact hadj a ha'\n    \u00b7 exact hK a ha' b hb' hab\n\ntheorem filter_split (p : Nat \u2192 Bool) : \u2200 L : List Nat,\n    (L.filter p).length + (L.filter (fun x => ! p x)).length = L.length := by\n  intro L\n  induction L with\n  | nil => rfl\n  | cons a t ih =>\n    by_cases h : p a\n    \u00b7 simp [List.filter, h] at *; omega\n    \u00b7 simp [List.filter, h] at *; omega\n\ntheorem es_recurrence (m n s t : Nat) (hm1 : 1 <= m) (hn1 : 1 <= n)\n    (hs : 1 <= s) (ht : 1 <= t)\n    (hm : Suffices m (s-1) t) (hn : Suffices n s (t-1)) :\n    Suffices (m + n) s t := by\n  intro e hsymm V hV\n  cases V with\n  | nil => simp at hV; omega\n  | cons v R =>\n    have hlen : m + n <= R.length + 1 := by simpa using hV\n    have hsplit := filter_split (fun x => e v x) R\n    have hcase : m <= (R.filter (fun x => e v x)).length\n               \\/ n <= (R.filter (fun x => ! e v x)).length := by omega\n    rcases hcase with hA | hB\n    . rcases hm e hsymm (R.filter (fun x => e v x)) hA with\n        \u27e8K, hKsub, hKlen, hKcl\u27e9 | \u27e8K, hKsub, hKlen, hKind\u27e9\n      . refine Or.inl \u27e8v :: K, ?_, ?_, ?_\u27e9\n        . exact List.Sublist.cons\u2082 v (hKsub.trans (List.filter_sublist))\n        . simp only [List.length_cons, hKlen]; omega\n        . refine extend_clique e hsymm v K ?_ hKcl\n          intro x hx\n          have hxA : x \u2208 R.filter (fun y => e v y) := hKsub.subset hx\n          simpa using (List.mem_filter.mp hxA).2\n      . exact Or.inr \u27e8K, (hKsub.trans (List.filter_sublist)).cons v, hKlen, hKind\u27e9\n    . rcases hn e hsymm (R.filter (fun x => ! e v x)) hB with\n        \u27e8K, hKsub, hKlen, hKcl\u27e9 | \u27e8K, hKsub, hKlen, hKind\u27e9\n      . exact Or.inl \u27e8K, (hKsub.trans (List.filter_sublist)).cons v, hKlen, hKcl\u27e9\n      . refine Or.inr \u27e8v :: K, ?_, ?_, ?_\u27e9\n        . exact List.Sublist.cons\u2082 v (hKsub.trans (List.filter_sublist))\n        . simp only [List.length_cons, hKlen]; omega\n        . refine extend_indep e hsymm v K ?_ hKind\n          intro x hx\n          have hxB : x \u2208 R.filter (fun y => ! e v y) := hKsub.subset hx\n          have := (List.mem_filter.mp hxB).2\n          simpa using this\ntheorem suffices_one_left (t : Nat) : Suffices 1 1 t := by\n  intro e _ V hV\n  cases V with\n  | nil => simp at hV\n  | cons v R =>\n    refine Or.inl \u27e8[v], List.Sublist.cons\u2082 v (List.nil_sublist R), rfl, ?_\u27e9\n    intro a ha b hb hab\n    simp at ha hb\n    subst ha; subst hb\n    exact absurd rfl hab\n\ntheorem suffices_one_right (s : Nat) : Suffices 1 s 1 := by\n  intro e _ V hV\n  cases V with\n  | nil => simp at hV\n  | cons v R =>\n    refine Or.inr \u27e8[v], List.Sublist.cons\u2082 v (List.nil_sublist R), rfl, ?_\u27e9\n    intro a ha b hb hab\n    simp at ha hb\n    subst ha; subst hb\n    exact absurd rfl hab\n\n/-- THE CHAIN TO 70.  Each step is one application of `es_recurrence`; the numerals are the\n    Pascal recurrence with unit boundary, whose agreement with the binomial coefficient is\n    kernel-checked separately (`r55-binomial-grid-v3`). -/\ntheorem es_chain : Suffices 70 5 5 := by\n  have h11 : Suffices 1 1 1 := suffices_one_left 1\n  have h12 : Suffices 1 1 2 := suffices_one_left 2\n  have h13 : Suffices 1 1 3 := suffices_one_left 3\n  have h14 : Suffices 1 1 4 := suffices_one_left 4\n  have h15 : Suffices 1 1 5 := suffices_one_left 5\n  have h21 : Suffices 1 2 1 := suffices_one_right 2\n  have h22 : Suffices 2 2 2 := es_recurrence 1 1 2 2 (by omega) (by omega) (by omega) (by omega) h12 h21\n  have h23 : Suffices 3 2 3 := es_recurrence 1 2 2 3 (by omega) (by omega) (by omega) (by omega) h13 h22\n  have h24 : Suffices 4 2 4 := es_recurrence 1 3 2 4 (by omega) (by omega) (by omega) (by omega) h14 h23\n  have h25 : Suffices 5 2 5 := es_recurrence 1 4 2 5 (by omega) (by omega) (by omega) (by omega) h15 h24\n  have h31 : Suffices 1 3 1 := suffices_one_right 3\n  have h32 : Suffices 3 3 2 := es_recurrence 2 1 3 2 (by omega) (by omega) (by omega) (by omega) h22 h31\n  have h33 : Suffices 6 3 3 := es_recurrence 3 3 3 3 (by omega) (by omega) (by omega) (by omega) h23 h32\n  have h34 : Suffices 10 3 4 := es_recurrence 4 6 3 4 (by omega) (by omega) (by omega) (by omega) h24 h33\n  have h35 : Suffices 15 3 5 := es_recurrence 5 10 3 5 (by omega) (by omega) (by omega) (by omega) h25 h34\n  have h41 : Suffices 1 4 1 := suffices_one_right 4\n  have h42 : Suffices 4 4 2 := es_recurrence 3 1 4 2 (by omega) (by omega) (by omega) (by omega) h32 h41\n  have h43 : Suffices 10 4 3 := es_recurrence 6 4 4 3 (by omega) (by omega) (by omega) (by omega) h33 h42\n  have h44 : Suffices 20 4 4 := es_recurrence 10 10 4 4 (by omega) (by omega) (by omega) (by omega) h34 h43\n  have h45 : Suffices 35 4 5 := es_recurrence 15 20 4 5 (by omega) (by omega) (by omega) (by omega) h35 h44\n  have h51 : Suffices 1 5 1 := suffices_one_right 5\n  have h52 : Suffices 5 5 2 := es_recurrence 4 1 5 2 (by omega) (by omega) (by omega) (by omega) h42 h51\n  have h53 : Suffices 15 5 3 := es_recurrence 10 5 5 3 (by omega) (by omega) (by omega) (by omega) h43 h52\n  have h54 : Suffices 35 5 4 := es_recurrence 20 15 5 4 (by omega) (by omega) (by omega) (by omega) h44 h53\n  have h55 : Suffices 70 5 5 := es_recurrence 35 35 5 5 (by omega) (by omega) (by omega) (by omega) h45 h54\n  exact h55\n\n/-- \u2b50 THE SPECIALISATION: from the list-carried statement to the STANDARD Ramsey statement.\n\n    `Suffices` quantifies over ALL lists, including degenerate ones with repeats, where\n    `IsClique` is vacuously true.  That degeneracy is harmless because the theorem holds for\n    every list, so it holds for `List.range 70`, which is duplicate-free \u2014 and a sublist of a\n    duplicate-free list is duplicate-free, so the returned 5-set really has 5 DISTINCT vertices.\n\n    This is exactly `R(5,5) \u2264 70`. -/\ntheorem R55_le_70 (e : Nat \u2192 Nat \u2192 Bool) (hsymm : \u2200 x y, e x y = e y x) :\n    (\u2203 K : List Nat, K.Sublist (List.range 70) \u2227 K.Nodup \u2227 K.length = 5 \u2227 IsClique e K) \u2228\n    (\u2203 K : List Nat, K.Sublist (List.range 70) \u2227 K.Nodup \u2227 K.length = 5 \u2227 IsIndep e K) := by\n  have hlen : 70 \u2264 (List.range 70).length := by simp\n  rcases es_chain e hsymm (List.range 70) hlen with\n    \u27e8K, hs, hl, hc\u27e9 | \u27e8K, hs, hl, hi\u27e9\n  \u00b7 exact Or.inl \u27e8K, hs, hs.nodup List.nodup_range, hl, hc\u27e9\n  \u00b7 exact Or.inr \u27e8K, hs, hs.nodup List.nodup_range, hl, hi\u27e9\n\n/-- The SAME specialisation for the (4,5) parameters, which the campaign also needs. -/\ntheorem R45_le_35 (e : Nat \u2192 Nat \u2192 Bool) (hsymm : \u2200 x y, e x y = e y x)\n    (h : Suffices 35 4 5) :\n    (\u2203 K : List Nat, K.Sublist (List.range 35) \u2227 K.Nodup \u2227 K.length = 4 \u2227 IsClique e K) \u2228\n    (\u2203 K : List Nat, K.Sublist (List.range 35) \u2227 K.Nodup \u2227 K.length = 5 \u2227 IsIndep e K) := by\n  have hlen : 35 \u2264 (List.range 35).length := by simp\n  rcases h e hsymm (List.range 35) hlen with \u27e8K, hs, hl, hc\u27e9 | \u27e8K, hs, hl, hi\u27e9\n  \u00b7 exact Or.inl \u27e8K, hs, hs.nodup List.nodup_range, hl, hc\u27e9\n  \u00b7 exact Or.inr \u27e8K, hs, hs.nodup List.nodup_range, hl, hi\u27e9\n\n/-- NEGATIVE CONTROL on the degeneracy the audit named: a repeated-vertex list of length 5 IS\n    a vacuous `IsClique`, so the specialisation above is doing real work and is not decoration. -/\ntheorem degenerate_clique_exists (e : Nat \u2192 Nat \u2192 Bool) :\n    IsClique e [7,7,7,7,7] := by\n  intro a ha b hb hab\n  simp at ha hb\n  subst ha; subst hb\n  exact absurd rfl hab\n\ntheorem degenerate_list_not_nodup : \u00ac ([7,7,7,7,7] : List Nat).Nodup := by decide\n\n/-! ## ONE ISLAND: the obstruction stated on the SAME carrier as the proved ceiling.\n\n    The fifth audit's finding was that the campaign held two formalisation islands \u2014 this\n    list-carried chain, and a separate interface file whose `upperObligation` carries `sorry`\n    over a different colouring type.  The repair is not a transfer lemma; it is to state the\n    obstruction HERE, in the language the ceiling is proved in, so a stranger attacking it uses\n    the same definitions and needs nothing else. -/\n\n/-- Monotonicity: a sufficient size stays sufficient when enlarged.  PROVED. -/\ntheorem suffices_mono (m m' s t : Nat) (h : m \u2264 m') (hm : Suffices m s t) :\n    Suffices m' s t := by\n  intro e hsymm V hV\n  exact hm e hsymm V (by omega)\n\n/-- `R(5,5) = N` in this carrier: `N` suffices and `N-1` does not. -/\ndef IsExactly (N s t : Nat) : Prop := Suffices N s t \u2227 \u00ac Suffices (N - 1) s t\n\n/-- \u26d4 THE OBSTRUCTION, stated on the carrier of the proved ceiling.\n\n    This campaign proved `Suffices 70 5 5` and, by `suffices_mono`, everything above it.\n    It did NOT prove this.  The gap between `Suffices 43 5 5` and `Suffices 70 5 5` is\n    27 orders, and every one of them is open in this record.\n\n    A stranger can attack this statement with nothing but the definitions above it in this\n    file: `IsClique`, `IsIndep`, `ArrowsOn`, `Suffices`.  No other file is needed. -/\ntheorem frontier_obligation : Suffices 43 5 5 := by\n  sorry\n\n/-- What the obstruction would give, if it were closed.  PROVED, modulo the obstruction. -/\ntheorem frontier_gives_the_tail (m : Nat) (h : 43 \u2264 m) : Suffices m 5 5 :=\n  suffices_mono 43 m 5 5 h frontier_obligation\n\n/-- And the ceiling this campaign DID prove, restated through the same monotonicity. -/\ntheorem ceiling_gives_the_tail (m : Nat) (h : 70 \u2264 m) : Suffices m 5 5 :=\n  suffices_mono 70 m 5 5 h es_chain\n\n/-! ## THE CAPSTONE: BOTH ENDS OF THE BRACKET, ONE FILE, ONE SET OF DEFINITIONS. -/\n\ntheorem bracket : \u00ac Suffices 41 5 5 \u2227 Suffices 70 5 5 :=\n  \u27e8not_suffices_41, es_chain\u27e9\n\ntheorem exact_value_in_bracket (N : Nat) (h : IsExactly N 5 5) : 42 \u2264 N \u2227 N \u2264 70 := by\n  obtain \u27e8hsuf, hnot\u27e9 := h\n  refine \u27e8?_, ?_\u27e9\n  \u00b7 rcases Nat.lt_or_ge N 42 with hlt | hge\n    \u00b7 exact absurd (suffices_mono N 41 5 5 (by omega) hsuf) not_suffices_41\n    \u00b7 exact hge\n  \u00b7 rcases Nat.lt_or_ge 70 N with hgt | hle\n    \u00b7 exact absurd (suffices_mono 70 (N - 1) 5 5 (by omega) es_chain) hnot\n    \u00b7 exact hle\n\ntheorem the_open_gap : (70 : Nat) - 42 = 28 := by decide\n",
+  "hypotheses": [],
+  "conclusion": "(70 : Nat) - 42 = 28",
+  "proof": "by decide"
+ },
+ "formal_status": "KERNEL_FAILED",
+ "events": [
+  "RAW[exit 0 with no captured error line]"
+ ],
+ "axioms": [
+  "Classical.choice",
+  "Quot.sound",
+  "propext",
+  "sorryAx"
+ ],
+ "attempts": [
+  {
+   "tactic": "(supplied proof)",
+   "status": "UNVERIFIED",
+   "seconds": 57.2,
+   "errors": [],
+   "exitCode": 0,
+   "resource_limit": null
+  }
+ ],
+ "budget_history": [
+  {
+   "tier_seconds": 120.0,
+   "outcome": "KERNEL_FAILED"
+  }
+ ],
+ "kernel_result": {
+  "status": "UNVERIFIED",
+  "file": "oracle/frontier_formalizer/cable/theorems/msl_r55-capstone-bracket-v3.lean",
+  "backend": "windows",
+  "project": "C:\\Users\\jared\\Local Sites\\woocommerce-enterprise\\oracle\\math\\EG411Formal",
+  "needsMathlib": false,
+  "exitCode": 0,
+  "seconds": 57.1,
+  "declarations": [
+   {
+    "declaration": "symm_res",
+    "clean": true,
+    "axioms": [
+     "propext",
+     "Quot.sound"
+    ]
+   },
+   {
+    "declaration": "adj_symm",
+    "clean": true,
+    "axioms": [
+     "propext",
+     "Quot.sound"
+    ]
+   },
+   {
+    "declaration": "nadj_symm",
+    "clean": true,
+    "axioms": [
+     "propext",
+     "Quot.sound"
+    ]
+   },
+   {
+    "declaration": "gnest_adj",
+    "clean": true,
+    "axioms": [
+     "propext",
+     "Quot.sound"
+    ]
+   },
+   {
+    "declaration": "gnest_nadj",
+    "clean": true,
+    "axioms": [
+     "propext",
+     "Quot.sound"
+    ]
+   },
+   {
+    "declaration": "gextract",
+    "clean": true,
+    "axioms": [
+     "propext",
+     "Quot.sound"
+    ]
+   },
+   {
+    "declaration": "sub_range_lt",
+    "clean": true,
+    "axioms": [
+     "propext",
+     "Quot.sound"
+    ]
+   },
+   {
+    "declaration": "sub_range_pairwise",
+    "clean": true,
+    "axioms": [
+     "propext",
+     "Classical.choice",
+     "Quot.sound"
+    ]
+   },
+   {
+    "declaration": "len5",
+    "clean": true,
+    "axioms": [
+     "propext"
+    ]
+   },
+   {
+    "declaration": "pw5",
+    "clean": true,
+    "axioms": [
+     "propext",
+     "Classical.choice",
+     "Quot.sound"
+    ]
+   },
+   {
+    "declaration": "not_suffices_41",
+    "clean": true,
+    "axioms": [
+     "propext",
+     "Classical.choice",
+     "Quot.sound"
+    ]
+   },
+   {
+    "declaration": "extend_clique",
+    "clean": true,
+    "axioms": [
+     "propext"
+    ]
+   },
+   {
+    "declaration": "extend_indep",
+    "clean": true,
+    "axioms": [
+     "propext"
+    ]
+   },
+   {
+    "declaration": "filter_split",
+    "clean": true,
+    "axioms": [
+     "propext",
+     "Quot.sound"
+    ]
+   },
+   {
+    "declaration": "es_recurrence",
+    "clean": true,
+    "axioms": [
+     "propext",
+     "Classical.choice",
+     "Quot.sound"
+    ]
+   },
+   {
+    "declaration": "suffices_one_left",
+    "clean": true,
+    "axioms": [
+     "propext"
+    ]
+   },
+   {
+    "declaration": "suffices_one_right",
+    "clean": true,
+    "axioms": [
+     "propext"
+    ]
+   },
+   {
+    "declaration": "es_chain",
+    "clean": true,
+    "axioms": [
+     "propext",
+     "Classical.choice",
+     "Quot.sound"
+    ]
+   },
+   {
+    "declaration": "R55_le_70",
+    "clean": true,
+    "axioms": [
+     "propext",
+     "Classical.choice",
+     "Quot.sound"
+    ]
+   },
+   {
+    "declaration": "R45_le_35",
+    "clean": true,
+    "axioms": [
+     "propext",
+     "Classical.choice",
+     "Quot.sound"
+    ]
+   },
+   {
+    "declaration": "degenerate_clique_exists",
+    "clean": true,
+    "axioms": [
+     "propext"
+    ]
+   },
+   {
+    "declaration": "degenerate_list_not_nodup",
+    "clean": true,
+    "axioms": []
+   },
+   {
+    "declaration": "suffices_mono",
+    "clean": true,
+    "axioms": [
+     "propext",
+     "Quot.sound"
+    ]
+   },
+   {
+    "declaration": "frontier_obligation",
+    "clean": false,
+    "axioms": [
+     "sorryAx"
+    ]
+   },
+   {
+    "declaration": "frontier_gives_the_tail",
+    "clean": false,
+    "axioms": [
+     "propext",
+     "sorryAx",
+     "Quot.sound"
+    ]
+   },
+   {
+    "declaration": "ceiling_gives_the_tail",
+    "clean": true,
+    "axioms": [
+     "propext",
+     "Classical.choice",
+     "Quot.sound"
+    ]
+   },
+   {
+    "declaration": "bracket",
+    "clean": true,
+    "axioms": [
+     "propext",
+     "Classical.choice",
+     "Quot.sound"
+    ]
+   },
+   {
+    "declaration": "exact_value_in_bracket",
+    "clean": true,
+    "axioms": [
+     "propext",
+     "Classical.choice",
+     "Quot.sound"
+    ]
+   },
+   {
+    "declaration": "the_open_gap",
+    "clean": true,
+    "axioms": []
+   },
+   {
+    "declaration": "msl_r55_capstone_bracket_v3",
+    "clean": true,
+    "axioms": []
+   }
+  ],
+  "errors": []
+ },
+ "lean_result_block": "LEAN_RESULT r55-capstone-bracket-v3\n  FORMAL_STATUS KERNEL_FAILED\n  FILE oracle/frontier_formalizer/cable/theorems/msl_r55-capstone-bracket-v3.lean\n  THEOREMS msl_r55_capstone_bracket_v3\n  BACKEND windows\n  AXIOMS Classical.choice, Quot.sound, propext, sorryAx\n  TACTIC (supplied proof)\n  BUDGET 120s:KERNEL_FAILED\n  FAILURE RAW[exit 0 with no captured error line]\n  LAW KERNEL_FAILED does not refute the claim \u2014 the FAILURE line names what actually broke",
+ "timestamp": "2026-09-04T17:30:23Z"
+}

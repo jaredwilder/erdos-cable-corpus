@@ -1,0 +1,27 @@
+{
+ "schema": "oracle.msl.closer.witness.v1",
+ "id": "fmz-erdos413-campaign-001-R015-L1-a1r3",
+ "pipeline": "WITNESS_FINITE",
+ "witness": {
+  "description": "Narrowed fragment: exact finite set S = {1 <= n < 30 : omega(n-j) <= j for all j=1..8}, recomputed from scratch inside the verifier by pure-integer trial division. Hand-checked certificate constants: n-1 must be 1 or a prime power (omega(n-1)<=1), giving candidates n in {2,3,4,5,6,8,9,10,12,14,17,18,20,24,26,28,30}; for each, n-j <= 28 has omega <= 2 <= j for j>=2, so all 17 pass. Hence EXPECTED_COUNT=17, EXPECTED_FIRST=2, EXPECTED_LAST=30.",
+  "bound": 30,
+  "window": 8,
+  "expected_count": 17,
+  "expected_first": 2,
+  "expected_last": 30
+ },
+ "verifier_sha256": "788e583d2fe5cdc071f287695c297786c5fd05fdb90a001bd9cc56db8bca33bd",
+ "verifier_source": "def omega(n):\n    if n < 1:\n        raise ValueError\n    cnt = 0\n    m = n\n    d = 2\n    while d * d <= m:\n        if m % d == 0:\n            cnt += 1\n            while m % d == 0:\n                m //= d\n        d += 1 if d == 2 else 2\n    if m > 1:\n        cnt += 1\n    return cnt\n\nEXPECTED_COUNT = 17\nEXPECTED_FIRST = 2\nEXPECTED_LAST = 30\n\ndef verify():\n    S = []\n    for n in range(1, 30):\n        ok = True\n        for j in (1, 2, 3, 4, 5, 6, 7, 8):\n            if omega(n - j) > j:\n                ok = False\n                break\n        if ok:\n            S.append(n)\n    if len(S) != EXPECTED_COUNT:\n        return False\n    if S[0] != EXPECTED_FIRST or S[-1] != EXPECTED_LAST:\n        return False\n    for i in range(len(S) - 1):\n        if S[i] >= S[i + 1]:\n            return False\n    for n in S:\n        for j in (1, 2, 3, 4, 5, 6, 7, 8):\n            if omega(n - j) > j:\n                return False\n    return True\n\ndef main():\n    return 0 if verify() else 1\n",
+ "run": {
+  "passed": false,
+  "status": "VERIFIER_FAIL",
+  "exit_code": 1,
+  "stdout": "",
+  "detail": "TypeError: verify() takes 0 positional arguments but 1 was given",
+  "seconds": 0.09,
+  "code_sha256": "788e583d2fe5cdc071f287695c297786c5fd05fdb90a001bd9cc56db8bca33bd"
+ },
+ "claim": "A PASS (exit 0) establishes the exact window-8 barrier set S below n=30, elementwise re-verified by pure-integer trial division with fail-closed cardinality/order/first/last constants — the minimal finite core of R015's interval cover. It does NOT establish infinitude of B_1; extension of the certificate to the 8th primorial bound 9699690 and the S->B_1 periodicity reduction remain analytic, outside the trust boundary per lemma L1's own scope.",
+ "law": "Wang 7.2: an exact finite object plus a proved reduction is a CERTIFICATE. The reduction is the `claim` and is a human's to audit; the object and the verifier run are the machine's part.",
+ "timestamp": "2026-09-02T02:09:46Z"
+}

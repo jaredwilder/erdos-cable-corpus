@@ -1,0 +1,75 @@
+{
+ "schema": "oracle.msl.cable.v1",
+ "id": "e710-n50-infeasible",
+ "spec": {
+  "id": "e710-n50-infeasible",
+  "imports": "Mathlib",
+  "definitions": "\ndef Deficient {iota alpha : Type*} [DecidableEq alpha] (tt : iota \u2192 Finset alpha)\n    (S : Finset iota) : Prop := (S.biUnion tt).card < S.card\n\ntheorem hall_deficiency_blocks {iota alpha : Type*} [DecidableEq alpha]\n    (tt : iota \u2192 Finset alpha) (S : Finset iota) (hdef : Deficient tt S) :\n    \u00ac (\u2203 f : iota \u2192 alpha, Set.InjOn f (S : Set iota)\n        \u2227 (\u2200 i, i \u2208 S \u2192 f i \u2208 tt i)) := by\n  rintro \u27e8f, hinj, hmem\u27e9\n  have hsub : S.image f \u2286 S.biUnion tt := by\n    intro y hy\n    simp only [Finset.mem_image] at hy\n    obtain \u27e8i, hi, rfl\u27e9 := hy\n    exact Finset.mem_biUnion.mpr \u27e8i, hi, hmem i hi\u27e9\n  have hcard : (S.image f).card = S.card := Finset.card_image_of_injOn hinj\n  have hle := Finset.card_le_card hsub\n  rw [hcard] at hle\n  exact absurd hle (Nat.not_le.mpr hdef)\n\n/-- The divisibility neighborhood: integers \u2208 the open interval (n, n+L) that k divides. -/\ndef divNbhd (n L k : Nat) : Finset Nat := (Finset.Ioo n (n + L)).filter (fun v => k \u2223 v)\n\n/-- Corollary about Erdos 710: a deficient index set blocks every valid assignment\n    (each index k mapped injectively to a multiple of k inside the open interval). -/\ntheorem e710_infeasible (n L : Nat) (S : Finset Nat) (hdef : Deficient (divNbhd n L) S) :\n    \u00ac (\u2203 a : Nat \u2192 Nat, Set.InjOn a (S : Set Nat)\n        \u2227 (\u2200 k, k \u2208 S \u2192 a k \u2208 divNbhd n L k)) :=\n  hall_deficiency_blocks (divNbhd n L) S hdef\n",
+  "conclusion": "\u00ac (\u2203 a : Nat \u2192 Nat, Set.InjOn a (({12, 20, 24, 30, 36, 40, 42, 45, 48, 50} : Finset Nat) : Set Nat) \u2227 (\u2200 k, k \u2208 ({12, 20, 24, 30, 36, 40, 42, 45, 48, 50} : Finset Nat) \u2192 a k \u2208 divNbhd 50 75 k))",
+  "proof": "by\n  apply e710_infeasible\n  unfold Deficient divNbhd\n  decide"
+ },
+ "formal_status": "KERNEL_CHECKED",
+ "events": [],
+ "axioms": [
+  "Classical.choice",
+  "Quot.sound",
+  "propext"
+ ],
+ "attempts": [
+  {
+   "tactic": "(supplied proof)",
+   "status": "VERIFIED",
+   "seconds": 66.2,
+   "errors": [],
+   "exitCode": 0,
+   "resource_limit": null
+  }
+ ],
+ "budget_history": [
+  {
+   "tier_seconds": 180.0,
+   "outcome": "KERNEL_CHECKED"
+  }
+ ],
+ "kernel_result": {
+  "status": "VERIFIED",
+  "file": "oracle/frontier_formalizer/cable/theorems/msl_e710-n50-infeasible.lean",
+  "backend": "wsl",
+  "project": "/root/erdosfire-bench/proofs",
+  "needsMathlib": true,
+  "exitCode": 0,
+  "seconds": 53.5,
+  "declarations": [
+   {
+    "declaration": "hall_deficiency_blocks",
+    "clean": true,
+    "axioms": [
+     "propext",
+     "Classical.choice",
+     "Quot.sound"
+    ]
+   },
+   {
+    "declaration": "e710_infeasible",
+    "clean": true,
+    "axioms": [
+     "propext",
+     "Classical.choice",
+     "Quot.sound"
+    ]
+   },
+   {
+    "declaration": "msl_e710_n50_infeasible",
+    "clean": true,
+    "axioms": [
+     "propext",
+     "Classical.choice",
+     "Quot.sound"
+    ]
+   }
+  ],
+  "errors": []
+ },
+ "lean_result_block": "LEAN_RESULT e710-n50-infeasible\n  FORMAL_STATUS KERNEL_CHECKED\n  FILE oracle/frontier_formalizer/cable/theorems/msl_e710-n50-infeasible.lean\n  THEOREMS msl_e710_n50_infeasible\n  BACKEND wsl\n  AXIOMS Classical.choice, Quot.sound, propext\n  TACTIC (supplied proof)\n  BUDGET 180s:KERNEL_CHECKED\n  FAILURE NONE",
+ "timestamp": "2026-09-03T20:47:02Z"
+}

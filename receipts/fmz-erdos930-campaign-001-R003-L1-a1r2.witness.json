@@ -1,0 +1,34 @@
+{
+ "schema": "oracle.msl.closer.witness.v1",
+ "id": "fmz-erdos930-campaign-001-R003-L1-a1r2",
+ "pipeline": "WITNESS_FINITE",
+ "witness": {
+  "perfect_power_examples": [
+   {
+    "n": 144,
+    "base": 12,
+    "exponent": 2
+   },
+   {
+    "n": 705600,
+    "base": 840,
+    "exponent": 2
+   }
+  ],
+  "k4_nonexistence_bound": 1000000,
+  "k": 4
+ },
+ "verifier_sha256": "29903d0bfb050f50640e19043f364025d32de8a07ef01a833cfa5c3fe6116b98",
+ "verifier_source": "import math\n\nWITNESS = {\n    \"perfect_power_examples\": [(144, 12, 2), (705600, 840, 2)],\n    \"k4_nonexistence_bound\": 1000000,\n}\n\ndef _is_perfect_power(n):\n    if n < 4:\n        return False\n    b = 2\n    while b * b <= n:\n        p = b * b\n        while p <= n:\n            if p == n:\n                return True\n            p *= b\n        b += 1\n    return False\n\ndef verify():\n    # Part 1: exact perfect-power witnesses (fail closed on any mismatch)\n    for (n, b, e) in WITNESS[\"perfect_power_examples\"]:\n        p = 1\n        for _ in range(e):\n            p *= b\n        if p != n:\n            return False\n        if not _is_perfect_power(n):\n            return False\n    # Part 2: k=4 nonexistence for t <= 10^6, exact integer arithmetic only\n    B = WITNESS[\"k4_nonexistence_bound\"]\n    if B > 10**6:\n        return False\n    for t in range(1, B + 1):\n        prod = t * (t + 1) * (t + 2) * (t + 3)\n        if _is_perfect_power(prod):\n            return False\n    return True\n\nRESULT = verify()\n",
+ "run": {
+  "passed": false,
+  "status": "VERIFIER_TIMEOUT",
+  "seconds": 300,
+  "stdout": "",
+  "code_sha256": "29903d0bfb050f50640e19043f364025d32de8a07ef01a833cfa5c3fe6116b98",
+  "detail": "verifier exceeded 300s — a verifier that does not terminate has not verified anything"
+ },
+ "claim": "RESULT == True establishes the finite fragment of L1 exactly: 144=12^2 and 705600=840^2 are certified perfect powers, and no t<=10^6 makes t(t+1)(t+2)(t+3) a perfect power (k=4 nonexistence on the checked range); the universal forall-k statement remains open, as the lemma itself states.",
+ "law": "Wang 7.2: an exact finite object plus a proved reduction is a CERTIFICATE. The reduction is the `claim` and is a human's to audit; the object and the verifier run are the machine's part.",
+ "timestamp": "2026-09-02T02:43:32Z"
+}

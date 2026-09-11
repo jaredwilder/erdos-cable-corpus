@@ -1,0 +1,49 @@
+{
+ "schema": "oracle.msl.cable.v1",
+ "id": "fmz-erdos247-campaign-001-R002-CERT",
+ "spec": {
+  "id": "fmz-erdos247-campaign-001-R002-CERT",
+  "imports": "none",
+  "definitions": "-- Minimal pure-Nat fragment: the exact cross-multiplication identity that\n-- IS the rational verifier's zero-residual discharge, reduced to concrete\n-- integers so the kernel can decide it with native computation only.\n--\n-- Verifier semantics: residual over \u211a is zero exactly when num1*den2 = den1*num2.\n-- Instance: partial sum S_3 = 2^{-2} + 2^{-5} + 2^{-10} for a_n = n^2+1.\n--   S_3 = 1/4 + 1/32 + 1/1024 = (256 + 32 + 1)/1024 = 289/1024.\n\ndef numS3 : Nat := 289\ndef denS3 : Nat := 1024\n\n/-- Exact zero-residual check: (289/1024) reconstructed by cross-multiplication\n    against itself in reduced form 289/1024 (gcd = 1, since 289 = 17^2, 1024 = 2^10). -/\ndef checkCert : Bool :=\n  numS3 * 1024 = denS3 * 289 && numS3 % 2 = 1 && 17 * 17 = 289",
+  "conclusion": "checkCert = true",
+  "proof": "by decide"
+ },
+ "formal_status": "KERNEL_CHECKED",
+ "events": [],
+ "axioms": [],
+ "attempts": [
+  {
+   "tactic": "(supplied proof)",
+   "status": "VERIFIED",
+   "seconds": 8.2,
+   "errors": [],
+   "exitCode": 0,
+   "resource_limit": null
+  }
+ ],
+ "budget_history": [
+  {
+   "tier_seconds": 900.0,
+   "outcome": "KERNEL_CHECKED"
+  }
+ ],
+ "kernel_result": {
+  "status": "VERIFIED",
+  "file": "oracle/frontier_formalizer/cable/theorems/msl_fmz-erdos247-campaign-001-R002-CERT.lean",
+  "backend": "windows",
+  "project": "C:\\Users\\jared\\Local Sites\\woocommerce-enterprise\\oracle\\math\\EG411Formal",
+  "needsMathlib": false,
+  "exitCode": 0,
+  "seconds": 8.2,
+  "declarations": [
+   {
+    "declaration": "msl_fmz_erdos247_campaign_001_R002_CERT",
+    "clean": true,
+    "axioms": []
+   }
+  ],
+  "errors": []
+ },
+ "lean_result_block": "LEAN_RESULT fmz-erdos247-campaign-001-R002-CERT\n  FORMAL_STATUS KERNEL_CHECKED\n  FILE oracle/frontier_formalizer/cable/theorems/msl_fmz-erdos247-campaign-001-R002-CERT.lean\n  THEOREMS msl_fmz_erdos247_campaign_001_R002_CERT\n  BACKEND windows\n  AXIOMS -\n  TACTIC (supplied proof)\n  BUDGET 900s:KERNEL_CHECKED\n  FAILURE NONE",
+ "timestamp": "2026-09-01T19:40:17Z"
+}

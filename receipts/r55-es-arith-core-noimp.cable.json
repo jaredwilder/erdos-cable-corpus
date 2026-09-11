@@ -1,0 +1,98 @@
+{
+ "schema": "oracle.msl.cable.v1",
+ "id": "r55-es-arith-core-noimp",
+ "spec": {
+  "id": "r55-es-arith-core-noimp",
+  "imports": "none",
+  "set_options": [
+   "set_option maxRecDepth 20000"
+  ],
+  "definitions": "-- THE COUNTING CORE OF ERDOS-SZEKERES.\n-- In the derivation, v has m+n-1 other vertices; A is its red neighbourhood and B its blue.\n-- The claim is that A and B cannot BOTH fall short.\ntheorem es_pigeonhole (m n a b : Nat) (hm : 1 \u2264 m) (hn : 1 \u2264 n)\n    (hsplit : a + b = m + n - 1) (ha : a \u2264 m - 1) (hb : b \u2264 n - 1) : False := by\n  omega\n\n-- THE COUNTING CORE OF THE GREENWOOD-GLEASON PARITY SHARPENING.\n-- Both one-sided bounds are tight at every vertex, so the red graph is (m-1)-regular\n-- on N = m+n-1 vertices; with m and n even that degree sum is odd.\ntheorem gg_forced_tight (m n a b : Nat) (hm : 1 \u2264 m) (hn : 1 \u2264 n)\n    (hsplit : a + b = m + n - 2) (ha : a \u2264 m - 1) (hb : b \u2264 n - 1) :\n    a = m - 1 \u2227 b = n - 1 := by\n  omega\n\ntheorem gg_parity (m n : Nat) (hm : 2 \u2264 m) (hn : 2 \u2264 n)\n    (hme : m % 2 = 0) (hne : n % 2 = 0) :\n    ((m + n - 1) * (m - 1)) % 2 = 1 := by\n  obtain \u27e8p, rfl\u27e9 : \u2203 p, m = 2 * p := \u27e8m / 2, by omega\u27e9\n  obtain \u27e8q, rfl\u27e9 : \u2203 q, n = 2 * q := \u27e8n / 2, by omega\u27e9\n  have h1 : 2 * p + 2 * q - 1 = 2 * (p + q - 1) + 1 := by omega\n  have h2 : 2 * p - 1 = 2 * (p - 1) + 1 := by omega\n  rw [h1, h2]\n  omega\n\n-- HANDSHAKE, as the parity argument uses it: a degree sum is even.\ntheorem handshake_even (N d : Nat) (h : \u2203 E : Nat, N * d = 2 * E) : (N * d) % 2 = 0 := by\n  obtain \u27e8E, hE\u27e9 := h; omega",
+  "hypotheses": [],
+  "conclusion": "(41 * 20) % 2 = 0",
+  "proof": "by decide"
+ },
+ "formal_status": "KERNEL_FAILED",
+ "events": [
+  "((supplied proof)) RAW[tmpg1y1bi5v.lean:27:2: error: omega could not prove the goal:]"
+ ],
+ "axioms": [
+  "Classical.choice",
+  "Quot.sound",
+  "propext",
+  "sorryAx"
+ ],
+ "attempts": [
+  {
+   "tactic": "(supplied proof)",
+   "status": "UNVERIFIED",
+   "seconds": 33.4,
+   "errors": [
+    "tmpg1y1bi5v.lean:27:2: error: omega could not prove the goal:"
+   ],
+   "exitCode": 1,
+   "resource_limit": null
+  }
+ ],
+ "budget_history": [
+  {
+   "tier_seconds": 120.0,
+   "outcome": "KERNEL_FAILED"
+  }
+ ],
+ "kernel_result": {
+  "status": "UNVERIFIED",
+  "file": "oracle/frontier_formalizer/cable/theorems/msl_r55-es-arith-core-noimp.lean",
+  "backend": "windows",
+  "project": "C:\\Users\\jared\\Local Sites\\woocommerce-enterprise\\oracle\\math\\EG411Formal",
+  "needsMathlib": false,
+  "exitCode": 1,
+  "seconds": 33.4,
+  "declarations": [
+   {
+    "declaration": "es_pigeonhole",
+    "clean": true,
+    "axioms": [
+     "propext",
+     "Quot.sound"
+    ]
+   },
+   {
+    "declaration": "gg_forced_tight",
+    "clean": true,
+    "axioms": [
+     "propext",
+     "Classical.choice",
+     "Quot.sound"
+    ]
+   },
+   {
+    "declaration": "gg_parity",
+    "clean": false,
+    "axioms": [
+     "propext",
+     "sorryAx",
+     "Quot.sound"
+    ]
+   },
+   {
+    "declaration": "handshake_even",
+    "clean": true,
+    "axioms": [
+     "propext",
+     "Quot.sound"
+    ]
+   },
+   {
+    "declaration": "msl_r55_es_arith_core_noimp",
+    "clean": true,
+    "axioms": []
+   }
+  ],
+  "errors": [
+   "tmpg1y1bi5v.lean:27:2: error: omega could not prove the goal:"
+  ]
+ },
+ "lean_result_block": "LEAN_RESULT r55-es-arith-core-noimp\n  FORMAL_STATUS KERNEL_FAILED\n  FILE oracle/frontier_formalizer/cable/theorems/msl_r55-es-arith-core-noimp.lean\n  THEOREMS msl_r55_es_arith_core_noimp\n  BACKEND windows\n  AXIOMS Classical.choice, Quot.sound, propext, sorryAx\n  TACTIC (supplied proof)\n  BUDGET 120s:KERNEL_FAILED\n  FAILURE ((supplied proof)) RAW[tmpg1y1bi5v.lean:27:2: error: omega could not prove the goal:]\n  LAW KERNEL_FAILED does not refute the claim \u2014 the FAILURE line names what actually broke",
+ "timestamp": "2026-09-04T16:20:40Z"
+}

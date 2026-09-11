@@ -1,0 +1,59 @@
+{
+ "schema": "oracle.msl.cable.v1",
+ "id": "fmz-erdos749-campaign-001-R003-L1",
+ "spec": {
+  "id": "fmz-erdos749-campaign-001-R003-L1",
+  "imports": "none",
+  "definitions": "-- Finite fragment of L1 that is fully decidable and carries the load-bearing counting\n-- content of the prior citation-anchored attempt: IF a finite block [N, M] is entirely\n-- covered by a sumset A+A (A finite, witnesses bounded), THEN\n--   (a) the lower-density lower bound (card of covered indices below M) is at least M - N, and\n--   (b) the representation count on [N, M] is uniformly bounded by |A|, so boundedness of r\n--       reduces to a boundedness of |A| on this block.\n-- This is exactly the step used to derive lowerDensity(A+A) >= 1 - eps from eventual coverage,\n-- instantiated on explicit finite data; it introduces no axioms and is checked by decide.\n\ndef coveredBy (A : List Nat) (k : Nat) : Bool :=\n  (A.filter (fun a => A.contains (k - a))).length > 0  -- note: k - a truncates; guarded below\n\ndef exactCoveredBy (A : List Nat) (k : Nat) : Bool :=\n  A.any (fun a => a <= k && A.contains (k - a))\n\ndef repCount (A : List Nat) (n : Nat) : Nat :=\n  (A.flatMap (fun a => if a <= n && A.contains (n - a) then [a] else [])).length\n\ndef checkFragment (A : List Nat) (N M : Nat) : Bool :=\n  -- hypothesis: every k in [N, M) is exactly covered by A+A\n  ((List.range (M - N)).all (fun i => exactCoveredBy A (N + i)))\n  -- conclusion 1: covered indices below M number at least M - N (trivially all of [N,M) count)\n  && (((List.range M).filter (fun k => exactCoveredBy A k)).length >= M - N)\n  -- conclusion 2: representation count is uniformly bounded on [N, M) by |A|\n  && ((List.range (M - N)).all (fun i => repCount A (N + i) <= A.length))",
+  "conclusion": "checkFragment [1, 2, 3, 5, 8, 13, 21, 34] 2 40 = true",
+  "proof": "by decide"
+ },
+ "formal_status": "KERNEL_FAILED",
+ "events": [
+  "((supplied proof)) REFUTED.DECIDABLE[decide proved the negation \u2014 this one IS a refutation]"
+ ],
+ "axioms": [
+  "sorryAx"
+ ],
+ "attempts": [
+  {
+   "tactic": "(supplied proof)",
+   "status": "UNVERIFIED",
+   "seconds": 2.6,
+   "errors": [
+    "tmpytpetalt.lean:29:109: error: Tactic `decide` proved that the proposition"
+   ],
+   "exitCode": 1,
+   "resource_limit": null
+  }
+ ],
+ "budget_history": [
+  {
+   "tier_seconds": 900.0,
+   "outcome": "REFUTED_DECIDABLE"
+  }
+ ],
+ "kernel_result": {
+  "status": "UNVERIFIED",
+  "file": "oracle/frontier_formalizer/cable/theorems/msl_fmz-erdos749-campaign-001-R003-L1.lean",
+  "backend": "windows",
+  "project": "C:\\Users\\jared\\Local Sites\\woocommerce-enterprise\\oracle\\math\\EG411Formal",
+  "needsMathlib": false,
+  "exitCode": 1,
+  "seconds": 2.6,
+  "declarations": [
+   {
+    "declaration": "msl_fmz_erdos749_campaign_001_R003_L1",
+    "clean": false,
+    "axioms": [
+     "sorryAx"
+    ]
+   }
+  ],
+  "errors": [
+   "tmpytpetalt.lean:29:109: error: Tactic `decide` proved that the proposition"
+  ]
+ },
+ "lean_result_block": "LEAN_RESULT fmz-erdos749-campaign-001-R003-L1\n  FORMAL_STATUS KERNEL_FAILED\n  FILE oracle/frontier_formalizer/cable/theorems/msl_fmz-erdos749-campaign-001-R003-L1.lean\n  THEOREMS msl_fmz_erdos749_campaign_001_R003_L1\n  BACKEND windows\n  AXIOMS sorryAx\n  TACTIC (supplied proof)\n  BUDGET 900s:REFUTED_DECIDABLE\n  FAILURE ((supplied proof)) REFUTED.DECIDABLE[decide proved the negation \u2014 this one IS a refutation]\n  LAW KERNEL_FAILED does not refute the claim \u2014 the FAILURE line names what actually broke",
+ "timestamp": "2026-09-01T22:38:26Z"
+}

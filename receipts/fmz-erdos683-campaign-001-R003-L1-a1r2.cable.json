@@ -1,0 +1,62 @@
+{
+ "schema": "oracle.msl.cable.v1",
+ "id": "fmz-erdos683-campaign-001-R003-L1-a1r2",
+ "spec": {
+  "id": "fmz-erdos683-campaign-001-R003-L1-a1r2",
+  "imports": "none",
+  "definitions": "def ceilK75 (k : Nat) : Nat :=\n  -- ceil(k^{7/5}) = least r with r^5 >= k^7, exact integer arithmetic\n  ((List.range (k*k*k*k*k*k*k + 2)).find? (fun r => k^7 <= r^5)).getD 0\n\ndef lpf (m : Nat) : Nat :=\n  -- largest prime factor by exact trial division over divisors\n  ((List.range (m + 1)).filter Nat.Prime).filter (fun p => m % p == 0)\n    |>.foldr max 0\n\ndef binom (n k : Nat) : Nat :=\n  (List.range (k+1)).foldl (fun acc i => acc * (n - i) / (i + 1)) 1\n\ndef boundAt (n k : Nat) : Nat := min (n - k + 1) (ceilK75 k)\n\ndef checkPair (n k : Nat) : Bool := lpf (binom n k) >= boundAt n k\n\ndef checkAll : Bool :=\n  (List.range 15).all fun i =>\n    let n := i + 1\n    (List.range n).all fun j =>\n      let k := j + 1\n      checkPair n k\n\ndef checkL1 : Bool := checkAll",
+  "conclusion": "checkL1 = true",
+  "proof": "by native_decide"
+ },
+ "formal_status": "KERNEL_FAILED",
+ "events": [
+  "((supplied proof)) TYPE.FAIL NEED[Nat.Prime]",
+  "((supplied proof)) RAW[tmplxi7k8k9.lean:28:75: error: Tactic `native_decide` failed: Could not evaluate decidable instance. Error: cannot evaluate code because 'List.filterTR.loop._at]"
+ ],
+ "axioms": [
+  "sorryAx"
+ ],
+ "attempts": [
+  {
+   "tactic": "(supplied proof)",
+   "status": "UNVERIFIED",
+   "seconds": 2.2,
+   "errors": [
+    "tmplxi7k8k9.lean:9:31: error(lean.unknownIdentifier): Unknown constant `Nat.Prime`",
+    "tmplxi7k8k9.lean:28:75: error: Tactic `native_decide` failed: Could not evaluate decidable instance. Error: cannot evaluate code because 'List.filterTR.loop._at_.lpf.spec_0' uses 'sorry' and/or contains errors"
+   ],
+   "exitCode": 1,
+   "resource_limit": null
+  }
+ ],
+ "budget_history": [
+  {
+   "tier_seconds": 900.0,
+   "outcome": "KERNEL_FAILED"
+  }
+ ],
+ "kernel_result": {
+  "status": "UNVERIFIED",
+  "file": "oracle/frontier_formalizer/cable/theorems/msl_fmz-erdos683-campaign-001-R003-L1-a1r2.lean",
+  "backend": "windows",
+  "project": "C:\\Users\\jared\\Local Sites\\woocommerce-enterprise\\oracle\\math\\EG411Formal",
+  "needsMathlib": false,
+  "exitCode": 1,
+  "seconds": 2.1,
+  "declarations": [
+   {
+    "declaration": "msl_fmz_erdos683_campaign_001_R003_L1_a1r2",
+    "clean": false,
+    "axioms": [
+     "sorryAx"
+    ]
+   }
+  ],
+  "errors": [
+   "tmplxi7k8k9.lean:9:31: error(lean.unknownIdentifier): Unknown constant `Nat.Prime`",
+   "tmplxi7k8k9.lean:28:75: error: Tactic `native_decide` failed: Could not evaluate decidable instance. Error: cannot evaluate code because 'List.filterTR.loop._at_.lpf.spec_0' uses 'sorry' and/or contains errors"
+  ]
+ },
+ "lean_result_block": "LEAN_RESULT fmz-erdos683-campaign-001-R003-L1-a1r2\n  FORMAL_STATUS KERNEL_FAILED\n  FILE oracle/frontier_formalizer/cable/theorems/msl_fmz-erdos683-campaign-001-R003-L1-a1r2.lean\n  THEOREMS msl_fmz_erdos683_campaign_001_R003_L1_a1r2\n  BACKEND windows\n  AXIOMS sorryAx\n  TACTIC (supplied proof)\n  BUDGET 900s:KERNEL_FAILED\n  FAILURE ((supplied proof)) TYPE.FAIL NEED[Nat.Prime]; ((supplied proof)) RAW[tmplxi7k8k9.lean:28:75: error: Tactic `native_decide` failed: Could not evaluate decidable instance. Error: cannot evaluate code because 'List.filterTR.loop._at]\n  LAW KERNEL_FAILED does not refute the claim \u2014 the FAILURE line names what actually broke",
+ "timestamp": "2026-09-02T01:03:15Z"
+}

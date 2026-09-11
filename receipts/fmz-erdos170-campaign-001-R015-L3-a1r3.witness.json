@@ -1,0 +1,71 @@
+{
+ "schema": "oracle.msl.closer.witness.v1",
+ "id": "fmz-erdos170-campaign-001-R015-L3-a1r3",
+ "pipeline": "WITNESS_FINITE",
+ "witness": {
+  "contract_sha": "33024e452a491159",
+  "expected_F": {
+   "0": 1,
+   "1": 2,
+   "2": 3,
+   "3": 3,
+   "4": 4,
+   "5": 4,
+   "6": 4
+  },
+  "expected_ties": [
+   0,
+   1,
+   3,
+   6
+  ],
+  "expected_strict": [
+   2,
+   4,
+   5
+  ],
+  "counting_lower_bound": "min k with k*(k+1)/2 >= N+1",
+  "certified_extremizers": {
+   "0": [
+    [
+     0
+    ]
+   ],
+   "1": [
+    [
+     0,
+     1
+    ]
+   ],
+   "3": [
+    [
+     0,
+     1,
+     3
+    ]
+   ],
+   "6": [
+    [
+     0,
+     1,
+     4,
+     6
+    ]
+   ]
+  }
+ },
+ "verifier_sha256": "75e98331c7389734099c1f93cd8f3e86b1731c359318be5f109348ed475e8dbc",
+ "verifier_source": "#!/usr/bin/env python3\n# Exact-integer fail-closed verifier for lemma L3, contract 33024e452a491159.\n# Entry point: verify(witness) -- raises on ANY failed check; returns True on PASS.\n# Exhaustive enumeration over all subsets of {0..N}, N in 0..6. Ints only;\n# deterministic; no network; no filesystem; no I/O.\nfrom itertools import combinations\n\ndef covers(A, N):\n    d = set()\n    for a in A:\n        for b in A:\n            d.add(a - b if a >= b else b - a)\n    for x in range(0, N + 1):\n        if x not in d:\n            return False\n    return True\n\ndef counting_lb(N):\n    k = 1\n    while k * (k + 1) // 2 < N + 1:\n        k += 1\n    return k\n\ndef verify(witness):\n    expected_F = {int(k): v for k, v in witness[\"expected_F\"].items()}\n    ties = frozenset(witness[\"expected_ties\"])\n    strict = frozenset(witness[\"expected_strict\"])\n    extremizers = {int(k): [tuple(x) for x in v]\n                   for k, v in witness[\"certified_extremizers\"].items()}\n    for N in range(0, 7):\n        universe = list(range(0, N + 1))\n        f = None\n        for k in range(1, N + 2):\n            found = False\n            for A in combinations(universe, k):\n                if covers(A, N):\n                    f = k\n                    found = True\n                    break\n            if found:\n                break\n        if f is None or f != expected_F[N]:\n            raise AssertionError(\"F(%d) mismatch\" % N)\n        lb = counting_lb(N)\n        if N in ties and f != lb:\n            raise AssertionError(\"N=%d tie violated\" % N)\n        if N in strict and f <= lb:\n            raise AssertionError(\"N=%d strict violated\" % N)\n        if (N in ties) == (N in strict):\n            raise AssertionError(\"N=%d unclassified\" % N)\n        allE = set()\n        for C in combinations(universe, f):\n            if covers(C, N):\n                allE.add(C)\n        if N in extremizers:\n            if not extremizers[N]:\n                raise AssertionError(\"no extremizer at N=%d\" % N)\n            for e in extremizers[N]:\n                if e not in allE:\n                    raise AssertionError(\"bogus extremizer at N=%d\" % N)\n    return True\n\nWITNESS = {\n \"expected_F\": {\"0\": 1, \"1\": 2, \"2\": 3, \"3\": 3, \"4\": 4, \"5\": 4, \"6\": 4},\n \"expected_ties\": [0, 1, 3, 6],\n \"expected_strict\": [2, 4, 5],\n \"certified_extremizers\": {\n  \"0\": [[0]], \"1\": [[0, 1]], \"3\": [[0, 1, 3]], \"6\": [[0, 1, 4, 6]]\n }\n}\n\nverify(WITNESS)\n",
+ "run": {
+  "passed": true,
+  "status": "VERIFIER_PASS",
+  "exit_code": 0,
+  "stdout": "PASS",
+  "detail": "",
+  "seconds": 0.13,
+  "code_sha256": "75e98331c7389734099c1f93cd8f3e86b1731c359318be5f109348ed475e8dbc"
+ },
+ "claim": "verify(WITNESS) returning without raising certifies, by exact exhaustive enumeration over all subsets of {0..N} for N<=6 (ints only, deterministic, fail closed, no I/O): F(0..6) = 1,2,3,3,4,4,4; F(N) ties the counting lower bound exactly at N in {0,1,3,6} and is strict at {2,4,5}; and {0},{0,1},{0,1,3},{0,1,4,6} are valid extremizers. Full finite content of lemma L3 under contract 33024e452a491159.",
+ "law": "Wang 7.2: an exact finite object plus a proved reduction is a CERTIFICATE. The reduction is the `claim` and is a human's to audit; the object and the verifier run are the machine's part.",
+ "timestamp": "2026-09-02T01:36:22Z"
+}

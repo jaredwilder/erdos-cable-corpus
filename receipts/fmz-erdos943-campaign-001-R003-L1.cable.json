@@ -1,0 +1,68 @@
+{
+ "schema": "oracle.msl.cable.v1",
+ "id": "fmz-erdos943-campaign-001-R003-L1",
+ "spec": {
+  "id": "fmz-erdos943-campaign-001-R003-L1",
+  "imports": "Mathlib",
+  "definitions": "def Powerful (n : \u2115) : Prop := \u2200 p : \u2115, p.Prime \u2192 p \u2223 n \u2192 p^2 \u2223 n\ndef isPowerful (n : \u2115) : Bool := (n == 0) || n.primeFactors.all (fun p => (p^2 : \u2115) \u2223 n)\ndef ConvPowerful (n : \u2115) : \u2115 :=\n  (Finset.filter (fun m => isPowerful m && isPowerful (n / m) && m * (n / m) == n) (Finset.range (n+1))).card\ndef LocalCount (\u03b1 : \u2115) : \u2115 := if \u03b1 = 0 then 1 else if \u03b1 \u2264 3 then 2 else 4\n-- The two decidable combinatorial cores of L1:\n-- (i) exact local count: for p^\u03b1, pairs (\u03b2,\u03b3), \u03b2+\u03b3=\u03b1, each 0 or \u22652, number = LocalCount \u03b1 \u2264 4;\n-- (ii) hence ConvPowerful n \u2264 4^{\u03c9(n)} \u2264 d(n)^2 (squarefree divisors inject into divisors).\ndef omega (n : \u2115) : \u2115 := n.primeFactors.card\ndef divisorCount (n : \u2115) : \u2115 := (Finset.filter (fun m => m \u2223 n) (Finset.range (n+1))).card\ndef checkCore (bound : \u2115) : Bool :=\n  (List.range (bound + 1)).all (fun \u03b1 => LocalCount \u03b1 \u2264 4) \u2227\n  (List.range (bound + 1)).all (fun n =>\n    ConvPowerful n \u2264 4 ^ (omega n) \u2227 4 ^ (omega n) \u2264 (divisorCount n)^2)",
+  "conclusion": "checkCore 400 = true",
+  "proof": "by decide"
+ },
+ "formal_status": "KERNEL_FAILED",
+ "events": [
+  "((supplied proof)) RAW[/tmp/oracle_lean_7YRi3aOy.lean:6:60: error(lean.invalidField): Invalid field `all`: The environment does not contain `Finset.all`, so it is not possible to proj]",
+  "((supplied proof)) RAW[/tmp/oracle_lean_7YRi3aOy.lean:20:76: error: maximum recursion depth has been reached]"
+ ],
+ "axioms": [
+  "Classical.choice",
+  "Quot.sound",
+  "propext",
+  "sorryAx"
+ ],
+ "attempts": [
+  {
+   "tactic": "(supplied proof)",
+   "status": "UNVERIFIED",
+   "seconds": 185.7,
+   "errors": [
+    "/tmp/oracle_lean_7YRi3aOy.lean:6:60: error(lean.invalidField): Invalid field `all`: The environment does not contain `Finset.all`, so it is not possible to project the field `all` from an expression",
+    "/tmp/oracle_lean_7YRi3aOy.lean:20:76: error: maximum recursion depth has been reached"
+   ],
+   "exitCode": 1,
+   "resource_limit": "maximum recursion depth"
+  }
+ ],
+ "budget_history": [
+  {
+   "tier_seconds": 900.0,
+   "outcome": "UNDECIDED_RESOURCE[maximum recursion depth]"
+  }
+ ],
+ "kernel_result": {
+  "status": "UNVERIFIED",
+  "file": "oracle/frontier_formalizer/cable/theorems/msl_fmz-erdos943-campaign-001-R003-L1.lean",
+  "backend": "wsl",
+  "project": "/root/erdosfire-bench/proofs",
+  "needsMathlib": true,
+  "exitCode": 1,
+  "seconds": 161.9,
+  "declarations": [
+   {
+    "declaration": "msl_fmz_erdos943_campaign_001_R003_L1",
+    "clean": false,
+    "axioms": [
+     "propext",
+     "sorryAx",
+     "Classical.choice",
+     "Quot.sound"
+    ]
+   }
+  ],
+  "errors": [
+   "/tmp/oracle_lean_7YRi3aOy.lean:6:60: error(lean.invalidField): Invalid field `all`: The environment does not contain `Finset.all`, so it is not possible to project the field `all` from an expression",
+   "/tmp/oracle_lean_7YRi3aOy.lean:20:76: error: maximum recursion depth has been reached"
+  ]
+ },
+ "lean_result_block": "LEAN_RESULT fmz-erdos943-campaign-001-R003-L1\n  FORMAL_STATUS KERNEL_FAILED\n  FILE oracle/frontier_formalizer/cable/theorems/msl_fmz-erdos943-campaign-001-R003-L1.lean\n  THEOREMS msl_fmz_erdos943_campaign_001_R003_L1\n  BACKEND wsl\n  AXIOMS Classical.choice, Quot.sound, propext, sorryAx\n  TACTIC (supplied proof)\n  BUDGET 900s:UNDECIDED_RESOURCE[maximum recursion depth]\n  FAILURE ((supplied proof)) RAW[/tmp/oracle_lean_7YRi3aOy.lean:6:60: error(lean.invalidField): Invalid field `all`: The environment does not contain `Finset.all`, so it is not possible to proj]; ((supplied proof)) RAW[/tmp/oracle_lean_7YRi3aOy.lean:20:76: error: maximum recursion depth has been reached]\n  LAW KERNEL_FAILED does not refute the claim \u2014 the FAILURE line names what actually broke\n  LAW BUDGET_EXHAUSTED is an UNDECIDED question, not a failed proof \u2014 the machine stopped, the mathematics did not answer",
+ "timestamp": "2026-09-01T23:01:10Z"
+}

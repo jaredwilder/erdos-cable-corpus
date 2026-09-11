@@ -1,0 +1,60 @@
+{
+ "schema": "oracle.msl.cable.v1",
+ "id": "r55-global-ramsey-40",
+ "spec": {
+  "id": "r55-global-ramsey-40",
+  "imports": "none",
+  "set_options": [
+   "set_option maxRecDepth 20000",
+   "set_option maxHeartbeats 40000000"
+  ],
+  "definitions": "def S : List Nat := [1,2,4,5,7,12,16,17,18,22,23,24,28,33,35,36,38,39]\ndef adj (i j : Nat) : Bool := ((i + 40 - j) % 40) \u2208 S\ndef nadj (i j : Nat) : Bool := (i != j) && (! adj i j)\ndef V : List Nat := List.range 40\ndef noMono4 (e : Nat \u2192 Nat \u2192 Bool) : Bool :=\n  V.all fun a => V.all fun b => (! (a < b)) || (! e a b) ||\n    (V.all fun c => (! (b < c)) || (! e a c) || (! e b c) ||\n      (V.all fun d => (! (c < d)) || (! e a d) || (! e b d) || (! e c d)))\ndef noMono5 (e : Nat \u2192 Nat \u2192 Bool) : Bool :=\n  V.all fun a => V.all fun b => (! (a < b)) || (! e a b) ||\n    (V.all fun c => (! (b < c)) || (! e a c) || (! e b c) ||\n      (V.all fun d => (! (c < d)) || (! e a d) || (! e b d) || (! e c d) ||\n        (V.all fun f => (! (d < f)) || (! e a f) || (! e b f) || (! e c f) || (! e d f))))\ndef globalOK : Bool := noMono5 adj && noMono5 nadj",
+  "hypotheses": [],
+  "conclusion": "globalOK = true",
+  "proof": "by decide"
+ },
+ "formal_status": "KERNEL_CHECKED",
+ "events": [],
+ "axioms": [
+  "Quot.sound",
+  "propext"
+ ],
+ "attempts": [
+  {
+   "tactic": "(supplied proof)",
+   "status": "VERIFIED",
+   "seconds": 70.8,
+   "errors": [],
+   "exitCode": 0,
+   "resource_limit": null
+  }
+ ],
+ "budget_history": [
+  {
+   "tier_seconds": 120.0,
+   "outcome": "KERNEL_CHECKED"
+  }
+ ],
+ "kernel_result": {
+  "status": "VERIFIED",
+  "file": "oracle/frontier_formalizer/cable/theorems/msl_r55-global-ramsey-40.lean",
+  "backend": "windows",
+  "project": "C:\\Users\\jared\\Local Sites\\woocommerce-enterprise\\oracle\\math\\EG411Formal",
+  "needsMathlib": false,
+  "exitCode": 0,
+  "seconds": 70.8,
+  "declarations": [
+   {
+    "declaration": "msl_r55_global_ramsey_40",
+    "clean": true,
+    "axioms": [
+     "propext",
+     "Quot.sound"
+    ]
+   }
+  ],
+  "errors": []
+ },
+ "lean_result_block": "LEAN_RESULT r55-global-ramsey-40\n  FORMAL_STATUS KERNEL_CHECKED\n  FILE oracle/frontier_formalizer/cable/theorems/msl_r55-global-ramsey-40.lean\n  THEOREMS msl_r55_global_ramsey_40\n  BACKEND windows\n  AXIOMS Quot.sound, propext\n  TACTIC (supplied proof)\n  BUDGET 120s:KERNEL_CHECKED\n  FAILURE NONE",
+ "timestamp": "2026-09-04T15:56:13Z"
+}

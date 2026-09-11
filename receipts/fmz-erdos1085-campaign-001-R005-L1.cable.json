@@ -1,0 +1,55 @@
+{
+ "schema": "oracle.msl.cable.v1",
+ "id": "fmz-erdos1085-campaign-001-R005-L1",
+ "spec": {
+  "id": "fmz-erdos1085-campaign-001-R005-L1",
+  "imports": "none",
+  "definitions": "-- Exact integer model of d=1 unit-distance pairs.\n-- Points are integers; a pair of points at distance exactly 1 is a unit pair.\n-- On the integer line, the number of unit pairs of a sorted finite set is\n-- the number of adjacent (gap-1) pairs, computable exactly in Nat.\n\ndef unitPairs (s : List Nat) : Nat :=\n  match s with\n  | [] => 0\n  | x :: rest => (rest.map (fun y => if y - x == 1 then 1 else 0)).foldl (\u00b7 + \u00b7) 0\n    + unitPairs rest\n\ndef allSortedSubsets : Nat -> Nat -> List (List Nat)\n  | 0, _ => [[]]\n  | _, 0 => [[]]\n  | m+1, k+1 =>\n      -- subsets of {0..m} of size k+1, each listed in increasing order\n      (allSortedSubsets m (k+1)) ++\n      ((allSortedSubsets m k).filterMap\n        (fun s => match s with\n          | [] => some [m]\n          | x :: _ => if x > m then none else some (s ++ [m])))\n\ndef maxUnitPairs (n : Nat) : Nat :=\n  (allSortedSubsets (n) n).foldl (fun m s => Nat.max m (unitPairs s)) 0\n\ndef check_upper (n : Nat) : Bool :=\n  (allSortedSubsets n n).all (fun s => unitPairs s \u2264 n - 1)\n\ndef check_lower (n : Nat) : Bool :=\n  maxUnitPairs n == n - 1\n\ndef check_f1_5 : Bool :=\n  check_upper 5 && check_lower 5 && (unitPairs [0,1,2,3,4] == 4)",
+  "conclusion": "check_f1_5 = true \u2227 maxUnitPairs 5 = 4",
+  "proof": "by native_decide"
+ },
+ "formal_status": "KERNEL_FAILED",
+ "events": [
+  "RAW[exit 0 with no captured error line]"
+ ],
+ "axioms": [
+  "msl_fmz_erdos1085_campaign_001_R005_L1._native.native_decide.ax_1_1"
+ ],
+ "attempts": [
+  {
+   "tactic": "(supplied proof)",
+   "status": "UNVERIFIED",
+   "seconds": 2.1,
+   "errors": [],
+   "exitCode": 0,
+   "resource_limit": null
+  }
+ ],
+ "budget_history": [
+  {
+   "tier_seconds": 900.0,
+   "outcome": "KERNEL_FAILED"
+  }
+ ],
+ "kernel_result": {
+  "status": "UNVERIFIED",
+  "file": "oracle/frontier_formalizer/cable/theorems/msl_fmz-erdos1085-campaign-001-R005-L1.lean",
+  "backend": "windows",
+  "project": "C:\\Users\\jared\\Local Sites\\woocommerce-enterprise\\oracle\\math\\EG411Formal",
+  "needsMathlib": false,
+  "exitCode": 0,
+  "seconds": 2.1,
+  "declarations": [
+   {
+    "declaration": "msl_fmz_erdos1085_campaign_001_R005_L1",
+    "clean": false,
+    "axioms": [
+     "msl_fmz_erdos1085_campaign_001_R005_L1._native.native_decide.ax_1_1"
+    ]
+   }
+  ],
+  "errors": []
+ },
+ "lean_result_block": "LEAN_RESULT fmz-erdos1085-campaign-001-R005-L1\n  FORMAL_STATUS KERNEL_FAILED\n  FILE oracle/frontier_formalizer/cable/theorems/msl_fmz-erdos1085-campaign-001-R005-L1.lean\n  THEOREMS msl_fmz_erdos1085_campaign_001_R005_L1\n  BACKEND windows\n  AXIOMS msl_fmz_erdos1085_campaign_001_R005_L1._native.native_decide.ax_1_1\n  TACTIC (supplied proof)\n  BUDGET 900s:KERNEL_FAILED\n  FAILURE RAW[exit 0 with no captured error line]\n  LAW KERNEL_FAILED does not refute the claim \u2014 the FAILURE line names what actually broke",
+ "timestamp": "2026-09-01T21:13:51Z"
+}

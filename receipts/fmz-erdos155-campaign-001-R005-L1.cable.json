@@ -1,0 +1,60 @@
+{
+ "schema": "oracle.msl.cable.v1",
+ "id": "fmz-erdos155-campaign-001-R005-L1",
+ "spec": {
+  "id": "fmz-erdos155-campaign-001-R005-L1",
+  "imports": "Mathlib",
+  "definitions": "import Mathlib\n\nnamespace R005L1\n\n/-- Sidon (diagonal-inclusive, unordered pairs): all sums a+b with a,b \u2208 s\nare distinct up to swapping of the two summands. -/\ndef IsSidon (s : Finset \u2115) : Prop :=\n  \u2200 a \u2208 s, \u2200 b \u2208 s, \u2200 c \u2208 s, \u2200 d \u2208 s,\n    a + b = c + d \u2192 (a = c \u2227 b = d) \u2228 (a = d \u2227 b = c)\n\nopen scoped Classical\n\n/-- F(N) = size of the largest Sidon subset of {1,\u2026,N}, defined by exhaustive\nfilter over the powerset (mirrors the contract's maxSidonSubsetCard encoding). -/\nnoncomputable def F (N : \u2115) : \u2115 :=\n  ((Finset.Icc 1 N).powerset.filter (fun s => IsSidon s)).sup Finset.card\n\n/-- Any Sidon subset of Icc 1 N has cardinality at most F N. -/\ntheorem le_F {N : \u2115} {s : Finset \u2115} (hsub : s \u2286 Finset.Icc 1 N) (hS : IsSidon s) :\n    s.card \u2264 F N := by\n  have hmem : s \u2208 (Finset.Icc 1 N).powerset.filter (fun t => IsSidon t) :=\n    Finset.mem_filter.mpr \u27e8Finset.mem_powerset.mpr hsub, hS\u27e9\n  exact Finset.le_sup hmem\n\nend R005L1",
+  "conclusion": "\u2200 N : \u2115, R005L1.F (N + 1) \u2264 R005L1.F N + 1",
+  "proof": "by\n  intro N\n  refine Finset.sup_le (fun s hs => ?_)\n  obtain \u27e8hpow, hS\u27e9 := Finset.mem_filter.mp hs\n  obtain \u27e8h1, -\u27e9 := Finset.mem_powerset.mp hpow\n  -- h1 : s \u2286 Icc 1 (N+1)\n  by_cases hmemN : N + 1 \u2208 s\n  \u00b7 -- Case 1: s contains N+1; delete it. The deletion is a Sidon subset of Icc 1 N\n    -- and costs exactly one element.\n    have hdel : s.erase (N + 1) \u2286 Finset.Icc 1 N := by\n      intro x hx\n      have hxin : x \u2208 s := Finset.mem_of_mem_erase hx\n      have hpair := Finset.mem_Icc.mp (h1 hxin)\n      have hge := hpair.1\n      have hle := hpair.2\n      have hxne : x \u2260 N + 1 := (Finset.mem_erase.mp hx).1\n      exact Finset.mem_Icc.mpr \u27e8hge, by omega\u27e9\n    have hSid : R005L1.IsSidon (s.erase (N + 1)) := by\n      intro a ha b hb c hc d hd hsum\n      exact hS a (Finset.mem_of_mem_erase ha) b (Finset.mem_of_mem_erase hb)\n        c (Finset.mem_of_mem_erase hc) d (Finset.mem_of_mem_erase hd) hsum\n    have hbound := R005L1.le_F hdel hSid\n    have hcard : s.card = (s.erase (N + 1)).card + 1 := by\n      rw [Finset.card_erase_of_mem hmemN]; omega\n    omega\n  \u00b7 -- Case 2: s avoids N+1; then s is already a Sidon subset of Icc 1 N.\n    have hdel : s \u2286 Finset.Icc 1 N := by\n      intro x hx\n      have hpair := Finset.mem_Icc.mp (h1 hx)\n      have hge := hpair.1\n      have hle := hpair.2\n      have hxne : x \u2260 N + 1 := fun h => hmemN (h \u25b8 hx)\n      exact Finset.mem_Icc.mpr \u27e8hge, by omega\u27e9\n    have hbound := R005L1.le_F hdel hS\n    omega"
+ },
+ "formal_status": "KERNEL_FAILED",
+ "events": [
+  "((supplied proof)) RAW[/tmp/oracle_lean_YRWFtVWE.lean:5:0: error: invalid 'import' command, it must be used in the beginning of the file]"
+ ],
+ "axioms": [],
+ "attempts": [
+  {
+   "tactic": "(supplied proof)",
+   "status": "UNVERIFIED",
+   "seconds": 115.6,
+   "errors": [
+    "/tmp/oracle_lean_YRWFtVWE.lean:5:0: error: invalid 'import' command, it must be used in the beginning of the file"
+   ],
+   "exitCode": 1,
+   "resource_limit": null
+  }
+ ],
+ "budget_history": [
+  {
+   "tier_seconds": 900.0,
+   "outcome": "KERNEL_FAILED"
+  }
+ ],
+ "kernel_result": {
+  "status": "UNVERIFIED",
+  "file": "oracle/frontier_formalizer/cable/theorems/msl_fmz-erdos155-campaign-001-R005-L1.lean",
+  "backend": "wsl",
+  "project": "/root/erdosfire-bench/proofs",
+  "needsMathlib": true,
+  "exitCode": 1,
+  "seconds": 79.6,
+  "declarations": [
+   {
+    "declaration": "le_F",
+    "clean": false,
+    "axioms": []
+   },
+   {
+    "declaration": "msl_fmz_erdos155_campaign_001_R005_L1",
+    "clean": false,
+    "axioms": []
+   }
+  ],
+  "errors": [
+   "/tmp/oracle_lean_YRWFtVWE.lean:5:0: error: invalid 'import' command, it must be used in the beginning of the file"
+  ]
+ },
+ "lean_result_block": "LEAN_RESULT fmz-erdos155-campaign-001-R005-L1\n  FORMAL_STATUS KERNEL_FAILED\n  FILE oracle/frontier_formalizer/cable/theorems/msl_fmz-erdos155-campaign-001-R005-L1.lean\n  THEOREMS msl_fmz_erdos155_campaign_001_R005_L1\n  BACKEND wsl\n  AXIOMS -\n  TACTIC (supplied proof)\n  BUDGET 900s:KERNEL_FAILED\n  FAILURE ((supplied proof)) RAW[/tmp/oracle_lean_YRWFtVWE.lean:5:0: error: invalid 'import' command, it must be used in the beginning of the file]\n  LAW KERNEL_FAILED does not refute the claim \u2014 the FAILURE line names what actually broke",
+ "timestamp": "2026-09-01T20:36:27Z"
+}

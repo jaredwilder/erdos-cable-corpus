@@ -1,0 +1,69 @@
+{
+ "schema": "oracle.msl.cable.v1",
+ "id": "fmz-erdos1-campaign-001-R002-L1",
+ "spec": {
+  "id": "fmz-erdos1-campaign-001-R002-L1",
+  "imports": "Mathlib",
+  "definitions": "def exactSign (x : Int) : Option Int :=\n  if x = 0 then none else some (if x < 0 then -1 else 1)\n\ndef verifier (xs : List Int) : Option (List Int) :=\n  xs.mapM exactSign",
+  "conclusion": "\u2200 xs : List Int, verifier xs = none \u2194 \u2203 x : Int, x \u2208 xs \u2227 x = 0",
+  "proof": "by\n  intro xs\n  induction xs with\n  | nil =>\n      simp [verifier]\n  | cons x xs ih =>\n      by_cases hx : x = 0\n      \u00b7 simp [verifier, exactSign, hx]\n      \u00b7 simp only [verifier, List.mapM_cons, exactSign, hx, if_false,\n          Option.some_bind]\n        by_cases hxs : verifier xs = none\n        \u00b7 simp [hxs, ih]\n        \u00b7 simp [hxs, ih]"
+ },
+ "formal_status": "KERNEL_FAILED",
+ "events": [
+  "((supplied proof)) TYPE.FAIL NEED[Option.some_bind]",
+  "((supplied proof)) PROOF.OPEN GOALS[/tmp/oracle_lean_dgrJs60y.lean:22:8: error: unsolved goals]",
+  "((supplied proof)) PROOF.OPEN GOALS[/tmp/oracle_lean_dgrJs60y.lean:23:8: error: unsolved goals]"
+ ],
+ "axioms": [
+  "Quot.sound",
+  "propext",
+  "sorryAx"
+ ],
+ "attempts": [
+  {
+   "tactic": "(supplied proof)",
+   "status": "UNVERIFIED",
+   "seconds": 45.3,
+   "errors": [
+    "/tmp/oracle_lean_dgrJs60y.lean:20:10: error(lean.unknownIdentifier): Unknown constant `Option.some_bind`",
+    "/tmp/oracle_lean_dgrJs60y.lean:22:8: error: unsolved goals",
+    "/tmp/oracle_lean_dgrJs60y.lean:23:8: error: unsolved goals"
+   ],
+   "exitCode": 1,
+   "resource_limit": null
+  }
+ ],
+ "budget_history": [
+  {
+   "tier_seconds": 900.0,
+   "outcome": "KERNEL_FAILED"
+  }
+ ],
+ "kernel_result": {
+  "status": "UNVERIFIED",
+  "file": "oracle/frontier_formalizer/cable/theorems/msl_fmz-erdos1-campaign-001-R002-L1.lean",
+  "backend": "wsl",
+  "project": "/root/erdosfire-bench/proofs",
+  "needsMathlib": true,
+  "exitCode": 1,
+  "seconds": 37.8,
+  "declarations": [
+   {
+    "declaration": "msl_fmz_erdos1_campaign_001_R002_L1",
+    "clean": false,
+    "axioms": [
+     "propext",
+     "sorryAx",
+     "Quot.sound"
+    ]
+   }
+  ],
+  "errors": [
+   "/tmp/oracle_lean_dgrJs60y.lean:20:10: error(lean.unknownIdentifier): Unknown constant `Option.some_bind`",
+   "/tmp/oracle_lean_dgrJs60y.lean:22:8: error: unsolved goals",
+   "/tmp/oracle_lean_dgrJs60y.lean:23:8: error: unsolved goals"
+  ]
+ },
+ "lean_result_block": "LEAN_RESULT fmz-erdos1-campaign-001-R002-L1\n  FORMAL_STATUS KERNEL_FAILED\n  FILE oracle/frontier_formalizer/cable/theorems/msl_fmz-erdos1-campaign-001-R002-L1.lean\n  THEOREMS msl_fmz_erdos1_campaign_001_R002_L1\n  BACKEND wsl\n  AXIOMS Quot.sound, propext, sorryAx\n  TACTIC (supplied proof)\n  BUDGET 900s:KERNEL_FAILED\n  FAILURE ((supplied proof)) TYPE.FAIL NEED[Option.some_bind]; ((supplied proof)) PROOF.OPEN GOALS[/tmp/oracle_lean_dgrJs60y.lean:22:8: error: unsolved goals]; ((supplied proof)) PROOF.OPEN GOALS[/tmp/oracle_lean_dgrJs60y.lean:23:8: error: unsolved goals]\n  LAW KERNEL_FAILED does not refute the claim \u2014 the FAILURE line names what actually broke",
+ "timestamp": "2026-09-01T23:34:26Z"
+}

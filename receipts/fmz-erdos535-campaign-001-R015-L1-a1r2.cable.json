@@ -1,0 +1,63 @@
+{
+ "schema": "oracle.msl.cable.v1",
+ "id": "fmz-erdos535-campaign-001-R015-L1-a1r2",
+ "spec": {
+  "id": "fmz-erdos535-campaign-001-R015-L1-a1r2",
+  "imports": "Mathlib",
+  "definitions": "def bad3 (a b c : Nat) : Bool := let g1 := Nat.gcd a b; let g2 := Nat.gcd a c; let g3 := Nat.gcd b c; g1 == g2 && g2 == g3\ndef triples (N : Nat) : List (Nat \u00d7 Nat \u00d7 Nat) :=\n  (List.range N).flatMap fun i =>\n  (List.range N).flatMap fun j =>\n  (List.range N).filterMap fun k =>\n    let a := i + 1; let b := j + 1; let c := k + 1\n    if a < b && b < c then some (a, b, c) else none\ndef good (N : Nat) (S : List Nat) : Bool :=\n  (triples N).all fun t => !(t.1 \u2208 S && t.2.1 \u2208 S && t.2.2 \u2208 S && bad3 t.1 t.2.1 t.2.2)\ndef subs : List Nat \u2192 List (List Nat)\n  | [] => [[]]\n  | a :: l => let s := subs l; s ++ s.map (fun t => a :: t)\ndef maxGood (N : Nat) : Nat :=\n  ((subs (List.range N)).filter (good N)).map (fun S => S.length) |>.foldl max 0\ndef checkN (N : Nat) : Bool :=\n  let m := maxGood N\n  (subs (List.range N)).any (fun S => good N S && S.length == m)\n  && (subs (List.range N)).all (fun S => !(m < S.length && good N S))\ndef check : Bool := (List.range 6).all (fun k => checkN (k + 3))",
+  "conclusion": "check = true",
+  "proof": "by decide"
+ },
+ "formal_status": "KERNEL_FAILED",
+ "events": [
+  "((supplied proof)) RAW[/tmp/oracle_lean_oWlLqkCj.lean:25:73: error: maximum recursion depth has been reached]"
+ ],
+ "axioms": [
+  "Quot.sound",
+  "propext",
+  "sorryAx"
+ ],
+ "attempts": [
+  {
+   "tactic": "(supplied proof)",
+   "status": "UNVERIFIED",
+   "seconds": 9.6,
+   "errors": [
+    "/tmp/oracle_lean_oWlLqkCj.lean:25:73: error: maximum recursion depth has been reached"
+   ],
+   "exitCode": 1,
+   "resource_limit": "maximum recursion depth"
+  }
+ ],
+ "budget_history": [
+  {
+   "tier_seconds": 900.0,
+   "outcome": "UNDECIDED_RESOURCE[maximum recursion depth]"
+  }
+ ],
+ "kernel_result": {
+  "status": "UNVERIFIED",
+  "file": "oracle/frontier_formalizer/cable/theorems/msl_fmz-erdos535-campaign-001-R015-L1-a1r2.lean",
+  "backend": "wsl",
+  "project": "/root/erdosfire-bench/proofs",
+  "needsMathlib": true,
+  "exitCode": 1,
+  "seconds": 6.5,
+  "declarations": [
+   {
+    "declaration": "msl_fmz_erdos535_campaign_001_R015_L1_a1r2",
+    "clean": false,
+    "axioms": [
+     "propext",
+     "sorryAx",
+     "Quot.sound"
+    ]
+   }
+  ],
+  "errors": [
+   "/tmp/oracle_lean_oWlLqkCj.lean:25:73: error: maximum recursion depth has been reached"
+  ]
+ },
+ "lean_result_block": "LEAN_RESULT fmz-erdos535-campaign-001-R015-L1-a1r2\n  FORMAL_STATUS KERNEL_FAILED\n  FILE oracle/frontier_formalizer/cable/theorems/msl_fmz-erdos535-campaign-001-R015-L1-a1r2.lean\n  THEOREMS msl_fmz_erdos535_campaign_001_R015_L1_a1r2\n  BACKEND wsl\n  AXIOMS Quot.sound, propext, sorryAx\n  TACTIC (supplied proof)\n  BUDGET 900s:UNDECIDED_RESOURCE[maximum recursion depth]\n  FAILURE ((supplied proof)) RAW[/tmp/oracle_lean_oWlLqkCj.lean:25:73: error: maximum recursion depth has been reached]\n  LAW KERNEL_FAILED does not refute the claim \u2014 the FAILURE line names what actually broke\n  LAW BUDGET_EXHAUSTED is an UNDECIDED question, not a failed proof \u2014 the machine stopped, the mathematics did not answer",
+ "timestamp": "2026-09-02T01:52:31Z"
+}

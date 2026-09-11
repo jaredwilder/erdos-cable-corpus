@@ -1,0 +1,30 @@
+{
+ "schema": "oracle.msl.closer.witness.v1",
+ "id": "fmz-erdos701-campaign-001-R006-L1",
+ "pipeline": "WITNESS_FINITE",
+ "witness": {
+  "ground_set": [
+   0,
+   1,
+   2,
+   3
+  ],
+  "n": 4,
+  "expected_downset_count": 168,
+  "convention": "Set.Intersecting with self-pairs included (∅ cannot be a member of an intersecting subfamily); identical to the frozen Mathlib convention."
+ },
+ "verifier_sha256": "f1ba5467d3403cc0007460fb6ffbe671e408662fea94d0862a3e857f39aa4869",
+ "verifier_source": "# Pure stdlib-free verifier: defines verify(witness), raises AssertionError on any\n# failed check. Success = normal return. No imports, no I/O, deterministic, exact integers.\n\ndef verify(witness):\n    n = witness['n']\n    assert witness['ground_set'] == list(range(n))\n    assert n == 4\n    N = 1 << n  # 16 subsets of the ground set, as bitmasks 0..15\n    EXPECTED_DOWNSETS = witness['expected_downset_count']\n\n    def bitcount(m):\n        return bin(m).count('1')\n\n    def is_intersecting(fm):\n        # Mathlib Set.Intersecting: self-pairs included, so a member equal to the\n        # empty set disqualifies the family.\n        members = [i for i in range(N) if (fm >> i) & 1]\n        for a in range(len(members)):\n            if members[a] & members[a] == 0:\n                return False\n            for b in range(a, len(members)):\n                if members[a] & members[b] == 0:\n                    return False\n        return True\n\n    def is_downset(fm):\n        for i in range(N):\n            if (fm >> i) & 1:\n                sub = i\n                while True:\n                    if not ((fm >> sub) & 1):\n                        return False\n                    if sub == 0:\n                        break\n                    sub = (sub - 1) & i  # next strict submask\n        return True\n\n    downsets = [fm for fm in range(1 << N) if is_downset(fm)]\n    assert len(downsets) == EXPECTED_DOWNSETS, 'downset count mismatch: %d != %d' % (\n        len(downsets), EXPECTED_DOWNSETS)\n    equality_attained = False\n    for fm in downsets:\n        members = [i for i in range(N) if (fm >> i) & 1]\n        max_star = 0\n        for x in range(n):\n            s = sum(1 for i in members if (i >> x) & 1)\n            if s > max_star:\n                max_star = s\n        max_int = 0\n        for sub in range(1 << len(members)):\n            size = bitcount(sub)\n            if size <= max_int:\n                continue\n            fm2 = 0\n            for k in range(len(members)):\n                if (sub >> k) & 1:\n                    fm2 |= 1 << members[k]\n            if is_intersecting(fm2) and size > max_int:\n                max_int = size\n        assert max_int <= max_star, (\n            'star bound violated for downset %d: %d > %d' % (fm, max_int, max_star))\n        if max_int == max_star and max_star > 0:\n            equality_attained = True\n    assert equality_attained, 'tight case (equality) absent; enumeration unfaithful'\n",
+ "run": {
+  "passed": true,
+  "status": "VERIFIER_PASS",
+  "exit_code": 0,
+  "stdout": "PASS",
+  "detail": "",
+  "seconds": 0.5,
+  "code_sha256": "f1ba5467d3403cc0007460fb6ffbe671e408662fea94d0862a3e857f39aa4869"
+ },
+ "claim": "verify(witness) returning normally certifies the full scope of L1: exact enumeration of all 168 hereditary families on the 4-element ground set with brute-force exact-integer check of every subfamily of each establishes the Chvátal star bound (every intersecting subfamily of a hereditary family on |X|≤4 is no larger than a largest star), tight triangle-downset equality cases included, under the frozen Set.Intersecting convention. Any check failure raises, fail-closed.",
+ "law": "Wang 7.2: an exact finite object plus a proved reduction is a CERTIFICATE. The reduction is the `claim` and is a human's to audit; the object and the verifier run are the machine's part.",
+ "timestamp": "2026-09-01T23:58:36Z"
+}

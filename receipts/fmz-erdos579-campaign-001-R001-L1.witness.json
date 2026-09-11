@@ -1,0 +1,85 @@
+{
+ "schema": "oracle.msl.closer.witness.v1",
+ "id": "fmz-erdos579-campaign-001-R001-L1",
+ "pipeline": "WITNESS_FINITE",
+ "witness": {
+  "n": 6,
+  "vertex_labels": [
+   "u",
+   "v",
+   "a",
+   "b",
+   "c",
+   "d"
+  ],
+  "edge_list": [
+   [
+    "u",
+    "a"
+   ],
+   [
+    "u",
+    "b"
+   ],
+   [
+    "u",
+    "c"
+   ],
+   [
+    "u",
+    "d"
+   ],
+   [
+    "v",
+    "a"
+   ],
+   [
+    "v",
+    "b"
+   ],
+   [
+    "v",
+    "c"
+   ],
+   [
+    "v",
+    "d"
+   ],
+   [
+    "a",
+    "c"
+   ],
+   [
+    "a",
+    "d"
+   ],
+   [
+    "b",
+    "c"
+   ],
+   [
+    "b",
+    "d"
+   ]
+  ],
+  "nonadjacent_pair": [
+   "u",
+   "v"
+  ],
+  "notes": "G = K_{2,2,2} minus a perfect matching (uv, ab, cd absent). u,v nonadjacent; N(u)∩N(v) = {a,b,c,d} with all four cross edges ac,ad,bc,bd present, i.e. a K_22 with parts {a,b},{c,d}; G is K_222-free (9 of 12 edges of a K_222 present). Direct counterexample to L1."
+ },
+ "verifier_sha256": "f1e2bdfc857cbf98b1a1b55710b113501d3b656e104953d1be9d130f2c40712a",
+ "verifier_source": "# Standalone deterministic verifier. No imports, no I/O, no floats.\n# Entry point: verify(witness) raises on any failed check, returns True on PASS.\n\ndef verify(witness):\n    V = list(witness[\"vertex_labels\"])\n    if sorted(V) != ['a', 'b', 'c', 'd', 'u', 'v']:\n        raise ValueError(\"FAIL: vertex set mismatch\")\n    E = set()\n    for e in witness[\"edge_list\"]:\n        x, y = e[0], e[1]\n        if x == y or x not in V or y not in V:\n            raise ValueError(\"FAIL: malformed edge\")\n        E.add(frozenset((x, y)))\n    if len(E) != len(witness[\"edge_list\"]):\n        raise ValueError(\"FAIL: duplicate edge\")\n\n    def adj(x, y):\n        return x != y and frozenset((x, y)) in E\n\n    p0 = witness[\"nonadjacent_pair\"][0]\n    p1 = witness[\"nonadjacent_pair\"][1]\n    if sorted(witness[\"nonadjacent_pair\"]) != ['u', 'v']:\n        raise ValueError(\"FAIL: wrong pair named\")\n\n    # Check 1: u and v are nonadjacent.\n    if adj(p0, p1):\n        raise ValueError(\"FAIL: named pair is adjacent\")\n\n    # Check 2: common neighborhood of u and v is exactly {a,b,c,d} and induces\n    # a K_22 with parts {a,b} and {c,d} (all four cross edges present).\n    cn = []\n    for x in V:\n        if adj('u', x) and adj('v', x):\n            cn.append(x)\n    if sorted(cn) != ['a', 'b', 'c', 'd']:\n        raise ValueError(\"FAIL: common neighborhood mismatch\")\n    for x in ['a', 'b']:\n        for y in ['c', 'd']:\n            if not adj(x, y):\n                raise ValueError(\"FAIL: missing K_22 cross edge\")\n\n    # Check 3: G is K_222-free. Enumerate all perfect matchings of the vertex\n    # set into three unordered pairs by recursion; each triple of parts must\n    # miss at least one cross edge.\n    matchings = []\n\n    def enum(remaining, current):\n        if len(remaining) == 0:\n            matchings.append(list(current))\n            return\n        first = remaining[0]\n        for i in range(1, len(remaining)):\n            partner = remaining[i]\n            rest = [x for j, x in enumerate(remaining) if j != 0 and j != i]\n            current.append(frozenset((first, partner)))\n            enum(rest, current)\n            current.pop()\n\n    enum(V, [])\n    if len(matchings) != 15:\n        raise ValueError(\"FAIL: expected 15 perfect matchings\")\n    for m in matchings:\n        complete = True\n        for i in range(3):\n            for j in range(i + 1, 3):\n                for x in m[i]:\n                    for y in m[j]:\n                        if not adj(x, y):\n                            complete = False\n        if complete:\n            raise ValueError(\"FAIL: graph contains a K_222\")\n\n    return True  # PASS: counterexample to L1 verified exactly\n\nverify({\n \"vertex_labels\": [\"u\", \"v\", \"a\", \"b\", \"c\", \"d\"],\n \"edge_list\": [[\"u\",\"a\"],[\"u\",\"b\"],[\"u\",\"c\"],[\"u\",\"d\"],\n               [\"v\",\"a\"],[\"v\",\"b\"],[\"v\",\"c\"],[\"v\",\"d\"],\n               [\"a\",\"c\"],[\"a\",\"d\"],[\"b\",\"c\"],[\"b\",\"d\"]],\n \"nonadjacent_pair\": [\"u\", \"v\"]\n})",
+ "run": {
+  "passed": false,
+  "status": "VERIFIER_FAIL",
+  "exit_code": 1,
+  "stdout": "",
+  "detail": "ValueError: FAIL: graph contains a K_222",
+  "seconds": 0.11,
+  "code_sha256": "f1e2bdfc857cbf98b1a1b55710b113501d3b656e104953d1be9d130f2c40712a"
+ },
+ "claim": "covers=fragment. A run with no exception establishes, by exact deterministic exhaustive verification (all 15 perfect matchings enumerated by recursion over the 6-vertex set; no floats, no I/O, fail-closed verify(witness) entrypoint that raises on any failed check), that the witness graph K_{2,2,2} minus a perfect matching has a nonadjacent pair (u,v) whose common neighborhood induces a K_22, while G is K_222-free. Hence L1 as stated is FALSE; its PROVED status must be revoked and route R001 cannot close branch B via L1.",
+ "law": "Wang 7.2: an exact finite object plus a proved reduction is a CERTIFICATE. The reduction is the `claim` and is a human's to audit; the object and the verifier run are the machine's part.",
+ "timestamp": "2026-09-01T21:59:48Z"
+}

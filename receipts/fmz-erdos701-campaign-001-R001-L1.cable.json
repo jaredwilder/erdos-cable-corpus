@@ -1,0 +1,61 @@
+{
+ "schema": "oracle.msl.cable.v1",
+ "id": "fmz-erdos701-campaign-001-R001-L1",
+ "spec": {
+  "id": "fmz-erdos701-campaign-001-R001-L1",
+  "imports": "none",
+  "definitions": "-- Complete, self-contained Lean 4. All defs total and computable on Nat/Bool.\n\ndef isEdge (m : Nat) (u v : Nat) : Bool := m &&& 2^(u*4+v) != 0\n\ndef setEdge (m : Nat) (u v : Nat) : Nat := m ||| 2^(u*4+v) ||| 2^(v*4+u)\n\ndef deg (m : Nat) (u : Nat) : Nat :=\n  ((List.range 4).filter (fun v => v != u && isEdge m u v)).length\n\ndef closureStep (m : Nat) : Nat :=\n  (List.range 4).foldl (fun m u =>\n    (List.range 4).foldl (fun m v =>\n      if u < v && !(isEdge m u v) && (deg m u + deg m v) >= 4 then setEdge m u v else m) m) m\n\ndef closureN (m : Nat) : Nat -> Nat\n  | 0 => m\n  | (k+1) => closureN (closureStep m) k\n\ndef fullMask : Nat := 31710  -- bits (u,v) and (v,u) set for all u\u2260v: 2*(1+2+4+8+16+32)*... encodes all 12 ordered pairs\n\ndef isK4 (m : Nat) : Bool := closureN m 16 == fullMask\n\ndef perms4 : List (List Nat) :=\n  [[0,1,2,3],[0,1,3,2],[0,2,1,3],[0,2,3,1],[0,3,1,2],[0,3,2,1],\n   [1,0,2,3],[1,0,3,2],[1,2,0,3],[1,2,3,0],[1,3,0,2],[1,3,2,0],\n   [2,0,1,3],[2,0,3,1],[2,1,0,3],[2,1,3,0],[2,3,0,1],[2,3,1,0],\n   [3,0,1,2],[3,0,2,1],[3,1,0,2],[3,1,2,0],[3,2,0,1],[3,2,1,0]]\n\ndef ham (m : Nat) : Bool :=\n  perms4.any (fun p =>\n    isEdge m (p[0]!) (p[1]!) && isEdge m (p[1]!) (p[2]!) &&\n    isEdge m (p[2]!) (p[3]!) && isEdge m (p[3]!) (p[0]!))\n\ndef iffCount : Bool :=\n  (List.range 64).all (fun m => isK4 m == ham m)\n\ndef hamCount : Nat := ((List.range 64).filter ham).length\n\ndef k4Count : Nat := ((List.range 64).filter isK4).length\n\ndef lemmaL1check : Bool := iffCount && hamCount == 10 && k4Count == 10",
+  "conclusion": "lemmaL1check = true",
+  "proof": "by decide"
+ },
+ "formal_status": "KERNEL_FAILED",
+ "events": [
+  "((supplied proof)) RAW[tmpkih7cf1r.lean:45:75: error: maximum recursion depth has been reached]"
+ ],
+ "axioms": [
+  "propext",
+  "sorryAx"
+ ],
+ "attempts": [
+  {
+   "tactic": "(supplied proof)",
+   "status": "UNVERIFIED",
+   "seconds": 2.2,
+   "errors": [
+    "tmpkih7cf1r.lean:45:75: error: maximum recursion depth has been reached"
+   ],
+   "exitCode": 1,
+   "resource_limit": "maximum recursion depth"
+  }
+ ],
+ "budget_history": [
+  {
+   "tier_seconds": 900.0,
+   "outcome": "UNDECIDED_RESOURCE[maximum recursion depth]"
+  }
+ ],
+ "kernel_result": {
+  "status": "UNVERIFIED",
+  "file": "oracle/frontier_formalizer/cable/theorems/msl_fmz-erdos701-campaign-001-R001-L1.lean",
+  "backend": "windows",
+  "project": "C:\\Users\\jared\\Local Sites\\woocommerce-enterprise\\oracle\\math\\EG411Formal",
+  "needsMathlib": false,
+  "exitCode": 1,
+  "seconds": 2.2,
+  "declarations": [
+   {
+    "declaration": "msl_fmz_erdos701_campaign_001_R001_L1",
+    "clean": false,
+    "axioms": [
+     "propext",
+     "sorryAx"
+    ]
+   }
+  ],
+  "errors": [
+   "tmpkih7cf1r.lean:45:75: error: maximum recursion depth has been reached"
+  ]
+ },
+ "lean_result_block": "LEAN_RESULT fmz-erdos701-campaign-001-R001-L1\n  FORMAL_STATUS KERNEL_FAILED\n  FILE oracle/frontier_formalizer/cable/theorems/msl_fmz-erdos701-campaign-001-R001-L1.lean\n  THEOREMS msl_fmz_erdos701_campaign_001_R001_L1\n  BACKEND windows\n  AXIOMS propext, sorryAx\n  TACTIC (supplied proof)\n  BUDGET 900s:UNDECIDED_RESOURCE[maximum recursion depth]\n  FAILURE ((supplied proof)) RAW[tmpkih7cf1r.lean:45:75: error: maximum recursion depth has been reached]\n  LAW KERNEL_FAILED does not refute the claim \u2014 the FAILURE line names what actually broke\n  LAW BUDGET_EXHAUSTED is an UNDECIDED question, not a failed proof \u2014 the machine stopped, the mathematics did not answer",
+ "timestamp": "2026-09-01T23:50:04Z"
+}

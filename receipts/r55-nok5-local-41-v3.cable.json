@@ -1,0 +1,56 @@
+{
+ "schema": "oracle.msl.cable.v1",
+ "id": "r55-nok5-local-41-v3",
+ "spec": {
+  "id": "r55-nok5-local-41-v3",
+  "imports": "none",
+  "definitions": "def S : List Nat := [1,2,3,5,7,10,13,15,16,17,24,25,26,28,31,34,36,38,39,40]\ndef adj (i j : Nat) : Bool := ((i + 41 - j) % 41) \u2208 S\ndef quads : List (Nat \u00d7 Nat \u00d7 Nat \u00d7 Nat) :=\n  S.flatMap fun a => S.flatMap fun b => S.flatMap fun c => S.filterMap fun d =>\n    if a < b && b < c && c < d then some (a,b,c,d) else none\ndef comp : List Nat := ((List.range 40).map (fun k => k+1)).filter (fun u => ! (u \u2208 S))\ndef nadj (i j : Nat) : Bool := (i != j) && (! adj i j)\ndef cquads : List (Nat \u00d7 Nat \u00d7 Nat \u00d7 Nat) :=\n  comp.flatMap fun a => comp.flatMap fun b => comp.flatMap fun c => comp.filterMap fun d =>\n    if a < b && b < c && c < d then some (a,b,c,d) else none\ndef localOK : Bool :=\n  (S.length == 20) && (comp.length == 20)\n  && (quads.length == 4845) && (cquads.length == 4845)\n  && (quads.all fun q => ! (adj q.1 q.2.1 && adj q.1 q.2.2.1 && adj q.1 q.2.2.2 && adj q.2.1 q.2.2.1 && adj q.2.1 q.2.2.2 && adj q.2.2.1 q.2.2.2))\n  && (cquads.all fun q => ! (nadj q.1 q.2.1 && nadj q.1 q.2.2.1 && nadj q.1 q.2.2.2 && nadj q.2.1 q.2.2.1 && nadj q.2.1 q.2.2.2 && nadj q.2.2.1 q.2.2.2))",
+  "hypotheses": [],
+  "conclusion": "localOK = true",
+  "proof": "by decide",
+  "set_options": [
+   "set_option maxRecDepth 1000000",
+   "set_option maxHeartbeats 4000000"
+  ]
+ },
+ "formal_status": "KERNEL_FAILED",
+ "events": [
+  "RAW[exit 3221226505 with no captured error line]"
+ ],
+ "axioms": [],
+ "attempts": [
+  {
+   "tactic": "(supplied proof)",
+   "status": "UNVERIFIED",
+   "seconds": 12.9,
+   "errors": [],
+   "exitCode": 3221226505,
+   "resource_limit": null
+  }
+ ],
+ "budget_history": [
+  {
+   "tier_seconds": 120.0,
+   "outcome": "KERNEL_FAILED"
+  }
+ ],
+ "kernel_result": {
+  "status": "UNVERIFIED",
+  "file": "oracle/frontier_formalizer/cable/theorems/msl_r55-nok5-local-41-v3.lean",
+  "backend": "windows",
+  "project": "C:\\Users\\jared\\Local Sites\\woocommerce-enterprise\\oracle\\math\\EG411Formal",
+  "needsMathlib": false,
+  "exitCode": 3221226505,
+  "seconds": 12.9,
+  "declarations": [
+   {
+    "declaration": "msl_r55_nok5_local_41_v3",
+    "clean": false,
+    "axioms": []
+   }
+  ],
+  "errors": []
+ },
+ "lean_result_block": "LEAN_RESULT r55-nok5-local-41-v3\n  FORMAL_STATUS KERNEL_FAILED\n  FILE oracle/frontier_formalizer/cable/theorems/msl_r55-nok5-local-41-v3.lean\n  THEOREMS msl_r55_nok5_local_41_v3\n  BACKEND windows\n  AXIOMS -\n  TACTIC (supplied proof)\n  BUDGET 120s:KERNEL_FAILED\n  FAILURE RAW[exit 3221226505 with no captured error line]\n  LAW KERNEL_FAILED does not refute the claim \u2014 the FAILURE line names what actually broke",
+ "timestamp": "2026-09-04T15:40:47Z"
+}

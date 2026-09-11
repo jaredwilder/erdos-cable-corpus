@@ -1,0 +1,25 @@
+{
+  "receipt_id": "erdos595-countable-floor-2026-09-05",
+  "campaign": "msl-595 FLAGSHIP epoch 11",
+  "target": "Erdos #595 flagship, the countable floor in the source file's own vocabulary",
+  "file": "oracle/evidence/erdos595/lean/Erdos595Countable.lean",
+  "file_sha256": "3ccb9becb8d94943341a314b1add43b68fdd289dde29d5f92ba85fcf456fc6e9",
+  "backend": "box root@51.158.234.15 /root/formalizer/proofs, Mathlib 919544d4, toolchain v4.31.0-rc1",
+  "command": "lake env lean /root/peer/msl-595/Erdos595Countable.lean",
+  "exit_code": 0,
+  "log": "oracle/evidence/erdos595/lean/kernel-countable-2026-09-05.log",
+  "theorems": [
+    "Erdos595C.cliqueFree_three_of_subsingleton_edges",
+    "Erdos595C.countable_edges",
+    "Erdos595C.closed_countable_iSup",
+    "Erdos595C.witness_edges_uncountable"
+  ],
+  "axioms": ["propext", "Classical.choice", "Quot.sound"],
+  "axiom_verdict": "CLEAN_TRIPLE",
+  "sorry_count": 0,
+  "formal_status": "KERNEL_CHECKED_UNIVERSAL",
+  "packet_cards_sealed": {"T13": "countable_edges", "T21": "closed_countable_iSup"},
+  "binding": "IsCountableUnionOfTriangleFree is transcribed verbatim from FormalConjectures/ErdosProblems/595.lean",
+  "covers": "FRAGMENT",
+  "not_covered": "the flagship existence question itself"
+}

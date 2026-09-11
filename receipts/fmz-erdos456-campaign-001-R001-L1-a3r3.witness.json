@@ -1,0 +1,23 @@
+{
+ "schema": "oracle.msl.closer.witness.v1",
+ "id": "fmz-erdos456-campaign-001-R001-L1-a3r3",
+ "pipeline": "WITNESS_FINITE",
+ "witness": {
+  "N": 1000000,
+  "spot_bound": 2000
+ },
+ "verifier_sha256": "b814bb10237fdfcbf2f944fb5b15feaa074f3ca1f3978f8ada3434aa94bc79c8",
+ "verifier_source": "def verify(witness):\n    N = int(witness['N'])\n    SPOT = int(witness['spot_bound'])\n    if N < 1000 or SPOT < 100 or SPOT > N:\n        raise ValueError('witness constants out of range')\n\n    phi = list(range(N + 1))\n    for i in range(2, N + 1):\n        if phi[i] == i:\n            for j in range(i, N + 1, i):\n                phi[j] -= phi[j] // i\n\n    def isprime(n):\n        if n < 2:\n            return False\n        d = 2\n        while d * d <= n:\n            if n % d == 0:\n                return False\n            d += 1\n        return True\n\n    # CHECK 1: sieve sanity, exact integers: 1 <= phi[m] <= m-1 for all m >= 2\n    for m in range(2, N + 1):\n        if not (1 <= phi[m] <= m - 1):\n            raise ValueError('phi sieve bounds violated at m=%d' % m)\n\n    # CHECK 2: exhaustive modular check for small odd primes: no m < p with (p-1)|phi(m)\n    small_count = 0\n    for p in range(3, SPOT + 1):\n        if isprime(p):\n            small_count += 1\n            for m in range(2, p):\n                if phi[m] % (p - 1) == 0:\n                    raise ValueError('small-prime derivation failed at p=%d, m=%d' % (p, m))\n    if small_count < 100:\n        raise ValueError('too few small primes checked')\n\n    # CHECK 3: for every odd prime p <= N: phi(p) == p-1, so p witnesses m_{p-1} = p\n    odd_count = 0\n    for p in range(3, N + 1):\n        if isprime(p):\n            odd_count += 1\n            if phi[p] != p - 1:\n                raise ValueError('phi(p) != p-1 at p=%d' % p)\n    if odd_count < 70000:\n        raise ValueError('too few primes checked')\n\n    # CHECK 4: q=2 endpoint honestly verified as the recorded exception: m_1 = 1 != 2\n    if phi[1] != 1:\n        raise ValueError('q=2 endpoint record wrong')\n\n    return True\n",
+ "run": {
+  "passed": true,
+  "status": "VERIFIER_PASS",
+  "exit_code": 0,
+  "stdout": "PASS",
+  "detail": "",
+  "seconds": 3.99,
+  "code_sha256": "b814bb10237fdfcbf2f944fb5b15feaa074f3ca1f3978f8ada3434aa94bc79c8"
+ },
+ "claim": "Certified fragment of L1: for every odd prime p <= 10^6, m_{p-1}=p (phi(p)=p-1 gives p as a witness; the sieve-verified bound 1<=phi(m)<=m-1<m<p-1 with exact integer arithmetic certifies no m<p is a witness; exhaustive modular re-check for p<=2000 validates the derivation). Honest exception: p=2 is a counterexample (m_1=1), matching the Q=2 ENDPOINT trap. Verifier: no imports, no I/O, exact integer arithmetic, raises on every failed check, fail-closed. covers='fragment': finite range certified; the 'for almost all n' / 'infinitely many' clauses remain open analytic content.",
+ "law": "Wang 7.2: an exact finite object plus a proved reduction is a CERTIFICATE. The reduction is the `claim` and is a human's to audit; the object and the verifier run are the machine's part.",
+ "timestamp": "2026-09-02T02:09:52Z"
+}

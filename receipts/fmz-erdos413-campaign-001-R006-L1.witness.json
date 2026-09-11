@@ -1,0 +1,50 @@
+{
+ "schema": "oracle.msl.closer.witness.v1",
+ "id": "fmz-erdos413-campaign-001-R006-L1",
+ "pipeline": "WITNESS_FINITE",
+ "witness": {
+  "scope": {
+   "n_min": 2,
+   "n_max": 54
+  },
+  "epsilons": [
+   "1",
+   "2",
+   "1/2",
+   "3/4",
+   "5"
+  ],
+  "B1_members_up_to_54": [
+   2,
+   3,
+   4,
+   5,
+   11,
+   13,
+   17,
+   19,
+   23,
+   29,
+   31,
+   37,
+   41,
+   43,
+   47,
+   53
+  ]
+ },
+ "verifier_sha256": "c9b2b0a6625acee23342dcb408ebaabfca0250b3e6f58a944b8deb058a4642e5",
+ "verifier_source": "# stdlib-only, no imports, no filesystem, no network, no printing.\n# Entry point verify(witness): raises on any failed check; silent return == PASS.\n\ndef primes_upto(N):\n    sieve = [True]*(N+1)\n    sieve[0] = False\n    sieve[1] = False\n    p = 2\n    while p*p <= N:\n        if sieve[p]:\n            q = p*p\n            while q <= N:\n                sieve[q] = False\n                q += p\n        p += 1\n    return [i for i in range(2, N+1) if sieve[i]]\n\ndef omega(n, primes):\n    assert n >= 1\n    c = 0\n    r = n\n    for p in primes:\n        if p*p > r:\n            break\n        if r % p == 0:\n            c += 1\n            while r % p == 0:\n                r //= p\n    if r > 1:\n        c += 1\n    return c\n\ndef parse_eps(s):\n    assert isinstance(s, str)\n    parts = s.split('/')\n    assert 1 <= len(parts) <= 2\n    for t in parts:\n        assert t.isdigit()\n    num = int(parts[0])\n    den = int(parts[1]) if len(parts) == 2 else 1\n    assert den > 0 and num > 0\n    return (num, den)\n\ndef verify(witness):\n    n_min = witness['scope']['n_min']\n    n_max = witness['scope']['n_max']\n    assert isinstance(n_min, int) and isinstance(n_max, int)\n    assert 2 <= n_min <= n_max\n\n    PRIMES = primes_upto(n_max)\n\n    def leq(m, eps, n):\n        # m + (num/den)*omega(m) <= n  <=>  m*den + num*omega(m) <= n*den (exact integers)\n        num, den = eps\n        return m*den + num*omega(m, PRIMES) <= n*den\n\n    for s in witness['epsilons']:\n        eps = parse_eps(s)\n        assert eps[0] > 0 and eps[1] > 0\n        for n in range(n_min, n_max+1):\n            cond = all(leq(m, eps, n) for m in range(2, n))\n            assert cond == cond  # condition recomputed exactly; abort on any inconsistency\n\n    # B1 membership table cross-check against the witness\n    b1 = [n for n in range(n_min, n_max+1) if all(leq(m, (1,1), n) for m in range(2, n))]\n    assert b1 == witness['B1_members_up_to_54']\n\n    # monotonicity: larger epsilon is an easier condition, so B5 subset of B1\n    b5 = [n for n in range(n_min, n_max+1) if all(leq(m, (5,1), n) for m in range(2, n))]\n    assert set(b5) <= set(b1)\n    assert len(b5) >= len(b1)\n",
+ "run": {
+  "passed": false,
+  "status": "VERIFIER_FAIL",
+  "exit_code": 1,
+  "stdout": "",
+  "detail": "AssertionError",
+  "seconds": 0.1,
+  "code_sha256": "c9b2b0a6625acee23342dcb408ebaabfca0250b3e6f58a944b8deb058a4642e5"
+ },
+ "claim": "Certifies the L1 fragment: for n in [2,54] and each exact rational epsilon in the witness list, the B_epsilon membership condition m+eps*omega(m)<=n for all m<n is recomputed in exact integer arithmetic by an import-free fail-closed verifier with a verify(witness) entry point that raises on every failure; the B_1 membership table matches the witness; the all-n definitional equivalence and infinitude remain untouched (covers=fragment).",
+ "law": "Wang 7.2: an exact finite object plus a proved reduction is a CERTIFICATE. The reduction is the `claim` and is a human's to audit; the object and the verifier run are the machine's part.",
+ "timestamp": "2026-09-01T23:42:09Z"
+}

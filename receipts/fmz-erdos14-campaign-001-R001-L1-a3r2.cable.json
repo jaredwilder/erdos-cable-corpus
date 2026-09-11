@@ -1,0 +1,54 @@
+{
+ "schema": "oracle.msl.cable.v1",
+ "id": "fmz-erdos14-campaign-001-R001-L1-a3r2",
+ "spec": {
+  "id": "fmz-erdos14-campaign-001-R001-L1-a3r2",
+  "imports": "none",
+  "definitions": "def witnessA : List Nat := [1, 2, 4, 8, 16, 32]\ndef sumPairs (A : List Nat) : List (Nat \u00d7 Nat) :=\n  A.flatMap (fun a => (A.filter (fun b => a \u2264 b)).map (fun b => (a, b)))\ndef rA (A : List Nat) (n : Nat) : Nat :=\n  (sumPairs A).filter (fun p => p.1 + p.2 == n) |>.length\ndef nonUniqueCount (A : List Nat) (N : Nat) : Nat :=\n  (List.range N).filter (fun m => rA A (m + 1) != 1) |>.length\ndef check_witness : Bool := nonUniqueCount witnessA 64 == 43\ntheorem L1_instance : check_witness = true := by decide",
+  "conclusion": "check_witness = true",
+  "proof": "by decide"
+ },
+ "formal_status": "KERNEL_CHECKED",
+ "events": [],
+ "axioms": [],
+ "attempts": [
+  {
+   "tactic": "(supplied proof)",
+   "status": "VERIFIED",
+   "seconds": 19.9,
+   "errors": [],
+   "exitCode": 0,
+   "resource_limit": null
+  }
+ ],
+ "budget_history": [
+  {
+   "tier_seconds": 900.0,
+   "outcome": "KERNEL_CHECKED"
+  }
+ ],
+ "kernel_result": {
+  "status": "VERIFIED",
+  "file": "oracle/frontier_formalizer/cable/theorems/msl_fmz-erdos14-campaign-001-R001-L1-a3r2.lean",
+  "backend": "windows",
+  "project": "C:\\Users\\jared\\Local Sites\\woocommerce-enterprise\\oracle\\math\\EG411Formal",
+  "needsMathlib": false,
+  "exitCode": 0,
+  "seconds": 19.9,
+  "declarations": [
+   {
+    "declaration": "L1_instance",
+    "clean": true,
+    "axioms": []
+   },
+   {
+    "declaration": "msl_fmz_erdos14_campaign_001_R001_L1_a3r2",
+    "clean": true,
+    "axioms": []
+   }
+  ],
+  "errors": []
+ },
+ "lean_result_block": "LEAN_RESULT fmz-erdos14-campaign-001-R001-L1-a3r2\n  FORMAL_STATUS KERNEL_CHECKED\n  FILE oracle/frontier_formalizer/cable/theorems/msl_fmz-erdos14-campaign-001-R001-L1-a3r2.lean\n  THEOREMS msl_fmz_erdos14_campaign_001_R001_L1_a3r2\n  BACKEND windows\n  AXIOMS -\n  TACTIC (supplied proof)\n  BUDGET 900s:KERNEL_CHECKED\n  FAILURE NONE",
+ "timestamp": "2026-09-02T01:51:44Z"
+}

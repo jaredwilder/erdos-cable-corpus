@@ -1,0 +1,60 @@
+{
+ "schema": "oracle.msl.cable.v1",
+ "id": "erdos595-stability",
+ "produced_by": "box run; receipt written by hand from the kernel log, NOT by msl_lean_cable.py",
+ "campaign": "msl-595 FLAGSHIP epoch 11",
+ "target": "Erdos #595 flagship, packet cards T16 and T31 in source vocabulary",
+ "file": "oracle/evidence/erdos595/lean/Erdos595Stability.lean",
+ "formal_status": "KERNEL_CHECKED",
+ "kernel_result": {
+  "status": "VERIFIED",
+  "backend": "box root@51.158.234.15 /root/formalizer/proofs, Mathlib 919544d4, toolchain v4.31.0-rc1",
+  "command": "lake env lean /root/peer/msl-595/Erdos595Stability.lean",
+  "exitCode": 0,
+  "log": "oracle/evidence/erdos595/lean/kernel-stability-2026-09-05.log",
+  "declarations": [
+   {
+    "declaration": "Erdos595S.blowup_countableUnion_iff",
+    "clean": true,
+    "axioms": [
+     "propext",
+     "Classical.choice",
+     "Quot.sound"
+    ]
+   },
+   {
+    "declaration": "Erdos595S.add_inert_edges",
+    "clean": true,
+    "axioms": [
+     "propext",
+     "Classical.choice",
+     "Quot.sound"
+    ]
+   }
+  ],
+  "errors": []
+ },
+ "axioms": [
+  "propext",
+  "Classical.choice",
+  "Quot.sound"
+ ],
+ "sorry_count": 0,
+ "attempts": [
+  {
+   "tactic": "if-then-else layer family with destructive rcases",
+   "status": "FAILED",
+   "errors": [
+    "unknown identifier e1 after rcases consumed it",
+    "if True residue blocked the symmetry application"
+   ]
+  },
+  {
+   "tactic": "Nat.casesOn layer family with adjacencies saved before the case split",
+   "status": "VERIFIED",
+   "errors": []
+  }
+ ],
+ "covers": "FRAGMENT",
+ "not_covered": "the flagship existence question itself"
+}

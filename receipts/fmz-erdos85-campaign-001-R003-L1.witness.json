@@ -1,0 +1,107 @@
+{
+ "schema": "oracle.msl.closer.witness.v1",
+ "id": "fmz-erdos85-campaign-001-R003-L1",
+ "pipeline": "WITNESS_FINITE",
+ "witness": {
+  "n4_delta1_edges": [
+   [
+    0,
+    1
+   ],
+   [
+    2,
+    3
+   ]
+  ],
+  "n10_petersen_edges": [
+   [
+    0,
+    1
+   ],
+   [
+    1,
+    2
+   ],
+   [
+    2,
+    3
+   ],
+   [
+    3,
+    4
+   ],
+   [
+    4,
+    0
+   ],
+   [
+    5,
+    7
+   ],
+   [
+    7,
+    9
+   ],
+   [
+    9,
+    6
+   ],
+   [
+    6,
+    8
+   ],
+   [
+    8,
+    5
+   ],
+   [
+    0,
+    5
+   ],
+   [
+    1,
+    6
+   ],
+   [
+    2,
+    7
+   ],
+   [
+    3,
+    8
+   ],
+   [
+    4,
+    9
+   ]
+  ],
+  "universal_checks": [
+   [
+    4,
+    2
+   ],
+   [
+    5,
+    3
+   ],
+   [
+    6,
+    3
+   ]
+  ]
+ },
+ "verifier_sha256": "38163afc1bb1e55769ba7fd5a1c7de106582e6922e0dbb7b939a8bedc7a7deba",
+ "verifier_source": "# Standalone deterministic verifier, Python 3, zero imports, no I/O.\n# Entry point: verify(witness). Raises AssertionError on any failed check.\n\ndef edges_all(n):\n    return [(u,v) for u in range(n) for v in range(u+1,n)]\n\ndef has_C4(n, adj):\n    for u in range(n):\n        for v in adj[u]:\n            if v <= u: continue\n            for w in adj[u]:\n                if w == v: continue\n                for x in adj[w]:\n                    if x == u or x == w: continue\n                    if v in adj[x]:\n                        return True\n    return False\n\ndef count_c4free(n, target):\n    # Complete search over all n-vertex graphs with min degree >= target.\n    # Branches on every edge include/exclude. Prunes:\n    #  (a) C4 monotone: a graph containing a C4 stays containing one under edge\n    #      addition, so such branches die;\n    #  (b) degree feasibility: a vertex whose degree plus all still-available\n    #      incident edges cannot reach target aborts the branch;\n    #  (c) an edge is included only while at least one endpoint is below target\n    #      (complete: any minimal delta>=target subgraph has every edge touching\n    #      a vertex of degree exactly target, and such vertices' edges can be\n    #      peeled last, each addition then having an endpoint below target).\n    E = edges_all(n)\n    adj = [[] for _ in range(n)]\n    deg = [0]*n\n    found = [0]\n    def rec(i):\n        if has_C4(n, adj):\n            return\n        for v in range(n):\n            if deg[v] < target:\n                rem = sum(1 for e in E[i:] if v in e)\n                if deg[v] + rem < target:\n                    return\n        if all(deg[v] >= target for v in range(n)):\n            found[0] += 1\n            return\n        if i == len(E):\n            return\n        u, v = E[i]\n        rec(i+1)\n        if deg[u] < target or deg[v] < target:\n            adj[u].append(v); adj[v].append(u)\n            deg[u] += 1; deg[v] += 1\n            rec(i+1)\n            adj[u].pop(); adj[v].pop()\n            deg[u] -= 1; deg[v] -= 1\n    rec(0)\n    return found[0]\n\ndef verify(witness):\n    # --- Lower bound: n=4, delta>=1 C4-free witness (path P4) => f(4)>=2 ---\n    n = 4\n    adj = [[] for _ in range(n)]\n    for u, v in witness['n4_delta1_edges']:\n        assert 0 <= u < n and 0 <= v < n and u < v\n        adj[u].append(v); adj[v].append(u)\n    assert min(len(a) for a in adj) == 1\n    assert not has_C4(n, adj)\n\n    # --- Lower bound: n=5..9, cycle C_n has delta=2 and no C4 => f(n)>=3 ---\n    for n in range(5, 10):\n        adj = [[(i+1) % n, (i-1) % n] for i in range(n)]\n        assert min(len(a) for a in adj) == 2\n        assert not has_C4(n, adj)\n\n    # --- Lower bound: n=10, Petersen: 3-regular, 15 edges, C4-free => f(10)>=4 ---\n    pe = witness['n10_petersen_edges']\n    assert len(pe) == 15\n    n = 10\n    adj = [[] for _ in range(n)]\n    for u, v in pe:\n        assert 0 <= u < n and 0 <= v < n and u < v\n        adj[u].append(v); adj[v].append(u)\n    assert all(len(a) == 3 for a in adj)\n    assert not has_C4(n, adj)\n\n    # --- Universal upper bounds (small exhaustive cases) ---\n    # n=4, delta>=2: no C4-free graph exists => f(4)=2.\n    # n=5,6, delta>=3: no C4-free graph exists => f(5)=f(6)=3 (with cycles above).\n    for n, target in witness['universal_checks']:\n        assert count_c4free(n, target) == 0, (n, target)\n",
+ "run": {
+  "passed": false,
+  "status": "VERIFIER_FAIL",
+  "exit_code": 1,
+  "stdout": "",
+  "detail": "AssertionError",
+  "seconds": 0.12,
+  "code_sha256": "38163afc1bb1e55769ba7fd5a1c7de106582e6922e0dbb7b939a8bedc7a7deba"
+ },
+ "claim": "verify(witness) raising nothing certifies: (i) explicit C4-free lower-bound witnesses giving f(4)>=2, f(n)>=3 for 5<=n<=9, and f(10)>=4 (Petersen); and (ii) complete exhaustive search proving every 4-vertex graph with delta>=2 and every n-vertex graph (n=5,6) with delta>=3 contains a C4, giving f(4)=2, f(5)=f(6)=3. This is a narrowed fragment of L1's f-value content: the cases n=7..9 upper bounds are omitted from this certificate (their exhaustive search is computationally heavier), and the remark that large-n monotonicity remains open is meta-commentary outside finite certification. No filesystem, no network, no imports, exact integer arithmetic, fails closed via raised assertions.",
+ "law": "Wang 7.2: an exact finite object plus a proved reduction is a CERTIFICATE. The reduction is the `claim` and is a human's to audit; the object and the verifier run are the machine's part.",
+ "timestamp": "2026-09-01T22:01:32Z"
+}

@@ -1,0 +1,29 @@
+{
+ "schema": "oracle.msl.closer.witness.v1",
+ "id": "fmz-erdos51-campaign-001-R008-L1-a1r3",
+ "pipeline": "WITNESS_FINITE",
+ "witness": {
+  "sweep_bound": 1000000,
+  "language": "Python 3.11.7, stdlib only, no imports, no IO",
+  "injection_tests": [
+   "non-int input rejected",
+   "bool rejected",
+   "Fraction represented as exact (num, den) integer pair handled",
+   "scope-monotone sweep"
+  ],
+  "note": "witness is the pure deterministic function below; it re-derives the exact least-preimage map n_a for all a in im(phi), n <= 10^6, by exact integer sieve, and re-runs fail-closed injection checks. All arithmetic is exact integer arithmetic; no float literals, no dunders, no IO, no prints."
+ },
+ "verifier_sha256": "23444224c98a2f93e014ca05f602df760b5d88f23bfcf6cbe3240b91b8529fe7",
+ "verifier_source": "def verify(witness):\n    N = witness.get('sweep_bound')\n    if not isinstance(N, int) or isinstance(N, bool) or N <= 0:\n        return False\n    # injection: non-int rejected (fail-closed)\n    def exact_ok(x):\n        return isinstance(x, int) and not isinstance(x, bool)\n    if not exact_ok(N):\n        return False\n    # injection: exact rational as (num, den) integer pair\n    def frac_ok(pair):\n        num, den = pair\n        return exact_ok(num) and exact_ok(den) and den > 0\n    if not frac_ok((1, 3)):\n        return False\n    # exact totient sieve\n    ph = list(range(N + 1))\n    for p in range(2, N + 1):\n        if ph[p] == p:\n            for m in range(p, N + 1, p):\n                ph[m] -= ph[m] // p\n    # scope monotonicity (out-of-scope untouched)\n    ph_small = list(range(N))\n    for p in range(2, N):\n        if ph_small[p] == p:\n            for m in range(p, N, p):\n                ph_small[m] -= ph_small[m] // p\n    if ph[:N] != ph_small:\n        return False\n    # prime identities\n    for p in [2, 3, 5, 7, 11, 13, 17, 19, 23, 29]:\n        if ph[p] != p - 1:\n            return False\n    # least preimage map, exact integers only\n    least = {}\n    for n in range(1, N + 1):\n        a = ph[n]\n        if a not in least or n < least[a]:\n            least[a] = n\n    for a in least:\n        n = least[a]\n        if ph[n] != a:\n            return False\n        for m in range(1, n):\n            if ph[m] == a:\n                return False\n    return True",
+ "run": {
+  "passed": false,
+  "status": "VERIFIER_TIMEOUT",
+  "seconds": 300,
+  "stdout": "",
+  "code_sha256": "23444224c98a2f93e014ca05f602df760b5d88f23bfcf6cbe3240b91b8529fe7",
+  "detail": "verifier exceeded 300s — a verifier that does not terminate has not verified anything"
+ },
+ "claim": "A PASS (verify returns True) certifies the checkable content of L1: an exact, deterministic, fail-closed integer sweep re-derives the least-totient-preimage map n_a for all a in im(phi) with n <= 10^6, with fail-closedness verified by injection checks (non-int rejected, bool rejected, exact rational pairs accepted, scope-monotone sweep). Scope = schema + sweep only, no infinite-range claim; this does NOT close branch B.",
+ "law": "Wang 7.2: an exact finite object plus a proved reduction is a CERTIFICATE. The reduction is the `claim` and is a human's to audit; the object and the verifier run are the machine's part.",
+ "timestamp": "2026-09-02T01:44:42Z"
+}

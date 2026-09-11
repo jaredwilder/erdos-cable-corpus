@@ -1,0 +1,69 @@
+{
+ "schema": "oracle.msl.cable.v1",
+ "id": "fmz-erdos479-campaign-001-R007-L1-a3r1",
+ "spec": {
+  "id": "fmz-erdos479-campaign-001-R007-L1-a3r1",
+  "imports": "Mathlib",
+  "definitions": "def checkLTE (a : Nat) : Bool :=\n  let m := 2 ^ (3 ^ a) + 1\n  (m % (3 ^ (a + 1)) == 0) && (m % (3 ^ (a + 2)) != 0)\n\ndef checkAll : Bool := checkLTE 1 && checkLTE 2 && checkLTE 3",
+  "conclusion": "checkAll = true \u2227 (checkLTE a = true \u2192 (2 ^ (3 ^ a) + 1) % 3 ^ (a + 1) = 0 \u2227 (2 ^ (3 ^ a) + 1) % 3 ^ (a + 2) \u2260 0)",
+  "proof": "by decide"
+ },
+ "formal_status": "KERNEL_FAILED",
+ "events": [
+  "((supplied proof)) TYPE.FAIL NEED[a]"
+ ],
+ "axioms": [
+  "propext",
+  "sorryAx"
+ ],
+ "attempts": [
+  {
+   "tactic": "(supplied proof)",
+   "status": "UNVERIFIED",
+   "seconds": 182.6,
+   "errors": [
+    "/tmp/oracle_lean_NhVu6QH7.lean:11:82: error(lean.unknownIdentifier): Unknown identifier `a`",
+    "/tmp/oracle_lean_NhVu6QH7.lean:11:103: error(lean.unknownIdentifier): Unknown identifier `a`",
+    "/tmp/oracle_lean_NhVu6QH7.lean:11:118: error(lean.unknownIdentifier): Unknown identifier `a`",
+    "/tmp/oracle_lean_NhVu6QH7.lean:11:141: error(lean.unknownIdentifier): Unknown identifier `a`",
+    "/tmp/oracle_lean_NhVu6QH7.lean:11:156: error(lean.unknownIdentifier): Unknown identifier `a`"
+   ],
+   "exitCode": 1,
+   "resource_limit": null
+  }
+ ],
+ "budget_history": [
+  {
+   "tier_seconds": 900.0,
+   "outcome": "KERNEL_FAILED"
+  }
+ ],
+ "kernel_result": {
+  "status": "UNVERIFIED",
+  "file": "oracle/frontier_formalizer/cable/theorems/msl_fmz-erdos479-campaign-001-R007-L1-a3r1.lean",
+  "backend": "wsl",
+  "project": "/root/erdosfire-bench/proofs",
+  "needsMathlib": true,
+  "exitCode": 1,
+  "seconds": 166.7,
+  "declarations": [
+   {
+    "declaration": "msl_fmz_erdos479_campaign_001_R007_L1_a3r1",
+    "clean": false,
+    "axioms": [
+     "propext",
+     "sorryAx"
+    ]
+   }
+  ],
+  "errors": [
+   "/tmp/oracle_lean_NhVu6QH7.lean:11:82: error(lean.unknownIdentifier): Unknown identifier `a`",
+   "/tmp/oracle_lean_NhVu6QH7.lean:11:103: error(lean.unknownIdentifier): Unknown identifier `a`",
+   "/tmp/oracle_lean_NhVu6QH7.lean:11:118: error(lean.unknownIdentifier): Unknown identifier `a`",
+   "/tmp/oracle_lean_NhVu6QH7.lean:11:141: error(lean.unknownIdentifier): Unknown identifier `a`",
+   "/tmp/oracle_lean_NhVu6QH7.lean:11:156: error(lean.unknownIdentifier): Unknown identifier `a`"
+  ]
+ },
+ "lean_result_block": "LEAN_RESULT fmz-erdos479-campaign-001-R007-L1-a3r1\n  FORMAL_STATUS KERNEL_FAILED\n  FILE oracle/frontier_formalizer/cable/theorems/msl_fmz-erdos479-campaign-001-R007-L1-a3r1.lean\n  THEOREMS msl_fmz_erdos479_campaign_001_R007_L1_a3r1\n  BACKEND wsl\n  AXIOMS propext, sorryAx\n  TACTIC (supplied proof)\n  BUDGET 900s:KERNEL_FAILED\n  FAILURE ((supplied proof)) TYPE.FAIL NEED[a]\n  LAW KERNEL_FAILED does not refute the claim \u2014 the FAILURE line names what actually broke",
+ "timestamp": "2026-09-02T01:00:57Z"
+}

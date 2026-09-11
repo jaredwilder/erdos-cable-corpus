@@ -1,0 +1,92 @@
+{
+ "schema": "oracle.msl.closer.witness.v1",
+ "id": "fmz-erdos1199-campaign-001-R003-L1",
+ "pipeline": "WITNESS_FINITE",
+ "witness": {
+  "description": "Embedded finite exactness test-set for Fraction cross-multiplication comparison over Q with fail-closed guards. All cases are constants in the verifier; no I/O of any kind.",
+  "cases": [
+   [
+    1,
+    2,
+    2,
+    4
+   ],
+   [
+    -1,
+    3,
+    1,
+    -3
+   ],
+   [
+    0,
+    5,
+    0,
+    7
+   ],
+   [
+    355,
+    113,
+    71,
+    22
+   ],
+   [
+    -7,
+    12,
+    -5,
+    9
+   ],
+   [
+    10,
+    -4,
+    -5,
+    2
+   ],
+   [
+    1,
+    3,
+    999999999999,
+    3000000000000
+   ],
+   [
+    2,
+    7,
+    3,
+    11
+   ],
+   [
+    -1,
+    1000000007,
+    1,
+    -1000000007
+   ]
+  ],
+  "guard_cases_zero_denominator": [
+   [
+    1,
+    0,
+    2,
+    3
+   ],
+   [
+    2,
+    3,
+    5,
+    0
+   ]
+  ]
+ },
+ "verifier_sha256": "55b4c9ef277619a1193379ad7c3f5998dfdd6120ace35a3e4b62cb15a16aa70b",
+ "verifier_source": "from fractions import Fraction\n\nCASES = [\n    [1, 2, 2, 4],\n    [-1, 3, 1, -3],\n    [0, 5, 0, 7],\n    [355, 113, 71, 22],\n    [-7, 12, -5, 9],\n    [10, -4, -5, 2],\n    [1, 3, 999999999999, 3000000000000],\n    [2, 7, 3, 11],\n    [-1, 1000000007, 1, -1000000007],\n]\n\nGUARD_CASES = [\n    [1, 0, 2, 3],\n    [2, 3, 5, 0],\n]\n\ndef cmp_cross(an, ad, bn, bd):\n    if ad == 0 or bd == 0:\n        raise ArithmeticError('zero denominator: unresolved, abort')\n    lhs = an * bd\n    rhs = bn * ad\n    if lhs < rhs:\n        return -1\n    if lhs > rhs:\n        return 1\n    return 0\n\ndef cmp_frac(x, y):\n    if x < y: return -1\n    if x > y: return 1\n    return 0\n\ndef verify():\n    for c in GUARD_CASES:\n        try:\n            cmp_cross(c[0], c[1], c[2], c[3])\n            return 'FAIL'\n        except ArithmeticError:\n            pass\n    for c in CASES:\n        an, ad, bn, bd = c\n        got = cmp_cross(an, ad, bn, bd)\n        want = cmp_frac(Fraction(an, ad), Fraction(bn, bd))\n        if got != want:\n            return 'FAIL'\n        if got == 0 and Fraction(an, ad) != Fraction(bn, bd):\n            return 'FAIL'\n        if got != 0 and Fraction(an, ad) == Fraction(bn, bd):\n            return 'FAIL'\n    return 'PASS'\n\nRESULT = verify()\n",
+ "run": {
+  "passed": false,
+  "status": "VERIFIER_FAIL",
+  "exit_code": 1,
+  "stdout": "",
+  "detail": "TypeError: verify() takes 0 positional arguments but 1 was given",
+  "seconds": 0.17,
+  "code_sha256": "55b4c9ef277619a1193379ad7c3f5998dfdd6120ace35a3e4b62cb15a16aa70b"
+ },
+ "claim": "A result of 'PASS' (RESULT == 'PASS') certifies the checkable fragment of L1: Fraction cross-multiplication comparison is exact, sound (agrees with normalized Fraction comparison on all 9 witness pairs including negatives, zeros, and unreduced forms), complete (equal cross-products imply exactly equal rationals), and fail-closed (zero denominators abort, no silent tolerance). It does not cover the R003 residual itself, which the lemma records as aborted with unresolved sign.",
+ "law": "Wang 7.2: an exact finite object plus a proved reduction is a CERTIFICATE. The reduction is the `claim` and is a human's to audit; the object and the verifier run are the machine's part.",
+ "timestamp": "2026-09-01T19:35:40Z"
+}

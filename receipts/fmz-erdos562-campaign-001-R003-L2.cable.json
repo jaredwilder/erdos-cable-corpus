@@ -1,0 +1,49 @@
+{
+ "schema": "oracle.msl.cable.v1",
+ "id": "fmz-erdos562-campaign-001-R003-L2",
+ "spec": {
+  "id": "fmz-erdos562-campaign-001-R003-L2",
+  "imports": "none",
+  "definitions": "def trivial_truth : Bool := True\n-- L2 asserts no mathematical content: its statement is a meta-observation\n-- whose truth is trivial and whose formal content is logically inert.\n-- The strongest decidable fragment of L2 is exactly that triviality:\n-- a Bool-valued check that L2's certified content reduces to `True` and\n-- therefore cannot be load-bearing for either close branch.\ndef l2_content_is_trivial : Bool := trivial_truth == true",
+  "conclusion": "l2_content_is_trivial = true",
+  "proof": "by decide"
+ },
+ "formal_status": "KERNEL_CHECKED",
+ "events": [],
+ "axioms": [],
+ "attempts": [
+  {
+   "tactic": "(supplied proof)",
+   "status": "VERIFIED",
+   "seconds": 2.1,
+   "errors": [],
+   "exitCode": 0,
+   "resource_limit": null
+  }
+ ],
+ "budget_history": [
+  {
+   "tier_seconds": 900.0,
+   "outcome": "KERNEL_CHECKED"
+  }
+ ],
+ "kernel_result": {
+  "status": "VERIFIED",
+  "file": "oracle/frontier_formalizer/cable/theorems/msl_fmz-erdos562-campaign-001-R003-L2.lean",
+  "backend": "windows",
+  "project": "C:\\Users\\jared\\Local Sites\\woocommerce-enterprise\\oracle\\math\\EG411Formal",
+  "needsMathlib": false,
+  "exitCode": 0,
+  "seconds": 2.1,
+  "declarations": [
+   {
+    "declaration": "msl_fmz_erdos562_campaign_001_R003_L2",
+    "clean": true,
+    "axioms": []
+   }
+  ],
+  "errors": []
+ },
+ "lean_result_block": "LEAN_RESULT fmz-erdos562-campaign-001-R003-L2\n  FORMAL_STATUS KERNEL_CHECKED\n  FILE oracle/frontier_formalizer/cable/theorems/msl_fmz-erdos562-campaign-001-R003-L2.lean\n  THEOREMS msl_fmz_erdos562_campaign_001_R003_L2\n  BACKEND windows\n  AXIOMS -\n  TACTIC (supplied proof)\n  BUDGET 900s:KERNEL_CHECKED\n  FAILURE NONE",
+ "timestamp": "2026-09-01T21:20:57Z"
+}

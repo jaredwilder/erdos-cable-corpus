@@ -1,0 +1,34 @@
+{
+ "schema": "oracle.msl.closer.witness.v1",
+ "id": "fmz-erdos196-campaign-001-R005-L1",
+ "pipeline": "WITNESS_FINITE",
+ "witness": {
+  "n": 9,
+  "permutation": [
+   5,
+   3,
+   7,
+   1,
+   9,
+   8,
+   2,
+   6,
+   4
+  ],
+  "description": "A permutation x of [9] with no indices i<j<k<l (nor i>j>k>l) such that x_i,x_j,x_k,x_l form an arithmetic progression."
+ },
+ "verifier_sha256": "09d27e60eb316e809dfd74a3b6f14da2fcc29fe79b4c791949135e855776306a",
+ "verifier_source": "N = 9\nX = [5, 3, 7, 1, 9, 8, 2, 6, 4]\n\ndef verify(witness):\n    n = witness['n']\n    x = witness['permutation']\n    if n != N:\n        raise ValueError('n mismatch')\n    if not isinstance(x, list) or len(x) != N:\n        raise ValueError('length mismatch')\n    if sorted(x) != list(range(1, N + 1)):\n        raise ValueError('not a permutation of [n]')\n    pos = [0] * (N + 1)\n    for i in range(N):\n        v = x[i]\n        if not (1 <= v <= N) or pos[v] != 0:\n            raise ValueError('malformed value')\n        pos[v] = i\n    checked = 0\n    for a in range(1, N + 1):\n        for d in range(1, (N - 1) // 3 + 1):\n            if a + 3 * d > N:\n                continue\n            p0 = pos[a]\n            p1 = pos[a + d]\n            p2 = pos[a + 2 * d]\n            p3 = pos[a + 3 * d]\n            checked += 1\n            if p0 < p1 and p1 < p2 and p2 < p3:\n                raise ValueError('monotone 4-AP, increasing indices')\n            if p0 > p1 and p1 > p2 and p2 > p3:\n                raise ValueError('monotone 4-AP, decreasing indices')\n    if checked != 9:\n        raise ValueError('coverage mismatch')\n\nwitness = {'n': N, 'permutation': X}\ntry:\n    verify(witness)\nexcept Exception:\n    raise SystemExit(1)\nraise SystemExit(0)",
+ "run": {
+  "passed": false,
+  "status": "VERIFIER_FAIL",
+  "exit_code": 0,
+  "stdout": "",
+  "detail": "",
+  "seconds": 0.09,
+  "code_sha256": "09d27e60eb316e809dfd74a3b6f14da2fcc29fe79b4c791949135e855776306a"
+ },
+ "claim": "Exit code 0 (verify() returns without raising) certifies that VALID(permutation of [9] avoiding monotone 4-term APs) is nonempty — a machine-verified concrete instance of the finite side of lemma L1's König reduction (covers: fragment; the all-n infinite side and branch B are NOT closed).",
+ "law": "Wang 7.2: an exact finite object plus a proved reduction is a CERTIFICATE. The reduction is the `claim` and is a human's to audit; the object and the verifier run are the machine's part.",
+ "timestamp": "2026-09-01T22:34:40Z"
+}

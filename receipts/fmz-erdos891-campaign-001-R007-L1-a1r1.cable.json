@@ -1,0 +1,71 @@
+{
+ "schema": "oracle.msl.cable.v1",
+ "id": "fmz-erdos891-campaign-001-R007-L1-a1r1",
+ "spec": {
+  "id": "fmz-erdos891-campaign-001-R007-L1-a1r1",
+  "imports": "Mathlib",
+  "definitions": "def bigOmega (m : Nat) : Nat := m.factorization.sum fun _ e => e\n\ndef P (k : Nat) : Nat := (List.range (k+1) |>.drop 1 |>.map (fun i => (Nat.nth (fun p => Nat.Prime p) i))) |>.prod\n-- simpler: primorial of first k primes\ndef primorial : Nat -> Nat\n  | 0 => 1\n  | (k+1) => primorial k * (Nat.nth Nat.Prime k)\n\ndef windowOK (k n : Nat) : Bool :=\n  ((List.range (primorial k)).any fun j => bigOmega (n + j) > k)\n\ndef check_base (k nMax : Nat) : Bool :=\n  (List.range (nMax - 2 * primorial k + 1)).all\n    (fun i => windowOK k (2 * primorial k + i))\n\ndef the_check : Bool :=\n  check_base 2 2000 && check_base 3 2000 && check_base 4 2000",
+  "conclusion": "the_check = true",
+  "proof": "by decide"
+ },
+ "formal_status": "KERNEL_FAILED",
+ "events": [
+  "((supplied proof)) RAW[/tmp/oracle_lean_ClyaGJWc.lean:7:4: error(lean.dependsOnNoncomputable): failed to compile definition, consider marking it as 'noncomputable' because it depends ]",
+  "((supplied proof)) RAW[/tmp/oracle_lean_ClyaGJWc.lean:9:4: error: `primorial` has already been declared]",
+  "((supplied proof)) RAW[/tmp/oracle_lean_ClyaGJWc.lean:23:77: error: maximum recursion depth has been reached]"
+ ],
+ "axioms": [
+  "Classical.choice",
+  "Quot.sound",
+  "propext",
+  "sorryAx"
+ ],
+ "attempts": [
+  {
+   "tactic": "(supplied proof)",
+   "status": "UNVERIFIED",
+   "seconds": 13.0,
+   "errors": [
+    "/tmp/oracle_lean_ClyaGJWc.lean:7:4: error(lean.dependsOnNoncomputable): failed to compile definition, consider marking it as 'noncomputable' because it depends on 'Nat.nth', which is 'noncomputable'",
+    "/tmp/oracle_lean_ClyaGJWc.lean:9:4: error: `primorial` has already been declared",
+    "/tmp/oracle_lean_ClyaGJWc.lean:23:77: error: maximum recursion depth has been reached"
+   ],
+   "exitCode": 1,
+   "resource_limit": "maximum recursion depth"
+  }
+ ],
+ "budget_history": [
+  {
+   "tier_seconds": 900.0,
+   "outcome": "UNDECIDED_RESOURCE[maximum recursion depth]"
+  }
+ ],
+ "kernel_result": {
+  "status": "UNVERIFIED",
+  "file": "oracle/frontier_formalizer/cable/theorems/msl_fmz-erdos891-campaign-001-R007-L1-a1r1.lean",
+  "backend": "wsl",
+  "project": "/root/erdosfire-bench/proofs",
+  "needsMathlib": true,
+  "exitCode": 1,
+  "seconds": 6.0,
+  "declarations": [
+   {
+    "declaration": "msl_fmz_erdos891_campaign_001_R007_L1_a1r1",
+    "clean": false,
+    "axioms": [
+     "propext",
+     "sorryAx",
+     "Classical.choice",
+     "Quot.sound"
+    ]
+   }
+  ],
+  "errors": [
+   "/tmp/oracle_lean_ClyaGJWc.lean:7:4: error(lean.dependsOnNoncomputable): failed to compile definition, consider marking it as 'noncomputable' because it depends on 'Nat.nth', which is 'noncomputable'",
+   "/tmp/oracle_lean_ClyaGJWc.lean:9:4: error: `primorial` has already been declared",
+   "/tmp/oracle_lean_ClyaGJWc.lean:23:77: error: maximum recursion depth has been reached"
+  ]
+ },
+ "lean_result_block": "LEAN_RESULT fmz-erdos891-campaign-001-R007-L1-a1r1\n  FORMAL_STATUS KERNEL_FAILED\n  FILE oracle/frontier_formalizer/cable/theorems/msl_fmz-erdos891-campaign-001-R007-L1-a1r1.lean\n  THEOREMS msl_fmz_erdos891_campaign_001_R007_L1_a1r1\n  BACKEND wsl\n  AXIOMS Classical.choice, Quot.sound, propext, sorryAx\n  TACTIC (supplied proof)\n  BUDGET 900s:UNDECIDED_RESOURCE[maximum recursion depth]\n  FAILURE ((supplied proof)) RAW[/tmp/oracle_lean_ClyaGJWc.lean:7:4: error(lean.dependsOnNoncomputable): failed to compile definition, consider marking it as 'noncomputable' because it depends ]; ((supplied proof)) RAW[/tmp/oracle_lean_ClyaGJWc.lean:9:4: error: `primorial` has already been declared]; ((supplied proof)) RAW[/tmp/oracle_lean_ClyaGJWc.lean:23:77: error: maximum recursion depth has been reached]\n  LAW KERNEL_FAILED does not refute the claim \u2014 the FAILURE line names what actually broke\n  LAW BUDGET_EXHAUSTED is an UNDECIDED question, not a failed proof \u2014 the machine stopped, the mathematics did not answer",
+ "timestamp": "2026-09-02T02:28:25Z"
+}

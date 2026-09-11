@@ -1,0 +1,63 @@
+{
+ "schema": "oracle.msl.closer.lap.v1",
+ "id": "fmz-erdos406-campaign-001-R001-L1",
+ "pipeline": "CITATION_ANCHORED",
+ "lean_file": "oracle/frontier_formalizer/cable/theorems/lap_fmz-erdos406-campaign-001-R001-L1.lean",
+ "theorem": "msl_fmz_erdos406_campaign_001_R001_L1",
+ "axiom_name": "PublishedTheorem_SengeStraus1971",
+ "axiom_statement_lean": "∀ (r s k : Nat), 1 < r → 1 < s →\n      (∀ (a b : Nat), r ^ a = s ^ b → a = 0 ∧ b = 0) →\n      ∃ N : Nat, ∀ m : Nat, ndz r m ≤ k → ndz s m ≤ k → m < N",
+ "citation": {
+  "source": "H. G. Senge and E. G. Straus, 'PV-numbers and sets of multiplicity', Periodica Mathematica Hungarica 2 (1972), pp. 73-77.",
+  "theorem_number": "Main theorem of the paper (internal statement number not verified against the original)",
+  "verbatim": "[HONESTY FLAG: the original text is not on file; the following is the standard formulation of the Senge-Straus theorem as reproduced across the citing literature on digit expansions. It must be checked word-for-word against the paper before this citation is treated as load-bearing.] 'If r and s are multiplicatively independent integers greater than 1, then for every positive integer k there exist only finitely many natural numbers which have at most k nonzero digits in their representation to base r and at most k nonzero digits in their representation to base s.'",
+  "url_or_doi": "not on file; bibliographic data to be verified"
+ },
+ "claim": "REPAIR of the KERNEL_FAILED obligation: the previous filing depended on Mathlib's `Set.Finite` API; this filing is self-contained in core Lean (import Lean only), with finiteness spelled out as an explicit existential bound (∃ N, ∀ m, ndz 2 m ≤ k → ndz 3 m ≤ k → m < N), which is the standard bounded formulation of 'only finitely many' and is interderivable with Set.Finite. CONDITIONAL on the cited Senge-Straus theorem, the Lean kernel checks exactly: (a) clause (ii) of L1 — the (2,3) instance: for every k there is a bound N with every natural number m having at most k nonzero digits in both base 2 and base 3 satisfying m < N, with ndz bound semantically to core Lean's Nat.digits and '2,3 multiplicatively independent' proved in-file (mulIndep23, pure core Lean); (b) clause (i) of L1 in its non-vacuous form — binDig (n+2) (2^n) = 1 for all n, i.e. 2^n has exactly one nonzero base-2 digit. covers=fragment: clause (iii) of L1 ('matching the canonical quantifiers exactly') is NOT certified and is defective — Senge-Straus bounds the nonzero-digit COUNT by a fixed k, whereas the canonical predicate 'all base-3 digits in {0,1}' permits an unbounded number of 1-digits, and the countable union of the resulting finite sets need not be finite; this fragment therefore does not close close branch A. Expected axiom footprint of the closure theorem: PublishedTheorem_SengeStraus1971 (plus at most the Lean standard trio {propext, Classical.choice, Quot.sound}); the proof body is a single `exact` application, no omitted steps, no sorryAx.",
+ "gate": {
+  "passed": false,
+  "reason": "KERNEL_FAILED",
+  "detail": "the LAP file did not compile (exit 1)"
+ },
+ "kernel_result": {
+  "status": "UNVERIFIED",
+  "file": "oracle/frontier_formalizer/cable/theorems/lap_fmz-erdos406-campaign-001-R001-L1.lean",
+  "backend": "windows",
+  "project": "C:\\Users\\jared\\Local Sites\\woocommerce-enterprise\\oracle\\math\\EG411Formal",
+  "needsMathlib": false,
+  "exitCode": 1,
+  "seconds": 5.9,
+  "declarations": [
+   {
+    "declaration": "binDig_pow_two_succ",
+    "clean": false,
+    "axioms": []
+   },
+   {
+    "declaration": "binDig_pow_two",
+    "clean": false,
+    "axioms": []
+   },
+   {
+    "declaration": "pow3_mod2",
+    "clean": false,
+    "axioms": []
+   },
+   {
+    "declaration": "mulIndep23",
+    "clean": false,
+    "axioms": []
+   },
+   {
+    "declaration": "msl_fmz_erdos406_campaign_001_R001_L1",
+    "clean": false,
+    "axioms": []
+   }
+  ],
+  "errors": [
+   "tmpj93xli0v.lean:3:0: error: invalid 'import' command, it must be used in the beginning of the file"
+  ]
+ },
+ "seconds": 5.9,
+ "law": "CLOSED_CONDITIONAL_ON_CITATION is NOT TARGET_CLOSED. The kernel checked the IMPLICATION from the assumed theorem; it did not check the assumed theorem. Confirm `axiom_statement_lean` against `citation.verbatim`, and confirm that the cited theorem exists in that form, before this is cited as a result.",
+ "timestamp": "2026-09-01T22:15:33Z"
+}

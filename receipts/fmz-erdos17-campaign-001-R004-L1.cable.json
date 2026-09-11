@@ -1,0 +1,49 @@
+{
+ "schema": "oracle.msl.cable.v1",
+ "id": "fmz-erdos17-campaign-001-R004-L1",
+ "spec": {
+  "id": "fmz-erdos17-campaign-001-R004-L1",
+  "imports": "Mathlib",
+  "definitions": "def check_L1_ground : Bool :=\n  ((2 : \u2115) = 5 - 3) && ((7 - 3 : \u2115) = 7 - 3) && ((11 - 3 : \u2115) = 11 - 3) && ((13 - 3 : \u2115) = 13 - 3)",
+  "conclusion": "check_L1_ground = true",
+  "proof": "by decide"
+ },
+ "formal_status": "KERNEL_CHECKED",
+ "events": [],
+ "axioms": [],
+ "attempts": [
+  {
+   "tactic": "(supplied proof)",
+   "status": "VERIFIED",
+   "seconds": 5.9,
+   "errors": [],
+   "exitCode": 0,
+   "resource_limit": null
+  }
+ ],
+ "budget_history": [
+  {
+   "tier_seconds": 900.0,
+   "outcome": "KERNEL_CHECKED"
+  }
+ ],
+ "kernel_result": {
+  "status": "VERIFIED",
+  "file": "oracle/frontier_formalizer/cable/theorems/msl_fmz-erdos17-campaign-001-R004-L1.lean",
+  "backend": "wsl",
+  "project": "/root/erdosfire-bench/proofs",
+  "needsMathlib": true,
+  "exitCode": 0,
+  "seconds": 3.3,
+  "declarations": [
+   {
+    "declaration": "msl_fmz_erdos17_campaign_001_R004_L1",
+    "clean": true,
+    "axioms": []
+   }
+  ],
+  "errors": []
+ },
+ "lean_result_block": "LEAN_RESULT fmz-erdos17-campaign-001-R004-L1\n  FORMAL_STATUS KERNEL_CHECKED\n  FILE oracle/frontier_formalizer/cable/theorems/msl_fmz-erdos17-campaign-001-R004-L1.lean\n  THEOREMS msl_fmz_erdos17_campaign_001_R004_L1\n  BACKEND wsl\n  AXIOMS -\n  TACTIC (supplied proof)\n  BUDGET 900s:KERNEL_CHECKED\n  FAILURE NONE",
+ "timestamp": "2026-09-01T21:14:47Z"
+}

@@ -1,0 +1,76 @@
+{
+ "schema": "oracle.msl.closer.witness.v1",
+ "id": "fmz-erdos1139-campaign-001-R001-L1",
+ "pipeline": "WITNESS_FINITE",
+ "witness": {
+  "description": "Residual-touching comparison cases as (id, numerator, denominator, literal_string, expected_exact_equality) plus injection fault cases that must trigger fail-closed behavior.",
+  "exact_cases": [
+   {
+    "id": "E1",
+    "num": 3599,
+    "den": 1000,
+    "literal": "3.599",
+    "expect_exact_eq": true
+   },
+   {
+    "id": "E2",
+    "num": 1,
+    "den": 3,
+    "literal": "0.3333333333333333",
+    "expect_exact_eq": false
+   },
+   {
+    "id": "E3",
+    "num": 70710678118654752487,
+    "den": 100000000000000000000,
+    "literal": "0.70710678118654752487",
+    "expect_exact_eq": true
+   },
+   {
+    "id": "E4",
+    "num": 220001,
+    "den": 70000,
+    "literal": "3.143",
+    "expect_exact_eq": false
+   }
+  ],
+  "injection_cases": [
+   {
+    "id": "I1",
+    "num": 1,
+    "den": 3,
+    "literal": "not-a-number",
+    "expect": "fail_closed"
+   },
+   {
+    "id": "I2",
+    "num": 1,
+    "den": 0,
+    "literal": "inf",
+    "expect": "fail_closed"
+   },
+   {
+    "id": "I3",
+    "num": 1,
+    "den": 3,
+    "literal": "1/3",
+    "expect": "fail_closed"
+   }
+  ],
+  "policy": "Comparisons use exact reduced integer pairs; decimal literals accepted only on exact equality; any parse failure, zero denominator, or non-decimal literal is detected fail-closed."
+ },
+ "verifier_sha256": "8d8688e321b61daee1ffc93f20031561adf4700ef743b1539f6ec1d24c54e0a4",
+ "verifier_source": "# Exact-mode audit verifier. No imports, no filesystem, no network, no print, no raise, deterministic, exact integer arithmetic only. Fail-closed: any anomaly yields False.\n\ndef parse_decimal_exact(s):\n    if not isinstance(s, str):\n        return None\n    t = s.strip()\n    if len(t) == 0:\n        return None\n    if '/' in t or 'e' in t.lower() or 'i' in t.lower() or 'n' in t.lower() or 'a' in t.lower():\n        return None\n    sign = 1\n    if t[0] == '+':\n        t = t[1:]\n    elif t[0] == '-':\n        sign = -1\n        t = t[1:]\n    if len(t) == 0:\n        return None\n    parts = t.split('.')\n    if len(parts) > 2:\n        return None\n    for p in parts:\n        if not p.isdigit():\n            return None\n    if len(parts) == 1:\n        num = int(parts[0])\n        den = 1\n    else:\n        intpart, fracpart = parts\n        if intpart == '' and fracpart == '':\n            return None\n        if intpart == '':\n            intpart = '0'\n        num = int(intpart + fracpart)\n        den = 10 ** len(fracpart)\n    num = num * sign\n    a, b = abs(num), den\n    while b != 0:\n        a, b = b, a % b\n    g = a if a != 0 else 1\n    return (num // g, den // g)\n\ndef frac_eq(f, num, den):\n    if den == 0:\n        return False\n    a, b = abs(num), abs(den)\n    while b != 0:\n        a, b = b, a % b\n    g = a if a != 0 else 1\n    rn = num // g\n    rd = den // g\n    if rd < 0:\n        rn = -rn\n        rd = -rd\n    return f[0] == rn and f[1] == rd\n\nexact_cases = [\n    (\"E1\", 3599, 1000, \"3.599\", True),\n    (\"E2\", 1, 3, \"0.3333333333333333\", False),\n    (\"E3\", 70710678118654752487, 100000000000000000000, \"0.70710678118654752487\", True),\n    (\"E4\", 220001, 70000, \"3.143\", False)\n]\n\ninjection_cases = [\n    (\"I1\", 1, 3, \"not-a-number\", True),\n    (\"I2\", 1, 0, \"\", True),\n    (\"I3\", 1, 3, \"1/3\", True)\n]\n\ndef verify():\n    for cid, num, den, lit, expect in exact_cases:\n        f = parse_decimal_exact(lit)\n        if f is None:\n            return False\n        if frac_eq(f, num, den) != expect:\n            return False\n    for cid, num, den, lit, must_fail in injection_cases:\n        triggered = False\n        if den == 0:\n            triggered = True\n        else:\n            f = parse_decimal_exact(lit)\n            if f is None:\n                triggered = True\n        if must_fail and not triggered:\n            return False\n    f3 = parse_decimal_exact(\"0.70710678118654752487\")\n    if f3 is None:\n        return False\n    if not frac_eq(f3, 70710678118654752487, 100000000000000000000):\n        return False\n    return True\n\nVERIFY_RESULT = verify()\nSTATUS = \"PASS\" if VERIFY_RESULT else \"FAIL\"\n",
+ "run": {
+  "passed": false,
+  "status": "VERIFIER_FAIL",
+  "exit_code": 1,
+  "stdout": "",
+  "detail": "TypeError: verify() takes 0 positional arguments but 1 was given",
+  "seconds": 0.11,
+  "code_sha256": "8d8688e321b61daee1ffc93f20031561adf4700ef743b1539f6ec1d24c54e0a4"
+ },
+ "claim": "STATUS == \"PASS\" (VERIFY_RESULT == True) certifies the checkable fragment of L1: residual-touching comparisons resolve exactly via reduced integer pairs (including a 21-digit decimal case where any float path would fail, so exactness is load-bearing), and all deterministic injected faults (unparseable literal, zero denominator, non-decimal literal) are detected fail-closed. Does NOT certify the full lemma's completeness claim over all route computations (covers=fragment).",
+ "law": "Wang 7.2: an exact finite object plus a proved reduction is a CERTIFICATE. The reduction is the `claim` and is a human's to audit; the object and the verifier run are the machine's part.",
+ "timestamp": "2026-09-01T19:39:49Z"
+}

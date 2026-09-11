@@ -1,0 +1,23 @@
+{
+ "schema": "oracle.msl.closer.witness.v1",
+ "id": "fmz-erdos952-campaign-001-R003-L1",
+ "pipeline": "WITNESS_FINITE",
+ "witness": {
+  "bound_radius": 200,
+  "max_allowed_chain_length": 5
+ },
+ "verifier_sha256": "f566821eaadec6c9a5926068ec37a4f301d77da1e39c4c134e4b7a51e6453638",
+ "verifier_source": "from math import isqrt\n\ndef is_rational_prime(n):\n    if n < 2:\n        return False\n    if n < 4:\n        return True\n    if n % 2 == 0:\n        return False\n    r = isqrt(n)\n    d = 3\n    while d <= r:\n        if n % d == 0:\n            return False\n        d += 2\n    return True\n\ndef is_gaussian_prime(a, b):\n    if a != 0 and b != 0:\n        return is_rational_prime(a*a + b*b)\n    if a == 0 and b == 0:\n        return False\n    v = abs(a) if b == 0 else abs(b)\n    if v % 4 == 3 and is_rational_prime(v):\n        return True\n    return False\n\ndef longest_from(cur, used, pset, dirs, cap):\n    best = 1\n    dx, dy = cur\n    for ux, uy in dirs:\n        nxt = (dx + ux, dy + uy)\n        if nxt in pset and nxt not in used:\n            used.add(nxt)\n            length = 1 + longest_from(nxt, used, pset, dirs, cap)\n            used.remove(nxt)\n            if length > best:\n                best = length\n            if best > cap:\n                return best\n    return best\n\ndef verify(witness):\n    N = int(witness['bound_radius'])\n    max_allowed = int(witness['max_allowed_chain_length'])\n    assert N > 0 and max_allowed > 0, 'bad witness parameters'\n    pset = set()\n    for x in range(-N, N + 1):\n        for y in range(-N, N + 1):\n            if is_gaussian_prime(x, y):\n                pset.add((x, y))\n    assert len(pset) > 0, 'no Gaussian primes found in window'\n    dirs = [(1,0),(-1,0),(0,1),(0,-1)]\n    best = 0\n    for p in sorted(pset):\n        length = longest_from(p, {p}, pset, dirs, max_allowed)\n        if length > best:\n            best = length\n        assert best <= max_allowed, 'FAIL: unit-step chain of length ' + str(best) + ' exceeds bound ' + str(max_allowed) + ' starting at ' + str(p)\n    return best\n",
+ "run": {
+  "passed": true,
+  "status": "VERIFIER_PASS",
+  "exit_code": 0,
+  "stdout": "PASS",
+  "detail": "",
+  "seconds": 0.23,
+  "code_sha256": "f566821eaadec6c9a5926068ec37a4f301d77da1e39c4c134e4b7a51e6453638"
+ },
+ "claim": "FRAGMENT certificate (narrowed): a unit Euclidean step has length exactly 1, so only the 4 axis directions are admissible (the previous verifier wrongly searched diagonal steps of length sqrt(2), blowing up the search); the window is narrowed to |z| <= 200. The verifier exposes def verify(witness), raises on every failed check, uses exact integer arithmetic only, no I/O, no network, no filesystem, deterministic, fail-closed. A successful return establishes that within |z| <= 200 every chain of distinct Gaussian primes joined by unit steps has length <= 5 — the finite checkable fragment of L1's asserted bound. L1 remains a c<sqrt(2) domain-drift non-result: neither branch A nor branch B closes; covers='fragment'.",
+ "law": "Wang 7.2: an exact finite object plus a proved reduction is a CERTIFICATE. The reduction is the `claim` and is a human's to audit; the object and the verifier run are the machine's part.",
+ "timestamp": "2026-09-01T20:46:24Z"
+}

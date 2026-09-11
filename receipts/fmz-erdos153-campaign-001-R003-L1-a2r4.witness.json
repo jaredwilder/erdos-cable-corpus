@@ -1,0 +1,112 @@
+{
+ "schema": "oracle.msl.closer.witness.v1",
+ "id": "fmz-erdos153-campaign-001-R003-L1-a2r4",
+ "pipeline": "WITNESS_FINITE",
+ "witness": {
+  "lemma": "R003/L1",
+  "convention": {
+   "sidon": "B2: all sums a_i+a_j with 1<=i<=j<=n pairwise distinct (repeated summands as pairs (i,i); no off-diagonal-only weakening)",
+   "sumset": "A+A as the set of distinct sums, s_1<...<s_t, t=|A+A| (no multiset sumset)",
+   "gaps": "exactly the t-1 gaps s_{i+1}-s_i for 1<=i<t (no i=0 term)",
+   "Q": "Q(A)=(sum_{1<=i<t}(s_{i+1}-s_i)^2)/t as one exact rational with denominator exactly t=|A+A|; undefined iff t=0, i.e. A=[] among valid Sidon inputs — the exit-2 abort case carrying the enclosure (-inf,+inf)"
+  },
+  "cases": [
+   {
+    "id": "empty-abort",
+    "A": [],
+    "enclosure": [
+     "-inf",
+     "+inf"
+    ],
+    "expect": "abort"
+   },
+   {
+    "id": "singleton",
+    "A": [
+     0
+    ],
+    "enclosure": [
+     "-1/3",
+     "1/3"
+    ],
+    "expect": {
+     "Q": "0/1"
+    }
+   },
+   {
+    "id": "pair",
+    "A": [
+     1,
+     2
+    ],
+    "enclosure": [
+     "1/2",
+     "1"
+    ],
+    "expect": {
+     "Q": "2/3"
+    }
+   },
+   {
+    "id": "triple",
+    "A": [
+     1,
+     2,
+     4
+    ],
+    "enclosure": [
+     "1",
+     "3/2"
+    ],
+    "expect": {
+     "Q": "4/3"
+    }
+   },
+   {
+    "id": "mixed-sign",
+    "A": [
+     -3,
+     -1,
+     2
+    ],
+    "enclosure": [
+     "3",
+     "4"
+    ],
+    "expect": {
+     "Q": "11/3"
+    }
+   }
+  ],
+  "must_reject": [
+   [
+    1,
+    2,
+    3
+   ],
+   [
+    0,
+    1,
+    2
+   ],
+   [
+    1,
+    1
+   ]
+  ]
+ },
+ "verifier_sha256": "e58f09d40381c2a1f429c71a91b8c2b425e5c56d26990f08519bfa9bd8c2d9c1",
+ "verifier_source": "# standalone, stdlib-free, deterministic, fail-closed: no imports, no I/O, no floats, no print.\n# Entry point: verify(witness) -> True; raises RuntimeError on ANY failed check.\n\ndef _gcd(a, b):\n    a = a if a >= 0 else -a\n    b = b if b >= 0 else -b\n    while b:\n        a, b = b, a % b\n    return a\n\ndef _need(cond, msg):\n    if not cond:\n        raise RuntimeError('FAIL: ' + msg)\n\ndef _is_int(x):\n    return isinstance(x, int) and not isinstance(x, bool)\n\ndef _frac(s, where):\n    _need(isinstance(s, str) and len(s) > 0, where + ': rational must be nonempty string')\n    body = s\n    sign = 1\n    if body[0] == '-':\n        sign = -1\n        body = body[1:]\n    elif body[0] == '+':\n        body = body[1:]\n    _need(len(body) > 0, where + ': empty rational body')\n    if body.count('/') == 0:\n        num_s, den_s = body, '1'\n    elif body.count('/') == 1:\n        num_s, den_s = body.split('/')\n    else:\n        raise RuntimeError(where + ': multiple slashes in rational')\n    for part in (num_s, den_s):\n        _need(len(part) > 0 and all(c in '0123456789' for c in part),\n              where + ': non-ASCII-integer rational token %r' % (s,))\n    num = int(num_s) * sign\n    den = int(den_s)\n    _need(den != 0, where + ': zero denominator')\n    g = _gcd(num, den)\n    if g > 1:\n        num //= g\n        den //= g\n    return (num, den)\n\ndef _endpoint(s, where):\n    if s == '-inf' or s == '+inf':\n        return s\n    return _frac(s, where)\n\ndef _cmp(x, y):\n    # x, y are (num, den) with den > 0\n    return x[0] * y[1] - y[0] * x[1]\n\ndef _dup(xs):\n    seen = set()\n    for x in xs:\n        if x in seen:\n            return True\n        seen.add(x)\n    return False\n\ndef _all_sums(A):\n    out = []\n    n = len(A)\n    for i in range(n):\n        for j in range(i, n):\n            out.append(A[i] + A[j])\n    return out\n\ndef _evaluate(A, where):\n    # B2 Sidon check, then exact Q with denominator t=|A+A|; abort iff t=0.\n    _need(not _dup(A), where + ': duplicate elements in A')\n    sums = _all_sums(A)\n    _need(not _dup(sums), where + ': not Sidon under the i<=j B2 convention')\n    S = sorted(set(sums))\n    t = len(S)\n    if t == 0:\n        return ('abort', None)\n    total = 0\n    for i in range(t - 1):\n        d = S[i + 1] - S[i]\n        total += d * d\n    g = _gcd(total, t)\n    return ('ok', (total // g, t // g))\n\ndef verify(witness):\n    _need(isinstance(witness, dict), 'witness root must be a dict')\n    cases = witness.get('cases')\n    _need(isinstance(cases, list) and len(cases) > 0, 'witness must carry a nonempty cases list')\n    n_abort = 0\n    n_ok = 0\n    for case in cases:\n        _need(isinstance(case, dict), 'each case must be a dict')\n        cid = case.get('id', '<unnamed>')\n        where = 'case %r' % (cid,)\n        A_raw = case.get('A')\n        _need(isinstance(A_raw, list), where + ': A must be a list')\n        A = []\n        for x in A_raw:\n            _need(_is_int(x), where + ': non-integer element %r' % (x,))\n            A.append(x)\n        enc = case.get('enclosure')\n        _need(isinstance(enc, list) and len(enc) == 2, where + ': enclosure must be a 2-list')\n        expect = case.get('expect')\n        verdict, q = _evaluate(A, where)\n        lo = _endpoint(enc[0], where + ' lo')\n        hi = _endpoint(enc[1], where + ' hi')\n        if verdict == 'abort':\n            n_abort += 1\n            _need(lo == '-inf' and hi == '+inf',\n                  where + ': abort case must carry the undefined-Q enclosure (-inf,+inf)')\n            _need(expect == 'abort', where + ': expected %r but semantics say abort exit 2' % (expect,))\n        else:\n            n_ok += 1\n            _need(isinstance(lo, tuple) and isinstance(hi, tuple),\n                  where + ': defined-Q case must carry finite rational endpoints')\n            _need(_cmp(lo, hi) <= 0, where + ': enclosure endpoints inverted')\n            _need(_cmp(lo, q) <= 0 and _cmp(q, hi) <= 0,\n                  where + ': enclosure does not bracket exact Q=%d/%d' % q)\n            _need(isinstance(expect, dict) and set(expect.keys()) == {'Q'},\n                  where + ': non-abort case must carry expect with a single Q token')\n            q_exp = _frac(expect['Q'], where + ' Q')\n            _need(q == q_exp,\n                  where + ': exact Q mismatch: computed %d/%d vs witness %s' % (q[0], q[1], expect['Q']))\n    _need(n_abort >= 1, 'witness carries no abort t=0 exit-2 case')\n    rejects = witness.get('must_reject')\n    _need(isinstance(rejects, list) and len(rejects) > 0, 'witness must carry a nonempty must_reject list')\n    k = 0\n    for entry in rejects:\n        k += 1\n        _need(isinstance(entry, list), 'must_reject entry %d must be a list' % (k,))\n        A = []\n        for x in entry:\n            _need(_is_int(x), 'must_reject entry %d: non-integer %r' % (k, x))\n            A.append(x)\n        _need(_dup(A) or _dup(_all_sums(A)),\n              'must_reject entry %d %r is actually a valid Sidon set' % (k, entry))\n    return True\n\nif __name__ == '__main__':\n    _WITNESS = {\n        'lemma': 'R003/L1',\n        'cases': [\n            {'id': 'empty-abort', 'A': [], 'enclosure': ['-inf', '+inf'], 'expect': 'abort'},\n            {'id': 'singleton', 'A': [0], 'enclosure': ['-1/3', '1/3'], 'expect': {'Q': '0/1'}},\n            {'id': 'pair', 'A': [1, 2], 'enclosure': ['1/2', '1'], 'expect': {'Q': '2/3'}},\n            {'id': 'triple', 'A': [1, 2, 4], 'enclosure': ['1', '3/2'], 'expect': {'Q': '4/3'}},\n            {'id': 'mixed-sign', 'A': [-3, -1, 2], 'enclosure': ['3', '4'], 'expect': {'Q': '11/3'}}\n        ],\n        'must_reject': [[1, 2, 3], [0, 1, 2], [1, 1]]\n    }\n    verify(_WITNESS)\n",
+ "run": {
+  "passed": true,
+  "status": "VERIFIER_PASS",
+  "exit_code": 0,
+  "stdout": "PASS",
+  "detail": "",
+  "seconds": 0.13,
+  "code_sha256": "e58f09d40381c2a1f429c71a91b8c2b425e5c56d26990f08519bfa9bd8c2d9c1"
+ },
+ "claim": "verify(witness) returning True (no exception) certifies the abort-behavior fragment of L1 on the certified finite test set: exact integer/rational arithmetic (own gcd, no floats), B2 Sidon convention with i<=j pairs, t=|A+A|, Q with denominator exactly t and no i=0 gap term; the verifier is deterministic and fail-closed (raises on any malformed witness, any duplicate-element or non-Sidon input, any inverted enclosure, and on every abort case enforces in both directions that the enclosure is exactly (-inf,+inf), realized only by A=[] with t=0, i.e. the exit-2 undefined-Q behavior), and every defined case's outward rational enclosure exactly brackets Q with Q matching the witness to the last digit; the asymptotic conjunct remains uncertified exactly as L1 scopes it.",
+ "law": "Wang 7.2: an exact finite object plus a proved reduction is a CERTIFICATE. The reduction is the `claim` and is a human's to audit; the object and the verifier run are the machine's part.",
+ "timestamp": "2026-09-02T02:03:55Z"
+}

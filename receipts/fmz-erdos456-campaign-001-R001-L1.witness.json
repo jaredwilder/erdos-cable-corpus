@@ -1,0 +1,24 @@
+{
+ "schema": "oracle.msl.closer.witness.v1",
+ "id": "fmz-erdos456-campaign-001-R001-L1",
+ "pipeline": "WITNESS_FINITE",
+ "witness": {
+  "statement": "For every prime p <= 1000000, with n = p - 1: (i) m_n = p, i.e. p is the least positive integer m with n | phi(m); (ii) p_n = p, i.e. p is the least prime congruent to 1 mod n.",
+  "bound": 1000000,
+  "reasoning_checked": "m <= n implies phi(m) <= m - 1 < n, so the least witness m_n for n = p-1 is exactly p; every prime congruent to 1 mod (p-1) is at least p, and p qualifies, so p_n = p. Verifier inversion: a violation of (i) exists iff some m < BOUND has a divisor d of phi(m) with d+1 prime, d+1 <= BOUND, and m < d+1."
+ },
+ "verifier_sha256": "05b8889a6919ea5ff718f93f415652a830565fcb858fcfebe3bef4c78a33b6ec",
+ "verifier_source": "BOUND = 1000000\n\ndef verify():\n    assert BOUND == 1000000\n    # exact sieve of phi and primality, integer arithmetic only\n    phi = list(range(BOUND + 1))\n    is_p = bytearray([1]) * (BOUND + 1)\n    is_p[0] = 0\n    is_p[1] = 0\n    for i in range(2, BOUND + 1):\n        if is_p[i]:\n            j = i\n            while j <= BOUND:\n                is_p[j] = 0 if j > i else 1\n                phi[j] -= phi[j] // i\n                j += i\n    assert is_p[2] == 1 and is_p[999983] == 1 and is_p[4] == 0\n    assert phi[1] == 1 and phi[12] == 4 and phi[999983] == 999982\n    prime_count = 0\n    for v in range(2, BOUND + 1):\n        if is_p[v] == 1:\n            prime_count += 1\n    assert prime_count == 78498\n    # (i) inverted check: no m < p with (p-1) | phi(m), for any prime p <= BOUND\n    for m in range(1, BOUND + 1):\n        f = phi[m]\n        d = 1\n        while d * d <= f:\n            if f % d == 0:\n                for dd in (d, f // d):\n                    p = dd + 1\n                    if p <= BOUND and p > m and is_p[p] == 1:\n                        raise AssertionError(\"smaller witness m=%d for n=%d\" % (m, dd))\n            d += 1\n    # (ii) direct check: p_n = p for every prime p <= BOUND\n    for p in range(2, BOUND + 1):\n        if is_p[p] != 1:\n            continue\n        n = p - 1\n        q = p\n        while not (is_p[q] == 1 and q % n == 1):\n            q += 1\n        if q != p:\n            raise AssertionError(\"p_n mismatch at p=%d\" % p)\n\nverify()",
+ "run": {
+  "passed": false,
+  "status": "VERIFIER_FAIL",
+  "exit_code": 1,
+  "stdout": "",
+  "detail": "AssertionError: smaller witness m=1 for n=1",
+  "seconds": 0.65,
+  "code_sha256": "05b8889a6919ea5ff718f93f415652a830565fcb858fcfebe3bef4c78a33b6ec"
+ },
+ "claim": "A clean exit 0 certifies, by exact integer arithmetic, no floats, no I/O, no network, deterministic and fail-closed (any violated expectation raises and aborts nonzero), that for every prime p <= 10^6 the least m with (p-1) | phi(m) is exactly p and the least prime congruent to 1 mod (p-1) is exactly p, i.e. m_n = p = p_n at n = p-1 throughout the instance range of standing lemma L1.",
+ "law": "Wang 7.2: an exact finite object plus a proved reduction is a CERTIFICATE. The reduction is the `claim` and is a human's to audit; the object and the verifier run are the machine's part.",
+ "timestamp": "2026-09-01T23:39:29Z"
+}

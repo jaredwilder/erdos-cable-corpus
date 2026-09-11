@@ -1,0 +1,25 @@
+{
+ "schema": "oracle.msl.closer.witness.v1",
+ "id": "selftest-closer-fail-R001-close",
+ "pipeline": "WITNESS_FINITE",
+ "witness": [
+  1,
+  2,
+  3,
+  4
+ ],
+ "verifier_sha256": "e42c5ed3d04b822204fce575794a5ae3eeb0557168117de38ba0fcd6aba071bc",
+ "verifier_source": "def verify(witness):\n    s = sorted(set(witness))\n    sums = [a + b for i, a in enumerate(s) for b in s[i:]]\n    if len(set(sums)) != len(sums):\n        raise RuntimeError('pairwise sums collide')\n",
+ "run": {
+  "passed": false,
+  "status": "VERIFIER_FAIL",
+  "exit_code": 1,
+  "stdout": "",
+  "detail": "RuntimeError: pairwise sums collide",
+  "seconds": 0.09,
+  "code_sha256": "e42c5ed3d04b822204fce575794a5ae3eeb0557168117de38ba0fcd6aba071bc"
+ },
+ "claim": "the exhibited object is a Sidon set",
+ "law": "Wang 7.2: an exact finite object plus a proved reduction is a CERTIFICATE. The reduction is the `claim` and is a human's to audit; the object and the verifier run are the machine's part.",
+ "timestamp": "2026-09-02T01:02:05Z"
+}

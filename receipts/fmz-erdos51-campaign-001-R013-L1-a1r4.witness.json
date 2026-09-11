@@ -1,0 +1,42 @@
+{
+ "schema": "oracle.msl.closer.witness.v1",
+ "id": "fmz-erdos51-campaign-001-R013-L1-a1r4",
+ "pipeline": "WITNESS_FINITE",
+ "witness": {
+  "note": "Narrowed fragment: k<=4 primorials. The prior claim 'min(pre(phi(m))) = primorial' was FALSE (e.g. phi(3)=2 < 2, phi(7)=6 < 6): the least preimage of a primorial m is the NEXT PRIME p_{k+1}, since phi(p)=p-1 and m is even. The witness now records the corrected least preimages.",
+  "primorials": [
+   2,
+   6,
+   30,
+   210
+  ],
+  "k_values": [
+   1,
+   2,
+   3,
+   4
+  ],
+  "least_preimage_of_primorial": [
+   3,
+   7,
+   31,
+   211
+  ],
+  "side_result": "phi(2310) = 480 exactly (exact certificate; 2310 in pre(480))",
+  "claim_scope": "for m = product of first k primes (k=1..4), the least positive n with phi(n)=m equals the next prime p_{k+1}, certified by exhaustive exact-integer enumeration over the proved window n <= 2*m*m (bound phi(n) >= sqrt(n/2) => n <= 2*phi(m)^2), fail-closed"
+ },
+ "verifier_sha256": "5056e4c12ccbb69b24c23a4ef84eb9cd2e4263952564da2ee49902bc6a22e8b3",
+ "verifier_source": "# pure Python, no imports, no I/O, deterministic, exact integer arithmetic, fail-closed\n\ndef verify(witness):\n    primorials = witness['primorials']\n    k_values = witness['k_values']\n    least_claimed = witness['least_preimage_of_primorial']\n    assert len(primorials) == len(k_values) == len(least_claimed)\n\n    def factorint_exact(n):\n        assert n >= 2\n        f = {}\n        d = 2\n        while d * d <= n:\n            while n % d == 0:\n                f[d] = f.get(d, 0) + 1\n                n = n // d\n            d += 1\n        if n > 1:\n            f[n] = f.get(n, 0) + 1\n        for e in f.values():\n            assert e >= 1\n        return f\n\n    def phi(n):\n        if n == 1:\n            return 1\n        r = n\n        for p, e in factorint_exact(n).items():\n            assert r % p == 0\n            r = r // p * (p - 1)\n        assert r >= 1\n        return r\n\n    def first_k_primes(k):\n        primes = []\n        c = 2\n        while len(primes) < k:\n            if all(c % p != 0 for p in primes if p * p <= c):\n                if not any(c % p == 0 for p in primes):\n                    primes.append(c)\n            c += 1\n        return primes\n\n    for k, m_expected, least_c in zip(k_values, primorials, least_claimed):\n        primes = first_k_primes(k)\n        assert len(primes) == k\n        m = 1\n        for p in primes:\n            m *= p\n        assert m == m_expected, 'primorial mismatch at k=%d' % k\n        # exhaustive window: proved bound phi(n)>=sqrt(n/2) => any preimage n <= 2*m*m\n        bound = 2 * m * m\n        least = None\n        for n in range(1, bound + 1):\n            if phi(n) == m:\n                least = n\n                break\n        assert least is not None, 'no preimage in window at k=%d' % k\n        assert least == least_c, 'least preimage mismatch at k=%d: got %d, claimed %d' % (k, least, least_c)\n        # the least preimage must itself be prime (it is p_{k+1})\n        f = factorint_exact(least)\n        assert len(f) == 1 and list(f.values()) == [1], 'least preimage not prime at k=%d' % k\n\n    assert phi(2310) == 480, 'phi(2310) != 480'\n    return True",
+ "run": {
+  "passed": true,
+  "status": "VERIFIER_PASS",
+  "exit_code": 0,
+  "stdout": "PASS",
+  "detail": "",
+  "seconds": 0.08,
+  "code_sha256": "5056e4c12ccbb69b24c23a4ef84eb9cd2e4263952564da2ee49902bc6a22e8b3"
+ },
+ "claim": "Corrected, narrowed fragment of L1: for each primorial m in {2,6,30,210} the least n with phi(n)=m is exactly the next prime p_{k+1} in {3,7,31,211}, certified by exhaustive fail-closed exact-integer enumeration over the proved window n <= 2*m^2, plus the exact certificate phi(2310)=480. This replaces the false 'min(pre)=primorial' claim and certifies the finite computational core of L1 for k<=4; it does NOT close close_branch_A.",
+ "law": "Wang 7.2: an exact finite object plus a proved reduction is a CERTIFICATE. The reduction is the `claim` and is a human's to audit; the object and the verifier run are the machine's part.",
+ "timestamp": "2026-09-02T02:13:42Z"
+}

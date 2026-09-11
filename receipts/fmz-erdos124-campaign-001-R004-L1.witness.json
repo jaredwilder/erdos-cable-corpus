@@ -1,0 +1,32 @@
+{
+ "schema": "oracle.msl.closer.witness.v1",
+ "id": "fmz-erdos124-campaign-001-R004-L1",
+ "pipeline": "WITNESS_FINITE",
+ "witness": {
+  "r": 3,
+  "d": [
+   3,
+   4,
+   5
+  ],
+  "expected": "PASS",
+  "sum_fraction": [
+   13,
+   12
+  ]
+ },
+ "verifier_sha256": "6281234f32c87d992a7088664b4f66fa736193b83a2a9263e7af4b6a555f1629",
+ "verifier_source": "from fractions import Fraction\n\ndef verify(witness):\n    d = witness[\"d\"]\n    r = witness[\"r\"]\n    if r != len(d):\n        return False\n    if not all(isinstance(x, int) and x >= 3 for x in d):\n        return False\n    for i in range(len(d) - 1):\n        if not d[i] < d[i+1]:\n            return False\n    s = sum(Fraction(1, x - 1) for x in d)\n    return s >= 1\n\ndef run():\n    result = verify(WITNESS)\n    if result:\n        return (\"PASS\", 0)\n    return (\"FAIL\", 1)\n",
+ "run": {
+  "passed": true,
+  "status": "VERIFIER_PASS",
+  "exit_code": 0,
+  "stdout": "PASS",
+  "detail": "",
+  "seconds": 0.11,
+  "code_sha256": "6281234f32c87d992a7088664b4f66fa736193b83a2a9263e7af4b6a555f1629"
+ },
+ "claim": "covers=fragment: the witness (3,4,5) is a strictly increasing tuple of integers >= 3 with Sigma 1/(d_i-1) = 13/12 >= 1, refuting the 'hypothesis class empty' assertion of L1 by explicit counterexample; the d_r <= r+1 vs d_r >= r+2 collapse is invalid and no closure of either question mark can rest on L1.",
+ "law": "Wang 7.2: an exact finite object plus a proved reduction is a CERTIFICATE. The reduction is the `claim` and is a human's to audit; the object and the verifier run are the machine's part.",
+ "timestamp": "2026-09-01T19:36:17Z"
+}

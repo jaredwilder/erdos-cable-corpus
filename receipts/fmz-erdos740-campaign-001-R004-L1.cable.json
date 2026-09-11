@@ -1,0 +1,49 @@
+{
+ "schema": "oracle.msl.cable.v1",
+ "id": "fmz-erdos740-campaign-001-R004-L1",
+ "spec": {
+  "id": "fmz-erdos740-campaign-001-R004-L1",
+  "imports": "none",
+  "definitions": "-- Finite checkable fragment of L1: the supplied R004 input record\n-- carries no numerical claim to verify. Encode the input descriptor as a\n-- finite record of (field, value) string pairs, exactly as supplied by the\n-- orchestrator, and define a total Bool-valued verifier that fails closed:\n-- it returns true only if (a) the analytic reduction field is exactly \"none\",\n-- (b) the residual claim field is exactly \"per contract\", and (c) no field\n-- of the record is a numerical claim (i.e. every field name is one of the\n-- three declared non-numeric fields). Any unknown field => false.\n\nstructure R004Input where\n  analytic_reduction : String\n  residual_claim : String\n  extra_fields : List String\n\ndef declaredNonNumericFields : List String :=\n  [\"analytic_reduction\", \"residual_claim\", \"aux_note\"]\n\ndef isNumericClaimField (s : String) : Bool :=\n  !(declaredNonNumericFields.contains s)\n\ndef checkNoNumericalClaim (r : R004Input) : Bool :=\n  r.analytic_reduction == \"none\"\n    && r.residual_claim == \"per contract\"\n    && !(r.extra_fields.any isNumericClaimField)\n\n-- The actual supplied inputs for R004/L1, as recorded by the orchestrator:\ndef suppliedInput : R004Input :=\n  { analytic_reduction := \"none\"\n    residual_claim := \"per contract\"\n    extra_fields := [\"aux_note\"] }\n\ndef L1_fragment_check : Bool := checkNoNumericalClaim suppliedInput",
+  "conclusion": "L1_fragment_check = true",
+  "proof": "by decide"
+ },
+ "formal_status": "KERNEL_CHECKED",
+ "events": [],
+ "axioms": [],
+ "attempts": [
+  {
+   "tactic": "(supplied proof)",
+   "status": "VERIFIED",
+   "seconds": 12.3,
+   "errors": [],
+   "exitCode": 0,
+   "resource_limit": null
+  }
+ ],
+ "budget_history": [
+  {
+   "tier_seconds": 900.0,
+   "outcome": "KERNEL_CHECKED"
+  }
+ ],
+ "kernel_result": {
+  "status": "VERIFIED",
+  "file": "oracle/frontier_formalizer/cable/theorems/msl_fmz-erdos740-campaign-001-R004-L1.lean",
+  "backend": "windows",
+  "project": "C:\\Users\\jared\\Local Sites\\woocommerce-enterprise\\oracle\\math\\EG411Formal",
+  "needsMathlib": false,
+  "exitCode": 0,
+  "seconds": 12.3,
+  "declarations": [
+   {
+    "declaration": "msl_fmz_erdos740_campaign_001_R004_L1",
+    "clean": true,
+    "axioms": []
+   }
+  ],
+  "errors": []
+ },
+ "lean_result_block": "LEAN_RESULT fmz-erdos740-campaign-001-R004-L1\n  FORMAL_STATUS KERNEL_CHECKED\n  FILE oracle/frontier_formalizer/cable/theorems/msl_fmz-erdos740-campaign-001-R004-L1.lean\n  THEOREMS msl_fmz_erdos740_campaign_001_R004_L1\n  BACKEND windows\n  AXIOMS -\n  TACTIC (supplied proof)\n  BUDGET 900s:KERNEL_CHECKED\n  FAILURE NONE",
+ "timestamp": "2026-09-01T21:01:52Z"
+}

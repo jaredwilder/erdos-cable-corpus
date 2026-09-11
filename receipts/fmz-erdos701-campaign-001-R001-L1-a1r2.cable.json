@@ -1,0 +1,61 @@
+{
+ "schema": "oracle.msl.cable.v1",
+ "id": "fmz-erdos701-campaign-001-R001-L1-a1r2",
+ "spec": {
+  "id": "fmz-erdos701-campaign-001-R001-L1-a1r2",
+  "imports": "none",
+  "definitions": "-- Bit k = edge (k/4, k%4), only k with k/4 < k%4 used (upper triangle).\ndef hasEdge (m k : Nat) : Bool := (m >>> k) % 2 == 1\n\ndef deg (m v : Nat) : Nat :=\n  (List.range 16).filter (fun k => k/4 < k%4 && (k/4 == v || k%4 == v) && hasEdge m k) |>.length\n\ndef chvatalStep (m : Nat) : Nat :=\n  ((List.range 16).filter (fun k => k/4 < k%4 && !(hasEdge m k) &&\n      deg m (k/4) + deg m (k%4) >= 4)\n   |>.foldl (fun acc k => acc + 2^k) m)\n\n-- Bounded iteration: at most 6 edges can ever be added (upper triangle has 6 slots),\n-- so 7 rounds reach the fixpoint. Total by construction, no recursion needed.\ndef closure (m : Nat) : Nat := (List.range 7).foldl (fun acc _ => chvatalStep acc) m\n\ndef isK4 (m : Nat) : Bool := closure m == 15\n\ndef cycEdges (c : List Nat) : List Nat :=\n  (List.range 4).map (fun i =>\n    let a := c[i]!; let b := c[(i+1)%4]!\n    if a < b then a*4+b else b*4+a)\n\ndef allEdgeBits : List Nat := (List.range 16).filter (fun k => k/4 < k%4)\n\ndef hamiltonian (m : Nat) : Bool :=\n  let E := allEdgeBits.filter (hasEdge m)\n  let cycles : List (List Nat) :=\n    [[0,1,2,3],[0,1,3,2],[0,2,1,3],[0,2,3,1],[0,3,1,2],[0,3,2,1],\n     [1,0,2,3],[1,0,3,2],[1,2,0,3],[1,2,3,0],[1,3,0,2],[1,3,2,0],\n     [2,0,1,3],[2,0,3,1],[2,1,0,3],[2,1,3,0],[2,3,0,1],[2,3,1,0],\n     [3,0,1,2],[3,0,2,1],[3,1,0,2],[3,1,2,0],[3,2,0,1],[3,2,1,0]]\n  cycles.any (fun c => (cycEdges c).all E.contains)\n\ndef check_L1 : Bool :=\n  let ham := (List.range 64).filter hamiltonian\n  (List.range 64).all (fun m => hamiltonian m == isK4 m)\n  && ham.length == 10\n  && ham.contains 15                       -- K4\n  && ((List.range 64).filter (fun m => hamiltonian m && deg m 0 + deg m 1 + deg m 2 + deg m 3 == 5)).length == 6   -- six K4\u2212e\n  && ((List.range 64).filter (fun m => hamiltonian m && deg m 0 + deg m 1 + deg m 2 + deg m 3 == 4 && !(m == 15))).length == 3  -- three C4",
+  "conclusion": "check_L1 = true",
+  "proof": "by native_decide"
+ },
+ "formal_status": "KERNEL_FAILED",
+ "events": [
+  "((supplied proof)) RAW[tmp0cejqfsx.lean:44:76: error: Tactic `native_decide` evaluated that the proposition]"
+ ],
+ "axioms": [
+  "propext",
+  "sorryAx"
+ ],
+ "attempts": [
+  {
+   "tactic": "(supplied proof)",
+   "status": "UNVERIFIED",
+   "seconds": 2.1,
+   "errors": [
+    "tmp0cejqfsx.lean:44:76: error: Tactic `native_decide` evaluated that the proposition"
+   ],
+   "exitCode": 1,
+   "resource_limit": null
+  }
+ ],
+ "budget_history": [
+  {
+   "tier_seconds": 900.0,
+   "outcome": "KERNEL_FAILED"
+  }
+ ],
+ "kernel_result": {
+  "status": "UNVERIFIED",
+  "file": "oracle/frontier_formalizer/cable/theorems/msl_fmz-erdos701-campaign-001-R001-L1-a1r2.lean",
+  "backend": "windows",
+  "project": "C:\\Users\\jared\\Local Sites\\woocommerce-enterprise\\oracle\\math\\EG411Formal",
+  "needsMathlib": false,
+  "exitCode": 1,
+  "seconds": 2.1,
+  "declarations": [
+   {
+    "declaration": "msl_fmz_erdos701_campaign_001_R001_L1_a1r2",
+    "clean": false,
+    "axioms": [
+     "propext",
+     "sorryAx"
+    ]
+   }
+  ],
+  "errors": [
+   "tmp0cejqfsx.lean:44:76: error: Tactic `native_decide` evaluated that the proposition"
+  ]
+ },
+ "lean_result_block": "LEAN_RESULT fmz-erdos701-campaign-001-R001-L1-a1r2\n  FORMAL_STATUS KERNEL_FAILED\n  FILE oracle/frontier_formalizer/cable/theorems/msl_fmz-erdos701-campaign-001-R001-L1-a1r2.lean\n  THEOREMS msl_fmz_erdos701_campaign_001_R001_L1_a1r2\n  BACKEND windows\n  AXIOMS propext, sorryAx\n  TACTIC (supplied proof)\n  BUDGET 900s:KERNEL_FAILED\n  FAILURE ((supplied proof)) RAW[tmp0cejqfsx.lean:44:76: error: Tactic `native_decide` evaluated that the proposition]\n  LAW KERNEL_FAILED does not refute the claim \u2014 the FAILURE line names what actually broke",
+ "timestamp": "2026-09-02T02:19:22Z"
+}

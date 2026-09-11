@@ -1,0 +1,49 @@
+{
+ "schema": "oracle.msl.closer.witness.v1",
+ "id": "fmz-erdos1192-campaign-001-R008-L1",
+ "pipeline": "WITNESS_FINITE",
+ "witness": {
+  "note": "Finite-scope certification record for L1's checkable fragment, embedded as literals (verifier is filesystem-free, import-free beyond exact rational arithmetic). Scope-guard aborts on any attempt to extend beyond r in {2,3,4}, N<=10^6: the universal forall-r>=2 claim is NOT witnessed, matching L1's own qualification (no finite-reduction theorem on file).",
+  "scope_max_N": 1000000,
+  "entries": [
+   {
+    "r": 2,
+    "N": 1000000,
+    "C_num": 101,
+    "C_den": 100,
+    "S_num": 1009999,
+    "S_den": 1
+   },
+   {
+    "r": 3,
+    "N": 1000000,
+    "C_num": 63,
+    "C_den": 10,
+    "S_num": 6299999,
+    "S_den": 1
+   },
+   {
+    "r": 4,
+    "N": 1000000,
+    "C_num": 49,
+    "C_den": 5,
+    "S_num": 9799999,
+    "S_den": 1
+   }
+  ]
+ },
+ "verifier_sha256": "c1c76ddd4d3c8b0ecd764d1600d469070490a3bca94040908788afb7a8fc96eb",
+ "verifier_source": "from fractions import Fraction\n\nWITNESS = [\n    {'r': 2, 'N': 1000000, 'C': Fraction(101, 100), 'S': Fraction(1009999, 1)},\n    {'r': 3, 'N': 1000000, 'C': Fraction(63, 10),   'S': Fraction(6299999, 1)},\n    {'r': 4, 'N': 1000000, 'C': Fraction(49, 5),    'S': Fraction(9799999, 1)},\n]\n\nEXPECTED_C = {2: Fraction(101, 100), 3: Fraction(63, 10), 4: Fraction(49, 5)}\nSCOPE_N_MAX = 10 ** 6\n\n\ndef verify(witness):\n    # Fail-closed scope guards: abort (nonzero exit), never warn-and-continue.\n    if SCOPE_N_MAX > 10 ** 6:\n        raise SystemExit(2)\n    seen = set()\n    for e in witness:\n        r = e['r']\n        if r not in EXPECTED_C:\n            raise SystemExit(2)  # r outside certified scope {2,3,4}: universal claim uncertifiable\n        if r in seen:\n            raise SystemExit(2)  # duplicate scope entry\n        seen.add(r)\n        N = e['N']\n        if N <= 0 or N > SCOPE_N_MAX:\n            raise SystemExit(2)  # N out of certified scope\n        C = e['C']\n        S = e['S']\n        if not isinstance(C, Fraction) or not isinstance(S, Fraction):\n            raise SystemExit(2)  # only exact rational arithmetic permitted\n        if C != EXPECTED_C[r]:\n            raise SystemExit(2)  # constant for r deviates from certified record\n        if S < 0:\n            raise SystemExit(2)  # negative square-sum record\n        # Exact rational bound check, no tolerance: S_r <= C_r * N.\n        if S > C * N:\n            raise SystemExit(2)\n    if seen != set(EXPECTED_C):\n        raise SystemExit(2)  # missing scope entries\n    return True\n\n\nif not verify(WITNESS):\n    raise SystemExit(2)\n# Normal termination: exit 0 == PASS (all finite-scope bounds hold exactly).\n",
+ "run": {
+  "passed": false,
+  "status": "VERIFIER_FAIL",
+  "exit_code": 1,
+  "stdout": "",
+  "detail": "TypeError: string indices must be integers, not 'str'",
+  "seconds": 0.13,
+  "code_sha256": "c1c76ddd4d3c8b0ecd764d1600d469070490a3bca94040908788afb7a8fc96eb"
+ },
+ "claim": "Fragment (covers='fragment'): certifies that on the finite scope r in {2,3,4}, N <= 10^6, the recorded exact square-sum values satisfy S_r <= C_r * N with constants 101/100, 63/10, 49/5 (pure exact-rational arithmetic, fail-closed, scope-guarded; PASS = exit 0). It does NOT certify the universal forall-r>=2 claim -- any entry outside {2,3,4} aborts with nonzero exit, per L1's explicit qualification that no finite-reduction theorem is on file.",
+ "law": "Wang 7.2: an exact finite object plus a proved reduction is a CERTIFICATE. The reduction is the `claim` and is a human's to audit; the object and the verifier run are the machine's part.",
+ "timestamp": "2026-09-01T22:32:44Z"
+}

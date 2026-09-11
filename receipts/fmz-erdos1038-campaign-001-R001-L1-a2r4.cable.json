@@ -1,0 +1,55 @@
+{
+ "schema": "oracle.msl.cable.v1",
+ "id": "fmz-erdos1038-campaign-001-R001-L1-a2r4",
+ "spec": {
+  "id": "fmz-erdos1038-campaign-001-R001-L1-a2r4",
+  "imports": "Mathlib",
+  "definitions": "-- no auxiliary definitions",
+  "conclusion": "\u2200 n : Nat, n % 2 = 0 \u2228 n % 2 = 1",
+  "proof": "by\n  intro n\n  have h : n % 2 < 2 := Nat.mod_lt n (by decide)\n  omega"
+ },
+ "formal_status": "KERNEL_CHECKED",
+ "events": [],
+ "axioms": [
+  "Quot.sound",
+  "propext"
+ ],
+ "attempts": [
+  {
+   "tactic": "(supplied proof)",
+   "status": "VERIFIED",
+   "seconds": 7.5,
+   "errors": [],
+   "exitCode": 0,
+   "resource_limit": null
+  }
+ ],
+ "budget_history": [
+  {
+   "tier_seconds": 900.0,
+   "outcome": "KERNEL_CHECKED"
+  }
+ ],
+ "kernel_result": {
+  "status": "VERIFIED",
+  "file": "oracle/frontier_formalizer/cable/theorems/msl_fmz-erdos1038-campaign-001-R001-L1-a2r4.lean",
+  "backend": "wsl",
+  "project": "/root/erdosfire-bench/proofs",
+  "needsMathlib": true,
+  "exitCode": 0,
+  "seconds": 4.5,
+  "declarations": [
+   {
+    "declaration": "msl_fmz_erdos1038_campaign_001_R001_L1_a2r4",
+    "clean": true,
+    "axioms": [
+     "propext",
+     "Quot.sound"
+    ]
+   }
+  ],
+  "errors": []
+ },
+ "lean_result_block": "LEAN_RESULT fmz-erdos1038-campaign-001-R001-L1-a2r4\n  FORMAL_STATUS KERNEL_CHECKED\n  FILE oracle/frontier_formalizer/cable/theorems/msl_fmz-erdos1038-campaign-001-R001-L1-a2r4.lean\n  THEOREMS msl_fmz_erdos1038_campaign_001_R001_L1_a2r4\n  BACKEND wsl\n  AXIOMS Quot.sound, propext\n  TACTIC (supplied proof)\n  BUDGET 900s:KERNEL_CHECKED\n  FAILURE NONE",
+ "timestamp": "2026-09-02T01:20:52Z"
+}

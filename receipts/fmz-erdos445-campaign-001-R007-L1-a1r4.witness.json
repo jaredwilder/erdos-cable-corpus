@@ -1,0 +1,57 @@
+{
+ "schema": "oracle.msl.closer.witness.v1",
+ "id": "fmz-erdos445-campaign-001-R007-L1-a1r4",
+ "pipeline": "WITNESS_FINITE",
+ "witness": {
+  "primes": [
+   5,
+   7,
+   11,
+   13,
+   17,
+   19,
+   23,
+   29,
+   31,
+   37,
+   41,
+   43
+  ],
+  "c_values": [
+   [
+    3,
+    5
+   ],
+   [
+    3,
+    4
+   ],
+   [
+    1,
+    1
+   ],
+   [
+    3,
+    2
+   ]
+  ],
+  "n_range": "0 <= n <= p + ceil(p^c) inclusive, per (p, c)",
+  "property": "for each (p, c, n): exists integers a, b with n < a < n + p^c, n < b < n + p^c (STRICT real bound: allowed integers n+1 .. n+floor(p^c), minus the endpoint when p^c is an exact integer) and (a*b) mod p == 1",
+  "note": "Fragment narrowed relative to L1's recorded scope: prime p=3 is EXCLUDED because (p,c,n)=(3,3/5,2) is a genuine counterexample — the strict interval (2, 2+3^(3/5)) contains only the integer 3, and 3*3 ≡ 0 mod 3. All other primes in range are retained.",
+  "expected": "verify(witness) returns True; raises on any counterexample"
+ },
+ "verifier_sha256": "45d53c3a17f5d6b907f8541f097363d10727cc38140003c37d3466b2d998f532",
+ "verifier_source": "def floor_root(p, a, b):\n    lo, hi = 0, 1\n    while pow(hi, b) <= pow(p, a):\n        hi *= 2\n    while lo < hi:\n        mid = (lo + hi + 1) // 2\n        if pow(mid, b) <= pow(p, a):\n            lo = mid\n        else:\n            hi = mid - 1\n    return lo\n\ndef ceil_root(p, a, b):\n    m = floor_root(p, a, b)\n    if pow(m, b) == pow(p, a):\n        return m\n    return m + 1\n\ndef is_prime(m):\n    if m < 2:\n        return False\n    i = 2\n    while i * i <= m:\n        if m % i == 0:\n            return False\n        i += 1\n    return True\n\ndef verify(witness):\n    primes = witness['primes']\n    for q in primes:\n        if not is_prime(q):\n            raise ValueError(('not prime', q))\n    for (a, b) in witness['c_values']:\n        if 2 * a <= b:\n            raise ValueError(('c must exceed 1/2', a, b))\n    for p in primes:\n        for (a, b) in witness['c_values']:\n            M = ceil_root(p, a, b)\n            F = floor_root(p, a, b)\n            if not (pow(F, b) <= pow(p, a) < pow(F + 1, b)):\n                raise ValueError(('floor check failed', p, a, b))\n            span = F\n            if pow(F, b) == pow(p, a):\n                span = F - 1\n            for n in range(0, p + M + 1):\n                lo = n + 1\n                hi = n + span\n                found = False\n                for x in range(lo, hi + 1):\n                    if x % p == 0:\n                        continue\n                    for y in range(lo, hi + 1):\n                        if (x * y) % p == 1:\n                            found = True\n                            break\n                    if found:\n                        break\n                if not found:\n                    raise ValueError(('counterexample', p, a, b, n))\n    return True\n",
+ "run": {
+  "passed": false,
+  "status": "VERIFIER_FAIL",
+  "exit_code": 1,
+  "stdout": "",
+  "detail": "ValueError: ('counterexample', 11, 3, 5, 3)",
+  "seconds": 0.09,
+  "code_sha256": "45d53c3a17f5d6b907f8541f097363d10727cc38140003c37d3466b2d998f532"
+ },
+ "claim": "Exact fail-closed integer verification (exact arithmetic, no floats, no I/O, strict real-bound interval handling via exact integer floor/ceil roots) that for every prime 5<=p<=43, every c in {3/5,3/4,1,3/2}, and every 0<=n<=p+ceil(p^c), there exist a,b in the strict interval (n, n+p^c) with ab≡1 mod p. This certifies the finite enumerated scope of L1 restricted to primes >= 5; the prime 3 case is refuted (see witness.note) and general-p scaling remains analytic.",
+ "law": "Wang 7.2: an exact finite object plus a proved reduction is a CERTIFICATE. The reduction is the `claim` and is a human's to audit; the object and the verifier run are the machine's part.",
+ "timestamp": "2026-09-02T02:07:38Z"
+}

@@ -1,0 +1,79 @@
+{
+ "schema": "oracle.msl.cable.v1",
+ "id": "erdos595-countable-blindness",
+ "spec": {
+  "id": "erdos595-countable-blindness",
+  "imports": "Mathlib",
+  "definitions": "open SimpleGraph Set in\ndef IsCUTF {V : Type} (G : SimpleGraph V) : Prop :=\n  \u2203 H : \u2115 \u2192 SimpleGraph V, (\u2200 i, (H i).CliqueFree 3) \u2227 G = \u2a06 i, H i\n\ntheorem cliqueFreeSubsingleton {V : Type} (H : SimpleGraph V)\n    (h : \u2200 e\u2081 \u2208 H.edgeSet, \u2200 e\u2082 \u2208 H.edgeSet, e\u2081 = e\u2082) : H.CliqueFree 3 := by\n  classical\n  intro t ht\n  obtain \u27e8hcl, hcard\u27e9 := ht\n  obtain \u27e8a, b, c, hab, hac, hbc, hteq\u27e9 := Finset.card_eq_three.mp hcard\n  have ha : a \u2208 t := by rw [hteq]; simp\n  have hb : b \u2208 t := by rw [hteq]; simp\n  have hc : c \u2208 t := by rw [hteq]; simp\n  have e1 : s(a, b) \u2208 H.edgeSet := hcl ha hb hab\n  have e2 : s(a, c) \u2208 H.edgeSet := hcl ha hc hac\n  have hEq := h _ e1 _ e2\n  rw [Sym2.eq_iff] at hEq\n  rcases hEq with \u27e8-, hbc'\u27e9 | \u27e8h1, -\u27e9\n  \u00b7 exact hbc hbc'\n  \u00b7 exact hac h1\n\ntheorem countableEdgesCUTF {V : Type} (G : SimpleGraph V) (hG : Countable G.edgeSet) :\n    IsCUTF G := by\n  classical\n  obtain \u27e8cc, hcc\u27e9 := Countable.exists_injective_nat G.edgeSet\n  refine \u27e8fun n => SimpleGraph.fromEdgeSet {e | \u2203 h : e \u2208 G.edgeSet, cc \u27e8e, h\u27e9 = n}, ?_, ?_\u27e9\n  \u00b7 intro n\n    refine cliqueFreeSubsingleton _ ?_\n    intro e\u2081 h\u2081 e\u2082 h\u2082\n    revert h\u2081 h\u2082\n    refine Sym2.ind (fun a b => ?_) e\u2081\n    refine Sym2.ind (fun x y => ?_) e\u2082\n    intro h\u2081 h\u2082\n    rw [SimpleGraph.mem_edgeSet, SimpleGraph.fromEdgeSet_adj] at h\u2081 h\u2082\n    obtain \u27e8\u27e8hm\u2081, hv\u2081\u27e9, -\u27e9 := h\u2081\n    obtain \u27e8\u27e8hm\u2082, hv\u2082\u27e9, -\u27e9 := h\u2082\n    exact congrArg Subtype.val (hcc (hv\u2081.trans hv\u2082.symm))\n  \u00b7 ext a b\n    rw [SimpleGraph.iSup_adj]\n    constructor\n    \u00b7 intro hab\n      have hm : s(a, b) \u2208 G.edgeSet := hab\n      exact \u27e8cc \u27e8s(a, b), hm\u27e9, by\n        rw [SimpleGraph.fromEdgeSet_adj]\n        exact \u27e8\u27e8hm, rfl\u27e9, G.ne_of_adj hab\u27e9\u27e9\n    \u00b7 rintro \u27e8n, hn\u27e9\n      rw [SimpleGraph.fromEdgeSet_adj] at hn\n      exact hn.1.1",
+  "hypotheses": [
+   "{V : Type}",
+   "(G : SimpleGraph V)"
+  ],
+  "conclusion": "\u2200 W : Set V, W.Countable \u2192 IsCUTF (G.induce W)",
+  "proof": "by\n  classical\n  intro W hW\n  have hsub : Countable ((G.induce W).edgeSet) := by\n    haveI : Countable W := hW.to_subtype\n    haveI : Countable (Sym2 W) := inferInstance\n    exact Subtype.countable\n  exact countableEdgesCUTF _ hsub"
+ },
+ "formal_status": "KERNEL_CHECKED",
+ "events": [],
+ "axioms": [
+  "Classical.choice",
+  "Quot.sound",
+  "propext"
+ ],
+ "attempts": [
+  {
+   "tactic": "(supplied proof)",
+   "status": "VERIFIED",
+   "seconds": 58.2,
+   "errors": [],
+   "exitCode": 0,
+   "resource_limit": null
+  }
+ ],
+ "budget_history": [
+  {
+   "tier_seconds": 120.0,
+   "outcome": "KERNEL_CHECKED"
+  }
+ ],
+ "kernel_result": {
+  "status": "VERIFIED",
+  "file": "oracle/frontier_formalizer/cable/theorems/msl_erdos595-countable-blindness.lean",
+  "backend": "wsl",
+  "project": "/root/erdosfire-bench/proofs",
+  "needsMathlib": true,
+  "exitCode": 0,
+  "seconds": 46.4,
+  "declarations": [
+   {
+    "declaration": "cliqueFreeSubsingleton",
+    "clean": true,
+    "axioms": [
+     "propext",
+     "Classical.choice",
+     "Quot.sound"
+    ]
+   },
+   {
+    "declaration": "countableEdgesCUTF",
+    "clean": true,
+    "axioms": [
+     "propext",
+     "Classical.choice",
+     "Quot.sound"
+    ]
+   },
+   {
+    "declaration": "msl_erdos595_countable_blindness",
+    "clean": true,
+    "axioms": [
+     "propext",
+     "Classical.choice",
+     "Quot.sound"
+    ]
+   }
+  ],
+  "errors": []
+ },
+ "lean_result_block": "LEAN_RESULT erdos595-countable-blindness\n  FORMAL_STATUS KERNEL_CHECKED\n  FILE oracle/frontier_formalizer/cable/theorems/msl_erdos595-countable-blindness.lean\n  THEOREMS msl_erdos595_countable_blindness\n  BACKEND wsl\n  AXIOMS Classical.choice, Quot.sound, propext\n  TACTIC (supplied proof)\n  BUDGET 120s:KERNEL_CHECKED\n  FAILURE NONE",
+ "timestamp": "2026-09-06T00:47:09Z"
+}

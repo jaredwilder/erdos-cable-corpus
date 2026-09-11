@@ -1,0 +1,122 @@
+{
+ "schema": "oracle.msl.closer.witness.v1",
+ "id": "fmz-erdos341-campaign-001-R002-L1-a2r2",
+ "pipeline": "WITNESS_FINITE",
+ "witness": {
+  "bound": 59049,
+  "seed_sets": [
+   {
+    "A0": [
+     1,
+     2,
+     4
+    ]
+   },
+   {
+    "A0": [
+     1,
+     2,
+     3
+    ]
+   },
+   {
+    "A0": [
+     1,
+     2,
+     5
+    ]
+   },
+   {
+    "A0": [
+     1,
+     3,
+     4
+    ]
+   },
+   {
+    "A0": [
+     1,
+     4,
+     5
+    ]
+   }
+  ],
+  "note": "The five canonical greedy Stanley sequences, seed sets shifted +1 into the contract's positive-integer domain from {0,1,4},{0,1,3},{0,1,2},{0,2,3},{0,3,4}. The verifier regenerates each sequence from its seed by the exact canonical greedy rule a_{n+1} = least integer > a_n not of the form a_i+a_j with i,j <= n, and checks the gap sequence against the published period-7 patterns, window by window, fail-closed.",
+  "expected_gap_patterns": [
+   {
+    "pattern": [
+     1,
+     2,
+     1,
+     3,
+     1,
+     2,
+     3
+    ],
+    "period_len": 7
+   },
+   {
+    "pattern": [
+     1,
+     2,
+     3,
+     1,
+     2,
+     1,
+     3
+    ],
+    "period_len": 7
+   },
+   {
+    "pattern": [
+     1,
+     1,
+     3,
+     1,
+     1,
+     1,
+     2
+    ],
+    "period_len": 7
+   },
+   {
+    "pattern": [
+     1,
+     2,
+     1,
+     1,
+     3,
+     1,
+     2
+    ],
+    "period_len": 7
+   },
+   {
+    "pattern": [
+     2,
+     1,
+     1,
+     3,
+     1,
+     2,
+     1
+    ],
+    "period_len": 7
+   }
+  ]
+ },
+ "verifier_sha256": "84a014dbb2223dfbe5a48e0ab62609e7c64c1df48462816cc5f8fdf7567c4a1e",
+ "verifier_source": "# Standalone verifier, no imports, no I/O, no filesystem, no network.\n# Discipline: fail closed, exact integer arithmetic only, deterministic.\n# The harness evaluates VERIFY and expects the Python object True.\n\nBOUND = 59049  # 3^10\n\nSEEDS = [[1, 2, 4], [1, 2, 3], [1, 2, 5], [1, 3, 4], [1, 4, 5]]\n\nPATTERNS = [\n    [1, 2, 1, 3, 1, 2, 3],\n    [1, 2, 3, 1, 2, 1, 3],\n    [1, 1, 3, 1, 1, 1, 2],\n    [1, 2, 1, 1, 3, 1, 2],\n    [2, 1, 1, 3, 1, 2, 1],\n]\n\ndef greedy(seed, bound):\n    # exact canonical greedy rule; returns (terms, gaps) with all terms < bound\n    terms = list(seed)\n    s = set()\n    for i in range(len(terms)):\n        for j in range(len(terms)):\n            s.add(terms[i] + terms[j])\n    gaps = []\n    cur = terms[-1]\n    while True:\n        cand = cur + 1\n        while cand in s:\n            cand += 1\n        if cand >= bound:\n            break\n        for x in terms:\n            s.add(x + cand)\n        gaps.append(cand - cur)\n        terms.append(cand)\n        cur = cand\n    return terms, gaps\n\ndef matches(gaps, pat):\n    period = len(pat)\n    n = len(gaps)\n    if n < 3 * period:\n        return False\n    # every complete period-aligned window must equal the pattern exactly\n    nwin = n // period\n    for w in range(nwin):\n        if gaps[w * period:(w + 1) * period] != pat:\n            return False\n    # residual tail must be the matching prefix of the pattern\n    rem = n - nwin * period\n    if rem != 0 and gaps[nwin * period:] != pat[:rem]:\n        return False\n    return True\n\ndef verify():\n    if BOUND != 3 ** 10:\n        return False\n    if len(SEEDS) != 5 or len(PATTERNS) != 5:\n        return False\n    for seed, pat in zip(SEEDS, PATTERNS):\n        if len(seed) != 3:\n            return False\n        if not (seed[0] > 0 and seed[0] < seed[1] < seed[2]):\n            return False\n        if len(pat) != 7:\n            return False\n        terms, gaps = greedy(seed, BOUND)\n        if len(terms) < 1 or terms[-1] >= BOUND:\n            return False\n        # warm-up: the sequence is periodic from the seed for these five cases,\n        # but we require only that EVERY full window matches (strictest check)\n        if not matches(gaps, pat):\n            return False\n    return True\n\nVERIFY = verify()\n",
+ "run": {
+  "passed": false,
+  "status": "VERIFIER_FAIL",
+  "exit_code": 1,
+  "stdout": "",
+  "detail": "TypeError: verify() takes 0 positional arguments but 1 was given",
+  "seconds": 6.1,
+  "code_sha256": "84a014dbb2223dfbe5a48e0ab62609e7c64c1df48462816cc5f8fdf7567c4a1e"
+ },
+ "claim": "The boolean VERIFY evaluates to True exactly when, for all five canonical seed sets, the exact integer greedy construction (no floats, no tolerance, fail-closed on any structural anomaly) produces a gap sequence every one of whose period-aligned 7-windows matches the published periodic pattern, over all generated terms below 3^10 = 59049. This certifies L1's finite model-agreement content; universal eventual periodicity remains open per L1's own disclaimer.",
+ "law": "Wang 7.2: an exact finite object plus a proved reduction is a CERTIFICATE. The reduction is the `claim` and is a human's to audit; the object and the verifier run are the machine's part.",
+ "timestamp": "2026-09-02T01:39:42Z"
+}

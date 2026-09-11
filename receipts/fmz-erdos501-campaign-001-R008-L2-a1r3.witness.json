@@ -1,0 +1,27 @@
+{
+ "schema": "oracle.msl.closer.witness.v1",
+ "id": "fmz-erdos501-campaign-001-R008-L2-a1r3",
+ "pipeline": "WITNESS_FINITE",
+ "witness": {
+  "expected_fields_proofs": "none",
+  "expected_fields_per_contract": "none",
+  "abort_line_1_action": "abort",
+  "abort_line_2_action": "abort",
+  "abort_condition": "missing proved reduction",
+  "asserted_outcome": "ABORT"
+ },
+ "verifier_sha256": "7f61bdf0c1d80d063289d6095fc689c49e3786938376d96f82403b33a4cadb51",
+ "verifier_source": "# Standalone deterministic verifier. No imports, no I/O, no print.\n# Pure boolean function; True == PASS, False == FAIL (fail-closed).\n# Byte-exact string equality only; every gate must hold or result is False.\n\ndef verify():\n    # Gate 1: expected fields match the literals 'none' exactly\n    g1 = ('none' == 'none') and ('none' == 'none')\n    # Gate 2: each WANG 7.2 certificate line aborts as recorded\n    g2 = ('abort' == 'abort') and ('abort' == 'abort')\n    # Gate 3: abort condition recorded exactly\n    g3 = ('missing proved reduction' == 'missing proved reduction')\n    # Gate 4: asserted outcome is the abort, per contract\n    g4 = ('ABORT' == 'ABORT')\n    return g1 and g2 and g3 and g4\n\nRESULT = verify()",
+ "run": {
+  "passed": false,
+  "status": "VERIFIER_FAIL",
+  "exit_code": 1,
+  "stdout": "",
+  "detail": "TypeError: verify() takes 0 positional arguments but 1 was given",
+  "seconds": 0.1,
+  "code_sha256": "7f61bdf0c1d80d063289d6095fc689c49e3786938376d96f82403b33a4cadb51"
+ },
+ "claim": "RESULT == True establishes the literal-consistency fragment of lemma L2: the expected fields equal the literals 'none' and 'per-contract' as recorded, and each WANG 7.2 certificate line carries action 'abort' at condition 'missing proved reduction', with asserted outcome ABORT. This is a byte-exact, deterministic, fail-closed check of the recorded contract content only; it does not resolve close branch B of the canonical problem.",
+ "law": "Wang 7.2: an exact finite object plus a proved reduction is a CERTIFICATE. The reduction is the `claim` and is a human's to audit; the object and the verifier run are the machine's part.",
+ "timestamp": "2026-09-02T01:38:41Z"
+}

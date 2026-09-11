@@ -1,0 +1,53 @@
+{
+ "schema": "oracle.msl.cable.v1",
+ "id": "fmz-erdos260-campaign-001-R003-L1",
+ "spec": {
+  "id": "fmz-erdos260-campaign-001-R003-L1",
+  "imports": "none",
+  "definitions": "def a (n : Nat) : Nat := n * n\n\ndef ps : List Nat :=\n  (List.range 200).filter (fun k => (List.range 15).any (fun n => a n == k))\n\ndef check : Bool :=\n  match ps with\n  | [] => false\n  | _ => ps.zip ps.tail |>.all (fun p => p.2 - p.1 > 0) && (ps.head! = 0)",
+  "conclusion": "check = true",
+  "proof": "by decide"
+ },
+ "formal_status": "KERNEL_CHECKED",
+ "events": [],
+ "axioms": [
+  "propext"
+ ],
+ "attempts": [
+  {
+   "tactic": "(supplied proof)",
+   "status": "VERIFIED",
+   "seconds": 31.0,
+   "errors": [],
+   "exitCode": 0,
+   "resource_limit": null
+  }
+ ],
+ "budget_history": [
+  {
+   "tier_seconds": 900.0,
+   "outcome": "KERNEL_CHECKED"
+  }
+ ],
+ "kernel_result": {
+  "status": "VERIFIED",
+  "file": "oracle/frontier_formalizer/cable/theorems/msl_fmz-erdos260-campaign-001-R003-L1.lean",
+  "backend": "windows",
+  "project": "C:\\Users\\jared\\Local Sites\\woocommerce-enterprise\\oracle\\math\\EG411Formal",
+  "needsMathlib": false,
+  "exitCode": 0,
+  "seconds": 31.0,
+  "declarations": [
+   {
+    "declaration": "msl_fmz_erdos260_campaign_001_R003_L1",
+    "clean": true,
+    "axioms": [
+     "propext"
+    ]
+   }
+  ],
+  "errors": []
+ },
+ "lean_result_block": "LEAN_RESULT fmz-erdos260-campaign-001-R003-L1\n  FORMAL_STATUS KERNEL_CHECKED\n  FILE oracle/frontier_formalizer/cable/theorems/msl_fmz-erdos260-campaign-001-R003-L1.lean\n  THEOREMS msl_fmz_erdos260_campaign_001_R003_L1\n  BACKEND windows\n  AXIOMS propext\n  TACTIC (supplied proof)\n  BUDGET 900s:KERNEL_CHECKED\n  FAILURE NONE",
+ "timestamp": "2026-09-01T19:51:11Z"
+}

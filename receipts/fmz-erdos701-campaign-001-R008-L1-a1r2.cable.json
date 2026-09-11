@@ -1,0 +1,61 @@
+{
+ "schema": "oracle.msl.cable.v1",
+ "id": "fmz-erdos701-campaign-001-R008-L1-a1r2",
+ "spec": {
+  "id": "fmz-erdos701-campaign-001-R008-L1-a1r2",
+  "imports": "none",
+  "definitions": "-- Explicit hereditary families on X = {1,2}; subfamilies written out (no monad).\n\ndef intersecting : List (List Nat) -> Bool\n  | [] => true\n  | A :: rest => rest.all (fun B => A.any (fun x => B.contains x)) && intersecting rest\n\ndef maxStar (_F : List (List Nat)) (_x : Nat) : Nat := 0 -- replaced below by concrete counts\n\ndef star1 (F : List (List Nat)) : Nat := (F.filter (fun A => A.contains 1)).length\n\ndef star2 (F : List (List Nat)) : Nat := (F.filter (fun A => A.contains 2)).length\n\n-- Exact max intersecting subfamily by brute force over the finitely many subfamilies,\n-- written explicitly per family (decidable, total).\ndef maxInt : List (List Nat) -> Nat\n  | [] => 0\n  | F =>\n    -- all subsets of F, explicitly enumerated via binary masks over the 4-element lattice\n    let subsets : List (List (List Nat)) :=\n      match F with\n      | [[], [1], [2], [1,2]] =>\n        [[], [[]], [[1]], [[2]], [[1,2]], [[],[1]], [[],[2]], [[],[1,2]],\n         [[1],[2]], [[1],[1,2]], [[2],[1,2]], [[],[1],[2]], [[],[1],[1,2]],\n         [[],[2],[1,2]], [[1],[2],[1,2]], [[],[1],[2],[1,2]]]\n      | [[], [1]] => [[], [[]], [[1]], [[],[1]]]\n      | [[]] => [[], [[]]]\n      | _ => []\n    (subsets.filter intersecting).map (fun S => S.length) |>.foldl Nat.max 0\n\ndef starBound (F : List (List Nat)) : Bool :=\n  maxInt F <= Nat.max (star1 F) (star2 F)\n\ndef emptyFam : List (List Nat) := [[]]\ndef twoChain : List (List Nat) := [[], [1]]\ndef lattice : List (List Nat) := [[], [1], [2], [1,2]]\n\n-- Vacuous case: hereditary, NOT intersecting under all-pairs convention (empty set trap).\ndef checkVacuous : Bool :=\n  intersecting emptyFam == false && (maxInt emptyFam == 0)\n\n-- Tight cases: bound holds with equality at the lattice.\ndef checkTwoChain : Bool := starBound twoChain && (maxInt twoChain == 1)\ndef checkLattice : Bool := starBound lattice && (maxInt lattice == 2) && (star1 lattice == 2) && (star2 lattice == 2)\n\ndef check_core : Bool := checkVacuous && checkTwoChain && checkLattice",
+  "conclusion": "check_core = true",
+  "proof": "by decide"
+ },
+ "formal_status": "KERNEL_FAILED",
+ "events": [
+  "((supplied proof)) REFUTED.DECIDABLE[decide proved the negation \u2014 this one IS a refutation]"
+ ],
+ "axioms": [
+  "propext",
+  "sorryAx"
+ ],
+ "attempts": [
+  {
+   "tactic": "(supplied proof)",
+   "status": "UNVERIFIED",
+   "seconds": 2.1,
+   "errors": [
+    "tmpdjv9wvga.lean:49:78: error: Tactic `decide` proved that the proposition"
+   ],
+   "exitCode": 1,
+   "resource_limit": null
+  }
+ ],
+ "budget_history": [
+  {
+   "tier_seconds": 900.0,
+   "outcome": "REFUTED_DECIDABLE"
+  }
+ ],
+ "kernel_result": {
+  "status": "UNVERIFIED",
+  "file": "oracle/frontier_formalizer/cable/theorems/msl_fmz-erdos701-campaign-001-R008-L1-a1r2.lean",
+  "backend": "windows",
+  "project": "C:\\Users\\jared\\Local Sites\\woocommerce-enterprise\\oracle\\math\\EG411Formal",
+  "needsMathlib": false,
+  "exitCode": 1,
+  "seconds": 2.1,
+  "declarations": [
+   {
+    "declaration": "msl_fmz_erdos701_campaign_001_R008_L1_a1r2",
+    "clean": false,
+    "axioms": [
+     "propext",
+     "sorryAx"
+    ]
+   }
+  ],
+  "errors": [
+   "tmpdjv9wvga.lean:49:78: error: Tactic `decide` proved that the proposition"
+  ]
+ },
+ "lean_result_block": "LEAN_RESULT fmz-erdos701-campaign-001-R008-L1-a1r2\n  FORMAL_STATUS KERNEL_FAILED\n  FILE oracle/frontier_formalizer/cable/theorems/msl_fmz-erdos701-campaign-001-R008-L1-a1r2.lean\n  THEOREMS msl_fmz_erdos701_campaign_001_R008_L1_a1r2\n  BACKEND windows\n  AXIOMS propext, sorryAx\n  TACTIC (supplied proof)\n  BUDGET 900s:REFUTED_DECIDABLE\n  FAILURE ((supplied proof)) REFUTED.DECIDABLE[decide proved the negation \u2014 this one IS a refutation]\n  LAW KERNEL_FAILED does not refute the claim \u2014 the FAILURE line names what actually broke",
+ "timestamp": "2026-09-02T02:21:22Z"
+}

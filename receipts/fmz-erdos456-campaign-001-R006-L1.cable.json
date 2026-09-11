@@ -1,0 +1,49 @@
+{
+ "schema": "oracle.msl.cable.v1",
+ "id": "fmz-erdos456-campaign-001-R006-L1",
+ "spec": {
+  "id": "fmz-erdos456-campaign-001-R006-L1",
+  "imports": "none",
+  "definitions": "def coprime (a b : Nat) : Bool := Nat.gcd a b == 1\n\ndef countCoprime (p : Nat) : Nat :=\n  (List.range (p - 1)).filter (fun k => coprime (k + 1) p) |>.length\n\ndef phiEq (p : Nat) : Bool := countCoprime p == p - 1\n\ndef isPrimeCert (p : Nat) : Bool :=\n  2 <= p && !(List.range (p - 1)).any (fun k => Nat.gcd (k + 1) p != 1)\n\ndef checkRange (n : Nat) : Bool :=\n  (List.range (n - 1)).all (fun i =>\n    let p := i + 2\n    !isPrimeCert p || phiEq p)",
+  "conclusion": "checkRange 20 = true",
+  "proof": "by decide"
+ },
+ "formal_status": "KERNEL_CHECKED",
+ "events": [],
+ "axioms": [],
+ "attempts": [
+  {
+   "tactic": "(supplied proof)",
+   "status": "VERIFIED",
+   "seconds": 2.9,
+   "errors": [],
+   "exitCode": 0,
+   "resource_limit": null
+  }
+ ],
+ "budget_history": [
+  {
+   "tier_seconds": 900.0,
+   "outcome": "KERNEL_CHECKED"
+  }
+ ],
+ "kernel_result": {
+  "status": "VERIFIED",
+  "file": "oracle/frontier_formalizer/cable/theorems/msl_fmz-erdos456-campaign-001-R006-L1.lean",
+  "backend": "windows",
+  "project": "C:\\Users\\jared\\Local Sites\\woocommerce-enterprise\\oracle\\math\\EG411Formal",
+  "needsMathlib": false,
+  "exitCode": 0,
+  "seconds": 2.9,
+  "declarations": [
+   {
+    "declaration": "msl_fmz_erdos456_campaign_001_R006_L1",
+    "clean": true,
+    "axioms": []
+   }
+  ],
+  "errors": []
+ },
+ "lean_result_block": "LEAN_RESULT fmz-erdos456-campaign-001-R006-L1\n  FORMAL_STATUS KERNEL_CHECKED\n  FILE oracle/frontier_formalizer/cable/theorems/msl_fmz-erdos456-campaign-001-R006-L1.lean\n  THEOREMS msl_fmz_erdos456_campaign_001_R006_L1\n  BACKEND windows\n  AXIOMS -\n  TACTIC (supplied proof)\n  BUDGET 900s:KERNEL_CHECKED\n  FAILURE NONE",
+ "timestamp": "2026-09-01T23:44:37Z"
+}

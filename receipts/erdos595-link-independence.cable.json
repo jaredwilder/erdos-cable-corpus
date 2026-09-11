@@ -1,0 +1,61 @@
+{
+ "schema": "oracle.msl.cable.v1",
+ "id": "erdos595-link-independence",
+ "spec": {
+  "id": "erdos595-link-independence",
+  "imports": "Mathlib",
+  "definitions": "open SimpleGraph in\n/-- The link of an edge: the apexes completing it to a triangle. -/\ndef Link {V : Type} (G : SimpleGraph V) (a b : V) : Set V := {v | G.Adj a v \u2227 G.Adj b v}",
+  "hypotheses": [
+   "{V : Type}",
+   "(G : SimpleGraph V)"
+  ],
+  "conclusion": "G.CliqueFree 4 \u2194 \u2200 a b : V, G.Adj a b \u2192 \u2200 x \u2208 Link G a b, \u2200 y \u2208 Link G a b, x \u2260 y \u2192 \u00ac G.Adj x y",
+  "proof": "by\n  classical\n  constructor\n  \u00b7 intro hK4 a b hab x hx y hy hxy hxyadj\n    obtain \u27e8hax, hbx\u27e9 := hx\n    obtain \u27e8hay, hby\u27e9 := hy\n    have h3 : G.IsNClique 3 {a, x, y} :=\n      SimpleGraph.is3Clique_triple_iff.mpr \u27e8hax, hay, hxyadj\u27e9\n    refine hK4 (insert b {a, x, y}) (h3.insert ?_)\n    intro w hw\n    simp only [Finset.mem_insert, Finset.mem_singleton] at hw\n    rcases hw with rfl | rfl | rfl\n    \u00b7 exact hab.symm\n    \u00b7 exact hbx\n    \u00b7 exact hby\n  \u00b7 intro hlink t ht\n    obtain \u27e8hcl, hcard\u27e9 := ht\n    obtain \u27e8a, b, x, y, hab, hax, hay, hbx, hby, hxy, hteq\u27e9 := Finset.card_eq_four.mp hcard\n    have ha : a \u2208 t := by rw [hteq]; simp\n    have hb : b \u2208 t := by rw [hteq]; simp\n    have hx : x \u2208 t := by rw [hteq]; simp\n    have hy : y \u2208 t := by rw [hteq]; simp\n    exact hlink a b (hcl ha hb hab) x \u27e8hcl ha hx hax, hcl hb hx hbx\u27e9\n      y \u27e8hcl ha hy hay, hcl hb hy hby\u27e9 hxy (hcl hx hy hxy)"
+ },
+ "formal_status": "KERNEL_CHECKED",
+ "events": [],
+ "axioms": [
+  "Classical.choice",
+  "Quot.sound",
+  "propext"
+ ],
+ "attempts": [
+  {
+   "tactic": "(supplied proof)",
+   "status": "VERIFIED",
+   "seconds": 85.7,
+   "errors": [],
+   "exitCode": 0,
+   "resource_limit": null
+  }
+ ],
+ "budget_history": [
+  {
+   "tier_seconds": 120.0,
+   "outcome": "KERNEL_CHECKED"
+  }
+ ],
+ "kernel_result": {
+  "status": "VERIFIED",
+  "file": "oracle/frontier_formalizer/cable/theorems/msl_erdos595-link-independence.lean",
+  "backend": "wsl",
+  "project": "/root/erdosfire-bench/proofs",
+  "needsMathlib": true,
+  "exitCode": 0,
+  "seconds": 67.0,
+  "declarations": [
+   {
+    "declaration": "msl_erdos595_link_independence",
+    "clean": true,
+    "axioms": [
+     "propext",
+     "Classical.choice",
+     "Quot.sound"
+    ]
+   }
+  ],
+  "errors": []
+ },
+ "lean_result_block": "LEAN_RESULT erdos595-link-independence\n  FORMAL_STATUS KERNEL_CHECKED\n  FILE oracle/frontier_formalizer/cable/theorems/msl_erdos595-link-independence.lean\n  THEOREMS msl_erdos595_link_independence\n  BACKEND wsl\n  AXIOMS Classical.choice, Quot.sound, propext\n  TACTIC (supplied proof)\n  BUDGET 120s:KERNEL_CHECKED\n  FAILURE NONE",
+ "timestamp": "2026-09-06T10:30:47Z"
+}

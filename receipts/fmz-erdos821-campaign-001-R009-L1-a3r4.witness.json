@@ -1,0 +1,27 @@
+{
+ "schema": "oracle.msl.closer.witness.v1",
+ "id": "fmz-erdos821-campaign-001-R009-L1-a3r4",
+ "pipeline": "WITNESS_FINITE",
+ "witness": {
+  "cutoff_m": 8192,
+  "anchors": {
+   "24": 10,
+   "36": 13,
+   "60": 20
+  }
+ },
+ "verifier_sha256": "f73f432cd7351c63219a0949cf76e9459a775bbff6cae861cc9ebc2efb14fa12",
+ "verifier_source": "from math import gcd\n\ndef verify(witness):\n    cutoff = witness[\"cutoff_m\"]\n    anchors = witness[\"anchors\"]\n    if cutoff != 8192:\n        raise AssertionError(\"unexpected cutoff\")\n    def phi(m):\n        return sum(1 for k in range(1, m + 1) if gcd(k, m) == 1)\n    counts = {}\n    for m in range(1, cutoff + 1):\n        v = phi(m)\n        counts[v] = counts.get(v, 0) + 1\n    for n_str, expected in anchors.items():\n        n = int(n_str)\n        if counts.get(n, 0) != int(expected):\n            raise AssertionError(\"anchor mismatch at n=%d: got %d, expected %d\" % (n, counts.get(n, 0), int(expected)))\n",
+ "run": {
+  "passed": false,
+  "status": "VERIFIER_FAIL",
+  "exit_code": 1,
+  "stdout": "",
+  "detail": "AssertionError: anchor mismatch at n=36: got 8, expected 13",
+  "seconds": 2.95,
+  "code_sha256": "f73f432cd7351c63219a0949cf76e9459a775bbff6cae861cc9ebc2efb14fa12"
+ },
+ "claim": "Fragment certificate (covers=\"fragment\"): verify(witness) recomputes phi exhaustively over [1,8192] with exact integer arithmetic from math.gcd only, and RAISES on any anchor mismatch; clean return = g(24)=10, g(36)=13, g(60)=20 confirmed fail-closed. This certifies the anchor content of L1 only; the completeness bound m<=2n^2 and the ∀ε unboundedness question remain open.",
+ "law": "Wang 7.2: an exact finite object plus a proved reduction is a CERTIFICATE. The reduction is the `claim` and is a human's to audit; the object and the verifier run are the machine's part.",
+ "timestamp": "2026-09-02T02:03:01Z"
+}

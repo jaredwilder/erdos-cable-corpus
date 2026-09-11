@@ -1,0 +1,75 @@
+{
+ "schema": "oracle.msl.closer.witness.v1",
+ "id": "fmz-erdos501-campaign-001-R007-L1",
+ "pipeline": "WITNESS_FINITE",
+ "witness": {
+  "graph_C5": {
+   "n": 5,
+   "edges": [
+    [
+     0,
+     1
+    ],
+    [
+     1,
+     2
+    ],
+    [
+     2,
+     3
+    ],
+    [
+     3,
+     4
+    ],
+    [
+     4,
+     0
+    ]
+   ]
+  },
+  "C5_complement_independent_witness": [
+   0,
+   2
+  ],
+  "directed_3_cycle": {
+   "n": 3,
+   "directed_edges": [
+    [
+     0,
+     1
+    ],
+    [
+     1,
+     2
+    ],
+    [
+     2,
+     0
+    ]
+   ]
+  },
+  "digraph_size3_forbidden_witness": [
+   0,
+   1
+  ],
+  "enumeration_bounds": {
+   "C5_subsets": 32,
+   "digraph_subsets": 8
+  }
+ },
+ "verifier_sha256": "214bc00574dbf747f730b79b05631287582707f2023da5d5aa7e4f426d122000",
+ "verifier_source": "def verify():\n    # fail-closed: any anomaly returns False; no imports, no I/O, exact integer arithmetic\n    # witness embedded; exhaustive 2^5 and 2^3 enumeration, abort on any mismatch\n    edges = [(0,1),(1,2),(2,3),(3,4),(4,0)]\n    dedges = [(0,1),(1,2),(2,0)]\n\n    def indep_und(sub, es):\n        s = set(sub)\n        for u, v in es:\n            if u in s and v in s:\n                return False\n        return True\n\n    def indep_dir(sub, des):\n        s = set(sub)\n        for u, v in des:\n            if u in s and v in s:\n                return False\n        return True\n\n    def subsets(n):\n        out = []\n        for mask in range(1 << n):\n            out.append([i for i in range(n) if (mask >> i) & 1])\n        return out\n\n    # --- C5 structural check ---\n    if len(edges) != 5:\n        return False\n    if sorted(edges) != [(0,1),(1,2),(2,3),(3,4),(4,0)]:\n        return False\n    sizes = [len(sub) for sub in subsets(5) if indep_und(sub, edges)]\n    if len(sizes) != 32:\n        return False            # abort on mismatch: expected full 2^5 scan\n    if max(sizes) != 2:\n        return False            # alpha(C5) != 2\n    if any(s >= 3 for s in sizes):\n        return False            # size-3 forbidding, exhaustively\n    wit = [0, 2]\n    if len(wit) != 2 or not indep_und(wit, edges):\n        return False            # witness {0,2} independent and extremal\n\n    # --- directed 3-cycle under size-3-forbidding encoding ---\n    if sorted(dedges) != [(0,1),(1,2),(2,0)]:\n        return False\n    dsizes = [len(sub) for sub in subsets(3) if indep_dir(sub, dedges)]\n    if len(dsizes) != 8:\n        return False            # abort on mismatch: expected full 2^3 scan\n    if max(dsizes) != 2:\n        return False            # alpha != 2 for the 3-cycle surrogate\n    if any(s >= 3 for s in dsizes):\n        return False            # size-3 forbidding confirmed exhaustively\n    dwit = [0, 1]\n    if not indep_dir(dwit, dedges) or len(dwit) != 2:\n        return False\n    return True\n\nRESULT = verify()\n",
+ "run": {
+  "passed": false,
+  "status": "VERIFIER_FAIL",
+  "exit_code": 1,
+  "stdout": "",
+  "detail": "TypeError: verify() takes 0 positional arguments but 1 was given",
+  "seconds": 0.12,
+  "code_sha256": "214bc00574dbf747f730b79b05631287582707f2023da5d5aa7e4f426d122000"
+ },
+ "claim": "The verifier is pure Python, import-free, I/O-free, deterministic, exact-integer, fail-closed (returns False on every anomaly). RESULT == True certifies exactly what L1 states: the exhaustive 2^5/2^3 enumerations confirm alpha=2 for the C5 surrogate with independent witness {0,2}, and alpha=2 with size-3 forbidding for the directed-3-cycle surrogate. Strictly finite-surrogate scope; NO transfer to the canonical outer-measure / Lebesgue statements (clause 1 or clause 2) is claimed or certified.",
+ "law": "Wang 7.2: an exact finite object plus a proved reduction is a CERTIFICATE. The reduction is the `claim` and is a human's to audit; the object and the verifier run are the machine's part.",
+ "timestamp": "2026-09-01T23:42:27Z"
+}

@@ -1,0 +1,25 @@
+{
+ "schema": "oracle.msl.closer.witness.v1",
+ "id": "fmz-erdos68-campaign-001-R003-L1",
+ "pipeline": "WITNESS_FINITE",
+ "witness": {
+  "n_min": 3,
+  "n_max": 40,
+  "K": 25,
+  "note": "n_min narrowed to 3: for n=2 (d=2) the stated upper bound's factor n!/(n!-2) = 2/0 is undefined, which caused ZeroDivisionError (VERIFIER_FAIL). Range [3,40] preserves the fragment content on its defined domain; n=2 case certified separately below via its exact closed form."
+ },
+ "verifier_sha256": "1c3dca3d1651636ed0a50f3c03966a001838ebf9709821eb5583b18eed8384d5",
+ "verifier_source": "from fractions import Fraction\n\ndef fact(n):\n    r = 1\n    for i in range(2, n + 1):\n        r *= i\n    return r\n\ndef verify(witness):\n    n_min = witness['n_min']\n    n_max = witness['n_max']\n    K = witness['K']\n    if n_min < 3 or n_max < n_min or K < 1:\n        raise AssertionError('bad witness parameters')\n    checks = 0\n    for n in range(n_min, n_max + 1):\n        d = fact(n)\n        lhs = Fraction(1, d - 1)\n        s = Fraction(0)\n        p = Fraction(1)\n        for j in range(1, K + 1):\n            p *= Fraction(1, d)\n            s += p\n        R = lhs - s\n        # exact closed form of the tail: R = (n!)^{-(K+1)} * n!/(n!-1)\n        tail_cf = (p * Fraction(1, d)) * Fraction(d, d - 1)\n        if R != tail_cf:\n            raise AssertionError('tail closed form mismatch n=%d' % n)\n        # lower bound: R >= (n!)^{-(K+1)}\n        lower = p * Fraction(1, d)\n        if not (lower <= R):\n            raise AssertionError('lower bound fails n=%d' % n)\n        # upper bound: R <= (n!)^{-(K+1)} * n!/(n!-2), defined for d >= 3 i.e. n >= 3\n        upper = (p * Fraction(1, d)) * Fraction(d, d - 2)\n        if not (R <= upper):\n            raise AssertionError('upper bound fails n=%d' % n)\n        # residual sign sanity after extending the sum by 35 more terms\n        s2 = s\n        p2 = p\n        for j in range(K + 1, K + 36):\n            p2 *= Fraction(1, d)\n            s2 += p2\n        if not (Fraction(1, d - 1) - s2 > 0):\n            raise AssertionError('residual sign fails n=%d' % n)\n        checks += 1\n    # n = 2 endpoint: d = 2, identity and exact tail closed form only\n    d = fact(2)\n    lhs = Fraction(1, d - 1)\n    s = Fraction(0)\n    p = Fraction(1)\n    for j in range(1, K + 1):\n        p *= Fraction(1, d)\n        s += p\n    if lhs - s != (p * Fraction(1, d)) * Fraction(d, d - 1):\n        raise AssertionError('n=2 closed form')\n    checks += 1\n    if checks != (n_max - n_min + 1) + 1:\n        raise AssertionError('check count mismatch')\n",
+ "run": {
+  "passed": true,
+  "status": "VERIFIER_PASS",
+  "exit_code": 0,
+  "stdout": "PASS",
+  "detail": "",
+  "seconds": 0.14,
+  "code_sha256": "1c3dca3d1651636ed0a50f3c03966a001838ebf9709821eb5583b18eed8384d5"
+ },
+ "claim": "Raising no exception certifies, for every n in [3,40] with K=25, the exact-Fraction geometric identity 1/(n!-1) = Σ_{j=1}^{K}(n!)^{-j} + R with closed form R = (n!)^{-(K+1)}·n!/(n!-1), both tail bounds (n!)^{-(K+1)} ≤ R ≤ (n!)^{-(K+1)}·n!/(n!-2), and residual sign; plus the n=2 endpoint identity and closed form (bounds form undefined there). Fail-closed via raises, stdlib Fractions only, no file/network/subprocess. This is the finite arithmetic content of L1; covers=fragment — the irrationality question itself remains out of certificate scope.",
+ "law": "Wang 7.2: an exact finite object plus a proved reduction is a CERTIFICATE. The reduction is the `claim` and is a human's to audit; the object and the verifier run are the machine's part.",
+ "timestamp": "2026-09-01T23:48:35Z"
+}

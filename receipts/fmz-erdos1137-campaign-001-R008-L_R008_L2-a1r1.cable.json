@@ -1,0 +1,49 @@
+{
+ "schema": "oracle.msl.cable.v1",
+ "id": "fmz-erdos1137-campaign-001-R008-L_R008_L2-a1r1",
+ "spec": {
+  "id": "fmz-erdos1137-campaign-001-R008-L_R008_L2-a1r1",
+  "imports": "none",
+  "definitions": "-- Checkable fragment of L_R008_L2: the contract-as-delivered record\n-- (CONTRACT_SHA 2f925e97a84d83a2) is exhaustively inspected as a finite object.\n-- The lemma's finite, decidable core: the delivered contract carries\n--   (a) residual = bare pointer 'per contract' (no materialized residual object),\n--   (b) analytic reduction = literal 'none',\n--   (c) zero other attachments,\n-- hence no exact closed form, recurrence, or finite procedure for R(x) is\n-- delivered by the contract itself. This is decidable by direct inspection of\n-- the finite contract record; the full non-existence claim over all possible\n-- derivations is NOT covered (covers = fragment).\n\nstructure ContractRecord where\n  sha           : String\n  residual      : String\n  analyticRed   : String\n  attachments   : List String\n\ndef delivered : ContractRecord :=\n  { sha := \"2f925e97a84d83a2\"\n    residual := \"per contract\"\n    analyticRed := \"none\"\n    attachments := [] }\n\ndef isBarePointer (r : String) : Bool := r == \"per contract\"\ndef isLiteralNone (r : String) : Bool := r == \"none\"\n\ndef absence_check (c : ContractRecord) : Bool :=\n  c.sha == \"2f925e97a84d83a2\"\n  && isBarePointer c.residual\n  && isLiteralNone c.analyticRed\n  && c.attachments = []",
+  "conclusion": "absence_check delivered = true",
+  "proof": "by decide"
+ },
+ "formal_status": "KERNEL_CHECKED",
+ "events": [],
+ "axioms": [],
+ "attempts": [
+  {
+   "tactic": "(supplied proof)",
+   "status": "VERIFIED",
+   "seconds": 7.9,
+   "errors": [],
+   "exitCode": 0,
+   "resource_limit": null
+  }
+ ],
+ "budget_history": [
+  {
+   "tier_seconds": 900.0,
+   "outcome": "KERNEL_CHECKED"
+  }
+ ],
+ "kernel_result": {
+  "status": "VERIFIED",
+  "file": "oracle/frontier_formalizer/cable/theorems/msl_fmz-erdos1137-campaign-001-R008-L_R008_L2-a1r1.lean",
+  "backend": "windows",
+  "project": "C:\\Users\\jared\\Local Sites\\woocommerce-enterprise\\oracle\\math\\EG411Formal",
+  "needsMathlib": false,
+  "exitCode": 0,
+  "seconds": 7.9,
+  "declarations": [
+   {
+    "declaration": "msl_fmz_erdos1137_campaign_001_R008_L_R008_L2_a1r1",
+    "clean": true,
+    "axioms": []
+   }
+  ],
+  "errors": []
+ },
+ "lean_result_block": "LEAN_RESULT fmz-erdos1137-campaign-001-R008-L_R008_L2-a1r1\n  FORMAL_STATUS KERNEL_CHECKED\n  FILE oracle/frontier_formalizer/cable/theorems/msl_fmz-erdos1137-campaign-001-R008-L_R008_L2-a1r1.lean\n  THEOREMS msl_fmz_erdos1137_campaign_001_R008_L_R008_L2_a1r1\n  BACKEND windows\n  AXIOMS -\n  TACTIC (supplied proof)\n  BUDGET 900s:KERNEL_CHECKED\n  FAILURE NONE",
+ "timestamp": "2026-09-02T01:47:19Z"
+}

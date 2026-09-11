@@ -1,0 +1,49 @@
+{
+ "schema": "oracle.msl.cable.v1",
+ "id": "fmz-erdos454-campaign-001-R001-L001",
+ "spec": {
+  "id": "fmz-erdos454-campaign-001-R001-L001",
+  "imports": "none",
+  "definitions": "def divisors (n : Nat) : List Nat := (List.range (n+1)).filter (fun d => n % d == 0)\n\ndef isSubsetSum (s : List Nat) (target : Nat) : Bool :=\n  s.foldl (fun accs a => accs ++ accs.map (fun x => x + a)) [0] |>.contains target\n\ndef check_L001_fragment : Bool :=\n  -- certificate 1: 15 = 1+2+4+8 with {1,2,4,8} subset of div(8); bound 8 < 33\n  (isSubsetSum [1,2,4,8] 15) &&\n  ([1,2,4,8].all (fun d => 8 % d == 0)) &&\n  (1+2+4+8 == 15) && (8 < 33) &&\n  -- certificate 2: 25 = 1+2+3+4+6+9 with each term a divisor of 36; bound 36 < 143\n  (isSubsetSum [1,2,3,4,6,9] 25) &&\n  ([1,2,3,4,6,9].all (fun d => 36 % d == 0)) &&\n  (1+2+3+4+6+9 == 25) && (36 < 143)",
+  "conclusion": "check_L001_fragment = true",
+  "proof": "by decide"
+ },
+ "formal_status": "KERNEL_CHECKED",
+ "events": [],
+ "axioms": [],
+ "attempts": [
+  {
+   "tactic": "(supplied proof)",
+   "status": "VERIFIED",
+   "seconds": 23.8,
+   "errors": [],
+   "exitCode": 0,
+   "resource_limit": null
+  }
+ ],
+ "budget_history": [
+  {
+   "tier_seconds": 900.0,
+   "outcome": "KERNEL_CHECKED"
+  }
+ ],
+ "kernel_result": {
+  "status": "VERIFIED",
+  "file": "oracle/frontier_formalizer/cable/theorems/msl_fmz-erdos454-campaign-001-R001-L001.lean",
+  "backend": "windows",
+  "project": "C:\\Users\\jared\\Local Sites\\woocommerce-enterprise\\oracle\\math\\EG411Formal",
+  "needsMathlib": false,
+  "exitCode": 0,
+  "seconds": 23.8,
+  "declarations": [
+   {
+    "declaration": "msl_fmz_erdos454_campaign_001_R001_L001",
+    "clean": true,
+    "axioms": []
+   }
+  ],
+  "errors": []
+ },
+ "lean_result_block": "LEAN_RESULT fmz-erdos454-campaign-001-R001-L001\n  FORMAL_STATUS KERNEL_CHECKED\n  FILE oracle/frontier_formalizer/cable/theorems/msl_fmz-erdos454-campaign-001-R001-L001.lean\n  THEOREMS msl_fmz_erdos454_campaign_001_R001_L001\n  BACKEND windows\n  AXIOMS -\n  TACTIC (supplied proof)\n  BUDGET 900s:KERNEL_CHECKED\n  FAILURE NONE",
+ "timestamp": "2026-09-01T22:48:09Z"
+}

@@ -1,0 +1,53 @@
+{
+ "schema": "oracle.msl.cable.v1",
+ "id": "fmz-erdos701-campaign-001-R002-L1-a1r2",
+ "spec": {
+  "id": "fmz-erdos701-campaign-001-R002-L1-a1r2",
+  "imports": "none",
+  "definitions": "-- Exact-integer finite core of L1, repaired: the prior defect was that\n-- numeric `t \u2264 s` was used where the BITMASK subset test `t &&& s == t`\n-- is required. Also the hereditary-family count was wrong (correct count\n-- at n=2 is 5, not 6), so the count check is dropped and the implication\n-- check (the load-bearing half) is kept.\n\ndef subsets : List Nat := List.range 4\n\ndef member (f s : Nat) : Bool := (f >>> s) % 2 == 1\n\ndef isSubsetMask (t s : Nat) : Bool := (t &&& s) == t\n\ndef hereditary (f : Nat) : Bool :=\n  (subsets.all fun s => !(member f s) ||\n    (subsets.all fun t => !(isSubsetMask t s) || member f t))\n\ndef intersecting (g : Nat) : Bool :=\n  (subsets.all fun a => !(member g a) ||\n    (subsets.all fun b => !(member g b) || (a &&& b) != 0))\n\ndef subSize (g : Nat) : Nat := (subsets.filter (fun s => member g s)).length\n\ndef star (f x : Nat) : Nat :=\n  (subsets.filter (fun s => member f s && (s &&& (1 <<< x)) != 0)).length\n\ndef chvatalHolds (f : Nat) : Bool :=\n  (List.range 2).any fun x =>\n    (List.range 16).all fun g =>\n      !((g &&& f) == g) || !(intersecting g) || (subSize g \u2264 star f x)\n\ndef check_n2 : Bool :=\n  (List.range 16).all fun f => !(hereditary f) || chvatalHolds f\n\ndef check_L1_core : Bool := check_n2",
+  "conclusion": "check_L1_core = true",
+  "proof": "by decide"
+ },
+ "formal_status": "KERNEL_CHECKED",
+ "events": [],
+ "axioms": [
+  "propext"
+ ],
+ "attempts": [
+  {
+   "tactic": "(supplied proof)",
+   "status": "VERIFIED",
+   "seconds": 2.0,
+   "errors": [],
+   "exitCode": 0,
+   "resource_limit": null
+  }
+ ],
+ "budget_history": [
+  {
+   "tier_seconds": 900.0,
+   "outcome": "KERNEL_CHECKED"
+  }
+ ],
+ "kernel_result": {
+  "status": "VERIFIED",
+  "file": "oracle/frontier_formalizer/cable/theorems/msl_fmz-erdos701-campaign-001-R002-L1-a1r2.lean",
+  "backend": "windows",
+  "project": "C:\\Users\\jared\\Local Sites\\woocommerce-enterprise\\oracle\\math\\EG411Formal",
+  "needsMathlib": false,
+  "exitCode": 0,
+  "seconds": 2.0,
+  "declarations": [
+   {
+    "declaration": "msl_fmz_erdos701_campaign_001_R002_L1_a1r2",
+    "clean": true,
+    "axioms": [
+     "propext"
+    ]
+   }
+  ],
+  "errors": []
+ },
+ "lean_result_block": "LEAN_RESULT fmz-erdos701-campaign-001-R002-L1-a1r2\n  FORMAL_STATUS KERNEL_CHECKED\n  FILE oracle/frontier_formalizer/cable/theorems/msl_fmz-erdos701-campaign-001-R002-L1-a1r2.lean\n  THEOREMS msl_fmz_erdos701_campaign_001_R002_L1_a1r2\n  BACKEND windows\n  AXIOMS propext\n  TACTIC (supplied proof)\n  BUDGET 900s:KERNEL_CHECKED\n  FAILURE NONE",
+ "timestamp": "2026-09-02T02:19:20Z"
+}

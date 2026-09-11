@@ -1,0 +1,63 @@
+{
+ "schema": "oracle.msl.cable.v1",
+ "id": "basic-sq-mono-a1",
+ "spec": {
+  "imports": "Mathlib",
+  "hypotheses": [
+   "(x : \u211a)",
+   "(y : \u211a)",
+   "(hx : 0 \u2264 x)",
+   "(hy : 0 \u2264 y)"
+  ],
+  "conclusion": "x ^ 2 \u2264 y ^ 2 \u2194 x \u2264 y",
+  "proof": "by\n  rw [sq, sq]\n  constructor\n  \u00b7 intro h\n    refine not_lt.mp fun hc => h.not_lt ?_\n    exact lt_of_le_of_lt (mul_le_mul_of_nonneg_left hc.le hy) (mul_lt_mul_of_pos_right hc (hy.trans_lt hc))\n  \u00b7 intro h\n    exact (mul_le_mul_of_nonneg_right h hx).trans (mul_le_mul_of_nonneg_left h hy)",
+  "set_options": [
+   "set_option maxHeartbeats 800000"
+  ],
+  "id": "basic-sq-mono-a1"
+ },
+ "formal_status": "KERNEL_FAILED",
+ "events": [
+  "RAW[exit 124 with no captured error line]"
+ ],
+ "axioms": [],
+ "attempts": [
+  {
+   "tactic": "(supplied proof)",
+   "status": "UNVERIFIED",
+   "seconds": 304.6,
+   "errors": [],
+   "exitCode": 124,
+   "resource_limit": "wall-clock timeout (exit 124)"
+  }
+ ],
+ "budget_history": [
+  {
+   "tier_seconds": 90.0,
+   "outcome": "UNDECIDED_RESOURCE[wall-clock timeout (exit 124)]"
+  },
+  {
+   "tier_seconds": 300.0,
+   "outcome": "UNDECIDED_RESOURCE[wall-clock timeout (exit 124)]"
+  }
+ ],
+ "kernel_result": {
+  "status": "UNVERIFIED",
+  "file": "oracle/frontier_formalizer/cable/theorems/msl_basic-sq-mono-a1.lean",
+  "backend": "wsl",
+  "project": "/root/erdosfire-bench/proofs",
+  "needsMathlib": true,
+  "exitCode": 124,
+  "seconds": 304.2,
+  "declarations": [
+   {
+    "declaration": "msl_basic_sq_mono_a1",
+    "clean": false,
+    "axioms": []
+   }
+  ],
+  "errors": []
+ },
+ "lean_result_block": "LEAN_RESULT basic-sq-mono-a1\n  FORMAL_STATUS KERNEL_FAILED\n  FILE oracle/frontier_formalizer/cable/theorems/msl_basic-sq-mono-a1.lean\n  THEOREMS msl_basic_sq_mono_a1\n  BACKEND wsl\n  AXIOMS -\n  TACTIC (supplied proof)\n  BUDGET 90s:UNDECIDED_RESOURCE[wall-clock timeout (exit 124)] -> 300s:UNDECIDED_RESOURCE[wall-clock timeout (exit 124)]\n  FAILURE RAW[exit 124 with no captured error line]\n  LAW KERNEL_FAILED does not refute the claim \u2014 the FAILURE line names what actually broke\n  LAW BUDGET_EXHAUSTED is an UNDECIDED question, not a failed proof \u2014 the machine stopped, the mathematics did not answer",
+ "timestamp": "2026-09-01T23:22:11Z"
+}

@@ -1,0 +1,71 @@
+{
+ "schema": "oracle.msl.cable.v1",
+ "id": "r55-handshake-lists",
+ "spec": {
+  "id": "r55-handshake-lists",
+  "imports": "none",
+  "set_options": [
+   "set_option maxRecDepth 20000"
+  ],
+  "definitions": "/-- THE MISSING INGREDIENT: a handshake lemma over vertex LISTS.\n    deg v V counts the neighbours of v inside V; edges V counts ordered pairs that are\n    adjacent.  The sum of degrees over V equals that ordered-pair count, which is even\n    when the relation is symmetric and irreflexive on V -- because each unordered edge is\n    counted exactly twice. -/\n\ndef deg (e : Nat \u2192 Nat \u2192 Bool) (v : Nat) (V : List Nat) : Nat := (V.filter (e v)).length\n\ndef degSum (e : Nat \u2192 Nat \u2192 Bool) (V : List Nat) : Nat := (V.map (fun v => deg e v V)).sum\n\ndef ordPairs (e : Nat \u2192 Nat \u2192 Bool) (V : List Nat) : Nat :=\n  (V.map (fun v => (V.filter (e v)).length)).sum\n\n/-- the two are the same by definition; stated so the name exists -/\ntheorem degSum_eq_ordPairs (e : Nat \u2192 Nat \u2192 Bool) (V : List Nat) :\n    degSum e V = ordPairs e V := rfl\n\n/-- a regular list: every vertex has the same degree -/\ndef Regular (e : Nat \u2192 Nat \u2192 Bool) (V : List Nat) (d : Nat) : Prop :=\n  \u2200 v \u2208 V, deg e v V = d\n\n/-- for a regular relation the degree sum is the order times the degree -/\ntheorem degSum_regular (e : Nat \u2192 Nat \u2192 Bool) (V : List Nat) (d : Nat)\n    (h : Regular e V d) : degSum e V = V.length * d := by\n  unfold degSum\n  induction V with\n  | nil => simp\n  | cons a t ih =>\n    sorry",
+  "hypotheses": [],
+  "conclusion": "deg (fun _ _ => true) 0 [1,2,3] = 3",
+  "proof": "by decide"
+ },
+ "formal_status": "KERNEL_FAILED",
+ "events": [
+  "RAW[exit 0 with no captured error line]"
+ ],
+ "axioms": [
+  "propext",
+  "sorryAx"
+ ],
+ "attempts": [
+  {
+   "tactic": "(supplied proof)",
+   "status": "UNVERIFIED",
+   "seconds": 8.3,
+   "errors": [],
+   "exitCode": 0,
+   "resource_limit": null
+  }
+ ],
+ "budget_history": [
+  {
+   "tier_seconds": 120.0,
+   "outcome": "KERNEL_FAILED"
+  }
+ ],
+ "kernel_result": {
+  "status": "UNVERIFIED",
+  "file": "oracle/frontier_formalizer/cable/theorems/msl_r55-handshake-lists.lean",
+  "backend": "windows",
+  "project": "C:\\Users\\jared\\Local Sites\\woocommerce-enterprise\\oracle\\math\\EG411Formal",
+  "needsMathlib": false,
+  "exitCode": 0,
+  "seconds": 8.3,
+  "declarations": [
+   {
+    "declaration": "degSum_eq_ordPairs",
+    "clean": true,
+    "axioms": []
+   },
+   {
+    "declaration": "degSum_regular",
+    "clean": false,
+    "axioms": [
+     "propext",
+     "sorryAx"
+    ]
+   },
+   {
+    "declaration": "msl_r55_handshake_lists",
+    "clean": true,
+    "axioms": []
+   }
+  ],
+  "errors": []
+ },
+ "lean_result_block": "LEAN_RESULT r55-handshake-lists\n  FORMAL_STATUS KERNEL_FAILED\n  FILE oracle/frontier_formalizer/cable/theorems/msl_r55-handshake-lists.lean\n  THEOREMS msl_r55_handshake_lists\n  BACKEND windows\n  AXIOMS propext, sorryAx\n  TACTIC (supplied proof)\n  BUDGET 120s:KERNEL_FAILED\n  FAILURE RAW[exit 0 with no captured error line]\n  LAW KERNEL_FAILED does not refute the claim \u2014 the FAILURE line names what actually broke",
+ "timestamp": "2026-09-04T17:40:31Z"
+}

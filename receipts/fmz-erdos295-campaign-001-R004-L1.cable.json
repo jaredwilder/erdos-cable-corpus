@@ -1,0 +1,51 @@
+{
+ "schema": "oracle.msl.cable.v1",
+ "id": "fmz-erdos295-campaign-001-R004-L1",
+ "spec": {
+  "id": "fmz-erdos295-campaign-001-R004-L1",
+  "imports": "Mathlib",
+  "definitions": "-- no auxiliary definitions",
+  "conclusion": "((\u2200 t : \u211a, 0 \u2264 t \u2192 (3 * (2 + t)^2 - 1 = 11 + 12 * t + 3 * t^2 \u2227 0 < 3 * (2 + t)^2 - 1)) \u2227 3 * (2 : \u211a)^2 - 1 = 11)",
+  "proof": "by\n  constructor\n  \u00b7 intro t ht\n    constructor\n    \u00b7 ring\n    \u00b7 nlinarith [sq_nonneg t]\n  \u00b7 norm_num"
+ },
+ "formal_status": "KERNEL_FAILED",
+ "events": [
+  "RAW[exit 143 with no captured error line]"
+ ],
+ "axioms": [],
+ "attempts": [
+  {
+   "tactic": "(supplied proof)",
+   "status": "UNVERIFIED",
+   "seconds": 313.9,
+   "errors": [],
+   "exitCode": 143,
+   "resource_limit": null
+  }
+ ],
+ "budget_history": [
+  {
+   "tier_seconds": 900.0,
+   "outcome": "KERNEL_FAILED"
+  }
+ ],
+ "kernel_result": {
+  "status": "UNVERIFIED",
+  "file": "oracle/frontier_formalizer/cable/theorems/msl_fmz-erdos295-campaign-001-R004-L1.lean",
+  "backend": "wsl",
+  "project": "/root/erdosfire-bench/proofs",
+  "needsMathlib": true,
+  "exitCode": 143,
+  "seconds": 275.7,
+  "declarations": [
+   {
+    "declaration": "msl_fmz_erdos295_campaign_001_R004_L1",
+    "clean": false,
+    "axioms": []
+   }
+  ],
+  "errors": []
+ },
+ "lean_result_block": "LEAN_RESULT fmz-erdos295-campaign-001-R004-L1\n  FORMAL_STATUS KERNEL_FAILED\n  FILE oracle/frontier_formalizer/cable/theorems/msl_fmz-erdos295-campaign-001-R004-L1.lean\n  THEOREMS msl_fmz_erdos295_campaign_001_R004_L1\n  BACKEND wsl\n  AXIOMS -\n  TACTIC (supplied proof)\n  BUDGET 900s:KERNEL_FAILED\n  FAILURE RAW[exit 143 with no captured error line]\n  LAW KERNEL_FAILED does not refute the claim \u2014 the FAILURE line names what actually broke",
+ "timestamp": "2026-09-01T23:23:36Z"
+}

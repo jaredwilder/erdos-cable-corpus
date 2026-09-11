@@ -1,0 +1,58 @@
+{
+ "schema": "oracle.msl.cable.v1",
+ "id": "fmz-erdos213-campaign-001-R005-L1",
+ "spec": {
+  "id": "fmz-erdos213-campaign-001-R005-L1",
+  "imports": "Mathlib",
+  "definitions": "namespace Erdos213L1\n\n/-- Fail-closed integer cross-multiplication acceptance predicate: no floating point\nanywhere; aborts (returns false) on any zero denominator BEFORE any comparison. -/\ndef accept (xNum xDen tNum tDen : \u2124) : Bool :=\n  if xDen = 0 \u2228 tDen = 0 then false\n  else decide (xNum.natAbs * tDen.natAbs \u2264 tNum.natAbs * xDen.natAbs)\n\nend Erdos213L1",
+  "conclusion": "Erdos213L1.accept_abort :\n  \u2200 (xNum xDen tNum tDen : \u2124), xDen = 0 \u2228 tDen = 0 \u2192\n    Erdos213L1.accept xNum xDen tNum tDen = false\n\nErdos213L1.accept_iff :\n  \u2200 (xNum xDen tNum tDen : \u2124), xDen \u2260 0 \u2192 tDen \u2260 0 \u2192\n    (Erdos213L1.accept xNum xDen tNum tDen = true \u2194\n      |(xNum : \u211a) / xDen| \u2264 |(tNum : \u211a) / tDen|)\n\nErdos213L1.accept_boundary :\n  \u2200 (xNum xDen tNum tDen : \u2124), xDen \u2260 0 \u2192 tDen \u2260 0 \u2192\n    xNum.natAbs * tDen.natAbs = tNum.natAbs * xDen.natAbs \u2192\n    Erdos213L1.accept xNum xDen tNum tDen = true",
+  "proof": "by\n  intro xNum xDen tNum tDen h\n  exact if_pos h\n\nby\n  intro xNum xDen tNum tDen hxd htd\n  have hnc : \u00ac(xDen = 0 \u2228 tDen = 0) := by\n    rintro (h0 | h0)\n    \u00b7 exact hxd h0\n    \u00b7 exact htd h0\n  have hbx : (0:\u211a) < |(xDen : \u211a)| := by\n    rw [abs_pos_iff]\n    simpa using hxd\n  have hbt : (0:\u211a) < |(tDen : \u211a)| := by\n    rw [abs_pos_iff]\n    simpa using htd\n  unfold accept\n  rw [if_neg hnc, decide_eq_true_eq]\n  rw [abs_div, abs_div, Int.cast_abs, Int.cast_abs, Int.cast_abs, Int.cast_abs]\n  rw [div_le_div_iff hbx hbt, \u2190 Int.cast_mul, \u2190 Int.cast_mul, Int.cast_le]\n  conv_lhs =>\n    rw [\u2190 Int.abs_eq_natAbs xNum]\n  conv_rhs =>\n    rw [\u2190 Int.abs_eq_natAbs tNum]\n  have hs : \u2200 (u v : \u2124), (|u| * |v| : \u2124) = (|u| * |v| : \u2124) := fun _ _ => rfl\n  have hsign : \u2200 (u v : \u2124), (|u| : \u2124) * |v| = (u.natAbs : \u2124) * v.natAbs := by\n    intro u v\n    rw [Int.abs_eq_natAbs u, Int.abs_eq_natAbs v]\n  rw [hsign xNum tDen, hsign tNum xDen]\n  exact Iff.rfl\n\nby\n  intro xNum xDen tNum tDen hxd htd heq\n  unfold accept\n  have hnc : \u00ac(xDen = 0 \u2228 tDen = 0) := by\n    rintro (h0 | h0)\n    \u00b7 exact hxd h0\n    \u00b7 exact htd h0\n  rw [if_neg hnc]\n  exact decide_eq_true (le_of_eq heq)"
+ },
+ "formal_status": "KERNEL_FAILED",
+ "events": [
+  "((supplied proof)) SYNTAX.FAIL[/tmp/oracle_lean_20oyb8Mr.lean:15:72: error: unexpected token ':'; expected ':=', 'where' or '|']",
+  "((supplied proof)) TYPE.FAIL NEED[Erdos213L1.accept_abort]"
+ ],
+ "axioms": [],
+ "attempts": [
+  {
+   "tactic": "(supplied proof)",
+   "status": "UNVERIFIED",
+   "seconds": 72.1,
+   "errors": [
+    "/tmp/oracle_lean_20oyb8Mr.lean:15:72: error: unexpected token ':'; expected ':=', 'where' or '|'",
+    "/tmp/oracle_lean_20oyb8Mr.lean:15:49: error(lean.unknownIdentifier): Unknown identifier `Erdos213L1.accept_abort`"
+   ],
+   "exitCode": 1,
+   "resource_limit": null
+  }
+ ],
+ "budget_history": [
+  {
+   "tier_seconds": 900.0,
+   "outcome": "KERNEL_FAILED"
+  }
+ ],
+ "kernel_result": {
+  "status": "UNVERIFIED",
+  "file": "oracle/frontier_formalizer/cable/theorems/msl_fmz-erdos213-campaign-001-R005-L1.lean",
+  "backend": "wsl",
+  "project": "/root/erdosfire-bench/proofs",
+  "needsMathlib": true,
+  "exitCode": 1,
+  "seconds": 56.8,
+  "declarations": [
+   {
+    "declaration": "msl_fmz_erdos213_campaign_001_R005_L1",
+    "clean": true,
+    "axioms": []
+   }
+  ],
+  "errors": [
+   "/tmp/oracle_lean_20oyb8Mr.lean:15:72: error: unexpected token ':'; expected ':=', 'where' or '|'",
+   "/tmp/oracle_lean_20oyb8Mr.lean:15:49: error(lean.unknownIdentifier): Unknown identifier `Erdos213L1.accept_abort`"
+  ]
+ },
+ "lean_result_block": "LEAN_RESULT fmz-erdos213-campaign-001-R005-L1\n  FORMAL_STATUS KERNEL_FAILED\n  FILE oracle/frontier_formalizer/cable/theorems/msl_fmz-erdos213-campaign-001-R005-L1.lean\n  THEOREMS msl_fmz_erdos213_campaign_001_R005_L1\n  BACKEND wsl\n  AXIOMS -\n  TACTIC (supplied proof)\n  BUDGET 900s:KERNEL_FAILED\n  FAILURE ((supplied proof)) SYNTAX.FAIL[/tmp/oracle_lean_20oyb8Mr.lean:15:72: error: unexpected token ':'; expected ':=', 'where' or '|']; ((supplied proof)) TYPE.FAIL NEED[Erdos213L1.accept_abort]\n  LAW KERNEL_FAILED does not refute the claim \u2014 the FAILURE line names what actually broke",
+ "timestamp": "2026-09-01T20:52:57Z"
+}

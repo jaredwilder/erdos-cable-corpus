@@ -1,0 +1,25 @@
+{
+ "schema": "oracle.msl.closer.witness.v1",
+ "id": "fmz-erdos683-campaign-001-R004-L1",
+ "pipeline": "WITNESS_FINITE",
+ "witness": {
+  "claim_interval": "log_5(7/5) ∈ [0.20905, 0.20906]",
+  "lower_bound_check": "5^(4181/20000) <= 7/5  <=>  5^24181 <= 7^20000",
+  "upper_bound_check": "7/5 <= 5^(10453/50000)  <=>  7^50000 <= 5^60453",
+  "note": "0.20905 = 4181/20000, 0.20906 = 10453/50000. Exact integer arithmetic; no floats, no tolerance."
+ },
+ "verifier_sha256": "dc1027e9118142c3bbaf03b3d531f0f01910eed4151e6c3802a1bb72ce59e191",
+ "verifier_source": "def verify(witness):\n    # Pure function: exact integer arithmetic, no imports, no I/O, no floats.\n    # Recompute every quantity from the witness; fail closed on any mismatch.\n    lb_num = witness['lower_bound_check']\n    ub_num = witness['upper_bound_check']\n    if lb_num != '5^24181 <= 7^20000':\n        return False\n    if ub_num != '7^50000 <= 5^60453':\n        return False\n    ok1 = pow(5, 24181) <= pow(7, 20000)      # lower bound: 5^0.20905 <= 7/5\n    ok2 = pow(7, 50000) <= pow(5, 60453)      # upper bound: 7/5 <= 5^0.20906\n    return bool(ok1 and ok2)\n\nRESULT = verify(WITNESS)",
+ "run": {
+  "passed": false,
+  "status": "VERIFIER_FAIL",
+  "exit_code": 1,
+  "stdout": "",
+  "detail": "NameError: name 'WITNESS' is not defined",
+  "seconds": 0.1,
+  "code_sha256": "dc1027e9118142c3bbaf03b3d531f0f01910eed4151e6c3802a1bb72ce59e191"
+ },
+ "claim": "FRAGMENT certificate: exact integer arithmetic establishes log_5(7/5) ∈ [0.20905, 0.20906], hence the numerical constant c ≤ 0.20905 in lemma L1 is correct. Covers the interval-verification fragment only (covers='fragment'); the (10,5) forcing argument and the P(1)=1 scope caveat are not certified here.",
+ "law": "Wang 7.2: an exact finite object plus a proved reduction is a CERTIFICATE. The reduction is the `claim` and is a human's to audit; the object and the verifier run are the machine's part.",
+ "timestamp": "2026-09-01T23:56:48Z"
+}

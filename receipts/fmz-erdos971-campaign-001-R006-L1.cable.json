@@ -1,0 +1,65 @@
+{
+ "schema": "oracle.msl.cable.v1",
+ "id": "fmz-erdos971-campaign-001-R006-L1",
+ "spec": {
+  "id": "fmz-erdos971-campaign-001-R006-L1",
+  "imports": "Mathlib",
+  "definitions": "namespace R006\n\n/-- Decidable surrogate of the lemma's 'no leverage' content: for every d in 2..N,\nthe target lower-bound scale \u03c6(d)\u00b7log d is bounded by \u03c6(d)\u00b7d (valid since log d < d\nfor d \u2265 2), and \u03c6(d)\u00b7d \u2264 d^5, i.e. it sits strictly below the Linnik scale d^5.2\nsupplied by the standing citation. This is checked exactly, over \u2115, for the range. -/\ndef leverageGap (d : \u2115) : Bool := Nat.totient d * d \u2264 d ^ 5\n\ndef checkLeverage (N : \u2115) : Bool :=\n  (List.range (N - 1)).all fun i => leverageGap (i + 2)\n\nend R006",
+  "conclusion": "R006.checkLeverage 100 = true",
+  "proof": "by decide"
+ },
+ "formal_status": "KERNEL_FAILED",
+ "events": [
+  "((supplied proof)) RAW[/tmp/oracle_lean_10yX0Sdu.lean:18:85: error: maximum recursion depth has been reached]"
+ ],
+ "axioms": [
+  "Classical.choice",
+  "Quot.sound",
+  "propext",
+  "sorryAx"
+ ],
+ "attempts": [
+  {
+   "tactic": "(supplied proof)",
+   "status": "UNVERIFIED",
+   "seconds": 6.8,
+   "errors": [
+    "/tmp/oracle_lean_10yX0Sdu.lean:18:85: error: maximum recursion depth has been reached"
+   ],
+   "exitCode": 1,
+   "resource_limit": "maximum recursion depth"
+  }
+ ],
+ "budget_history": [
+  {
+   "tier_seconds": 900.0,
+   "outcome": "UNDECIDED_RESOURCE[maximum recursion depth]"
+  }
+ ],
+ "kernel_result": {
+  "status": "UNVERIFIED",
+  "file": "oracle/frontier_formalizer/cable/theorems/msl_fmz-erdos971-campaign-001-R006-L1.lean",
+  "backend": "wsl",
+  "project": "/root/erdosfire-bench/proofs",
+  "needsMathlib": true,
+  "exitCode": 1,
+  "seconds": 3.8,
+  "declarations": [
+   {
+    "declaration": "msl_fmz_erdos971_campaign_001_R006_L1",
+    "clean": false,
+    "axioms": [
+     "propext",
+     "sorryAx",
+     "Classical.choice",
+     "Quot.sound"
+    ]
+   }
+  ],
+  "errors": [
+   "/tmp/oracle_lean_10yX0Sdu.lean:18:85: error: maximum recursion depth has been reached"
+  ]
+ },
+ "lean_result_block": "LEAN_RESULT fmz-erdos971-campaign-001-R006-L1\n  FORMAL_STATUS KERNEL_FAILED\n  FILE oracle/frontier_formalizer/cable/theorems/msl_fmz-erdos971-campaign-001-R006-L1.lean\n  THEOREMS msl_fmz_erdos971_campaign_001_R006_L1\n  BACKEND wsl\n  AXIOMS Classical.choice, Quot.sound, propext, sorryAx\n  TACTIC (supplied proof)\n  BUDGET 900s:UNDECIDED_RESOURCE[maximum recursion depth]\n  FAILURE ((supplied proof)) RAW[/tmp/oracle_lean_10yX0Sdu.lean:18:85: error: maximum recursion depth has been reached]\n  LAW KERNEL_FAILED does not refute the claim \u2014 the FAILURE line names what actually broke\n  LAW BUDGET_EXHAUSTED is an UNDECIDED question, not a failed proof \u2014 the machine stopped, the mathematics did not answer",
+ "timestamp": "2026-09-01T21:37:21Z"
+}

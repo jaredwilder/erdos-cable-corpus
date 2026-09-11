@@ -1,0 +1,53 @@
+{
+ "schema": "oracle.msl.cable.v1",
+ "id": "fmz-erdos390-campaign-001-R005-L1",
+ "spec": {
+  "id": "fmz-erdos390-campaign-001-R005-L1",
+  "imports": "Mathlib",
+  "definitions": "def verifyUndefined (residual : Option Unit) : Bool := match residual with | none => false | some _ => true",
+  "conclusion": "\u2200 residual : Option Unit, residual = none \u2192 verifyUndefined residual = false",
+  "proof": "by intro residual h; simp [h, verifyUndefined]"
+ },
+ "formal_status": "KERNEL_CHECKED",
+ "events": [],
+ "axioms": [
+  "propext"
+ ],
+ "attempts": [
+  {
+   "tactic": "(supplied proof)",
+   "status": "VERIFIED",
+   "seconds": 116.2,
+   "errors": [],
+   "exitCode": 0,
+   "resource_limit": null
+  }
+ ],
+ "budget_history": [
+  {
+   "tier_seconds": 900.0,
+   "outcome": "KERNEL_CHECKED"
+  }
+ ],
+ "kernel_result": {
+  "status": "VERIFIED",
+  "file": "oracle/frontier_formalizer/cable/theorems/msl_fmz-erdos390-campaign-001-R005-L1.lean",
+  "backend": "wsl",
+  "project": "/root/erdosfire-bench/proofs",
+  "needsMathlib": true,
+  "exitCode": 0,
+  "seconds": 111.8,
+  "declarations": [
+   {
+    "declaration": "msl_fmz_erdos390_campaign_001_R005_L1",
+    "clean": true,
+    "axioms": [
+     "propext"
+    ]
+   }
+  ],
+  "errors": []
+ },
+ "lean_result_block": "LEAN_RESULT fmz-erdos390-campaign-001-R005-L1\n  FORMAL_STATUS KERNEL_CHECKED\n  FILE oracle/frontier_formalizer/cable/theorems/msl_fmz-erdos390-campaign-001-R005-L1.lean\n  THEOREMS msl_fmz_erdos390_campaign_001_R005_L1\n  BACKEND wsl\n  AXIOMS propext\n  TACTIC (supplied proof)\n  BUDGET 900s:KERNEL_CHECKED\n  FAILURE NONE",
+ "timestamp": "2026-09-01T23:25:41Z"
+}

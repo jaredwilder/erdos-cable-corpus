@@ -1,0 +1,54 @@
+{
+ "schema": "oracle.msl.cable.v1",
+ "id": "fmz-erdos68-campaign-001-R002-T1",
+ "spec": {
+  "id": "fmz-erdos68-campaign-001-R002-T1",
+  "imports": "none",
+  "definitions": "def fact : Nat \u2192 Nat\n  | 0 => 1\n  | n+1 => (n+1) * fact n\n\ndef powN (N : Nat) : Nat \u2192 Nat\n  | 0 => 1\n  | k+1 => N * powN N k\n\n-- exact rational partial sum \u03a3_{j=1}^k N^{-j} as (num, den), built by\n-- cross-multiplication only (no floats, no gcd):\n-- step: num/den + 1/N^j = (num*N^j + den) / (den*N^j)\ndef geoSum (N : Nat) : Nat \u2192 Nat \u00d7 Nat\n  | 0 => (0, 1)\n  | k+1 =>\n      let p := powN N (k+1)\n      let (num, den) := geoSum N k\n      (num * p + den, den * p)\n\n-- Two exact checks for one (n, k), N := fact n \u2265 2:\n-- (a) closed form:  \u03a3_{j=1}^k N^{-j} = (N^k \u2212 1) / ((N\u22121)\u00b7N^k)\n--     cross-multiplied: sNum * ((N\u22121)\u00b7N^k) = (N^k \u2212 1) * sDen\n-- (b) exact remainder identity:  1/(N\u22121) = \u03a3 + N^{\u2212k}/(N\u22121)\n--     cross-multiplied against the geoSum representation:\n--     (N\u22121)\u00b7sNum + sDen/N^k = sDen   (division exact since sDen = N^k\u00b7M)\ndef check (n k : Nat) : Bool :=\n  let N := fact n\n  let (sNum, sDen) := geoSum N k\n  (sNum * ((N - 1) * powN N k) = (powN N k - 1) * sDen)\n    && ((N - 1) * sNum + sDen / powN N k = sDen)\n\ntheorem T1_holds :\n    check 2 3 = true \u2227 check 2 4 = true \u2227 check 3 2 = true \u2227 check 3 3 = true :=\n  by decide",
+  "conclusion": "check 2 3 = true \u2227 check 2 4 = true \u2227 check 3 2 = true \u2227 check 3 3 = true",
+  "proof": "by decide"
+ },
+ "formal_status": "KERNEL_CHECKED",
+ "events": [],
+ "axioms": [],
+ "attempts": [
+  {
+   "tactic": "(supplied proof)",
+   "status": "VERIFIED",
+   "seconds": 2.3,
+   "errors": [],
+   "exitCode": 0,
+   "resource_limit": null
+  }
+ ],
+ "budget_history": [
+  {
+   "tier_seconds": 900.0,
+   "outcome": "KERNEL_CHECKED"
+  }
+ ],
+ "kernel_result": {
+  "status": "VERIFIED",
+  "file": "oracle/frontier_formalizer/cable/theorems/msl_fmz-erdos68-campaign-001-R002-T1.lean",
+  "backend": "windows",
+  "project": "C:\\Users\\jared\\Local Sites\\woocommerce-enterprise\\oracle\\math\\EG411Formal",
+  "needsMathlib": false,
+  "exitCode": 0,
+  "seconds": 2.3,
+  "declarations": [
+   {
+    "declaration": "T1_holds",
+    "clean": true,
+    "axioms": []
+   },
+   {
+    "declaration": "msl_fmz_erdos68_campaign_001_R002_T1",
+    "clean": true,
+    "axioms": []
+   }
+  ],
+  "errors": []
+ },
+ "lean_result_block": "LEAN_RESULT fmz-erdos68-campaign-001-R002-T1\n  FORMAL_STATUS KERNEL_CHECKED\n  FILE oracle/frontier_formalizer/cable/theorems/msl_fmz-erdos68-campaign-001-R002-T1.lean\n  THEOREMS msl_fmz_erdos68_campaign_001_R002_T1\n  BACKEND windows\n  AXIOMS -\n  TACTIC (supplied proof)\n  BUDGET 900s:KERNEL_CHECKED\n  FAILURE NONE",
+ "timestamp": "2026-09-01T23:12:04Z"
+}

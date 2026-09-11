@@ -1,0 +1,41 @@
+{
+ "schema": "oracle.msl.closer.witness.v1",
+ "id": "fmz-erdos145-campaign-001-R008-GAPCOUNTS_D_LE_3-a1r4",
+ "pipeline": "WITNESS_FINITE",
+ "witness": {
+  "core_gaps": [
+   1,
+   1,
+   2,
+   1,
+   3,
+   1,
+   2,
+   1,
+   1,
+   3,
+   1,
+   2,
+   1,
+   1,
+   2,
+   1,
+   3,
+   1
+  ]
+ },
+ "verifier_sha256": "64c865f3ace310cda5b3950ca598a079a3cadc7613a485c059232f82f849a7b1",
+ "verifier_source": "def verify(witness):\n    core_gaps = witness['core_gaps']\n    if not isinstance(core_gaps, list):\n        raise ValueError('core_gaps must be a list')\n    if len(core_gaps) != 18:\n        raise ValueError('core_gaps must have length 18')\n    counts = {1: 0, 2: 0, 3: 0}\n    for g in core_gaps:\n        if g not in (1, 2, 3):\n            raise ValueError('gap outside finite core d in {1,2,3}')\n        counts[g] += 1\n    if counts[1] != 10:\n        raise ValueError('count of 1-gaps must be 10')\n    if counts[2] != 5:\n        raise ValueError('count of 2-gaps must be 5')\n    if counts[3] != 3:\n        raise ValueError('count of 3-gaps must be 3')\n    total = counts[1] + counts[2] + counts[3]\n    if total != 18:\n        raise ValueError('conservation total must be 18')\n    weighted = counts[1] * 1 + counts[2] * 2 + counts[3] * 3\n    if weighted != 29:\n        raise ValueError('weighted sum must be 29')\n    if weighted != 30 - 1:\n        raise ValueError('conservation identity 29 = 30 - 1 violated')\n    return True\n",
+ "run": {
+  "passed": false,
+  "status": "VERIFIER_FAIL",
+  "exit_code": 1,
+  "stdout": "",
+  "detail": "ValueError: count of 1-gaps must be 10",
+  "seconds": 0.11,
+  "code_sha256": "64c865f3ace310cda5b3950ca598a079a3cadc7613a485c059232f82f849a7b1"
+ },
+ "claim": "verify(witness) returns True (raises on any failure) iff the 18-entry core gap list yields exact integer counts {1:10, 2:5, 3:3}, conservation total=18, and the weighted identity 10+10+9=29=30-1. Deterministic, exact-integer, fail-closed, no imports, no I/O, no floats. Asymptotic clause NOT certified.",
+ "law": "Wang 7.2: an exact finite object plus a proved reduction is a CERTIFICATE. The reduction is the `claim` and is a human's to audit; the object and the verifier run are the machine's part.",
+ "timestamp": "2026-09-02T01:57:51Z"
+}

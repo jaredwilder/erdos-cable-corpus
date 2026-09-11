@@ -1,0 +1,57 @@
+{
+ "schema": "oracle.msl.cable.v1",
+ "id": "hall-deficiency-blocks",
+ "spec": {
+  "id": "hall-deficiency-blocks",
+  "imports": "Mathlib",
+  "definitions": "\n/-- A witness set `S` is *deficient* for neighborhood map `t` when the union of\n    neighborhoods of `S` is strictly smaller than `S` itself. -/\ndef Deficient {\u03b9 \u03b1 : Type*} [DecidableEq \u03b1] (t : \u03b9 \u2192 Finset \u03b1) (S : Finset \u03b9) : Prop :=\n  (S.biUnion t).card < S.card\n",
+  "conclusion": "\u2200 {iota : Type*} {alpha : Type*}, \u2200 [inst : DecidableEq alpha],\n  \u2200 (t : iota \u2192 Finset alpha) (S : Finset iota),\n    Deficient t S \u2192\n    \u00ac (\u2203 f : iota \u2192 alpha, Set.InjOn f (S : Set iota) \u2227 (\u2200 i, i \u2208 S \u2192 f i \u2208 t i))",
+  "proof": "by\n  intro iota alpha inst t S hdef\n  rintro \u27e8f, hinj, hmem\u27e9\n  have hsub : S.image f \u2286 S.biUnion t := by\n    intro y hy\n    simp only [Finset.mem_image] at hy\n    obtain \u27e8i, hi, rfl\u27e9 := hy\n    exact Finset.mem_biUnion.mpr \u27e8i, hi, hmem i hi\u27e9\n  have hcard : (S.image f).card = S.card := Finset.card_image_of_injOn hinj\n  have hle := Finset.card_le_card hsub\n  rw [hcard] at hle\n  exact absurd hle (Nat.not_le.mpr hdef)\n"
+ },
+ "formal_status": "KERNEL_CHECKED",
+ "events": [],
+ "axioms": [
+  "Classical.choice",
+  "Quot.sound",
+  "propext"
+ ],
+ "attempts": [
+  {
+   "tactic": "(supplied proof)",
+   "status": "VERIFIED",
+   "seconds": 70.6,
+   "errors": [],
+   "exitCode": 0,
+   "resource_limit": null
+  }
+ ],
+ "budget_history": [
+  {
+   "tier_seconds": 180.0,
+   "outcome": "KERNEL_CHECKED"
+  }
+ ],
+ "kernel_result": {
+  "status": "VERIFIED",
+  "file": "oracle/frontier_formalizer/cable/theorems/msl_hall-deficiency-blocks.lean",
+  "backend": "wsl",
+  "project": "/root/erdosfire-bench/proofs",
+  "needsMathlib": true,
+  "exitCode": 0,
+  "seconds": 60.0,
+  "declarations": [
+   {
+    "declaration": "msl_hall_deficiency_blocks",
+    "clean": true,
+    "axioms": [
+     "propext",
+     "Classical.choice",
+     "Quot.sound"
+    ]
+   }
+  ],
+  "errors": []
+ },
+ "lean_result_block": "LEAN_RESULT hall-deficiency-blocks\n  FORMAL_STATUS KERNEL_CHECKED\n  FILE oracle/frontier_formalizer/cable/theorems/msl_hall-deficiency-blocks.lean\n  THEOREMS msl_hall_deficiency_blocks\n  BACKEND wsl\n  AXIOMS Classical.choice, Quot.sound, propext\n  TACTIC (supplied proof)\n  BUDGET 180s:KERNEL_CHECKED\n  FAILURE NONE",
+ "timestamp": "2026-09-03T20:45:02Z"
+}

@@ -1,0 +1,64 @@
+{
+ "schema": "oracle.msl.closer.witness.v1",
+ "id": "fmz-erdos653-campaign-001-R004-L1",
+ "pipeline": "WITNESS_FINITE",
+ "witness": {
+  "n": 10,
+  "points": [
+   [
+    0,
+    0
+   ],
+   [
+    1,
+    0
+   ],
+   [
+    2,
+    0
+   ],
+   [
+    3,
+    0
+   ],
+   [
+    4,
+    0
+   ],
+   [
+    5,
+    0
+   ],
+   [
+    6,
+    0
+   ],
+   [
+    7,
+    0
+   ],
+   [
+    8,
+    0
+   ],
+   [
+    9,
+    0
+   ]
+  ]
+ },
+ "verifier_sha256": "4f9fe4aa1882c447be9441ee0deabcd05633271bbc8212b086ab290b7e3d30db",
+ "verifier_source": "def verify(witness):\n    n = witness['n']\n    pts = [(int(p[0]), int(p[1])) for p in witness['points']]\n    if len(pts) != n:\n        raise ValueError('point count mismatch')\n    if len(set(pts)) != n:\n        raise ValueError('repeated point')\n    d = [(pts[i+1][0]-pts[i][0], pts[i+1][1]-pts[i][1]) for i in range(n-1)]\n    if any(x != d[0] for x in d):\n        raise ValueError('not an arithmetic progression')\n    if d[0] == (0, 0):\n        raise ValueError('degenerate AP')\n    for i in range(n):\n        if (pts[i][0]-pts[0][0])*d[0][1] != (pts[i][1]-pts[0][1])*d[0][0]:\n            raise ValueError('off line')\n    def sq_dist(a, b):\n        return (a[0]-b[0])**2 + (a[1]-b[1])**2\n    R = []\n    for i in range(n):\n        ds = set()\n        for j in range(n):\n            if j != i:\n                ds.add(sq_dist(pts[i], pts[j]))\n        R.append(len(ds))\n    for r in R:\n        if not (1 <= r <= n-1):\n            raise ValueError('pigeonhole violated')\n    if len(set(R)) > n - 1:\n        raise ValueError('too many distinct R values')\n    for i in range(n):\n        if R[i] != max(i, n-1-i):\n            raise ValueError('AP distance profile wrong')\n    if len(set(R)) != (n + 1) // 2:\n        raise ValueError('distinct count != ceil(n/2)')\n",
+ "run": {
+  "passed": true,
+  "status": "VERIFIER_PASS",
+  "exit_code": 0,
+  "stdout": "PASS",
+  "detail": "",
+  "seconds": 0.1,
+  "code_sha256": "4f9fe4aa1882c447be9441ee0deabcd05633271bbc8212b086ab290b7e3d30db"
+ },
+ "claim": "Fragment certificate (covers='fragment'): the witness n=10, x_k=(k,0) is verified by exact integer arithmetic — no imports, no I/O, no floats — to be a nondegenerate arithmetic progression whose R-profile is R(x_i)=max(i,n-1-i) (0-indexed) with exactly ceil(10/2)=5 distinct values, each in {1,...,9}. Machine-checks the concrete instance of proved lemmas L1 (pigeonhole: R(x_i) in {1,...,n-1}, at most n-1 distinct) and L2 (AP attains collinear ceiling ceil(n/2)); verify() raises on any failed check. Does not certify the canonical open asymptotic claim.",
+ "law": "Wang 7.2: an exact finite object plus a proved reduction is a CERTIFICATE. The reduction is the `claim` and is a human's to audit; the object and the verifier run are the machine's part.",
+ "timestamp": "2026-09-01T22:00:45Z"
+}

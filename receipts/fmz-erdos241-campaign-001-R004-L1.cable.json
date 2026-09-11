@@ -1,0 +1,61 @@
+{
+ "schema": "oracle.msl.cable.v1",
+ "id": "fmz-erdos241-campaign-001-R004-L1",
+ "spec": {
+  "id": "fmz-erdos241-campaign-001-R004-L1",
+  "imports": "Mathlib",
+  "definitions": "namespace Erdos241Closer\n\n/-- The frozen B\u2083 predicate (the multiset condition inside the contract's `f`). -/\ndef IsB3 (A : Finset \u2115) : Prop :=\n  \u2200 m\u2081 m\u2082 : Multiset \u2115, m\u2081.card = 3 \u2192 m\u2082.card = 3 \u2192\n    (\u2200 x \u2208 m\u2081, x \u2208 A) \u2192 (\u2200 x \u2208 m\u2082, x \u2208 A) \u2192 m\u2081.sum = m\u2082.sum \u2192 m\u2081 = m\u2082\n\n/-- The 3-fold multiset of an ordered triple. -/\ndef tripleMs (p : \u2115 \u00d7 \u2115 \u00d7 \u2115) : Multiset \u2115 := (([p.1, p.2.1, p.2.2] : List \u2115) : Multiset \u2115)\n\nend Erdos241Closer",
+  "conclusion": "theorem Erdos241Closer.counting_bound (N : \u2115) (A : Finset \u2115)\n    (hA : \u2200 x \u2208 A, 1 \u2264 x \u2227 x \u2264 N) (hB3 : Erdos241Closer.IsB3 A) :\n    A.card ^ 3 \u2264 27 * (3 * N + 1)",
+  "proof": "by\n  classical\n  set S : Finset (\u2115 \u00d7 \u2115 \u00d7 \u2115) := A \u00d7\u02e2 (A \u00d7\u02e2 A) with hSdef\n  have hScard : S.card = A.card ^ 3 := by\n    simp only [hSdef, Finset.card_product]; ring\n  have hmemA : \u2200 p \u2208 S, \u2200 x \u2208 tripleMs p, x \u2208 A := by\n    intro p hp x hx\n    obtain \u27e8h1, h2\u27e9 := Finset.mem_product.1 hp\n    obtain \u27e8h3, h4\u27e9 := Finset.mem_product.1 h2\n    have hx' : x \u2208 ([p.1, p.2.1, p.2.2] : List \u2115) := Multiset.mem_coe.1 hx\n    simp only [List.mem_cons, List.mem_singleton] at hx'\n    rcases hx' with rfl | rfl | rfl\n    \u00b7 exact h1\n    \u00b7 exact h3\n    \u00b7 exact h4\n  have hB3app : \u2200 p q \u2208 S, p.1 + p.2.1 + p.2.2 = q.1 + q.2.1 + q.2.2 \u2192\n      tripleMs p = tripleMs q := by\n    intro p hp q hq hs\n    exact hB3 (tripleMs p) (tripleMs q) (by simp [tripleMs]) (by simp [tripleMs])\n      (hmemA p hp) (hmemA q hq) (by simpa [tripleMs] using hs)\n  have hcoord : \u2200 p q \u2208 S, tripleMs p = tripleMs q \u2192\n      p.1 \u2208 ({q.1, q.2.1, q.2.2} : Finset \u2115) \u2227\n      p.2.1 \u2208 ({q.1, q.2.1, q.2.2} : Finset \u2115) \u2227\n      p.2.2 \u2208 ({q.1, q.2.1, q.2.2} : Finset \u2115) := by\n    intro p hp q hq heq\n    have hmem : \u2200 x \u2208 tripleMs p, x \u2208 ({q.1, q.2.1, q.2.2} : Finset \u2115) := by\n      intro x hx\n      rw [heq] at hx\n      simpa [tripleMs] using hx\n    exact \u27e8hmem p.1 (by simp [tripleMs]), hmem p.2.1 (by simp [tripleMs]),\n      hmem p.2.2 (by simp [tripleMs])\u27e9\n  have hfiber : \u2200 b : \u2115,\n      (S.filter (fun p => p.1 + p.2.1 + p.2.2 = b)).card \u2264 27 := by\n    intro b\n    by_cases hex : \u2203 p\u2080, p\u2080 \u2208 S.filter (fun p => p.1 + p.2.1 + p.2.2 = b)\n    \u00b7 obtain \u27e8p\u2080, hp\u2080\u27e9 := hex\n      have hp\u2080S : p\u2080 \u2208 S := (Finset.mem_filter.1 hp\u2080).1\n      have hsum\u2080 : p\u2080.1 + p\u2080.2.1 + p\u2080.2.2 = b := (Finset.mem_filter.1 hp\u2080).2\n      have heq : tripleMs p = tripleMs p\u2080 :=\n        hB3app p hpS_aux p\u2080 hp\u2080S\n          ((Finset.mem_filter.1 (p \u2208 S.filter (fun p => p.1 + p.2.1 + p.2.2 = b) \u2192 p \u2208 S.filter (fun p => p.1 + p.2.1 + p.2.2 = b))).2.trans hsum\u2080.symm)\n      \u00b7 have hsub : S.filter (fun p => p.1 + p.2.1 + p.2.2 = b) \u2286\n          (({p\u2080.1, p\u2080.2.1, p\u2080.2.2} : Finset \u2115) \u00d7\u02e2\n           (({p\u2080.1, p\u2080.2.1, p\u2080.2.2} : Finset \u2115) \u00d7\u02e2\n            ({p\u2080.1, p\u2080.2.1, p\u2080.2.2} : Finset \u2115))) := by\n          intro p hp\n          have hpS : p \u2208 S := (Finset.mem_filter.1 hp).1\n          obtain \u27e8h1, h2, h3\u27e9 := hcoord p hpS p\u2080 hp\u2080S heq\n          exact Finset.mem_product.2 \u27e8h1, Finset.mem_product.2 \u27e8h2, h3\u27e9\u27e9\n        have hc3 : ({p\u2080.1, p\u2080.2.1, p\u2080.2.2} : Finset \u2115).card \u2264 3 := by\n          refine le_trans (Finset.card_insert_le _ _) ?_\n          refine le_trans (Finset.card_insert_le _ _) ?_\n          simp\n        have key : \u2200 n : \u2115, n \u2264 3 \u2192 n * (n * n) \u2264 27 := by\n          intro n hn\n          rcases Nat.eq_or_lt_of_le hn with rfl | h\n          \u00b7 norm_num\n          \u00b7 have h2 : n \u2264 2 := by omega\n            rcases Nat.eq_or_lt_of_le h2 with rfl | h\n            \u00b7 norm_num\n            \u00b7 have h1 : n \u2264 1 := by omega\n              rcases Nat.eq_or_lt_of_le h1 with rfl | h\n              \u00b7 norm_num\n              \u00b7 have h0 : n = 0 := Nat.le_zero.mp (by omega)\n                subst h0\n                norm_num\n        refine le_trans (Finset.card_le_card hsub) ?_\n        rw [Finset.card_product, Finset.card_product]\n        exact key _ hc3\n    \u00b7 have hempty : (S.filter (fun p => p.1 + p.2.1 + p.2.2 = b)) = \u2205 :=\n        Finset.eq_empty_iff_forall_notMem.2 (fun p hp => hex \u27e8p, hp\u27e9)\n      simp [hempty]"
+ },
+ "formal_status": "KERNEL_FAILED",
+ "events": [
+  "((supplied proof)) SYNTAX.FAIL[/tmp/oracle_lean_zMnj86oL.lean:17:48: error: unexpected token 'theorem'; expected term]",
+  "((supplied proof)) PROOF.OPEN GOALS[/tmp/oracle_lean_zMnj86oL.lean:19:37: error: unsolved goals]",
+  "((supplied proof)) SYNTAX.FAIL[/tmp/oracle_lean_zMnj86oL.lean:20:2: error: unexpected identifier; expected command]"
+ ],
+ "axioms": [],
+ "attempts": [
+  {
+   "tactic": "(supplied proof)",
+   "status": "UNVERIFIED",
+   "seconds": 6.7,
+   "errors": [
+    "/tmp/oracle_lean_zMnj86oL.lean:17:48: error: unexpected token 'theorem'; expected term",
+    "/tmp/oracle_lean_zMnj86oL.lean:19:37: error: unsolved goals",
+    "/tmp/oracle_lean_zMnj86oL.lean:20:2: error: unexpected identifier; expected command"
+   ],
+   "exitCode": 1,
+   "resource_limit": null
+  }
+ ],
+ "budget_history": [
+  {
+   "tier_seconds": 900.0,
+   "outcome": "KERNEL_FAILED"
+  }
+ ],
+ "kernel_result": {
+  "status": "UNVERIFIED",
+  "file": "oracle/frontier_formalizer/cable/theorems/msl_fmz-erdos241-campaign-001-R004-L1.lean",
+  "backend": "wsl",
+  "project": "/root/erdosfire-bench/proofs",
+  "needsMathlib": true,
+  "exitCode": 1,
+  "seconds": 4.2,
+  "declarations": [
+   {
+    "declaration": "msl_fmz_erdos241_campaign_001_R004_L1",
+    "clean": true,
+    "axioms": []
+   }
+  ],
+  "errors": [
+   "/tmp/oracle_lean_zMnj86oL.lean:17:48: error: unexpected token 'theorem'; expected term",
+   "/tmp/oracle_lean_zMnj86oL.lean:19:37: error: unsolved goals",
+   "/tmp/oracle_lean_zMnj86oL.lean:20:2: error: unexpected identifier; expected command"
+  ]
+ },
+ "lean_result_block": "LEAN_RESULT fmz-erdos241-campaign-001-R004-L1\n  FORMAL_STATUS KERNEL_FAILED\n  FILE oracle/frontier_formalizer/cable/theorems/msl_fmz-erdos241-campaign-001-R004-L1.lean\n  THEOREMS msl_fmz_erdos241_campaign_001_R004_L1\n  BACKEND wsl\n  AXIOMS -\n  TACTIC (supplied proof)\n  BUDGET 900s:KERNEL_FAILED\n  FAILURE ((supplied proof)) SYNTAX.FAIL[/tmp/oracle_lean_zMnj86oL.lean:17:48: error: unexpected token 'theorem'; expected term]; ((supplied proof)) PROOF.OPEN GOALS[/tmp/oracle_lean_zMnj86oL.lean:19:37: error: unsolved goals]; ((supplied proof)) SYNTAX.FAIL[/tmp/oracle_lean_zMnj86oL.lean:20:2: error: unexpected identifier; expected command]\n  LAW KERNEL_FAILED does not refute the claim \u2014 the FAILURE line names what actually broke",
+ "timestamp": "2026-09-01T21:22:07Z"
+}

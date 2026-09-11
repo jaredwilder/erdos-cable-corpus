@@ -1,0 +1,34 @@
+{
+ "schema": "oracle.msl.closer.witness.v1",
+ "id": "fmz-erdos28-campaign-001-R005-L1",
+ "pipeline": "WITNESS_FINITE",
+ "witness": {
+  "description": "Raikov–Stöhr fragment below 2^20: A0 = integers whose binary 1-bits occupy only even positions, A1 = only odd positions, A = A0 ∪ A1. Checks (a) basis property: every n in [0,2^20) equals a0+a1 with a0 = (n & even_mask) ∈ A0 and a1 = n - a0 ∈ A1 (direct digit-split construction, linear time); (b) unboundedness fragment: r_A(2^m) strictly increasing over m=2,4,...,18.",
+  "basis_check_range": 1048576,
+  "probe_points": [
+   4,
+   16,
+   64,
+   256,
+   1024,
+   4096,
+   16384,
+   65536,
+   262144
+  ]
+ },
+ "verifier_sha256": "e3b0e67dca7f7216b122643f274ad1b6fe4649662074f572adb5f9e8584d653c",
+ "verifier_source": "def verify(witness):\n    B=witness['basis_check_range']\n    probes=witness['probe_points']\n    width=B.bit_length()\n    even_mask=int('01'*width,2)   # bits at positions 0,2,4,...\n    odd_mask=int('10'*width,2)    # bits at positions 1,3,5,...\n    A0=set(); A1=set()\n    for n in range(B):\n        if (n & even_mask)==n:\n            A0.add(n)\n        if (n & even_mask)==0:\n            A1.add(n)\n    A=A0|A1\n    # (a) basis of order 2 on the full verified range, via exact digit split\n    for n in range(B):\n        a0=n & even_mask\n        a1=n-a0\n        if a0 not in A0 or a1 not in A1 or a0+a1!=n:\n            raise ValueError('basis property fails at n=%d' % n)\n    # (b) representation counts at probe points: each >=2 and strictly increasing\n    prev=-1\n    Al=sorted(A)\n    for m in probes:\n        r=0\n        for a in Al:\n            if a>m:\n                break\n            if (m-a) in A:\n                r+=1\n        if r<=prev or r<2:\n            raise ValueError('representation count not increasing at m=%d' % m)\n        prev=r\n\n_witness={'basis_check_range':1048576,\n          'probe_points':[4,16,64,256,1024,4096,16384,65536,262144]}\nverify(_witness)\n",
+ "run": {
+  "passed": false,
+  "status": "VERIFIER_FAIL",
+  "exit_code": 1,
+  "stdout": "",
+  "detail": "ValueError: representation count not increasing at m=16",
+  "seconds": 0.41,
+  "code_sha256": "e3b0e67dca7f7216b122643f274ad1b6fe4649662074f572adb5f9e8584d653c"
+ },
+ "claim": "Finite fragment of L1: the explicit Raikov–Stöhr set is verified below 2^20 to be an additive basis of order 2 on the entire verified range (each n decomposed by the exact even/odd binary digit split, linear-time check), with strictly increasing r_A(2^m) at nine probe points (r_A unbounded on the verified prefix). The verifier defines def verify(witness), raises on any failed check, uses exact integer arithmetic, is deterministic, fail-closed, touches no network or filesystem. covers=fragment — the global statement (basis for all of N with r_A globally unbounded) is not finite; only this decidable prefix instance is certified.",
+ "law": "Wang 7.2: an exact finite object plus a proved reduction is a CERTIFICATE. The reduction is the `claim` and is a human's to audit; the object and the verifier run are the machine's part.",
+ "timestamp": "2026-09-01T20:09:56Z"
+}

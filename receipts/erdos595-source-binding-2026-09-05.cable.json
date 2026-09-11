@@ -1,0 +1,79 @@
+{
+ "schema": "oracle.msl.cable.v1",
+ "id": "erdos595-source-binding-2026-09-05",
+ "spec": {
+  "id": "erdos595-source-binding-2026-09-05",
+  "imports": "Mathlib",
+  "definitions": "namespace Erdos595Bind\n\nvariable {V : Type*}\n\ndef Coverable (G : SimpleGraph V) : Prop :=\n  \u2203 H : \u2115 \u2192 SimpleGraph V, (\u2200 n, H n \u2264 G) \u2227 (\u2200 n, (H n).CliqueFree 3) \u2227\n    G.edgeSet \u2286 \u22c3 n, (H n).edgeSet\n\ndef CoverableSource (G : SimpleGraph V) : Prop :=\n  \u2203 H : \u2115 \u2192 SimpleGraph V, (\u2200 n, (H n).CliqueFree 3) \u2227\n    G.edgeSet = \u22c3 n, (H n).edgeSet\n\ntheorem le_of_edgeSet_subset {A B : SimpleGraph V} (h : A.edgeSet \u2286 B.edgeSet) : A \u2264 B := by\n  intro x y hxy\n  exact B.mem_edgeSet.mp (h (A.mem_edgeSet.mpr hxy))\n\ntheorem coverable_iff_source (G : SimpleGraph V) : Coverable G \u2194 CoverableSource G := by\n  constructor\n  \u00b7 rintro \u27e8H, hle, hfree, hcov\u27e9\n    refine \u27e8H, hfree, ?_\u27e9\n    apply Set.Subset.antisymm hcov\n    intro e he\n    obtain \u27e8n, hn\u27e9 := Set.mem_iUnion.mp he\n    exact SimpleGraph.edgeSet_mono (hle n) hn\n  \u00b7 rintro \u27e8H, hfree, heq\u27e9\n    refine \u27e8H, ?_, hfree, ?_\u27e9\n    \u00b7 intro n\n      apply le_of_edgeSet_subset\n      rw [heq]\n      exact Set.subset_iUnion (fun m => (H m).edgeSet) n\n    \u00b7 rw [heq]\n\nend Erdos595Bind",
+  "hypotheses": [
+   "{V : Type*}",
+   "(G : SimpleGraph V)"
+  ],
+  "conclusion": "Erdos595Bind.Coverable G \u2194 Erdos595Bind.CoverableSource G",
+  "proof": "by exact Erdos595Bind.coverable_iff_source G"
+ },
+ "formal_status": "KERNEL_CHECKED",
+ "events": [],
+ "axioms": [
+  "Classical.choice",
+  "Quot.sound",
+  "propext"
+ ],
+ "attempts": [
+  {
+   "tactic": "(supplied proof)",
+   "status": "VERIFIED",
+   "seconds": 60.6,
+   "errors": [],
+   "exitCode": 0,
+   "resource_limit": null
+  }
+ ],
+ "budget_history": [
+  {
+   "tier_seconds": 120.0,
+   "outcome": "KERNEL_CHECKED"
+  }
+ ],
+ "kernel_result": {
+  "status": "VERIFIED",
+  "file": "oracle/frontier_formalizer/cable/theorems/msl_erdos595-source-binding-2026-09-05.lean",
+  "backend": "wsl",
+  "project": "/root/erdosfire-bench/proofs",
+  "needsMathlib": true,
+  "exitCode": 0,
+  "seconds": 49.1,
+  "declarations": [
+   {
+    "declaration": "le_of_edgeSet_subset",
+    "clean": true,
+    "axioms": [
+     "propext",
+     "Classical.choice",
+     "Quot.sound"
+    ]
+   },
+   {
+    "declaration": "coverable_iff_source",
+    "clean": true,
+    "axioms": [
+     "propext",
+     "Classical.choice",
+     "Quot.sound"
+    ]
+   },
+   {
+    "declaration": "msl_erdos595_source_binding_2026_09_05",
+    "clean": true,
+    "axioms": [
+     "propext",
+     "Classical.choice",
+     "Quot.sound"
+    ]
+   }
+  ],
+  "errors": []
+ },
+ "lean_result_block": "LEAN_RESULT erdos595-source-binding-2026-09-05\n  FORMAL_STATUS KERNEL_CHECKED\n  FILE oracle/frontier_formalizer/cable/theorems/msl_erdos595-source-binding-2026-09-05.lean\n  THEOREMS msl_erdos595_source_binding_2026_09_05\n  BACKEND wsl\n  AXIOMS Classical.choice, Quot.sound, propext\n  TACTIC (supplied proof)\n  BUDGET 120s:KERNEL_CHECKED\n  FAILURE NONE",
+ "timestamp": "2026-09-05T18:14:05Z"
+}

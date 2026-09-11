@@ -1,0 +1,48 @@
+{
+ "schema": "oracle.msl.cable.v1",
+ "id": "LO50",
+ "spec": {
+  "id": "LO50",
+  "conclusion": "((List.range (50+75)).filter (fun m => m > 50 && [12,20,24,30,36,40,42,45,48,50].any (fun k => m % k == 0))).length < [12,20,24,30,36,40,42,45,48,50].length",
+  "proof": "by decide",
+  "imports": "Mathlib"
+ },
+ "formal_status": "KERNEL_CHECKED",
+ "events": [],
+ "axioms": [],
+ "attempts": [
+  {
+   "tactic": "(supplied proof)",
+   "status": "VERIFIED",
+   "seconds": 55.7,
+   "errors": [],
+   "exitCode": 0,
+   "resource_limit": null
+  }
+ ],
+ "budget_history": [
+  {
+   "tier_seconds": 120.0,
+   "outcome": "KERNEL_CHECKED"
+  }
+ ],
+ "kernel_result": {
+  "status": "VERIFIED",
+  "file": "oracle/frontier_formalizer/cable/theorems/msl_LO50.lean",
+  "backend": "wsl",
+  "project": "/root/erdosfire-bench/proofs",
+  "needsMathlib": true,
+  "exitCode": 0,
+  "seconds": 44.4,
+  "declarations": [
+   {
+    "declaration": "msl_LO50",
+    "clean": true,
+    "axioms": []
+   }
+  ],
+  "errors": []
+ },
+ "lean_result_block": "LEAN_RESULT LO50\n  FORMAL_STATUS KERNEL_CHECKED\n  FILE oracle/frontier_formalizer/cable/theorems/msl_LO50.lean\n  THEOREMS msl_LO50\n  BACKEND wsl\n  AXIOMS -\n  TACTIC (supplied proof)\n  BUDGET 120s:KERNEL_CHECKED\n  FAILURE NONE",
+ "timestamp": "2026-09-03T19:53:03Z"
+}

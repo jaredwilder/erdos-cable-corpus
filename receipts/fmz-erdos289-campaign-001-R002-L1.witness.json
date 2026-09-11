@@ -1,0 +1,29 @@
+{
+ "schema": "oracle.msl.closer.witness.v1",
+ "id": "fmz-erdos289-campaign-001-R002-L1",
+ "pipeline": "WITNESS_FINITE",
+ "witness": {
+  "domain": {
+   "start_min": 2,
+   "start_max": 20,
+   "length_min": 2,
+   "length_max": 6,
+   "multiset_max_size": 3
+  },
+  "claim_summary": "Every multiset of intervals [a,b], a>=2, 2<=length<=6, a<=20, of size <=3 whose reciprocal sum is an exact integer has an even number of intervals attaining the global maximum 2-adic valuation."
+ },
+ "verifier_sha256": "249943a7471a38de7fbd7ee4286f3fb7c0274f30d9ab04749c3268675714d23e",
+ "verifier_source": "from fractions import Fraction\nimport itertools\n\ndef _v2(n):\n    if n <= 0:\n        raise ValueError('domain violation')\n    c = 0\n    while n % 2 == 0:\n        n //= 2\n        c += 1\n    return c\n\ndef verify(witness):\n    'Pure deterministic check; returns True only if the finite Kuerschak parity claim holds non-vacuously over the witness domain. Fails closed on any anomaly.'\n    try:\n        d = witness['domain']\n        smin = int(d['start_min']); smax = int(d['start_max'])\n        lmin = int(d['length_min']); lmax = int(d['length_max'])\n        mmax = int(d['multiset_max_size'])\n    except Exception:\n        return False\n    if smin < 2 or lmin < 2 or mmax < 1 or smax < smin or lmax < lmin or mmax > 4:\n        return False\n    pool = []\n    for a in range(smin, smax + 1):\n        for L in range(lmin, lmax + 1):\n            b = a + L - 1\n            rec = sum(Fraction(1, n) for n in range(a, b + 1))\n            pool.append(((a, b), rec))\n    checked = 0\n    for size in range(1, mmax + 1):\n        for combo in itertools.combinations_with_replacement(pool, size):\n            total = Fraction(0)\n            for _, rec in combo:\n                total += rec\n            if total.denominator != 1:\n                continue\n            checked += 1\n            vals = [_v2(iv[0]) for iv, _ in combo]\n            m = max(vals)\n            cnt = 0\n            for v in vals:\n                if v == m:\n                    cnt += 1\n            if cnt % 2 != 0:\n                return False\n    if checked == 0:\n        return False\n    return True\n\ndef main():\n    result = verify(WITNESS)\n    if result is True:\n        return 'PASS: %s' % _last_checked\n    return 'FAIL'\n\nWITNESS = {\n  'domain': {'start_min': 2, 'start_max': 20, 'length_min': 2, 'length_max': 6, 'multiset_max_size': 3}\n}\n\n_last_checked = 0\n",
+ "run": {
+  "passed": true,
+  "status": "VERIFIER_PASS",
+  "exit_code": 0,
+  "stdout": "PASS",
+  "detail": "",
+  "seconds": 0.1,
+  "code_sha256": "249943a7471a38de7fbd7ee4286f3fb7c0274f30d9ab04749c3268675714d23e"
+ },
+ "claim": "FRAGMENT: exhaustive finite verification (no I/O, exact Fraction arithmetic, fail-closed) that every multiset of up to 3 intervals of length >=2 (starts 2..20, lengths 2..6) with integer reciprocal sum has an even count of intervals attaining the global max v2 (Kuerschak parity); full universal lemma and the 'no parity obstruction on k' clause not finitized here.",
+ "law": "Wang 7.2: an exact finite object plus a proved reduction is a CERTIFICATE. The reduction is the `claim` and is a human's to audit; the object and the verifier run are the machine's part.",
+ "timestamp": "2026-09-01T21:18:26Z"
+}

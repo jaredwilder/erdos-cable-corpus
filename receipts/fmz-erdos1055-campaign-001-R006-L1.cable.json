@@ -1,0 +1,62 @@
+{
+ "schema": "oracle.msl.cable.v1",
+ "id": "fmz-erdos1055-campaign-001-R006-L1",
+ "spec": {
+  "id": "fmz-erdos1055-campaign-001-R006-L1",
+  "imports": "none",
+  "definitions": "def divisorsAllFail : Nat -> Nat -> Nat -> Bool | _, _, 0 => True | n, b, k => (n % k != 0) && divisorsAllFail n b (k-1)\n\ndef check1021prime : Bool := divisorsAllFail 1021 31 31\n\ndef check1020 : Bool :=\n  (2 * 2 * 3 * 5 * 17 == 1020)\n  && (1020 / 2 == 510) && (510 / 2 == 255) && (255 / 3 == 85)\n  && (85 / 5 == 17) && (17 / 17 == 1)\n  && (17 % 2 != 0) && (17 % 3 != 0) && (17 % 5 != 0) && (17 % 7 != 0)\n  && (17 % 11 != 0) && (17 % 13 != 0)\n\ndef checkPrime7 : Bool := (7 % 2 != 0) && (7 % 3 != 0) && (2*2 > 7)\n\ndef checkPrime73 : Bool :=\n  (73 % 2 != 0) && (73 % 3 != 0) && (73 % 5 != 0) && (73 % 7 != 0)\n  && (8*8 > 73)\n\ndef check1022 : Bool :=\n  (2 * 7 * 73 == 1022) && (1022 / 2 == 511) && (511 / 7 == 73)\n  && (73 / 73 == 1) && checkPrime7 && checkPrime73\n\ndef check1021Break : Bool :=\n  check1021prime && check1020 && check1022",
+  "conclusion": "check1021Break = true",
+  "proof": "by decide"
+ },
+ "formal_status": "KERNEL_FAILED",
+ "events": [
+  "((supplied proof)) RAW[tmpvrx8407k.lean:3:4: error: fail to show termination for]",
+  "((supplied proof)) RAW[tmpvrx8407k.lean:27:78: error: Tactic `decide` failed for proposition]"
+ ],
+ "axioms": [
+  "sorryAx"
+ ],
+ "attempts": [
+  {
+   "tactic": "(supplied proof)",
+   "status": "UNVERIFIED",
+   "seconds": 9.1,
+   "errors": [
+    "tmpvrx8407k.lean:3:4: error: fail to show termination for",
+    "tmpvrx8407k.lean:27:78: error: Tactic `decide` failed for proposition"
+   ],
+   "exitCode": 1,
+   "resource_limit": null
+  }
+ ],
+ "budget_history": [
+  {
+   "tier_seconds": 900.0,
+   "outcome": "KERNEL_FAILED"
+  }
+ ],
+ "kernel_result": {
+  "status": "UNVERIFIED",
+  "file": "oracle/frontier_formalizer/cable/theorems/msl_fmz-erdos1055-campaign-001-R006-L1.lean",
+  "backend": "windows",
+  "project": "C:\\Users\\jared\\Local Sites\\woocommerce-enterprise\\oracle\\math\\EG411Formal",
+  "needsMathlib": false,
+  "exitCode": 1,
+  "seconds": 9.1,
+  "declarations": [
+   {
+    "declaration": "msl_fmz_erdos1055_campaign_001_R006_L1",
+    "clean": false,
+    "axioms": [
+     "sorryAx"
+    ]
+   }
+  ],
+  "errors": [
+   "tmpvrx8407k.lean:3:4: error: fail to show termination for",
+   "tmpvrx8407k.lean:27:78: error: Tactic `decide` failed for proposition"
+  ]
+ },
+ "lean_result_block": "LEAN_RESULT fmz-erdos1055-campaign-001-R006-L1\n  FORMAL_STATUS KERNEL_FAILED\n  FILE oracle/frontier_formalizer/cable/theorems/msl_fmz-erdos1055-campaign-001-R006-L1.lean\n  THEOREMS msl_fmz_erdos1055_campaign_001_R006_L1\n  BACKEND windows\n  AXIOMS sorryAx\n  TACTIC (supplied proof)\n  BUDGET 900s:KERNEL_FAILED\n  FAILURE ((supplied proof)) RAW[tmpvrx8407k.lean:3:4: error: fail to show termination for]; ((supplied proof)) RAW[tmpvrx8407k.lean:27:78: error: Tactic `decide` failed for proposition]\n  LAW KERNEL_FAILED does not refute the claim \u2014 the FAILURE line names what actually broke",
+ "timestamp": "2026-09-01T23:33:50Z"
+}

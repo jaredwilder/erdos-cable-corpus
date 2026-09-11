@@ -1,0 +1,115 @@
+{
+ "schema": "oracle.msl.cable.v1",
+ "id": "erdos595-countable-back-2026-09-05",
+ "spec": {
+  "id": "erdos595-countable-back-2026-09-05",
+  "imports": "Mathlib",
+  "definitions": "namespace Erdos595CB\n\nvariable {V : Type*}\n\ndef Coverable (G : SimpleGraph V) : Prop :=\n  \u2203 H : \u2115 \u2192 SimpleGraph V, (\u2200 n, H n \u2264 G) \u2227 (\u2200 n, (H n).CliqueFree 3) \u2227\n    G.edgeSet \u2286 \u22c3 n, (H n).edgeSet\n\ntheorem cliqueFree_three_iff (G : SimpleGraph V) :\n    G.CliqueFree 3 \u2194 \u2200 x y z : V, G.Adj x y \u2192 G.Adj y z \u2192 G.Adj x z \u2192 False := by\n  classical\n  constructor\n  \u00b7 intro hG x y z hxy hyz hxz\n    exact hG {x, y, z} (SimpleGraph.is3Clique_triple_iff.mpr \u27e8hxy, hxz, hyz\u27e9)\n  \u00b7 intro h s hs\n    obtain \u27e8x, y, z, hxy, hxz, hyz, hset\u27e9 := Finset.card_eq_three.mp hs.2\n    subst hset\n    exact h x y z (hs.1 (by simp) (by simp) hxy) (hs.1 (by simp) (by simp) hyz)\n      (hs.1 (by simp) (by simp) hxz)\n\ntheorem colouring_cover (G : SimpleGraph V) (c : Sym2 V \u2192 \u2115)\n    (hc : \u2200 x y z : V, G.Adj x y \u2192 G.Adj y z \u2192 G.Adj x z \u2192\n      \u00ac (c s(x, y) = c s(y, z) \u2227 c s(x, z) = c s(y, z))) : Coverable G := by\n  classical\n  refine \u27e8fun n => SimpleGraph.fromEdgeSet {e | e \u2208 G.edgeSet \u2227 c e = n}, ?_, ?_, ?_\u27e9\n  \u00b7 intro n x y h\n    rw [SimpleGraph.fromEdgeSet_adj] at h\n    exact G.mem_edgeSet.mp h.1.1\n  \u00b7 intro n\n    rw [cliqueFree_three_iff]\n    intro x y z hxy hyz hxz\n    rw [SimpleGraph.fromEdgeSet_adj] at hxy hyz hxz\n    exact hc x y z (G.mem_edgeSet.mp hxy.1.1) (G.mem_edgeSet.mp hyz.1.1)\n      (G.mem_edgeSet.mp hxz.1.1)\n      \u27e8hxy.1.2.trans hyz.1.2.symm, hxz.1.2.trans hyz.1.2.symm\u27e9\n  \u00b7 intro e he\n    refine Set.mem_iUnion.mpr \u27e8c e, ?_\u27e9\n    rw [SimpleGraph.edgeSet_fromEdgeSet]\n    exact \u27e8\u27e8he, rfl\u27e9, fun hd => (G.not_isDiag_of_mem_edgeSet he) hd\u27e9\n\nvariable [LinearOrder V]\n\nnoncomputable def backCol (g : V \u2192 V \u2192 \u2115) : Sym2 V \u2192 \u2115 :=\n  Sym2.lift \u27e8fun x y => if x < y then g y x else g x y, by\n    intro x y\n    rcases lt_trichotomy x y with h | h | h\n    \u00b7 simp [h, asymm h]\n    \u00b7 simp [h]\n    \u00b7 simp [h, asymm h]\u27e9\n\ntheorem backCol_lt (g : V \u2192 V \u2192 \u2115) (a b : V) (h : a < b) :\n    backCol g s(a, b) = g b a := by\n  simp [backCol, Sym2.lift_mk, h]\n\ntheorem backCol_gt (g : V \u2192 V \u2192 \u2115) (a b : V) (h : b < a) :\n    backCol g s(a, b) = g a b := by\n  simp [backCol, Sym2.lift_mk, asymm h]\n\ntheorem coverable_of_local_colouring (G : SimpleGraph V) (g : V \u2192 V \u2192 \u2115)\n    (hg : \u2200 v a b : V, a < v \u2192 b < v \u2192 G.Adj a v \u2192 G.Adj b v \u2192 G.Adj a b \u2192\n      g v a \u2260 g v b) : Coverable G := by\n  classical\n  refine colouring_cover G (backCol g) ?_\n  rintro x y z hxy hyz hxz \u27e8h1, h2\u27e9\n  rcases lt_trichotomy x y with hA | hA | hA\n  \u00b7 rcases lt_trichotomy y z with hB | hB | hB\n    \u00b7 have hxz' : x < z := hA.trans hB\n      rw [backCol_lt g x z hxz', backCol_lt g y z hB] at h2\n      exact hg z x y hxz' hB hxz hyz hxy h2\n    \u00b7 exact hyz.ne hB\n    \u00b7 rw [backCol_lt g x y hA, backCol_gt g y z hB] at h1\n      exact hg y x z hA hB hxy hyz.symm hxz h1\n  \u00b7 exact hxy.ne hA\n  \u00b7 rcases lt_trichotomy x z with hB | hB | hB\n    \u00b7 have hyz' : y < z := hA.trans hB\n      rw [backCol_lt g x z hB, backCol_lt g y z hyz'] at h2\n      exact hg z x y hB hyz' hxz hyz hxy h2\n    \u00b7 exact hxz.ne hB\n    \u00b7 rw [backCol_gt g x y hA] at h1\n      rw [backCol_gt g x z hB] at h2\n      exact hg x y z hA hB hxy.symm hxz.symm hyz (h1.trans h2.symm)\n\ntheorem coverable_of_countable_back (G : SimpleGraph V)\n    (hcnt : \u2200 v : V, {u : V | u < v \u2227 G.Adj u v}.Countable) : Coverable G := by\n  classical\n  have hinj : \u2200 v : V, \u2203 f : V \u2192 \u2115, Set.InjOn f {u : V | u < v \u2227 G.Adj u v} := by\n    intro v\n    exact Set.countable_iff_exists_injOn.mp (hcnt v)\n  choose g hgi using hinj\n  refine coverable_of_local_colouring G g ?_\n  intro v a b hav hbv hadj hbdj hab hEq\n  exact hab.ne (hgi v \u27e8hav, hadj\u27e9 \u27e8hbv, hbdj\u27e9 hEq)\n\nend Erdos595CB",
+  "hypotheses": [
+   "{V : Type*}",
+   "[LinearOrder V]",
+   "(G : SimpleGraph V)",
+   "(hcnt : \u2200 v : V, {u : V | u < v \u2227 G.Adj u v}.Countable)"
+  ],
+  "conclusion": "Erdos595CB.Coverable G",
+  "proof": "by exact Erdos595CB.coverable_of_countable_back G hcnt"
+ },
+ "formal_status": "KERNEL_CHECKED",
+ "events": [],
+ "axioms": [
+  "Classical.choice",
+  "Quot.sound",
+  "propext"
+ ],
+ "attempts": [
+  {
+   "tactic": "(supplied proof)",
+   "status": "VERIFIED",
+   "seconds": 51.3,
+   "errors": [],
+   "exitCode": 0,
+   "resource_limit": null
+  }
+ ],
+ "budget_history": [
+  {
+   "tier_seconds": 120.0,
+   "outcome": "KERNEL_CHECKED"
+  }
+ ],
+ "kernel_result": {
+  "status": "VERIFIED",
+  "file": "oracle/frontier_formalizer/cable/theorems/msl_erdos595-countable-back-2026-09-05.lean",
+  "backend": "wsl",
+  "project": "/root/erdosfire-bench/proofs",
+  "needsMathlib": true,
+  "exitCode": 0,
+  "seconds": 40.6,
+  "declarations": [
+   {
+    "declaration": "cliqueFree_three_iff",
+    "clean": true,
+    "axioms": [
+     "propext",
+     "Classical.choice",
+     "Quot.sound"
+    ]
+   },
+   {
+    "declaration": "colouring_cover",
+    "clean": true,
+    "axioms": [
+     "propext",
+     "Classical.choice",
+     "Quot.sound"
+    ]
+   },
+   {
+    "declaration": "backCol_lt",
+    "clean": true,
+    "axioms": [
+     "propext",
+     "Quot.sound"
+    ]
+   },
+   {
+    "declaration": "backCol_gt",
+    "clean": true,
+    "axioms": [
+     "propext",
+     "Quot.sound"
+    ]
+   },
+   {
+    "declaration": "coverable_of_local_colouring",
+    "clean": true,
+    "axioms": [
+     "propext",
+     "Classical.choice",
+     "Quot.sound"
+    ]
+   },
+   {
+    "declaration": "coverable_of_countable_back",
+    "clean": true,
+    "axioms": [
+     "propext",
+     "Classical.choice",
+     "Quot.sound"
+    ]
+   },
+   {
+    "declaration": "msl_erdos595_countable_back_2026_09_05",
+    "clean": true,
+    "axioms": [
+     "propext",
+     "Classical.choice",
+     "Quot.sound"
+    ]
+   }
+  ],
+  "errors": []
+ },
+ "lean_result_block": "LEAN_RESULT erdos595-countable-back-2026-09-05\n  FORMAL_STATUS KERNEL_CHECKED\n  FILE oracle/frontier_formalizer/cable/theorems/msl_erdos595-countable-back-2026-09-05.lean\n  THEOREMS msl_erdos595_countable_back_2026_09_05\n  BACKEND wsl\n  AXIOMS Classical.choice, Quot.sound, propext\n  TACTIC (supplied proof)\n  BUDGET 120s:KERNEL_CHECKED\n  FAILURE NONE",
+ "timestamp": "2026-09-05T18:41:37Z"
+}

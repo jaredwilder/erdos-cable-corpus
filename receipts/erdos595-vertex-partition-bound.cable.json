@@ -1,0 +1,62 @@
+{
+ "schema": "oracle.msl.cable.v1",
+ "id": "erdos595-vertex-partition-bound",
+ "spec": {
+  "id": "erdos595-vertex-partition-bound",
+  "imports": "Mathlib",
+  "definitions": "open SimpleGraph in\ndef IsUTF {V : Type} (I : Type) (G : SimpleGraph V) : Prop :=\n  \u2203 H : I \u2192 SimpleGraph V, (\u2200 i, (H i).CliqueFree 3) \u2227 G = \u2a06 i, H i",
+  "hypotheses": [
+   "{V I : Type}",
+   "(G : SimpleGraph V)",
+   "(rho : V \u2192 I)"
+  ],
+  "conclusion": "(\u2200 a b d : V, rho a = rho b \u2192 rho b = rho d \u2192 G.Adj a b \u2192 G.Adj a d \u2192 G.Adj b d \u2192 False) \u2192 IsUTF (Sym2 I) G",
+  "proof": "by\n  classical\n  intro h\n  have key : \u2200 x y z : I, s(x, y) = s(x, z) \u2192 s(x, z) = s(y, z) \u2192 x = y \u2227 y = z := by\n    intro x y z h1 h2\n    rcases Sym2.eq_iff.mp h1 with \u27e8-, hyz\u27e9 | \u27e8hxz, hyx\u27e9\n    \u00b7 rcases Sym2.eq_iff.mp h2 with \u27e8hxy, -\u27e9 | \u27e8hxz', hzy\u27e9\n      \u00b7 exact \u27e8hxy, hyz\u27e9\n      \u00b7 exact \u27e8hxz'.trans hzy, hyz\u27e9\n    \u00b7 exact \u27e8hyx.symm, hyx.trans hxz\u27e9\n  refine \u27e8fun p => SimpleGraph.fromEdgeSet {e | e \u2208 G.edgeSet \u2227 Sym2.map rho e = p}, ?_, ?_\u27e9\n  \u00b7 intro p t ht\n    obtain \u27e8hcl, hcard\u27e9 := ht\n    obtain \u27e8a, b, d, hab, had, hbd, hteq\u27e9 := Finset.card_eq_three.mp hcard\n    have ha : a \u2208 t := by rw [hteq]; simp\n    have hb : b \u2208 t := by rw [hteq]; simp\n    have hd : d \u2208 t := by rw [hteq]; simp\n    have e1 := hcl ha hb hab\n    have e2 := hcl ha hd had\n    have e3 := hcl hb hd hbd\n    rw [SimpleGraph.fromEdgeSet_adj] at e1 e2 e3\n    have q1 : s(rho a, rho b) = s(rho a, rho d) := by\n      have t1 : Sym2.map rho s(a, b) = p := e1.1.2\n      have t2 : Sym2.map rho s(a, d) = p := e2.1.2\n      simpa [Sym2.map_pair_eq] using t1.trans t2.symm\n    have q2 : s(rho a, rho d) = s(rho b, rho d) := by\n      have t2 : Sym2.map rho s(a, d) = p := e2.1.2\n      have t3 : Sym2.map rho s(b, d) = p := e3.1.2\n      simpa [Sym2.map_pair_eq] using t2.trans t3.symm\n    obtain \u27e8hx, hy\u27e9 := key (rho a) (rho b) (rho d) q1 q2\n    exact h a b d hx hy e1.1.1 e2.1.1 e3.1.1\n  \u00b7 ext a b\n    rw [SimpleGraph.iSup_adj]\n    constructor\n    \u00b7 intro hab\n      exact \u27e8Sym2.map rho s(a, b), by\n        rw [SimpleGraph.fromEdgeSet_adj]\n        exact \u27e8\u27e8hab, rfl\u27e9, G.ne_of_adj hab\u27e9\u27e9\n    \u00b7 rintro \u27e8p, hp\u27e9\n      rw [SimpleGraph.fromEdgeSet_adj] at hp\n      exact hp.1.1"
+ },
+ "formal_status": "KERNEL_CHECKED",
+ "events": [],
+ "axioms": [
+  "Classical.choice",
+  "Quot.sound",
+  "propext"
+ ],
+ "attempts": [
+  {
+   "tactic": "(supplied proof)",
+   "status": "VERIFIED",
+   "seconds": 55.2,
+   "errors": [],
+   "exitCode": 0,
+   "resource_limit": null
+  }
+ ],
+ "budget_history": [
+  {
+   "tier_seconds": 120.0,
+   "outcome": "KERNEL_CHECKED"
+  }
+ ],
+ "kernel_result": {
+  "status": "VERIFIED",
+  "file": "oracle/frontier_formalizer/cable/theorems/msl_erdos595-vertex-partition-bound.lean",
+  "backend": "wsl",
+  "project": "/root/erdosfire-bench/proofs",
+  "needsMathlib": true,
+  "exitCode": 0,
+  "seconds": 42.3,
+  "declarations": [
+   {
+    "declaration": "msl_erdos595_vertex_partition_bound",
+    "clean": true,
+    "axioms": [
+     "propext",
+     "Classical.choice",
+     "Quot.sound"
+    ]
+   }
+  ],
+  "errors": []
+ },
+ "lean_result_block": "LEAN_RESULT erdos595-vertex-partition-bound\n  FORMAL_STATUS KERNEL_CHECKED\n  FILE oracle/frontier_formalizer/cable/theorems/msl_erdos595-vertex-partition-bound.lean\n  THEOREMS msl_erdos595_vertex_partition_bound\n  BACKEND wsl\n  AXIOMS Classical.choice, Quot.sound, propext\n  TACTIC (supplied proof)\n  BUDGET 120s:KERNEL_CHECKED\n  FAILURE NONE",
+ "timestamp": "2026-09-06T11:18:43Z"
+}

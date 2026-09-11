@@ -1,0 +1,55 @@
+{
+ "schema": "oracle.msl.cable.v1",
+ "id": "fmz-erdos479-campaign-001-R013-L1-a1r2",
+ "spec": {
+  "id": "fmz-erdos479-campaign-001-R013-L1-a1r2",
+  "imports": "none",
+  "definitions": "def primes40 : List Nat := [2, 3, 5, 7, 11, 13, 17, 19, 23, 29, 31, 37]\ndef checkPrime (p : Nat) : Bool := (2 ^ p % p) == 2 % p\ndef checkAll : Bool := primes40.all checkPrime",
+  "conclusion": "checkAll = true",
+  "proof": "by native_decide"
+ },
+ "formal_status": "KERNEL_FAILED",
+ "events": [
+  "RAW[exit 0 with no captured error line]"
+ ],
+ "axioms": [
+  "msl_fmz_erdos479_campaign_001_R013_L1_a1r2._native.native_decide.ax_1_1"
+ ],
+ "attempts": [
+  {
+   "tactic": "(supplied proof)",
+   "status": "UNVERIFIED",
+   "seconds": 2.2,
+   "errors": [],
+   "exitCode": 0,
+   "resource_limit": null
+  }
+ ],
+ "budget_history": [
+  {
+   "tier_seconds": 900.0,
+   "outcome": "KERNEL_FAILED"
+  }
+ ],
+ "kernel_result": {
+  "status": "UNVERIFIED",
+  "file": "oracle/frontier_formalizer/cable/theorems/msl_fmz-erdos479-campaign-001-R013-L1-a1r2.lean",
+  "backend": "windows",
+  "project": "C:\\Users\\jared\\Local Sites\\woocommerce-enterprise\\oracle\\math\\EG411Formal",
+  "needsMathlib": false,
+  "exitCode": 0,
+  "seconds": 2.2,
+  "declarations": [
+   {
+    "declaration": "msl_fmz_erdos479_campaign_001_R013_L1_a1r2",
+    "clean": false,
+    "axioms": [
+     "msl_fmz_erdos479_campaign_001_R013_L1_a1r2._native.native_decide.ax_1_1"
+    ]
+   }
+  ],
+  "errors": []
+ },
+ "lean_result_block": "LEAN_RESULT fmz-erdos479-campaign-001-R013-L1-a1r2\n  FORMAL_STATUS KERNEL_FAILED\n  FILE oracle/frontier_formalizer/cable/theorems/msl_fmz-erdos479-campaign-001-R013-L1-a1r2.lean\n  THEOREMS msl_fmz_erdos479_campaign_001_R013_L1_a1r2\n  BACKEND windows\n  AXIOMS msl_fmz_erdos479_campaign_001_R013_L1_a1r2._native.native_decide.ax_1_1\n  TACTIC (supplied proof)\n  BUDGET 900s:KERNEL_FAILED\n  FAILURE RAW[exit 0 with no captured error line]\n  LAW KERNEL_FAILED does not refute the claim \u2014 the FAILURE line names what actually broke",
+ "timestamp": "2026-09-02T01:02:10Z"
+}

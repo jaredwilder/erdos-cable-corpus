@@ -1,0 +1,51 @@
+{
+ "schema": "oracle.msl.closer.lap.v1",
+ "id": "erdos96-campaign-001-R001-close",
+ "pipeline": "CITATION_ANCHORED",
+ "lean_file": "oracle/frontier_formalizer/cable/theorems/lap_erdos96-campaign-001-R001-close.lean",
+ "theorem": "msl_erdos96_campaign_001_R001_close",
+ "axiom_name": "PublishedTheorem_AbregoFernandezMerchant2005",
+ "axiom_statement_lean": "∀ (n : ℕ), 3 ≤ n → ∀ (P : ConvexPolygon n),\n  unitPairs n P ≤ 2 * n - 7",
+ "citation": {
+  "source": "B. M. Ábrego, S. Fernández-Merchant, 'The maximum number of unit distances in a convex polygon', 2005 (extending the Erdős–Moser O(n) bound for convex position)",
+  "theorem_number": "Main theorem",
+  "verbatim": "The maximum number of unit distances determined by the vertices of a convex n-gon is at most 2n − 7.",
+  "url_or_doi": "n/a"
+ },
+ "claim": "CONDITIONAL on the single named axiom, the canonical branch-A statement holds with absolute constant C = 2 independent of n; expected axiom footprint {propext, Classical.choice, Quot.sound, PublishedTheorem_AbregoFernandezMerchant2005}, stamp CITATION_ANCHORED.",
+ "gate": {
+  "passed": false,
+  "reason": "KERNEL_FAILED",
+  "detail": "the LAP file did not compile (exit 1)"
+ },
+ "kernel_result": {
+  "status": "UNVERIFIED",
+  "file": "oracle/frontier_formalizer/cable/theorems/lap_erdos96-campaign-001-R001-close.lean",
+  "backend": "wsl",
+  "project": "/root/erdosfire-bench/proofs",
+  "needsMathlib": true,
+  "exitCode": 1,
+  "seconds": 46.0,
+  "declarations": [
+   {
+    "declaration": "msl_erdos96_campaign_001_R001_close",
+    "clean": true,
+    "axioms": []
+   }
+  ],
+  "errors": [
+   "/tmp/oracle_lean_Hv6gJPk1.lean:8:4: error(lean.dependsOnNoncomputable): failed to compile definition, consider marking it as 'noncomputable' because it depends on 'Real.sqrt', which is 'noncomputable'",
+   "/tmp/oracle_lean_Hv6gJPk1.lean:11:30: error(lean.unknownIdentifier): Unknown identifier `n`",
+   "/tmp/oracle_lean_Hv6gJPk1.lean:12:12: error(lean.unknownIdentifier): Unknown identifier `n`",
+   "/tmp/oracle_lean_Hv6gJPk1.lean:12:65: error(lean.unknownIdentifier): Unknown identifier `n`",
+   "/tmp/oracle_lean_Hv6gJPk1.lean:12:23: error(lean.synthInstanceFailed): failed to synthesize instance of type class",
+   "/tmp/oracle_lean_Hv6gJPk1.lean:19:4: error(lean.dependsOnNoncomputable): failed to compile definition, consider marking it as 'noncomputable' because it depends on 'Real.decidableEq', which is 'noncomputable'",
+   "/tmp/oracle_lean_Hv6gJPk1.lean:28:46: error: unexpected token 'theorem'; expected term",
+   "/tmp/oracle_lean_Hv6gJPk1.lean:29:31: error: unexpected identifier; expected ':=', 'where' or '|'",
+   "/tmp/oracle_lean_Hv6gJPk1.lean:29:22: error: type expected, got"
+  ]
+ },
+ "seconds": 56.9,
+ "law": "CLOSED_CONDITIONAL_ON_CITATION is NOT TARGET_CLOSED. The kernel checked the IMPLICATION from the assumed theorem; it did not check the assumed theorem. Confirm `axiom_statement_lean` against `citation.verbatim`, and confirm that the cited theorem exists in that form, before this is cited as a result.",
+ "timestamp": "2026-09-01T18:27:09Z"
+}

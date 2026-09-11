@@ -1,0 +1,27 @@
+{
+ "schema": "oracle.msl.closer.witness.v1",
+ "id": "fmz-erdos413-campaign-001-R015-L1-a1r2",
+ "pipeline": "WITNESS_FINITE",
+ "witness": {
+  "description": "Finite set S = {1 <= n < 9699690 : omega(n-j) <= j for all j=1..8}, recomputed from scratch inside the verifier by exact integer trial division; the witness is the expected cardinality and a pure-integer rolling checksum of the sorted element list, both embedded as constants in the verifier (no file I/O).",
+  "bound": 9699690,
+  "window": 8,
+  "expected_count": null,
+  "expected_checksum": null,
+  "note": "expected_count/expected_checksum are filled by running the verifier's own recompute() once at certificate-generation time; the verifier then fail-closes on any mismatch. Since the verifier recomputes S itself and checks the barrier condition for every element, a PASS is self-witnessing; the constants catch any nondeterminism."
+ },
+ "verifier_sha256": "75803da514177d0ebb42ebc0a1bc219fc6c4ade0c17e630d8bc30bd3a992843f",
+ "verifier_source": "def omega(n):\n    cnt = 0\n    m = n\n    d = 2\n    while d * d <= m:\n        if m % d == 0:\n            cnt += 1\n            while m % d == 0:\n                m //= d\n        d += 1 if d == 2 else 2\n    if m > 1:\n        cnt += 1\n    return cnt\n\nEXPECTED_COUNT = 0\nEXPECTED_CHECKSUM = 0\n\ndef recompute():\n    S = []\n    for n in range(1, 9699690):\n        ok = True\n        for j in (1, 2, 3, 4, 5, 6, 7, 8):\n            if omega(n - j) > j:\n                ok = False\n                break\n        if ok:\n            S.append(n)\n    return S\n\ndef verify():\n    S = recompute()\n    if len(S) != EXPECTED_COUNT:\n        return False\n    chk = 0\n    for n in S:\n        chk = (chk * 1000003 + n) % 2305843009213693951\n        for j in (1, 2, 3, 4, 5, 6, 7, 8):\n            if omega(n - j) > j:\n                return False\n    return chk == EXPECTED_CHECKSUM\n\ndef main():\n    if verify():\n        return 0\n    return 1\n",
+ "run": {
+  "passed": false,
+  "status": "VERIFIER_FAIL",
+  "exit_code": 1,
+  "stdout": "",
+  "detail": "TypeError: verify() takes 0 positional arguments but 1 was given",
+  "seconds": 0.1,
+  "code_sha256": "75803da514177d0ebb42ebc0a1bc219fc6c4ade0c17e630d8bc30bd3a992843f"
+ },
+ "claim": "A PASS (exit 0) establishes the exact finite set S of n < 9699690 satisfying the window-8 barrier omega(n-j) <= j, j=1..8, recomputed and re-checked elementwise by pure-integer trial division — the finite core of R015. It does NOT establish infinitude of B_1: the S->B_1 reduction (Jacobsthal-type periodicity) and all n >= 9699690 remain analytic, outside the trust boundary per lemma L1's own scope.",
+ "law": "Wang 7.2: an exact finite object plus a proved reduction is a CERTIFICATE. The reduction is the `claim` and is a human's to audit; the object and the verifier run are the machine's part.",
+ "timestamp": "2026-09-02T02:09:06Z"
+}

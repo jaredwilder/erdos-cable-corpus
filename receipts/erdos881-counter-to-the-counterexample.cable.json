@@ -1,0 +1,52 @@
+{
+ "schema": "oracle.msl.cable.v1",
+ "id": "erdos881-counter-to-the-counterexample",
+ "spec": {
+  "id": "erdos881-counter-to-the-counterexample",
+  "imports": "none",
+  "definitions": "-- erdos881, sanity receipt for the standing PROVED lemma R001/L1.\n-- L1 claims A = N with B = N \\ squares refutes the canonical statement. The canonical\n-- conclusion is EXISTENTIAL in B, so one failing B refutes nothing. This file exhibits a\n-- DIFFERENT infinite B for the SAME A = N whose complement IS an order-2 basis.\n-- B* = { odd n >= 3 }.  A \\ B* = {1} u {even naturals} = inSet.\ndef inSet (m : Nat) : Bool := m == 1 || m % 2 == 0\n\n-- every n < bound is a sum of two elements of inSet\ndef allReprBelow (bound : Nat) : Bool :=\n  (List.range bound).all (fun n =>\n    (List.range (n + 1)).any (fun a => inSet a && inSet (n - a) && a + (n - a) == n))\n\n-- and B* really is infinite: it contains an odd number >= 3 above every bound\ndef bStarAbove (n : Nat) : Nat := 2 * n + 3\n\ndef bStarWitnessesBelow (bound : Nat) : Bool :=\n  (List.range bound).all (fun n =>\n    let w := bStarAbove n\n    decide (n < w) && (w % 2 == 1) && decide (3 <= w) && !(inSet w))",
+  "conclusion": "allReprBelow 200 = true \u2227 bStarWitnessesBelow 200 = true",
+  "proof": "by decide",
+  "set_options": [
+   "set_option maxRecDepth 20000"
+  ]
+ },
+ "formal_status": "KERNEL_CHECKED",
+ "events": [],
+ "axioms": [],
+ "attempts": [
+  {
+   "tactic": "(supplied proof)",
+   "status": "VERIFIED",
+   "seconds": 2.8,
+   "errors": [],
+   "exitCode": 0,
+   "resource_limit": null
+  }
+ ],
+ "budget_history": [
+  {
+   "tier_seconds": 900.0,
+   "outcome": "KERNEL_CHECKED"
+  }
+ ],
+ "kernel_result": {
+  "status": "VERIFIED",
+  "file": "oracle/frontier_formalizer/cable/theorems/msl_erdos881-counter-to-the-counterexample.lean",
+  "backend": "windows",
+  "project": "C:\\Users\\jared\\Local Sites\\woocommerce-enterprise\\oracle\\math\\EG411Formal",
+  "needsMathlib": false,
+  "exitCode": 0,
+  "seconds": 2.8,
+  "declarations": [
+   {
+    "declaration": "msl_erdos881_counter_to_the_counterexample",
+    "clean": true,
+    "axioms": []
+   }
+  ],
+  "errors": []
+ },
+ "lean_result_block": "LEAN_RESULT erdos881-counter-to-the-counterexample\n  FORMAL_STATUS KERNEL_CHECKED\n  FILE oracle/frontier_formalizer/cable/theorems/msl_erdos881-counter-to-the-counterexample.lean\n  THEOREMS msl_erdos881_counter_to_the_counterexample\n  BACKEND windows\n  AXIOMS -\n  TACTIC (supplied proof)\n  BUDGET 900s:KERNEL_CHECKED\n  FAILURE NONE",
+ "timestamp": "2026-09-01T17:40:42Z"
+}

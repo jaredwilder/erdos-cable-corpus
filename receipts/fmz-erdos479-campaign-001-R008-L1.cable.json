@@ -1,0 +1,53 @@
+{
+ "schema": "oracle.msl.cable.v1",
+ "id": "fmz-erdos479-campaign-001-R008-L1",
+ "spec": {
+  "id": "fmz-erdos479-campaign-001-R008-L1",
+  "imports": "Mathlib",
+  "definitions": "namespace R008\n\n/-- Decidable check of the full lemma content at a single s:\n(1) exact valuation v\u2082(2^(2^s)) = 2^s, encoded as: 2^(2^s) \u2223 2^(2^s) and \u00ac(2^(2^s + 1) \u2223 2^(2^s));\n(2) 2^s \u2265 s;\n(3) divisibility 2^s \u2223 2^(2^s) (witness family n = 2^s for k = 0). --/\ndef check_s (s : \u2115) : Bool :=\n  (2 ^ (2 ^ s) \u2223 2 ^ (2 ^ s))\n  && \u00ac (2 ^ (2 ^ s + 1) \u2223 2 ^ (2 ^ s))\n  && (s \u2264 2 ^ s)\n  && ((2 ^ s : \u2115) \u2223 2 ^ (2 ^ s))\n\n/-- Bounded check over s = 1, \u2026, bound. --/\ndef check (bound : \u2115) : Bool :=\n  (List.range bound).all (fun s => s = 0 || check_s s)\n\nend R008",
+  "conclusion": "R008.check 6 = true",
+  "proof": "by decide"
+ },
+ "formal_status": "KERNEL_CHECKED",
+ "events": [],
+ "axioms": [
+  "propext"
+ ],
+ "attempts": [
+  {
+   "tactic": "(supplied proof)",
+   "status": "VERIFIED",
+   "seconds": 33.3,
+   "errors": [],
+   "exitCode": 0,
+   "resource_limit": null
+  }
+ ],
+ "budget_history": [
+  {
+   "tier_seconds": 900.0,
+   "outcome": "KERNEL_CHECKED"
+  }
+ ],
+ "kernel_result": {
+  "status": "VERIFIED",
+  "file": "oracle/frontier_formalizer/cable/theorems/msl_fmz-erdos479-campaign-001-R008-L1.lean",
+  "backend": "wsl",
+  "project": "/root/erdosfire-bench/proofs",
+  "needsMathlib": true,
+  "exitCode": 0,
+  "seconds": 26.8,
+  "declarations": [
+   {
+    "declaration": "msl_fmz_erdos479_campaign_001_R008_L1",
+    "clean": true,
+    "axioms": [
+     "propext"
+    ]
+   }
+  ],
+  "errors": []
+ },
+ "lean_result_block": "LEAN_RESULT fmz-erdos479-campaign-001-R008-L1\n  FORMAL_STATUS KERNEL_CHECKED\n  FILE oracle/frontier_formalizer/cable/theorems/msl_fmz-erdos479-campaign-001-R008-L1.lean\n  THEOREMS msl_fmz_erdos479_campaign_001_R008_L1\n  BACKEND wsl\n  AXIOMS propext\n  TACTIC (supplied proof)\n  BUDGET 900s:KERNEL_CHECKED\n  FAILURE NONE",
+ "timestamp": "2026-09-01T23:48:54Z"
+}

@@ -1,0 +1,94 @@
+{
+ "schema": "oracle.msl.cable.v1",
+ "id": "r55-nest-extract-v2",
+ "spec": {
+  "id": "r55-nest-extract-v2",
+  "imports": "none",
+  "set_options": [
+   "set_option maxRecDepth 20000",
+   "set_option maxHeartbeats 40000000"
+  ],
+  "definitions": "def S : List Nat := [1,2,3,5,7,10,13,15,16,17,24,25,26,28,31,34,36,38,39,40]\n\n/-- the circulant adjacency, normalised so it depends only on residues and is therefore\n    total on the naturals -/\ndef adj (i j : Nat) : Bool := ((i % 41 + 41 - j % 41) % 41) \u2208 S\n\n/-- symmetry on RESIDUES, decided over all 1681 pairs -/\ntheorem symm_res :\n    (List.range 41).all (fun a => (List.range 41).all (fun b =>\n      (((a + 41 - b) % 41) \u2208 S) == (((b + 41 - a) % 41) \u2208 S))) = true := by decide\n\n/-- lifting that to a statement about every pair of naturals -/\ntheorem adj_symm (x y : Nat) : adj x y = adj y x := by\n  have hx : x % 41 < 41 := Nat.mod_lt _ (by decide)\n  have hy : y % 41 < 41 := Nat.mod_lt _ (by decide)\n  have h := List.all_eq_true.mp symm_res (x % 41) (List.mem_range.mpr hx)\n  have h2 := List.all_eq_true.mp h (y % 41) (List.mem_range.mpr hy)\n  unfold adj\n  simpa using h2\n\n/-- and the reflexive case, which the campaign's witness needs to be loop-free -/\ntheorem adj_irrefl (x : Nat) : adj x x = false := by\n  unfold adj\n  have : (x % 41 + 41 - x % 41) % 41 = 0 := by\n    have hx : x % 41 < 41 := Nat.mod_lt _ (by decide)\n    omega\n  rw [this]\n  decide\n\ndef nadj (i j : Nat) : Bool := (i % 41 != j % 41) && (! adj i j)\n\n/-- Ordering guards only; ALL adjacency at the leaf, so extraction is uniform. -/\ndef noMono5 (e : Nat \u2192 Nat \u2192 Bool) : Bool :=\n  (List.range 41).all fun a => (List.range 41).all fun b => (! (a < b)) ||\n    ((List.range 41).all fun c => (! (b < c)) ||\n      ((List.range 41).all fun d => (! (c < d)) ||\n        ((List.range 41).all fun f => (! (d < f)) ||\n          (! (e a b && e a c && e b c && e a d && e b d && e c d\n              && e a f && e b f && e c f && e d f)))))\n\ntheorem witness_noMono5 : noMono5 adj = true := by decide\ntheorem witness_noMono5_c : noMono5 nadj = true := by decide\n\n/-- one instance of the nest at a strictly increasing 5-tuple below 41 -/\ntheorem nest_at (e : Nat \u2192 Nat \u2192 Bool) (h : noMono5 e = true)\n    (a b c d f : Nat) (ha : a < 41) (hb : b < 41) (hc : c < 41) (hd : d < 41) (hf : f < 41)\n    (hab : a < b) (hbc : b < c) (hcd : c < d) (hdf : d < f) :\n    (e a b && e a c && e b c && e a d && e b d && e c d\n     && e a f && e b f && e c f && e d f) = false := by\n  have h1 := List.all_eq_true.mp h a (List.mem_range.mpr ha)\n  have h2 := List.all_eq_true.mp h1 b (List.mem_range.mpr hb)\n  simp only [hab, decide_true, Bool.not_true, Bool.false_or] at h2\n  have h3 := List.all_eq_true.mp h2 c (List.mem_range.mpr hc)\n  simp only [hbc, decide_true, Bool.not_true, Bool.false_or] at h3\n  have h4 := List.all_eq_true.mp h3 d (List.mem_range.mpr hd)\n  simp only [hcd, decide_true, Bool.not_true, Bool.false_or] at h4\n  have h5 := List.all_eq_true.mp h4 f (List.mem_range.mpr hf)\n  simp only [hdf, decide_true, Bool.not_true, Bool.false_or] at h5\n  simpa using h5",
+  "hypotheses": [],
+  "conclusion": "adj 0 1 = true",
+  "proof": "by decide"
+ },
+ "formal_status": "KERNEL_FAILED",
+ "events": [
+  "RAW[exit 124 with no captured error line]"
+ ],
+ "axioms": [],
+ "attempts": [
+  {
+   "tactic": "(supplied proof)",
+   "status": "UNVERIFIED",
+   "seconds": 1800.2,
+   "errors": [],
+   "exitCode": 124,
+   "resource_limit": "wall-clock timeout (exit 124)"
+  }
+ ],
+ "budget_history": [
+  {
+   "tier_seconds": 120.0,
+   "outcome": "UNDECIDED_RESOURCE[wall-clock timeout (exit 124)]"
+  },
+  {
+   "tier_seconds": 600.0,
+   "outcome": "UNDECIDED_RESOURCE[wall-clock timeout (exit 124)]"
+  },
+  {
+   "tier_seconds": 1800.0,
+   "outcome": "UNDECIDED_RESOURCE[wall-clock timeout (exit 124)]"
+  }
+ ],
+ "kernel_result": {
+  "status": "UNVERIFIED",
+  "file": "oracle/frontier_formalizer/cable/theorems/msl_r55-nest-extract-v2.lean",
+  "backend": "windows",
+  "project": "C:\\Users\\jared\\Local Sites\\woocommerce-enterprise\\oracle\\math\\EG411Formal",
+  "needsMathlib": false,
+  "exitCode": 124,
+  "seconds": 1800.0,
+  "declarations": [
+   {
+    "declaration": "symm_res",
+    "clean": false,
+    "axioms": []
+   },
+   {
+    "declaration": "adj_symm",
+    "clean": false,
+    "axioms": []
+   },
+   {
+    "declaration": "adj_irrefl",
+    "clean": false,
+    "axioms": []
+   },
+   {
+    "declaration": "witness_noMono5",
+    "clean": false,
+    "axioms": []
+   },
+   {
+    "declaration": "witness_noMono5_c",
+    "clean": false,
+    "axioms": []
+   },
+   {
+    "declaration": "nest_at",
+    "clean": false,
+    "axioms": []
+   },
+   {
+    "declaration": "msl_r55_nest_extract_v2",
+    "clean": false,
+    "axioms": []
+   }
+  ],
+  "errors": []
+ },
+ "lean_result_block": "LEAN_RESULT r55-nest-extract-v2\n  FORMAL_STATUS KERNEL_FAILED\n  FILE oracle/frontier_formalizer/cable/theorems/msl_r55-nest-extract-v2.lean\n  THEOREMS msl_r55_nest_extract_v2\n  BACKEND windows\n  AXIOMS -\n  TACTIC (supplied proof)\n  BUDGET 120s:UNDECIDED_RESOURCE[wall-clock timeout (exit 124)] -> 600s:UNDECIDED_RESOURCE[wall-clock timeout (exit 124)] -> 1800s:UNDECIDED_RESOURCE[wall-clock timeout (exit 124)]\n  FAILURE RAW[exit 124 with no captured error line]\n  LAW KERNEL_FAILED does not refute the claim \u2014 the FAILURE line names what actually broke\n  LAW BUDGET_EXHAUSTED is an UNDECIDED question, not a failed proof \u2014 the machine stopped, the mathematics did not answer",
+ "timestamp": "2026-09-04T17:35:23Z"
+}

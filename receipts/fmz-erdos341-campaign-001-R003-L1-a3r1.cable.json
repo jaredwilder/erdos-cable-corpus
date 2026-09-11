@@ -1,0 +1,67 @@
+{
+ "schema": "oracle.msl.cable.v1",
+ "id": "fmz-erdos341-campaign-001-R003-L1-a3r1",
+ "spec": {
+  "id": "fmz-erdos341-campaign-001-R003-L1-a3r1",
+  "imports": "none",
+  "definitions": "def greedy (seed : List Nat) (N : Nat) : List Nat :=\n  let rec step (seq : List Nat) (n : Nat) : List Nat :=\n    if seq.length \u2265 N then seq\n    else\n      let forbidden : Nat \u2192 Bool := fun x =>\n        seq.any (fun a => seq.any (fun b => a + b = x))\n      let rec next (x : Nat) : Nat :=\n        if forbidden x then next (x + 1) else x\n      step (seq ++ [next (seq.getLast! + 1)]) (n + 1)\n  termination_by _ n => N - n\n  step seed 0\n\ndef A1 : List Nat := greedy [1] 200\n\ndef check_l1 : Bool :=\n  (A1.length = 200) \u2227\n  (List.range 200 |>.all (fun i => A1[i]! = 2*i + 1)) \u2227\n  (List.range 199 |>.all (fun i => A1[i+1]! - A1[i]! = 2))",
+  "conclusion": "check_l1 = true",
+  "proof": "by decide"
+ },
+ "formal_status": "KERNEL_FAILED",
+ "events": [
+  "((supplied proof)) RAW[tmpzsg0tca0.lean:9:14: error: fail to show termination for]",
+  "((supplied proof)) RAW[tmpzsg0tca0.lean:12:2: error: 2 parameters bound in `termination_by`, but the body of greedy.step only binds 0 parameters.]",
+  "((supplied proof)) RAW[tmpzsg0tca0.lean:22:76: error: Tactic `decide` failed for proposition]"
+ ],
+ "axioms": [
+  "propext",
+  "sorryAx"
+ ],
+ "attempts": [
+  {
+   "tactic": "(supplied proof)",
+   "status": "UNVERIFIED",
+   "seconds": 2.1,
+   "errors": [
+    "tmpzsg0tca0.lean:9:14: error: fail to show termination for",
+    "tmpzsg0tca0.lean:12:2: error: 2 parameters bound in `termination_by`, but the body of greedy.step only binds 0 parameters.",
+    "tmpzsg0tca0.lean:22:76: error: Tactic `decide` failed for proposition"
+   ],
+   "exitCode": 1,
+   "resource_limit": null
+  }
+ ],
+ "budget_history": [
+  {
+   "tier_seconds": 900.0,
+   "outcome": "KERNEL_FAILED"
+  }
+ ],
+ "kernel_result": {
+  "status": "UNVERIFIED",
+  "file": "oracle/frontier_formalizer/cable/theorems/msl_fmz-erdos341-campaign-001-R003-L1-a3r1.lean",
+  "backend": "windows",
+  "project": "C:\\Users\\jared\\Local Sites\\woocommerce-enterprise\\oracle\\math\\EG411Formal",
+  "needsMathlib": false,
+  "exitCode": 1,
+  "seconds": 2.1,
+  "declarations": [
+   {
+    "declaration": "msl_fmz_erdos341_campaign_001_R003_L1_a3r1",
+    "clean": false,
+    "axioms": [
+     "propext",
+     "sorryAx"
+    ]
+   }
+  ],
+  "errors": [
+   "tmpzsg0tca0.lean:9:14: error: fail to show termination for",
+   "tmpzsg0tca0.lean:12:2: error: 2 parameters bound in `termination_by`, but the body of greedy.step only binds 0 parameters.",
+   "tmpzsg0tca0.lean:22:76: error: Tactic `decide` failed for proposition"
+  ]
+ },
+ "lean_result_block": "LEAN_RESULT fmz-erdos341-campaign-001-R003-L1-a3r1\n  FORMAL_STATUS KERNEL_FAILED\n  FILE oracle/frontier_formalizer/cable/theorems/msl_fmz-erdos341-campaign-001-R003-L1-a3r1.lean\n  THEOREMS msl_fmz_erdos341_campaign_001_R003_L1_a3r1\n  BACKEND windows\n  AXIOMS propext, sorryAx\n  TACTIC (supplied proof)\n  BUDGET 900s:KERNEL_FAILED\n  FAILURE ((supplied proof)) RAW[tmpzsg0tca0.lean:9:14: error: fail to show termination for]; ((supplied proof)) RAW[tmpzsg0tca0.lean:12:2: error: 2 parameters bound in `termination_by`, but the body of greedy.step only binds 0 parameters.]; ((supplied proof)) RAW[tmpzsg0tca0.lean:22:76: error: Tactic `decide` failed for proposition]\n  LAW KERNEL_FAILED does not refute the claim \u2014 the FAILURE line names what actually broke",
+ "timestamp": "2026-09-02T02:06:38Z"
+}

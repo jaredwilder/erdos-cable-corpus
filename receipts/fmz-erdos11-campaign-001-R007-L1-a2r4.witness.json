@@ -1,0 +1,23 @@
+{
+ "schema": "oracle.msl.closer.witness.v1",
+ "id": "fmz-erdos11-campaign-001-R007-L1-a2r4",
+ "pipeline": "WITNESS_FINITE",
+ "witness": {
+  "note": "The verifier does not read external data; it independently recomputes the full enumeration with exact integer arithmetic. Representative witnesses: n=3 l=1 k=1; n=9 l=3 k=1; n=33 l=5 k=1; n=65 l=6 k=1; n=129 l=7 k=1; n=185 l=7 k=57; n=255 l=1 k=7.",
+  "full_table_format": "(n, l, k): one per odd n in [3,255], 127 entries, as recomputed by the verifier"
+ },
+ "verifier_sha256": "e1f81757fae5aa10775437887bfee4811773ada4cdd906976bda0d7c10394c16",
+ "verifier_source": "# Standalone exact verifier. No imports, no filesystem, no network, no printing.\n# Discipline: fail closed, exact integer arithmetic, deterministic.\n# verify(witness) raises on any failed check; exit 0 only if every odd n in [3,255]\n# admits l with 2^l < n and n - 2^l squarefree (k >= 1 and no d >= 2 has d*d | k),\n# and specifically n = 185 = 57 + 2^7 with 57 squarefree.\n\ndef is_sqf(k):\n    if k <= 0:\n        raise ValueError(\"nonpositive k\")\n    d = 2\n    while d * d <= k:\n        if k % (d * d) == 0:\n            return False\n        d += 1\n    return True\n\ndef verify(witness):\n    count = 0\n    for n in range(3, 256, 2):\n        count += 1\n        found = False\n        l = 0\n        while (1 << l) < n:\n            k = n - (1 << l)\n            if k >= 1 and is_sqf(k):\n                found = True\n            l += 1\n        if not found:\n            raise ValueError(\"no decomposition for n=%d\" % n)\n    if count != 127:\n        raise ValueError(\"wrong count %d\" % count)\n    if not (185 - 128 == 57 and is_sqf(57) and (1 << 7) == 128):\n        raise ValueError(\"witness 185 = 57 + 2^7 failed\")\n    return True\n",
+ "run": {
+  "passed": true,
+  "status": "VERIFIER_PASS",
+  "exit_code": 0,
+  "stdout": "PASS",
+  "detail": "",
+  "seconds": 0.09,
+  "code_sha256": "e1f81757fae5aa10775437887bfee4811773ada4cdd906976bda0d7c10394c16"
+ },
+ "claim": "Exact fail-closed integer verifier with verify(witness) entrypoint re-enumerates all 127 odd n in [3,255] and confirms each has l with 2^l<n and n-2^l squarefree, including n=185=57+128 (l=7); strictly finite scope, no global or asymptotic claim certified.",
+ "law": "Wang 7.2: an exact finite object plus a proved reduction is a CERTIFICATE. The reduction is the `claim` and is a human's to audit; the object and the verifier run are the machine's part.",
+ "timestamp": "2026-09-02T01:08:26Z"
+}

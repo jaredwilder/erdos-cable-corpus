@@ -1,0 +1,55 @@
+{
+ "schema": "oracle.msl.cable.v1",
+ "id": "fmz-erdos11-campaign-001-R012-LIVE_CASES_COVERED_3_200-a1r2",
+ "spec": {
+  "id": "fmz-erdos11-campaign-001-R012-LIVE_CASES_COVERED_3_200-a1r2",
+  "imports": "none",
+  "definitions": "def squarefree (n : Nat) : Bool :=\n  n != 0 && (List.range (n + 1)).all (fun d => d < 2 || n % (d * d) != 0)\n\ndef hasWitness (n : Nat) : Bool :=\n  (List.range (Nat.log2 n + 1)).any\n    (fun l => squarefree (n - 2 ^ (l + 1)))\n\ndef checkRange : Bool :=\n  (List.range 99).all (fun i =>\n    let n := 2 * i + 3\n    squarefree (n - 1) || hasWitness n)\n\ndef maxL : Nat :=\n  (List.range 99).foldl (fun acc i =>\n    let n := 2 * i + 3\n    if squarefree (n - 1) then acc\n    else (List.range (Nat.log2 n + 1)).filter\n           (fun l => squarefree (n - 2 ^ (l + 1)))\n           |>.foldl (fun a l => max a (l + 1)) acc) 0\n\ndef checkAll : Bool := checkRange && maxL > 0",
+  "conclusion": "checkAll = true",
+  "proof": "by native_decide"
+ },
+ "formal_status": "KERNEL_FAILED",
+ "events": [
+  "RAW[exit 0 with no captured error line]"
+ ],
+ "axioms": [
+  "msl_fmz_erdos11_campaign_001_R012_LIVE_CASES_COVERED_3_200_a1r2._native.native_decide.ax_1_1"
+ ],
+ "attempts": [
+  {
+   "tactic": "(supplied proof)",
+   "status": "UNVERIFIED",
+   "seconds": 9.0,
+   "errors": [],
+   "exitCode": 0,
+   "resource_limit": null
+  }
+ ],
+ "budget_history": [
+  {
+   "tier_seconds": 900.0,
+   "outcome": "KERNEL_FAILED"
+  }
+ ],
+ "kernel_result": {
+  "status": "UNVERIFIED",
+  "file": "oracle/frontier_formalizer/cable/theorems/msl_fmz-erdos11-campaign-001-R012-LIVE_CASES_COVERED_3_200-a1r2.lean",
+  "backend": "windows",
+  "project": "C:\\Users\\jared\\Local Sites\\woocommerce-enterprise\\oracle\\math\\EG411Formal",
+  "needsMathlib": false,
+  "exitCode": 0,
+  "seconds": 9.0,
+  "declarations": [
+   {
+    "declaration": "msl_fmz_erdos11_campaign_001_R012_LIVE_CASES_COVERED_3_200_a1r2",
+    "clean": false,
+    "axioms": [
+     "msl_fmz_erdos11_campaign_001_R012_LIVE_CASES_COVERED_3_200_a1r2._native.native_decide.ax_1_1"
+    ]
+   }
+  ],
+  "errors": []
+ },
+ "lean_result_block": "LEAN_RESULT fmz-erdos11-campaign-001-R012-LIVE_CASES_COVERED_3_200-a1r2\n  FORMAL_STATUS KERNEL_FAILED\n  FILE oracle/frontier_formalizer/cable/theorems/msl_fmz-erdos11-campaign-001-R012-LIVE_CASES_COVERED_3_200-a1r2.lean\n  THEOREMS msl_fmz_erdos11_campaign_001_R012_LIVE_CASES_COVERED_3_200_a1r2\n  BACKEND windows\n  AXIOMS msl_fmz_erdos11_campaign_001_R012_LIVE_CASES_COVERED_3_200_a1r2._native.native_decide.ax_1_1\n  TACTIC (supplied proof)\n  BUDGET 900s:KERNEL_FAILED\n  FAILURE RAW[exit 0 with no captured error line]\n  LAW KERNEL_FAILED does not refute the claim \u2014 the FAILURE line names what actually broke",
+ "timestamp": "2026-09-02T01:22:12Z"
+}

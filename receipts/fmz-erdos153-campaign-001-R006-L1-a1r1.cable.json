@@ -1,0 +1,74 @@
+{
+ "schema": "oracle.msl.cable.v1",
+ "id": "fmz-erdos153-campaign-001-R006-L1-a1r1",
+ "spec": {
+  "id": "fmz-erdos153-campaign-001-R006-L1-a1r1",
+  "imports": "Mathlib",
+  "definitions": "def SidonSums (A : List Nat) : List Nat := (A.flatMap fun a => A.map fun b => a + b).eraseDups\n\ndef isSidon (A : List Nat) : Bool :=\n  ((A.flatMap fun a => (A.filter fun b => b \u2264 a).map fun b => a + b)).eraseDups.length ==\n  (A.flatMap fun a => (A.filter fun b => b \u2264 a).map fun b => a + b)).length\n\ndef gapSqSum (A : List Nat) : Nat :=\n  let s := A.mergeSort (\u00b7 \u2264 \u00b7)\n  (s.zip (s.drop 1)).foldr (fun p acc => (p.2 - p.1)^2 + acc) 0\n\ndef Q (A : List Nat) : \u211a :=\n  ((gapSqSum A : \u211a)) / ((SidonSums A).length - 1 : \u211a)\n\ndef subsets4 : List (List Nat) :=\n  (List.range 13).sublists4 -- realized as explicit comprehension below\n  -- concretely: all [a,b,c,d] with 0 \u2264 a < b < c < d \u2264 12\n\ndef subsets4' : List (List Nat) :=\n  (List.range 13).flatMap fun a =>\n  ((List.range 13).filter (\u00b7 > a)).flatMap fun b =>\n  ((List.range 13).filter (\u00b7 > b)).flatMap fun c =>\n  ((List.range 13).filter (\u00b7 > c)).map fun d => [a, b, c, d]\n\ndef min0 (A : List Nat) : Bool := A.head! == 0\n\ndef check_minQ2 : Bool :=\n  (subsets4'.all fun A => isSidon A && min0 A \u2192 (Q A \u2265 2))\n\ndef check_extremizer : Bool :=\n  isSidon [0,1,4,6] && min0 [0,1,4,6] && (Q [0,1,4,6] == 2)\n\ndef check_L1 : Bool := check_minQ2 && check_extremizer",
+  "conclusion": "check_L1 = true",
+  "proof": "by native_decide"
+ },
+ "formal_status": "KERNEL_FAILED",
+ "events": [
+  "((supplied proof)) RAW[/tmp/oracle_lean_aV3nyLJy.lean:9:2: error: Type mismatch]",
+  "((supplied proof)) SYNTAX.FAIL[/tmp/oracle_lean_aV3nyLJy.lean:9:67: error: unexpected token ')'; expected command]",
+  "((supplied proof)) RAW[/tmp/oracle_lean_aV3nyLJy.lean:19:18: error(lean.invalidField): Invalid field `sublists4`: The environment does not contain `List.sublists4`, so it is not possi]",
+  "((supplied proof)) RAW[/tmp/oracle_lean_aV3nyLJy.lean:38:76: error: Tactic `native_decide` failed: Could not evaluate decidable instance. Error: cannot evaluate code because 'isSidon']"
+ ],
+ "axioms": [
+  "Classical.choice",
+  "Quot.sound",
+  "propext",
+  "sorryAx"
+ ],
+ "attempts": [
+  {
+   "tactic": "(supplied proof)",
+   "status": "UNVERIFIED",
+   "seconds": 87.0,
+   "errors": [
+    "/tmp/oracle_lean_aV3nyLJy.lean:9:2: error: Type mismatch",
+    "/tmp/oracle_lean_aV3nyLJy.lean:9:67: error: unexpected token ')'; expected command",
+    "/tmp/oracle_lean_aV3nyLJy.lean:19:18: error(lean.invalidField): Invalid field `sublists4`: The environment does not contain `List.sublists4`, so it is not possible to project the field `sublists4` from an expression",
+    "/tmp/oracle_lean_aV3nyLJy.lean:38:76: error: Tactic `native_decide` failed: Could not evaluate decidable instance. Error: cannot evaluate code because 'isSidon' uses 'sorry' and/or contains errors"
+   ],
+   "exitCode": 1,
+   "resource_limit": null
+  }
+ ],
+ "budget_history": [
+  {
+   "tier_seconds": 900.0,
+   "outcome": "KERNEL_FAILED"
+  }
+ ],
+ "kernel_result": {
+  "status": "UNVERIFIED",
+  "file": "oracle/frontier_formalizer/cable/theorems/msl_fmz-erdos153-campaign-001-R006-L1-a1r1.lean",
+  "backend": "wsl",
+  "project": "/root/erdosfire-bench/proofs",
+  "needsMathlib": true,
+  "exitCode": 1,
+  "seconds": 72.9,
+  "declarations": [
+   {
+    "declaration": "msl_fmz_erdos153_campaign_001_R006_L1_a1r1",
+    "clean": false,
+    "axioms": [
+     "propext",
+     "sorryAx",
+     "Classical.choice",
+     "Quot.sound"
+    ]
+   }
+  ],
+  "errors": [
+   "/tmp/oracle_lean_aV3nyLJy.lean:9:2: error: Type mismatch",
+   "/tmp/oracle_lean_aV3nyLJy.lean:9:67: error: unexpected token ')'; expected command",
+   "/tmp/oracle_lean_aV3nyLJy.lean:19:18: error(lean.invalidField): Invalid field `sublists4`: The environment does not contain `List.sublists4`, so it is not possible to project the field `sublists4` from an expression",
+   "/tmp/oracle_lean_aV3nyLJy.lean:38:76: error: Tactic `native_decide` failed: Could not evaluate decidable instance. Error: cannot evaluate code because 'isSidon' uses 'sorry' and/or contains errors"
+  ]
+ },
+ "lean_result_block": "LEAN_RESULT fmz-erdos153-campaign-001-R006-L1-a1r1\n  FORMAL_STATUS KERNEL_FAILED\n  FILE oracle/frontier_formalizer/cable/theorems/msl_fmz-erdos153-campaign-001-R006-L1-a1r1.lean\n  THEOREMS msl_fmz_erdos153_campaign_001_R006_L1_a1r1\n  BACKEND wsl\n  AXIOMS Classical.choice, Quot.sound, propext, sorryAx\n  TACTIC (supplied proof)\n  BUDGET 900s:KERNEL_FAILED\n  FAILURE ((supplied proof)) RAW[/tmp/oracle_lean_aV3nyLJy.lean:9:2: error: Type mismatch]; ((supplied proof)) SYNTAX.FAIL[/tmp/oracle_lean_aV3nyLJy.lean:9:67: error: unexpected token ')'; expected command]; ((supplied proof)) RAW[/tmp/oracle_lean_aV3nyLJy.lean:19:18: error(lean.invalidField): Invalid field `sublists4`: The environment does not contain `List.sublists4`, so it is not possi]; ((supplied proof)) RAW[/tmp/oracle_lean_aV3nyLJy.lean:38:76: error: Tactic `native_decide` failed: Could not evaluate decidable instance. Error: cannot evaluate code because 'isSidon']\n  LAW KERNEL_FAILED does not refute the claim \u2014 the FAILURE line names what actually broke",
+ "timestamp": "2026-09-02T01:33:06Z"
+}

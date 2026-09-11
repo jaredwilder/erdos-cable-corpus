@@ -1,0 +1,65 @@
+{
+ "schema": "oracle.msl.cable.v1",
+ "id": "fmz-erdos153-campaign-001-R004-L1-a2r1",
+ "spec": {
+  "id": "fmz-erdos153-campaign-001-R004-L1-a2r1",
+  "imports": "none",
+  "definitions": "def sums (A : List Nat) : List Nat :=\n  (A.zipIdx A |>.flatMap fun (a, i) =>\n    (A.zipIdx A |>.filterMap fun (b, j) =>\n      if i \u2264 j then some (a + b) else none))\n\ndef isSidon (A : List Nat) : Bool :=\n  let s := sums A\n  s.eraseDups.length == s.length\n\ndef tValue (A : List Nat) : Nat := (sums A).length\n\ndef nPairs (n : Nat) : Nat := n * (n + 1) / 2\n\ndef checkL1 (A : List Nat) : Bool :=\n  isSidon A && tValue A == nPairs A.length\n\ndef witness : List Nat := [0, 1, 4, 10]",
+  "conclusion": "checkL1 witness = true \u2227 tValue witness = 10 \u2227 nPairs 4 = 10",
+  "proof": "by decide"
+ },
+ "formal_status": "KERNEL_FAILED",
+ "events": [
+  "((supplied proof)) TYPE.FAIL MISMATCH[tmpib81rrut.lean:4:12: error: Application type mismatch: The last]",
+  "((supplied proof)) TYPE.FAIL MISMATCH[tmpib81rrut.lean:5:14: error: Application type mismatch: The last]",
+  "((supplied proof)) RAW[tmpib81rrut.lean:21:121: error: Tactic `decide` failed for proposition]"
+ ],
+ "axioms": [
+  "sorryAx"
+ ],
+ "attempts": [
+  {
+   "tactic": "(supplied proof)",
+   "status": "UNVERIFIED",
+   "seconds": 7.7,
+   "errors": [
+    "tmpib81rrut.lean:4:12: error: Application type mismatch: The last",
+    "tmpib81rrut.lean:5:14: error: Application type mismatch: The last",
+    "tmpib81rrut.lean:21:121: error: Tactic `decide` failed for proposition"
+   ],
+   "exitCode": 1,
+   "resource_limit": null
+  }
+ ],
+ "budget_history": [
+  {
+   "tier_seconds": 900.0,
+   "outcome": "KERNEL_FAILED"
+  }
+ ],
+ "kernel_result": {
+  "status": "UNVERIFIED",
+  "file": "oracle/frontier_formalizer/cable/theorems/msl_fmz-erdos153-campaign-001-R004-L1-a2r1.lean",
+  "backend": "windows",
+  "project": "C:\\Users\\jared\\Local Sites\\woocommerce-enterprise\\oracle\\math\\EG411Formal",
+  "needsMathlib": false,
+  "exitCode": 1,
+  "seconds": 7.7,
+  "declarations": [
+   {
+    "declaration": "msl_fmz_erdos153_campaign_001_R004_L1_a2r1",
+    "clean": false,
+    "axioms": [
+     "sorryAx"
+    ]
+   }
+  ],
+  "errors": [
+   "tmpib81rrut.lean:4:12: error: Application type mismatch: The last",
+   "tmpib81rrut.lean:5:14: error: Application type mismatch: The last",
+   "tmpib81rrut.lean:21:121: error: Tactic `decide` failed for proposition"
+  ]
+ },
+ "lean_result_block": "LEAN_RESULT fmz-erdos153-campaign-001-R004-L1-a2r1\n  FORMAL_STATUS KERNEL_FAILED\n  FILE oracle/frontier_formalizer/cable/theorems/msl_fmz-erdos153-campaign-001-R004-L1-a2r1.lean\n  THEOREMS msl_fmz_erdos153_campaign_001_R004_L1_a2r1\n  BACKEND windows\n  AXIOMS sorryAx\n  TACTIC (supplied proof)\n  BUDGET 900s:KERNEL_FAILED\n  FAILURE ((supplied proof)) TYPE.FAIL MISMATCH[tmpib81rrut.lean:4:12: error: Application type mismatch: The last]; ((supplied proof)) TYPE.FAIL MISMATCH[tmpib81rrut.lean:5:14: error: Application type mismatch: The last]; ((supplied proof)) RAW[tmpib81rrut.lean:21:121: error: Tactic `decide` failed for proposition]\n  LAW KERNEL_FAILED does not refute the claim \u2014 the FAILURE line names what actually broke",
+ "timestamp": "2026-09-02T01:58:06Z"
+}

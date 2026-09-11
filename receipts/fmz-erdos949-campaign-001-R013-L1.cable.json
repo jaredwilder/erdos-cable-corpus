@@ -1,0 +1,53 @@
+{
+ "schema": "oracle.msl.cable.v1",
+ "id": "fmz-erdos949-campaign-001-R013-L1",
+ "spec": {
+  "id": "fmz-erdos949-campaign-001-R013-L1",
+  "imports": "none",
+  "definitions": "-- Vertices of the 5-cube\nabbrev V := Fin 5 \u2192 Fin 2\n\n-- The constant tensor T = 1 on the cube: its support is all of V.\ndef constSupport : V \u2192 Bool := fun _ => true\n\n-- A 4-subcube: fix coordinate i to value b.\ndef fourCube (i : Fin 5) (b : Fin 2) : V \u2192 Bool := fun x => x i == b\n\n-- All 10 four-subcubes, as (i, b) pairs.\ndef allPairs : List (Fin 5 \u00d7 Fin 2) :=\n  (List.finRange 5).flatMap (fun i => (List.finRange 2).map (fun b => (i, b)))\n\n-- Check: every four-subcube fails to CONTAIN the full support, i.e. for each (i,b)\n-- there is a vertex x with constSupport x = true but fourCube i b x = false\n-- (take x with x i = 1 - b, explicitly built).\ndef missedVertex (i : Fin 5) (b : Fin 2) : V :=\n  fun j => if j = i then (if b = 0 then (1 : Fin 2) else 0) else 0\n\ndef checkOne (p : Fin 5 \u00d7 Fin 2) : Bool :=\n  constSupport (missedVertex p.1 p.2) && !(fourCube p.1 p.2 (missedVertex p.1 p.2))\n\ndef checkRefutation : Bool := List.all allPairs checkOne",
+  "conclusion": "checkRefutation = true \u2227 (List.length allPairs = 10)",
+  "proof": "by decide"
+ },
+ "formal_status": "KERNEL_CHECKED",
+ "events": [],
+ "axioms": [
+  "propext"
+ ],
+ "attempts": [
+  {
+   "tactic": "(supplied proof)",
+   "status": "VERIFIED",
+   "seconds": 3.1,
+   "errors": [],
+   "exitCode": 0,
+   "resource_limit": null
+  }
+ ],
+ "budget_history": [
+  {
+   "tier_seconds": 900.0,
+   "outcome": "KERNEL_CHECKED"
+  }
+ ],
+ "kernel_result": {
+  "status": "VERIFIED",
+  "file": "oracle/frontier_formalizer/cable/theorems/msl_fmz-erdos949-campaign-001-R013-L1.lean",
+  "backend": "windows",
+  "project": "C:\\Users\\jared\\Local Sites\\woocommerce-enterprise\\oracle\\math\\EG411Formal",
+  "needsMathlib": false,
+  "exitCode": 0,
+  "seconds": 3.1,
+  "declarations": [
+   {
+    "declaration": "msl_fmz_erdos949_campaign_001_R013_L1",
+    "clean": true,
+    "axioms": [
+     "propext"
+    ]
+   }
+  ],
+  "errors": []
+ },
+ "lean_result_block": "LEAN_RESULT fmz-erdos949-campaign-001-R013-L1\n  FORMAL_STATUS KERNEL_CHECKED\n  FILE oracle/frontier_formalizer/cable/theorems/msl_fmz-erdos949-campaign-001-R013-L1.lean\n  THEOREMS msl_fmz_erdos949_campaign_001_R013_L1\n  BACKEND windows\n  AXIOMS propext\n  TACTIC (supplied proof)\n  BUDGET 900s:KERNEL_CHECKED\n  FAILURE NONE",
+ "timestamp": "2026-09-01T22:38:32Z"
+}

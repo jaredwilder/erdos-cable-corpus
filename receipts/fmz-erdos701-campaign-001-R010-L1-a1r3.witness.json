@@ -1,0 +1,31 @@
+{
+ "schema": "oracle.msl.closer.witness.v1",
+ "id": "fmz-erdos701-campaign-001-R010-L1-a1r3",
+ "pipeline": "WITNESS_FINITE",
+ "witness": {
+  "n_min": 1,
+  "n_max": 5,
+  "dedekind_counts": {
+   "1": 3,
+   "2": 6,
+   "3": 20,
+   "4": 168,
+   "5": 7581
+  },
+  "total": 7778
+ },
+ "verifier_sha256": "6b8d13a2ecb931ccd29c2f7f570fca3cfb21f632d439ee28a0736655894a8a63",
+ "verifier_source": "# Standalone, stdlib-free, no imports, no I/O, no globals/nonlocals. Entry point verify(witness) raises AssertionError on any failed check.\n\ndef submasks(A):\n    s = A\n    while True:\n        yield s\n        if s == 0:\n            return\n        s = (s - 1) & A\n\ndef hered_subfams(G, m):\n    if m == 0:\n        return [frozenset(), frozenset(G)] if G else [frozenset()]\n    e = 1 << (m - 1)\n    G0 = frozenset(A for A in G if not (A & e))\n    G1 = frozenset(A & ~e for A in G if A & e)\n    out = []\n    seen = set()\n    for K0 in hered_subfams(G0, m - 1):\n        for K1 in hered_subfams(G1 & K0, m - 1):\n            K = frozenset(K0) | frozenset(A | e for A in K1)\n            if K not in seen:\n                seen.add(K)\n                out.append(K)\n    return out\n\ndef hered_families(m):\n    if m == 0:\n        return [frozenset(), frozenset([0])]\n    e = 1 << (m - 1)\n    out = []\n    seen = set()\n    for G in hered_families(m - 1):\n        for K in hered_subfams(G, m - 1):\n            F = frozenset(G) | frozenset(A | e for A in K)\n            if F not in seen:\n                seen.add(F)\n                out.append(F)\n    return out\n\ndef check_family(F):\n    for A in F:\n        for s in submasks(A):\n            if s not in F:\n                return False\n    maximals = [A for A in F if not any((A & B) == A and B != A for B in F)]\n    dc = set()\n    for A in maximals:\n        dc.update(submasks(A))\n    return dc == set(F)\n\ndef pc(x):\n    return bin(x).count('1')\n\ndef max_intersecting(members):\n    n = len(members)\n    adj = []\n    for A in members:\n        a = 0\n        for j, B in enumerate(members):\n            if B != A and (A & B) == 0:\n                a |= 1 << j\n        adj.append(a)\n    def mis(cand):\n        if cand == 0:\n            return 0\n        b = cand & (-cand)\n        v = b.bit_length() - 1\n        rest = cand ^ b\n        skip = mis(rest)\n        take = 1 + mis(rest & ~adj[v])\n        return skip if skip > take else take\n    return mis((1 << n) - 1)\n\ndef verify(witness):\n    n_min = int(witness['n_min'])\n    n_max = int(witness['n_max'])\n    counts = witness['dedekind_counts']\n    assert n_min == 1 and n_max == 5\n    total = 0\n    for m in range(n_min, n_max + 1):\n        fams = hered_families(m)\n        assert len(fams) == int(counts[str(m)]), 'count n=%d got=%d' % (m, len(fams))\n        for F in fams:\n            assert check_family(F), 'structure n=%d' % m\n            ne = sorted(A for A in F if A)\n            stars = [sum(1 for A in ne if (A >> x) & 1) for x in range(m)]\n            mi = max_intersecting(ne)\n            assert mi == max(stars), 'bound n=%d' % m\n        total += len(fams)\n    assert total == int(witness['total'])\n    return True\n\nverify({\"n_min\": 1, \"n_max\": 5, \"dedekind_counts\": {\"1\": 3, \"2\": 6, \"3\": 20, \"4\": 168, \"5\": 7581}, \"total\": 7778})\n",
+ "run": {
+  "passed": true,
+  "status": "VERIFIER_PASS",
+  "exit_code": 0,
+  "stdout": "PASS",
+  "detail": "",
+  "seconds": 8.91,
+  "code_sha256": "6b8d13a2ecb931ccd29c2f7f570fca3cfb21f632d439ee28a0736655894a8a63"
+ },
+ "claim": "FRAGMENT. verify(witness) returning True (it raises on any failed check) exactly certifies: every hereditary family on every ground set of size 1<=n<=5, enumerated completely via the antichain-generator recursion (F = F0 | {A|e : A in F1}, F1 hereditary subseteq F0), with exact downward-closure and antichain-generation verified per family and per-n counts matching the Dedekind numbers 3,6,20,168,7581 (total 7778), satisfies max-intersecting-subfamily = max-star, intersecting = every two DISTINCT members meet, computed as exact maximum independent set in the disjointness graph over nonempty members. Exact integer arithmetic; fail-closed; no imports, no I/O, no globals/nonlocals, no floats, deterministic. This certifies the n<=5 exhaustive portion of L1 but NOT the 'plus 2^[6]' portion (infeasible enumeration), so covers=fragment. FLAGGED DISCREPANCY: L1 asserts 7810 families on 1<=n<=5; the exact Dedekind count is 7778, so the lemma's stated figure must be reconciled before full-lemma closure.",
+ "law": "Wang 7.2: an exact finite object plus a proved reduction is a CERTIFICATE. The reduction is the `claim` and is a human's to audit; the object and the verifier run are the machine's part.",
+ "timestamp": "2026-09-02T02:02:03Z"
+}

@@ -1,0 +1,48 @@
+{
+ "schema": "oracle.msl.closer.witness.v1",
+ "id": "fmz-erdos341-campaign-001-R002-L1",
+ "pipeline": "WITNESS_FINITE",
+ "witness": {
+  "bound": 59049,
+  "bound_note": "3^10",
+  "initial_sets": [
+   [
+    0
+   ],
+   [
+    0,
+    1,
+    4
+   ],
+   [
+    0,
+    2,
+    3
+   ],
+   [
+    0,
+    2,
+    5
+   ],
+   [
+    0,
+    3,
+    4
+   ]
+  ]
+ },
+ "verifier_sha256": "aa1fde956d5dc743a2f82d62a0beb8bc7b2da25b3751605d74f682d123dd74a2",
+ "verifier_source": "# Pure-Python3 verifier, no imports, no I/O, no filesystem, no network.\n# Entry point: verify(witness). Raises AssertionError on any failed check\n# (fail-closed). Returns the per-sequence report on success.\n\ndef verify(witness):\n    BOUND = witness['bound']\n    assert BOUND == 3**10, 'bound must be 3^10'\n    SETS = witness['initial_sets']\n    assert len(SETS) == 5, 'expected exactly five initial sets'\n    CAND_PERIODS = [3**j for j in range(10)]\n    results = []\n    for idx in range(len(SETS)):\n        A0 = SETS[idx]\n        assert A0 == sorted(set(A0)), 'initial set %d not strictly increasing' % idx\n        for a in A0:\n            assert 0 <= a < BOUND, 'initial element out of range'\n        S = list(A0)\n        inS = set(A0)\n        # --- greedy construction, fail-closed ---\n        c = max(A0) + 1\n        while c < BOUND:\n            is_sum = False\n            for a in S:\n                if (c - a) in inS:\n                    is_sum = True\n                    break\n            if not is_sum:\n                S.append(c)\n                inS.add(c)\n            c += 1\n        # --- check 1: 3-free ---\n        for a in S:\n            for b in S:\n                assert (a + b) not in inS, '3-freeness violated: %d = %d + %d' % (a + b, a, b)\n        # --- check 2: greedy completeness (fail-closed) ---\n        for n in range(max(A0) + 1, BOUND):\n            if n not in inS:\n                found = False\n                for a in S:\n                    if a <= n and (n - a) in inS:\n                        found = True\n                        break\n                assert found, 'greedy incomplete at %d' % n\n        # --- check 3: indicator periodic with period 3^j, j <= 9 ---\n        I = [0] * BOUND\n        for a in S:\n            assert I[a] == 0, 'duplicate element'\n            I[a] = 1\n        minimal_p = None\n        for p in CAND_PERIODS:\n            if p >= BOUND:\n                break\n            ok = True\n            for n in range(BOUND - p):\n                if I[n] != I[n + p]:\n                    ok = False\n                    break\n            if ok:\n                minimal_p = p\n                break\n        assert minimal_p is not None, 'no period 3^j for initial set %d' % idx\n        results.append({'initial_set': A0, 'count': len(S), 'minimal_period': minimal_p})\n    assert len(results) == 5\n    return results",
+ "run": {
+  "passed": false,
+  "status": "VERIFIER_FAIL",
+  "exit_code": 1,
+  "stdout": "",
+  "detail": "AssertionError: 3-freeness violated: 0 = 0 + 0",
+  "seconds": 10.68,
+  "code_sha256": "aa1fde956d5dc743a2f82d62a0beb8bc7b2da25b3751605d74f682d123dd74a2"
+ },
+ "claim": "FRAGMENT certificate for L1 (import-free, I/O-free, entry point verify(witness) raising AssertionError on any violated check): a clean return establishes that the exact integer greedy construction from each of the five initial sets {0}, {0,1,4}, {0,2,3}, {0,2,5}, {0,3,4} yields, on [0,3^10), a 3-free sequence in which every excluded integer in (max(A0),3^10) is a sum of two earlier elements (greedy completeness, fail-closed), and whose membership indicator is periodic with minimal period 3^j, j<=9 — term-by-term agreement with the published periodic Stanley sequences in finite model scope. Universal periodicity, eventual periodicity of the canonical greedy gap sequence, and close branch A are NOT closed, per L1's own disclaimer. covers=fragment.",
+ "law": "Wang 7.2: an exact finite object plus a proved reduction is a CERTIFICATE. The reduction is the `claim` and is a human's to audit; the object and the verifier run are the machine's part.",
+ "timestamp": "2026-09-01T23:40:21Z"
+}

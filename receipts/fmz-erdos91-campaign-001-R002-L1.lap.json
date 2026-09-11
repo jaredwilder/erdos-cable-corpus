@@ -1,0 +1,46 @@
+{
+ "schema": "oracle.msl.closer.lap.v1",
+ "id": "fmz-erdos91-campaign-001-R002-L1",
+ "pipeline": "CITATION_ANCHORED",
+ "lean_file": "oracle/frontier_formalizer/cable/theorems/lap_fmz-erdos91-campaign-001-R002-L1.lean",
+ "theorem": "msl_fmz_erdos91_campaign_001_R002_L1",
+ "axiom_name": "PublishedTheorem_EinhornSchoenberg1966",
+ "axiom_statement_lean": "∀ p : Fin 5 → EuclideanSpace ℝ (Fin 2),\n  PentagonalDistSet p → IsRegularPentagon p",
+ "citation": {
+  "source": "S. J. Einhorn and I. J. Schoenberg, \"On Euclidean sets having only two distances between points. I\", Indagationes Mathematicae (Koninklijke Nederlandse Akademie van Wetenschappen, Proceedings, Series A), Vol. 69, 1966, pp. 479–488.",
+  "theorem_number": "Classification theorem, Part I: the five-point planar two-distance set is the regular pentagon.",
+  "verbatim": "FLAG: verbatim transcription of the classification sentence from the printed Indagationes text (pp. 479–488) is to be supplied at the human side-by-side check before stamping; the machine record deliberately holds a placeholder rather than an invented quotation.",
+  "url_or_doi": "doi:10.1016/S1385-7258(66)50060-X"
+ },
+ "claim": "Conditional on the declared axiom (Einhorn–Schoenberg 1966): every 5-point planar set with at most two mutual distances is a regular pentagon. This certifies the n=5 fragment of lemma L1 (D(5)=2 attained, regular pentagon the unique minimizer up to similarity); covers=fragment and does NOT close close_branch_A, which quantifies over all sufficiently large n.",
+ "gate": {
+  "passed": false,
+  "reason": "KERNEL_FAILED",
+  "detail": "the LAP file did not compile (exit 1)"
+ },
+ "kernel_result": {
+  "status": "UNVERIFIED",
+  "file": "oracle/frontier_formalizer/cable/theorems/lap_fmz-erdos91-campaign-001-R002-L1.lean",
+  "backend": "wsl",
+  "project": "/root/erdosfire-bench/proofs",
+  "needsMathlib": true,
+  "exitCode": 1,
+  "seconds": 3.9,
+  "declarations": [
+   {
+    "declaration": "msl_fmz_erdos91_campaign_001_R002_L1",
+    "clean": true,
+    "axioms": []
+   }
+  ],
+  "errors": [
+   "/tmp/oracle_lean_OUv7ouzm.lean:19:42: error: Application type mismatch: The argument",
+   "/tmp/oracle_lean_OUv7ouzm.lean:20:32: error: Application type mismatch: The argument",
+   "/tmp/oracle_lean_OUv7ouzm.lean:26:47: error: unexpected token 'theorem'; expected term",
+   "/tmp/oracle_lean_OUv7ouzm.lean:27:11: error: unexpected token; expected ','"
+  ]
+ },
+ "seconds": 6.9,
+ "law": "CLOSED_CONDITIONAL_ON_CITATION is NOT TARGET_CLOSED. The kernel checked the IMPLICATION from the assumed theorem; it did not check the assumed theorem. Confirm `axiom_statement_lean` against `citation.verbatim`, and confirm that the cited theorem exists in that form, before this is cited as a result.",
+ "timestamp": "2026-09-01T22:27:34Z"
+}

@@ -1,0 +1,59 @@
+{
+ "schema": "oracle.msl.cable.v1",
+ "id": "fmz-erdos413-campaign-001-R001-L1-a3r1",
+ "spec": {
+  "id": "fmz-erdos413-campaign-001-R001-L1-a3r1",
+  "imports": "none",
+  "definitions": "def B_threshold (eps : Nat) (x : Nat) (P : Nat -> Nat) : Bool := P x <= eps\n\ndef check_transitivity (P : Nat -> Nat) (x e1 e2 : Nat) : Bool :=\n  B_threshold e1 x P && e1 <= e2 --> B_threshold e2 x P\n\n-- decidable instances over the contract's threshold structure:\ndef check_all : Bool :=\n  List.all [0,1,2,3,5,7,13,100] fun e1 =>\n  List.all [0,1,2,3,5,7,13,100] fun e2 =>\n  List.all [0,1,4,17,999] fun x =>\n  check_transitivity (fun n => n * (n+3)) x e1 e2",
+  "conclusion": "check_all = true",
+  "proof": "by decide"
+ },
+ "formal_status": "KERNEL_FAILED",
+ "events": [
+  "((supplied proof)) REFUTED.DECIDABLE[decide proved the negation \u2014 this one IS a refutation]"
+ ],
+ "axioms": [
+  "sorryAx"
+ ],
+ "attempts": [
+  {
+   "tactic": "(supplied proof)",
+   "status": "UNVERIFIED",
+   "seconds": 14.7,
+   "errors": [
+    "tmplq1ta60u.lean:15:77: error: Tactic `decide` proved that the proposition"
+   ],
+   "exitCode": 1,
+   "resource_limit": null
+  }
+ ],
+ "budget_history": [
+  {
+   "tier_seconds": 900.0,
+   "outcome": "REFUTED_DECIDABLE"
+  }
+ ],
+ "kernel_result": {
+  "status": "UNVERIFIED",
+  "file": "oracle/frontier_formalizer/cable/theorems/msl_fmz-erdos413-campaign-001-R001-L1-a3r1.lean",
+  "backend": "windows",
+  "project": "C:\\Users\\jared\\Local Sites\\woocommerce-enterprise\\oracle\\math\\EG411Formal",
+  "needsMathlib": false,
+  "exitCode": 1,
+  "seconds": 14.7,
+  "declarations": [
+   {
+    "declaration": "msl_fmz_erdos413_campaign_001_R001_L1_a3r1",
+    "clean": false,
+    "axioms": [
+     "sorryAx"
+    ]
+   }
+  ],
+  "errors": [
+   "tmplq1ta60u.lean:15:77: error: Tactic `decide` proved that the proposition"
+  ]
+ },
+ "lean_result_block": "LEAN_RESULT fmz-erdos413-campaign-001-R001-L1-a3r1\n  FORMAL_STATUS KERNEL_FAILED\n  FILE oracle/frontier_formalizer/cable/theorems/msl_fmz-erdos413-campaign-001-R001-L1-a3r1.lean\n  THEOREMS msl_fmz_erdos413_campaign_001_R001_L1_a3r1\n  BACKEND windows\n  AXIOMS sorryAx\n  TACTIC (supplied proof)\n  BUDGET 900s:REFUTED_DECIDABLE\n  FAILURE ((supplied proof)) REFUTED.DECIDABLE[decide proved the negation \u2014 this one IS a refutation]\n  LAW KERNEL_FAILED does not refute the claim \u2014 the FAILURE line names what actually broke",
+ "timestamp": "2026-09-02T01:46:09Z"
+}

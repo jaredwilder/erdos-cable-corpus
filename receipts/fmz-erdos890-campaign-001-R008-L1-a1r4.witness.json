@@ -1,0 +1,44 @@
+{
+ "schema": "oracle.msl.closer.witness.v1",
+ "id": "fmz-erdos890-campaign-001-R008-L1-a1r4",
+ "pipeline": "WITNESS_FINITE",
+ "witness": {
+  "bound": 1000000,
+  "k_values": [
+   2,
+   3,
+   4
+  ],
+  "exception_sets": {
+   "k2": [
+    2,
+    8
+   ],
+   "k3": [
+    8,
+    24
+   ],
+   "k4": [
+    24
+   ]
+  },
+  "definitions": {
+   "window": "For n>=2 and k>=1, window W(n,k) = {n, ..., n+k-1}.",
+   "property": "n is an exceptional start for k iff every member of W(n,k) has all prime factors <= k, and (n==2 or W(n-1,k) does not have that property)."
+  }
+ },
+ "verifier_sha256": "6760b0c62a542a0ff2437d9a3b99b433552a029bb1d9a0bcde6dc890375be0c7",
+ "verifier_source": "# Standalone Python 3, stdlib only, no imports, no I/O, deterministic, exact integer arithmetic.\n# Entry point: verify(witness) -- raises on any failed check, returns True on PASS.\n\ndef small_factors(x, k):\n    if x < 2:\n        return False\n    d = 2\n    while d * d <= x:\n        if x % d == 0:\n            if d > k:\n                return False\n            while x % d == 0:\n                x //= d\n        d += 1\n    if x > 1 and x > k:\n        return False\n    return True\n\ndef all_small_window(n, k):\n    return all(small_factors(n + i, k) for i in range(k))\n\ndef verify(witness):\n    B = witness['bound']\n    if witness['k_values'] != [2, 3, 4]:\n        raise ValueError('bad k_values')\n    expected = {\n        2: sorted(witness['exception_sets']['k2']),\n        3: sorted(witness['exception_sets']['k3']),\n        4: sorted(witness['exception_sets']['k4']),\n    }\n    for k in (2, 3, 4):\n        found = []\n        for n in range(2, B - k + 2):\n            if all_small_window(n, k):\n                if n == 2 or not all_small_window(n - 1, k):\n                    found.append(n)\n        if found != expected[k]:\n            raise ValueError('mismatch k=%d found=%s expected=%s' % (k, found, expected[k]))\n    return True\n\nWITNESS = {\n    'bound': 1000000,\n    'k_values': [2, 3, 4],\n    'exception_sets': {'k2': [2, 8], 'k3': [8, 24], 'k4': [24]},\n}\n\nverify(WITNESS)\n",
+ "run": {
+  "passed": false,
+  "status": "VERIFIER_FAIL",
+  "exit_code": 1,
+  "stdout": "",
+  "detail": "ValueError: mismatch k=2 found=[] expected=[2, 8]",
+  "seconds": 6.2,
+  "code_sha256": "6760b0c62a542a0ff2437d9a3b99b433552a029bb1d9a0bcde6dc890375be0c7"
+ },
+ "claim": "A clean run of the verifier (verify(WITNESS) returning without raising) establishes the finite-computational fragment of L1: exact integer arithmetic certifies that for k=2,3,4 on [2,10^6] the only windows with no member having a prime factor >k start exactly at n=2,8 (k=2), n=8,24 (k=3), n=24 (k=4), extremality included. covers=fragment: the analytic k=2 all-n>=2 argument (no consecutive powers of 2) and any transfer to the canonical clause-2 limsup are NOT certified here.",
+ "law": "Wang 7.2: an exact finite object plus a proved reduction is a CERTIFICATE. The reduction is the `claim` and is a human's to audit; the object and the verifier run are the machine's part.",
+ "timestamp": "2026-09-02T02:24:59Z"
+}

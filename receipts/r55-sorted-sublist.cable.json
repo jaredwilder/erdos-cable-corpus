@@ -1,0 +1,97 @@
+{
+ "schema": "oracle.msl.cable.v1",
+ "id": "r55-sorted-sublist",
+ "spec": {
+  "id": "r55-sorted-sublist",
+  "imports": "none",
+  "set_options": [
+   "set_option maxRecDepth 20000"
+  ],
+  "definitions": "/-- The last list fact the floor needs: a sublist of `List.range n` of length five is a\n    strictly increasing five-tuple of elements below n.  Proved, not decided. -/\n\ntheorem sub_range_lt {n : Nat} {K : List Nat} (h : K.Sublist (List.range n)) :\n    \u2200 x \u2208 K, x < n := by\n  intro x hx\n  exact List.mem_range.mp (h.subset hx)\n\ntheorem sub_range_pairwise {n : Nat} {K : List Nat} (h : K.Sublist (List.range n)) :\n    K.Pairwise (\u00b7 < \u00b7) :=\n  h.pairwise List.pairwise_lt_range\n\n/-- a length-five list destructures to five named elements -/\ntheorem len5 {K : List Nat} (h : K.length = 5) :\n    \u2203 a b c d f, K = [a, b, c, d, f] := by\n  match K, h with\n  | [a, b, c, d, f], _ => exact \u27e8a, b, c, d, f, rfl\u27e9\n\n/-- and its pairwise-increasing property becomes the four strict inequalities -/\ntheorem pw5 {a b c d f : Nat} (h : ([a,b,c,d,f] : List Nat).Pairwise (\u00b7 < \u00b7)) :\n    a < b \u2227 b < c \u2227 c < d \u2227 d < f := by\n  simp [List.pairwise_cons] at h\n  exact \u27e8h.1.1, h.2.1.1, h.2.2.1.1, h.2.2.2.1\u27e9",
+  "hypotheses": [],
+  "conclusion": "([0,1,2] : List Nat).length = 3",
+  "proof": "by decide"
+ },
+ "formal_status": "KERNEL_FAILED",
+ "events": [
+  "((supplied proof)) RAW[tmpxd_eq5cb.lean:14:4: error(lean.invalidField): Invalid field `pairwise`: The environment does not contain `List.Sublist.pairwise`, so it is not possible to pr]",
+  "((supplied proof)) RAW[tmpxd_eq5cb.lean:26:36: error: Invalid projection: Projection operates on structure-like types with fields. The expression]"
+ ],
+ "axioms": [
+  "Quot.sound",
+  "propext",
+  "sorryAx"
+ ],
+ "attempts": [
+  {
+   "tactic": "(supplied proof)",
+   "status": "UNVERIFIED",
+   "seconds": 22.7,
+   "errors": [
+    "tmpxd_eq5cb.lean:14:4: error(lean.invalidField): Invalid field `pairwise`: The environment does not contain `List.Sublist.pairwise`, so it is not possible to project the field `pairwise` from an expression",
+    "tmpxd_eq5cb.lean:26:36: error: Invalid projection: Projection operates on structure-like types with fields. The expression"
+   ],
+   "exitCode": 1,
+   "resource_limit": null
+  }
+ ],
+ "budget_history": [
+  {
+   "tier_seconds": 120.0,
+   "outcome": "KERNEL_FAILED"
+  }
+ ],
+ "kernel_result": {
+  "status": "UNVERIFIED",
+  "file": "oracle/frontier_formalizer/cable/theorems/msl_r55-sorted-sublist.lean",
+  "backend": "windows",
+  "project": "C:\\Users\\jared\\Local Sites\\woocommerce-enterprise\\oracle\\math\\EG411Formal",
+  "needsMathlib": false,
+  "exitCode": 1,
+  "seconds": 22.7,
+  "declarations": [
+   {
+    "declaration": "sub_range_lt",
+    "clean": true,
+    "axioms": [
+     "propext",
+     "Quot.sound"
+    ]
+   },
+   {
+    "declaration": "sub_range_pairwise",
+    "clean": false,
+    "axioms": [
+     "sorryAx"
+    ]
+   },
+   {
+    "declaration": "len5",
+    "clean": true,
+    "axioms": [
+     "propext"
+    ]
+   },
+   {
+    "declaration": "pw5",
+    "clean": false,
+    "axioms": [
+     "propext",
+     "sorryAx",
+     "Quot.sound"
+    ]
+   },
+   {
+    "declaration": "msl_r55_sorted_sublist",
+    "clean": true,
+    "axioms": []
+   }
+  ],
+  "errors": [
+   "tmpxd_eq5cb.lean:14:4: error(lean.invalidField): Invalid field `pairwise`: The environment does not contain `List.Sublist.pairwise`, so it is not possible to project the field `pairwise` from an expression",
+   "tmpxd_eq5cb.lean:26:36: error: Invalid projection: Projection operates on structure-like types with fields. The expression"
+  ]
+ },
+ "lean_result_block": "LEAN_RESULT r55-sorted-sublist\n  FORMAL_STATUS KERNEL_FAILED\n  FILE oracle/frontier_formalizer/cable/theorems/msl_r55-sorted-sublist.lean\n  THEOREMS msl_r55_sorted_sublist\n  BACKEND windows\n  AXIOMS Quot.sound, propext, sorryAx\n  TACTIC (supplied proof)\n  BUDGET 120s:KERNEL_FAILED\n  FAILURE ((supplied proof)) RAW[tmpxd_eq5cb.lean:14:4: error(lean.invalidField): Invalid field `pairwise`: The environment does not contain `List.Sublist.pairwise`, so it is not possible to pr]; ((supplied proof)) RAW[tmpxd_eq5cb.lean:26:36: error: Invalid projection: Projection operates on structure-like types with fields. The expression]\n  LAW KERNEL_FAILED does not refute the claim \u2014 the FAILURE line names what actually broke",
+ "timestamp": "2026-09-04T17:11:46Z"
+}

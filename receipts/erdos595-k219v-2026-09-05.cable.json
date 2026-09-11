@@ -1,0 +1,130 @@
+{
+ "schema": "oracle.msl.cable.v1",
+ "id": "erdos595-k219v-2026-09-05",
+ "spec": {
+  "id": "erdos595-k219v-2026-09-05",
+  "imports": "Mathlib",
+  "definitions": "namespace Erdos595Star\n\nvariable {V : Type*}\n\ndef star (G : SimpleGraph V) (v : V) : SimpleGraph V :=\n  SimpleGraph.fromRel (fun x y => x = v \u2227 G.Adj x y)\n\ntheorem star_adj_endpoint (G : SimpleGraph V) (v : V) :\n    \u2200 x y : V, (star G v).Adj x y \u2192 x = v \u2228 y = v := by\n  intro x y h\n  simp only [star, SimpleGraph.fromRel_adj] at h\n  rcases h with \u27e8-, \u27e8hx, -\u27e9 | \u27e8hy, -\u27e9\u27e9\n  \u00b7 exact Or.inl hx\n  \u00b7 exact Or.inr hy\n\ntheorem star_le (G : SimpleGraph V) (v : V) : star G v \u2264 G := by\n  intro x y h\n  simp only [star, SimpleGraph.fromRel_adj] at h\n  rcases h with \u27e8-, \u27e8-, ha\u27e9 | \u27e8-, ha\u27e9\u27e9\n  \u00b7 exact ha\n  \u00b7 exact ha.symm\n\ntheorem star_cliqueFree (G : SimpleGraph V) (v : V) : (star G v).CliqueFree 3 := by\n  classical\n  intro s hs\n  obtain \u27e8a, b, c, hab, hac, hbc, hset\u27e9 := Finset.card_eq_three.mp hs.2\n  subst hset\n  have key := star_adj_endpoint G v\n  by_cases hav : a = v\n  \u00b7 have h1 := key b c (hs.1 (by simp) (by simp) hbc)\n    rcases h1 with hbv | hcv\n    \u00b7 exact hab (hav.trans hbv.symm)\n    \u00b7 exact hac (hav.trans hcv.symm)\n  \u00b7 by_cases hbv : b = v\n    \u00b7 have h1 := key a c (hs.1 (by simp) (by simp) hac)\n      rcases h1 with h | h\n      \u00b7 exact hav h\n      \u00b7 exact hbc (hbv.trans h.symm)\n    \u00b7 have h1 := key a b (hs.1 (by simp) (by simp) hab)\n      rcases h1 with h | h\n      \u00b7 exact hav h\n      \u00b7 exact hbv h\n\ntheorem star_edgeSet_uncountable (G : SimpleGraph V) (v : V)\n    (h : \u00ac (G.neighborSet v).Countable) : \u00ac (star G v).edgeSet.Countable := by\n  intro hc\n  apply h\n  have hinj : Function.Injective (fun u : V => s(v, u)) := fun u u' he => Sym2.congr_right.mp he\n  have hpre : G.neighborSet v \u2286 (fun u : V => s(v, u)) \u207b\u00b9' (star G v).edgeSet := by\n    intro u hu\n    have hadj : G.Adj v u := hu\n    have hne : v \u2260 u := G.ne_of_adj hadj\n    apply (star G v).mem_edgeSet.mpr\n    show (SimpleGraph.fromRel fun x y => x = v \u2227 G.Adj x y).Adj v u\n    rw [SimpleGraph.fromRel_adj]\n    exact \u27e8hne, Or.inl \u27e8rfl, hadj\u27e9\u27e9\n  exact ((hc.preimage hinj).mono hpre)\n\nend Erdos595Star\n\nnamespace Erdos595Match\n\nvariable {V : Type*}\n\ntheorem fromEdgeSet_le_of_subset (G : SimpleGraph V) {M : Set (Sym2 V)}\n    (hsub : M \u2286 G.edgeSet) : SimpleGraph.fromEdgeSet M \u2264 G := by\n  intro x y h\n  rw [SimpleGraph.fromEdgeSet_adj] at h\n  exact G.mem_edgeSet.mp (hsub h.1)\n\ntheorem matching_cliqueFree {M : Set (Sym2 V)}\n    (hM : M.Pairwise fun e f => \u2200 x, x \u2208 e \u2192 x \u2209 f) :\n    (SimpleGraph.fromEdgeSet M).CliqueFree 3 := by\n  classical\n  intro s hs\n  obtain \u27e8a, b, c, hab, hac, hbc, hset\u27e9 := Finset.card_eq_three.mp hs.2\n  subst hset\n  have h1 : (SimpleGraph.fromEdgeSet M).Adj a b := hs.1 (by simp) (by simp) hab\n  have h2 : (SimpleGraph.fromEdgeSet M).Adj b c := hs.1 (by simp) (by simp) hbc\n  rw [SimpleGraph.fromEdgeSet_adj] at h1 h2\n  by_cases heq : s(a, b) = s(b, c)\n  \u00b7 rw [Sym2.eq_iff] at heq\n    rcases heq with \u27e8h3, -\u27e9 | \u27e8h3, -\u27e9\n    \u00b7 exact hab h3\n    \u00b7 exact hac h3\n  \u00b7 exact (hM h1.1 h2.1 heq) b (by simp [Sym2.mem_iff]) (by simp [Sym2.mem_iff])\n\ntheorem uncountable_triangleFree_subgraph (G : SimpleGraph V)\n    (h : \u00ac G.edgeSet.Countable) :\n    \u2203 H : SimpleGraph V, H \u2264 G \u2227 H.CliqueFree 3 \u2227 \u00ac H.edgeSet.Countable := by\n  classical\n  by_cases hdeg : \u2200 v : V, (G.neighborSet v).Countable\n  \u00b7 set S : Set (Set (Sym2 V)) :=\n      {M | M \u2286 G.edgeSet \u2227 M.Pairwise fun e f => \u2200 x, x \u2208 e \u2192 x \u2209 f} with hSdef\n    have hchain : \u2200 c \u2286 S, IsChain (\u00b7 \u2286 \u00b7) c \u2192 \u2203 ub \u2208 S, \u2200 t \u2208 c, t \u2286 ub := by\n      intro c hcS hch\n      refine \u27e8\u22c3\u2080 c, \u27e8?_, ?_\u27e9, fun t ht => Set.subset_sUnion_of_mem ht\u27e9\n      \u00b7 intro e he\n        obtain \u27e8t, htc, het\u27e9 := he\n        exact (hcS htc).1 het\n      \u00b7 intro e he f hf hef\n        obtain \u27e8t, htc, het\u27e9 := he\n        obtain \u27e8u, huc, hfu\u27e9 := hf\n        rcases hch.total htc huc with hle | hle\n        \u00b7 exact (hcS huc).2 (hle het) hfu hef\n        \u00b7 exact (hcS htc).2 het (hle hfu) hef\n    obtain \u27e8M, hM\u27e9 := zorn_subset S hchain\n    have hMsub : M \u2286 G.edgeSet := hM.1.1\n    have hMpw : M.Pairwise fun e f => \u2200 x, x \u2208 e \u2192 x \u2209 f := hM.1.2\n    have hmeet : \u2200 e \u2208 G.edgeSet, \u2203 f \u2208 M, \u2203 x, x \u2208 e \u2227 x \u2208 f := by\n      intro e he\n      by_cases heM : e \u2208 M\n      \u00b7 obtain \u27e8a, ha\u27e9 : \u2203 a, a \u2208 e := by\n          induction e using Sym2.ind with\n          | _ a b => exact \u27e8a, by simp [Sym2.mem_iff]\u27e9\n        exact \u27e8e, heM, a, ha, ha\u27e9\n      \u00b7 have hins : insert e M \u2209 S := by\n          intro hmem\n          exact heM (hM.2 hmem (Set.subset_insert e M) (Set.mem_insert e M))\n        have hpair : \u00ac (insert e M).Pairwise fun e f => \u2200 x, x \u2208 e \u2192 x \u2209 f := by\n          intro hp\n          exact hins \u27e8Set.insert_subset he hMsub, hp\u27e9\n        obtain \u27e8f, hfM, hef, hbad\u27e9 :\n            \u2203 f \u2208 M, e \u2260 f \u2227\n              \u00ac((\u2200 x, x \u2208 e \u2192 x \u2209 f) \u2227 (\u2200 x, x \u2208 f \u2192 x \u2209 e)) := by\n          by_contra hcon\n          push_neg at hcon\n          exact hpair (Set.pairwise_insert.mpr \u27e8hMpw, fun f hf hef => hcon f hf hef\u27e9)\n        rcases not_and_or.mp hbad with hb | hb\n        \u00b7 push_neg at hb\n          obtain \u27e8x, hxe, hxf\u27e9 := hb\n          exact \u27e8f, hfM, x, hxe, hxf\u27e9\n        \u00b7 push_neg at hb\n          obtain \u27e8x, hxf, hxe\u27e9 := hb\n          exact \u27e8f, hfM, x, hxe, hxf\u27e9\n    have hMc : \u00ac M.Countable := by\n      intro hMc\n      apply h\n      have hVM : (\u22c3 f \u2208 M, {x | x \u2208 f}).Countable := by\n        refine hMc.biUnion fun f _ => ?_\n        induction f using Sym2.ind with\n        | _ a b =>\n          have hab2 : {x | x \u2208 s(a, b)} = {a, b} := by\n            ext x\n            simp [Sym2.mem_iff]\n          rw [hab2]\n          exact (Set.toFinite _).countable\n      have hxcount : \u2200 x : V, {e | e \u2208 G.edgeSet \u2227 x \u2208 e}.Countable := by\n        intro x\n        have hsub2 : {e | e \u2208 G.edgeSet \u2227 x \u2208 e} \u2286 (fun u => s(x, u)) '' (G.neighborSet x) := by\n          rintro e \u27e8he, hxe\u27e9\n          obtain \u27e8y, rfl\u27e9 := Sym2.mem_iff_exists.mp hxe\n          exact \u27e8y, G.mem_edgeSet.mp he, rfl\u27e9\n        exact ((hdeg x).image _).mono hsub2\n      have hcover : G.edgeSet \u2286 \u22c3 x \u2208 (\u22c3 f \u2208 M, {y | y \u2208 f}), {e | e \u2208 G.edgeSet \u2227 x \u2208 e} := by\n        intro e he\n        obtain \u27e8f, hfM, x, hxe, hxf\u27e9 := hmeet e he\n        exact Set.mem_biUnion (Set.mem_biUnion hfM hxf) \u27e8he, hxe\u27e9\n      exact ((hVM.biUnion fun x _ => hxcount x).mono hcover)\n    refine \u27e8SimpleGraph.fromEdgeSet M, fromEdgeSet_le_of_subset G hMsub,\n      matching_cliqueFree hMpw, ?_\u27e9\n    rw [SimpleGraph.edgeSet_fromEdgeSet]\n    have hnd : M \\ {e : Sym2 V | e.IsDiag} = M := by\n      ext e\n      constructor\n      \u00b7 exact fun he => he.1\n      \u00b7 intro he\n        exact \u27e8he, fun hd => (G.not_isDiag_of_mem_edgeSet (hMsub he)) hd\u27e9\n    rw [hnd]\n    exact hMc\n  \u00b7 push_neg at hdeg\n    obtain \u27e8v, hv\u27e9 := hdeg\n    exact \u27e8Erdos595Star.star G v, Erdos595Star.star_le G v,\n      Erdos595Star.star_cliqueFree G v, Erdos595Star.star_edgeSet_uncountable G v hv\u27e9\n\nend Erdos595Match",
+  "hypotheses": [
+   "{V : Type*}",
+   "(G : SimpleGraph V)",
+   "(h : \u00ac G.edgeSet.Countable)"
+  ],
+  "conclusion": "\u2203 H : SimpleGraph V, H \u2264 G \u2227 H.CliqueFree 3 \u2227 \u00ac H.edgeSet.Countable",
+  "proof": "by exact Erdos595Match.uncountable_triangleFree_subgraph G h"
+ },
+ "formal_status": "KERNEL_FAILED",
+ "events": [
+  "((supplied proof)) RAW[/tmp/oracle_lean_GQqQ9HLZ.lean:177:8: error: Tactic `rewrite` failed: Did not find an occurrence of the pattern]"
+ ],
+ "axioms": [
+  "Classical.choice",
+  "Quot.sound",
+  "propext",
+  "sorryAx"
+ ],
+ "attempts": [
+  {
+   "tactic": "(supplied proof)",
+   "status": "UNVERIFIED",
+   "seconds": 64.4,
+   "errors": [
+    "/tmp/oracle_lean_GQqQ9HLZ.lean:177:8: error: Tactic `rewrite` failed: Did not find an occurrence of the pattern"
+   ],
+   "exitCode": 1,
+   "resource_limit": null
+  }
+ ],
+ "budget_history": [
+  {
+   "tier_seconds": 120.0,
+   "outcome": "KERNEL_FAILED"
+  }
+ ],
+ "kernel_result": {
+  "status": "UNVERIFIED",
+  "file": "oracle/frontier_formalizer/cable/theorems/msl_erdos595-k219v-2026-09-05.lean",
+  "backend": "wsl",
+  "project": "/root/erdosfire-bench/proofs",
+  "needsMathlib": true,
+  "exitCode": 1,
+  "seconds": 52.4,
+  "declarations": [
+   {
+    "declaration": "star_adj_endpoint",
+    "clean": true,
+    "axioms": [
+     "propext"
+    ]
+   },
+   {
+    "declaration": "star_le",
+    "clean": true,
+    "axioms": [
+     "propext"
+    ]
+   },
+   {
+    "declaration": "star_cliqueFree",
+    "clean": true,
+    "axioms": [
+     "propext",
+     "Classical.choice",
+     "Quot.sound"
+    ]
+   },
+   {
+    "declaration": "star_edgeSet_uncountable",
+    "clean": true,
+    "axioms": [
+     "propext",
+     "Classical.choice",
+     "Quot.sound"
+    ]
+   },
+   {
+    "declaration": "fromEdgeSet_le_of_subset",
+    "clean": true,
+    "axioms": [
+     "propext",
+     "Classical.choice",
+     "Quot.sound"
+    ]
+   },
+   {
+    "declaration": "matching_cliqueFree",
+    "clean": true,
+    "axioms": [
+     "propext",
+     "Classical.choice",
+     "Quot.sound"
+    ]
+   },
+   {
+    "declaration": "uncountable_triangleFree_subgraph",
+    "clean": false,
+    "axioms": [
+     "propext",
+     "sorryAx",
+     "Classical.choice",
+     "Quot.sound"
+    ]
+   },
+   {
+    "declaration": "msl_erdos595_k219v_2026_09_05",
+    "clean": false,
+    "axioms": [
+     "propext",
+     "sorryAx",
+     "Classical.choice",
+     "Quot.sound"
+    ]
+   }
+  ],
+  "errors": [
+   "/tmp/oracle_lean_GQqQ9HLZ.lean:177:8: error: Tactic `rewrite` failed: Did not find an occurrence of the pattern"
+  ]
+ },
+ "lean_result_block": "LEAN_RESULT erdos595-k219v-2026-09-05\n  FORMAL_STATUS KERNEL_FAILED\n  FILE oracle/frontier_formalizer/cable/theorems/msl_erdos595-k219v-2026-09-05.lean\n  THEOREMS msl_erdos595_k219v_2026_09_05\n  BACKEND wsl\n  AXIOMS Classical.choice, Quot.sound, propext, sorryAx\n  TACTIC (supplied proof)\n  BUDGET 120s:KERNEL_FAILED\n  FAILURE ((supplied proof)) RAW[/tmp/oracle_lean_GQqQ9HLZ.lean:177:8: error: Tactic `rewrite` failed: Did not find an occurrence of the pattern]\n  LAW KERNEL_FAILED does not refute the claim \u2014 the FAILURE line names what actually broke",
+ "timestamp": "2026-09-05T17:32:38Z"
+}

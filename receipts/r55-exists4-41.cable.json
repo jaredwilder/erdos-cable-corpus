@@ -1,0 +1,60 @@
+{
+ "schema": "oracle.msl.cable.v1",
+ "id": "r55-exists4-41",
+ "spec": {
+  "id": "r55-exists4-41",
+  "imports": "none",
+  "set_options": [
+   "set_option maxRecDepth 20000",
+   "set_option maxHeartbeats 40000000"
+  ],
+  "definitions": "def S : List Nat := [1,2,3,5,7,10,13,15,16,17,24,25,26,28,31,34,36,38,39,40]\ndef adj (i j : Nat) : Bool := ((i + 41 - j) % 41) \u2208 S\ndef pairsOf (L : List Nat) : List (Nat \u00d7 Nat) :=\n  L.flatMap fun a => L.filterMap fun b => if a < b then some (a,b) else none\ndef isClique (L : List Nat) : Bool := (pairsOf L).all fun p => adj p.1 p.2\ndef isIndep (L : List Nat) : Bool := (pairsOf L).all fun p => ! adj p.1 p.2\ndef K : List Nat := [0,1,2,3]\ndef I : List Nat := [0,4,8,12]\ndef existsOK : Bool :=\n  (K.length == 4) && (I.length == 4)\n  && ((pairsOf K).length == 6) && ((pairsOf I).length == 6)\n  && isClique K && isIndep I\n  && (! isIndep K) && (! isClique I)",
+  "hypotheses": [],
+  "conclusion": "existsOK = true",
+  "proof": "by decide"
+ },
+ "formal_status": "KERNEL_CHECKED",
+ "events": [],
+ "axioms": [
+  "Quot.sound",
+  "propext"
+ ],
+ "attempts": [
+  {
+   "tactic": "(supplied proof)",
+   "status": "VERIFIED",
+   "seconds": 18.3,
+   "errors": [],
+   "exitCode": 0,
+   "resource_limit": null
+  }
+ ],
+ "budget_history": [
+  {
+   "tier_seconds": 120.0,
+   "outcome": "KERNEL_CHECKED"
+  }
+ ],
+ "kernel_result": {
+  "status": "VERIFIED",
+  "file": "oracle/frontier_formalizer/cable/theorems/msl_r55-exists4-41.lean",
+  "backend": "windows",
+  "project": "C:\\Users\\jared\\Local Sites\\woocommerce-enterprise\\oracle\\math\\EG411Formal",
+  "needsMathlib": false,
+  "exitCode": 0,
+  "seconds": 18.3,
+  "declarations": [
+   {
+    "declaration": "msl_r55_exists4_41",
+    "clean": true,
+    "axioms": [
+     "propext",
+     "Quot.sound"
+    ]
+   }
+  ],
+  "errors": []
+ },
+ "lean_result_block": "LEAN_RESULT r55-exists4-41\n  FORMAL_STATUS KERNEL_CHECKED\n  FILE oracle/frontier_formalizer/cable/theorems/msl_r55-exists4-41.lean\n  THEOREMS msl_r55_exists4_41\n  BACKEND windows\n  AXIOMS Quot.sound, propext\n  TACTIC (supplied proof)\n  BUDGET 120s:KERNEL_CHECKED\n  FAILURE NONE",
+ "timestamp": "2026-09-04T16:00:32Z"
+}

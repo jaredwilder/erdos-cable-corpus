@@ -1,0 +1,153 @@
+{
+ "schema": "oracle.msl.closer.witness.v1",
+ "id": "fmz-erdos14-campaign-001-R002-L1",
+ "pipeline": "WITNESS_FINITE",
+ "witness": {
+  "description": "Fragment certificate for L1: the exact-integer verifier recomputes r_A(n) by exhaustive enumeration in exact integer arithmetic for each finitary case, accepts a correct supplied f_A table, rejects a corrupted one, and fails closed (raises) on a missing or negative f_A entry. Witness is embedded; no files, no imports, no I/O.",
+  "cases": [
+   {
+    "case_id": "pos_A_finite",
+    "A": [
+     0,
+     1,
+     2,
+     4,
+     8
+    ],
+    "N": 20,
+    "f_A_table": {
+     "0": 0,
+     "1": 1,
+     "2": 1,
+     "3": 1,
+     "4": 2,
+     "5": 1,
+     "6": 2,
+     "7": 1,
+     "8": 3,
+     "9": 1,
+     "10": 2,
+     "11": 1,
+     "12": 1,
+     "13": 0,
+     "14": 1,
+     "15": 1,
+     "16": 2,
+     "17": 1,
+     "18": 1,
+     "19": 0,
+     "20": 1
+    },
+    "expect": "ACCEPT"
+   },
+   {
+    "case_id": "neg_wrong_table",
+    "A": [
+     0,
+     1,
+     2,
+     4,
+     8
+    ],
+    "N": 20,
+    "f_A_table": {
+     "0": 0,
+     "1": 1,
+     "2": 1,
+     "3": 1,
+     "4": 2,
+     "5": 1,
+     "6": 2,
+     "7": 1,
+     "8": 3,
+     "9": 1,
+     "10": 2,
+     "11": 1,
+     "12": 1,
+     "13": 0,
+     "14": 1,
+     "15": 1,
+     "16": 2,
+     "17": 1,
+     "18": 1,
+     "19": 0,
+     "20": 2
+    },
+    "expect": "REJECT"
+   },
+   {
+    "case_id": "missing_entry_fails_closed",
+    "A": [
+     0,
+     1,
+     2,
+     4,
+     8
+    ],
+    "N": 20,
+    "f_A_table": {
+     "0": 0,
+     "1": 1,
+     "2": 1,
+     "3": 1,
+     "4": 2,
+     "5": 1,
+     "6": 2,
+     "7": 1,
+     "8": 3,
+     "9": 1,
+     "10": 2,
+     "11": 1,
+     "12": 1,
+     "13": 0,
+     "14": 1,
+     "15": 1,
+     "16": 2,
+     "17": 1,
+     "18": 1
+    },
+    "expect": "ABORT"
+   },
+   {
+    "case_id": "negative_entry_fails_closed",
+    "A": [
+     0,
+     1
+    ],
+    "N": 3,
+    "f_A_table": {
+     "0": 0,
+     "1": 1,
+     "2": 1,
+     "3": -1
+    },
+    "expect": "ABORT"
+   },
+   {
+    "case_id": "no_table_self_computed",
+    "A": [
+     0,
+     1,
+     3
+    ],
+    "N": 12,
+    "f_A_table": null,
+    "expect": "ACCEPT"
+   }
+  ]
+ },
+ "verifier_sha256": "1528ebb7054c435426e4c7a13dc120c8787c6be37d63901b4256312ee42d82d0",
+ "verifier_source": "# Exact-integer verifier for the finitary restatement (fragment certificate for L1).\n# No imports. No I/O. No filesystem. No network. Deterministic. Exact integer arithmetic only.\n# Entry point: verify(witness) -- raises on any failed check (fail closed); returns True on PASS.\n\nWITNESS = {\n \"cases\": [\n  {\"case_id\": \"pos_A_finite\", \"A\": [0,1,2,4,8], \"N\": 20,\n   \"f_A_table\": {0:0,1:1,2:1,3:1,4:2,5:1,6:2,7:1,8:3,9:1,10:2,11:1,12:1,13:0,14:1,15:1,16:2,17:1,18:1,19:0,20:1},\n   \"expect\": \"ACCEPT\"},\n  {\"case_id\": \"neg_wrong_table\", \"A\": [0,1,2,4,8], \"N\": 20,\n   \"f_A_table\": {0:0,1:1,2:1,3:1,4:2,5:1,6:2,7:1,8:3,9:1,10:2,11:1,12:1,13:0,14:1,15:1,16:2,17:1,18:1,19:0,20:2},\n   \"expect\": \"REJECT\"},\n  {\"case_id\": \"missing_entry_fails_closed\", \"A\": [0,1,2,4,8], \"N\": 20,\n   \"f_A_table\": {0:0,1:1,2:1,3:1,4:2,5:1,6:2,7:1,8:3,9:1,10:2,11:1,12:1,13:0,14:1,15:1,16:2,17:1,18:1},\n   \"expect\": \"ABORT\"},\n  {\"case_id\": \"negative_entry_fails_closed\", \"A\": [0,1], \"N\": 3,\n   \"f_A_table\": {0:0,1:1,2:1,3:-1},\n   \"expect\": \"ABORT\"},\n  {\"case_id\": \"no_table_self_computed\", \"A\": [0,1,3], \"N\": 12,\n   \"f_A_table\": None, \"expect\": \"ACCEPT\"}\n ]\n}\n\ndef r_A(a_sorted, s, n):\n    c = 0\n    for a in a_sorted:\n        b = n - a\n        if b in s:\n            c += 1\n    return c\n\ndef _check_int(v, what):\n    if not isinstance(v, int) or isinstance(v, bool):\n        raise ValueError(\"non-integer %s\" % what)\n    if v < 0:\n        raise ValueError(\"negative %s\" % what)\n    return v\n\ndef verify(witness):\n    if not isinstance(witness, dict) or \"cases\" not in witness:\n        raise ValueError(\"malformed witness\")\n    for case in witness[\"cases\"]:\n        A = case[\"A\"]\n        N = case[\"N\"]\n        tbl = case[\"f_A_table\"]\n        expect = case[\"expect\"]\n        if expect not in (\"ACCEPT\", \"REJECT\", \"ABORT\"):\n            raise ValueError(\"bad expect\")\n        for x in A:\n            _check_int(x, \"A element\")\n        _check_int(N, \"N\")\n        a_sorted = sorted(set(A))\n        s = set(a_sorted)\n        computed = {}\n        for n in range(1, N + 1):\n            computed[n] = r_A(a_sorted, s, n)\n        if tbl is None:\n            verdict = \"ACCEPT\"\n        else:\n            verdict = \"ACCEPT\"\n            for n in range(1, N + 1):\n                if n not in tbl:\n                    raise ValueError(\"missing f_A entry n=%d (fail closed => ABORT)\" % n)\n                v = _check_int(tbl[n], \"f_A[%d]\" % n)\n                if v != computed[n]:\n                    verdict = \"REJECT\"\n                    break\n        if expect == \"ABORT\":\n            # An ABORT expectation cannot be reached on a live witness here without an\n            # actual raise; a case whose table is complete/correct and expects ABORT is\n            # itself a defective witness. To honor ABORT expectations, re-trigger the\n            # exact fail-closed condition explicitly and require that it raises.\n            trigger = False\n            for n in range(1, N + 1):\n                if tbl is None or n not in tbl:\n                    trigger = True\n                    break\n                if tbl[n] < 0:\n                    trigger = True\n                    break\n            if not trigger:\n                raise ValueError(\"ABORT expected but fail-closed condition not present in case %s\" % case[\"case_id\"])\n            # raising here IS the ABORT behavior, demonstrated live:\n            if tbl is not None and any(n not in tbl for n in range(1, N + 1)):\n                raise ValueError(\"missing f_A entry n (demonstrated ABORT)\" )\n            if tbl is not None and any(tbl[n] < 0 for n in range(1, N + 1)):\n                raise ValueError(\"negative f_A entry (demonstrated ABORT)\")\n            verdict = \"ABORT\"\n        if verdict != expect:\n            raise ValueError(\"case %s: expected %s, verifier produced %s\" % (case[\"case_id\"], expect, verdict))\n    return True\n\nRESULT = verify(WITNESS)\nassert RESULT is True\n",
+ "run": {
+  "passed": false,
+  "status": "VERIFIER_FAIL",
+  "exit_code": 1,
+  "stdout": "",
+  "detail": "ValueError: case pos_A_finite: expected ACCEPT, verifier produced REJECT",
+  "seconds": 0.16,
+  "code_sha256": "1528ebb7054c435426e4c7a13dc120c8787c6be37d63901b4256312ee42d82d0"
+ },
+ "claim": "Clean termination (RESULT is True, no exception) establishes: the exact-integer verifier exposes a verify(witness) entrypoint that recomputes r_A(n) for every n<=N by exhaustive enumeration in exact integer arithmetic, is sound and complete for the finitary counting predicate on the supplied instances (accepts a correct f_A table, rejects a corrupted one), and raises — fail closed — on a missing or negative f_A entry (the ABORT cases demonstrate the raise path live). This is the finite, decidable fragment of L1 exactly as stated. The ∀A∀ε eventually-lower-bound and o(√N) clauses of the campaign target are outside this certificate's scope.",
+ "law": "Wang 7.2: an exact finite object plus a proved reduction is a CERTIFICATE. The reduction is the `claim` and is a human's to audit; the object and the verifier run are the machine's part.",
+ "timestamp": "2026-09-01T23:37:53Z"
+}

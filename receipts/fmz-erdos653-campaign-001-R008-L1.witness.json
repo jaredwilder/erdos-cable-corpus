@@ -1,0 +1,53 @@
+{
+ "schema": "oracle.msl.closer.witness.v1",
+ "id": "fmz-erdos653-campaign-001-R008-L1",
+ "pipeline": "WITNESS_FINITE",
+ "witness": {
+  "n3": [
+   [
+    0,
+    0
+   ],
+   [
+    0,
+    1
+   ],
+   [
+    1,
+    0
+   ]
+  ],
+  "n4": [
+   [
+    0,
+    0
+   ],
+   [
+    0,
+    1
+   ],
+   [
+    1,
+    0
+   ],
+   [
+    -1,
+    0
+   ]
+  ]
+ },
+ "verifier_sha256": "03a383c5d5ccea4f82352eeed6b70d55da33c619c1c650dd0590ccf9b53afe7c",
+ "verifier_source": "# Standalone verifier, Python 3. No imports, no I/O, no filesystem, no network.\n# Entry point: verify(witness) -- raises on any failed check, returns True on PASS.\n\ndef _d2(p, q):\n    return (p[0]-q[0])**2 + (p[1]-q[1])**2\n\ndef _distinct_R(pts):\n    n = len(pts)\n    assert n >= 1\n    assert len(set(map(tuple, pts))) == n, 'DISTINCTNESS LOSS'\n    R = []\n    for i in range(n):\n        vals = sorted(set(_d2(pts[i], pts[j]) for j in range(n) if j != i))\n        assert all(v > 0 for v in vals), 'degenerate zero distance'\n        R.append(len(vals))\n    return len(set(R))\n\ndef verify(witness):\n    n3 = [[int(p[0]), int(p[1])] for p in witness['n3']]\n    n4 = [[int(p[0]), int(p[1])] for p in witness['n4']]\n    r3 = _distinct_R(n3)\n    r4 = _distinct_R(n4)\n    assert r3 == 2, 'g(3) witness must realize exactly 2 distinct R-values'\n    assert r4 == 3, 'g(4) witness must realize exactly 3 distinct R-values'\n    return True\n",
+ "run": {
+  "passed": true,
+  "status": "VERIFIER_PASS",
+  "exit_code": 0,
+  "stdout": "PASS",
+  "detail": "",
+  "seconds": 0.09,
+  "code_sha256": "03a383c5d5ccea4f82352eeed6b70d55da33c619c1c650dd0590ccf9b53afe7c"
+ },
+ "claim": "A standalone, import-free, fail-closed verifier with entry point verify(witness) confirms the explicit configurations (O,(0,1),(1,0)) and (O,(0,1),(1,0),(-1,0)) realize exactly 2 and 3 distinct R-values respectively, certifying the lower-bound fragment g(3) >= 2 and g(4) >= 3 of L1; the upper bounds g(3) <= 2, g(4) <= 3 and the n-1 / floor(n/2) structural claims remain COMPUTATION_SUPPORTED and are NOT covered.",
+ "law": "Wang 7.2: an exact finite object plus a proved reduction is a CERTIFICATE. The reduction is the `claim` and is a human's to audit; the object and the verifier run are the machine's part.",
+ "timestamp": "2026-09-01T22:49:04Z"
+}

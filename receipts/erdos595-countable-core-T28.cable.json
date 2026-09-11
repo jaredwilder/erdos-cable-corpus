@@ -1,0 +1,80 @@
+{
+ "schema": "oracle.msl.cable.v1",
+ "id": "erdos595-countable-core-T28",
+ "spec": {
+  "id": "erdos595-countable-core-T28",
+  "imports": "Mathlib",
+  "definitions": "open SimpleGraph Set in\ndef GoodOn {V : Type} (G : SimpleGraph V) (k : \u2115) (S : Set V) (f : Sym2 V \u2192 Fin k) : Prop :=\n  \u2200 a \u2208 S, \u2200 b \u2208 S, \u2200 c \u2208 S, G.Adj a b \u2192 G.Adj a c \u2192 G.Adj b c \u2192\n    \u00ac (f s(a, b) = f s(a, c) \u2227 f s(a, c) = f s(b, c))\n\ndef IsCUTF {V : Type} (G : SimpleGraph V) : Prop :=\n  \u2203 H : \u2115 \u2192 SimpleGraph V, (\u2200 i, (H i).CliqueFree 3) \u2227 G = \u2a06 i, H i\n\ntheorem compactT26 {V : Type} (G : SimpleGraph V) (k : \u2115)\n    (h : \u2200 S : Finset V, \u2203 f : Sym2 V \u2192 Fin k, GoodOn G k (S : Set V) f) :\n    \u2203 f : Sym2 V \u2192 Fin k, GoodOn G k Set.univ f := by\n  classical\n  letI : TopologicalSpace (Fin k) := \u22a5\n  haveI : DiscreteTopology (Fin k) := \u27e8rfl\u27e9\n  haveI : CompactSpace (Fin k) := Finite.compactSpace\n  haveI : CompactSpace (Sym2 V \u2192 Fin k) := Pi.compactSpace\n  let T := {p : V \u00d7 V \u00d7 V // G.Adj p.1 p.2.1 \u2227 G.Adj p.1 p.2.2 \u2227 G.Adj p.2.1 p.2.2}\n  let C : T \u2192 Set (Sym2 V \u2192 Fin k) := fun t =>\n    {f | \u00ac (f s(t.1.1, t.1.2.1) = f s(t.1.1, t.1.2.2) \u2227\n            f s(t.1.1, t.1.2.2) = f s(t.1.2.1, t.1.2.2))}\n  have hclosed : \u2200 t : T, IsClosed (C t) := by\n    intro t\n    have hcont : Continuous (fun f : Sym2 V \u2192 Fin k =>\n        (f s(t.1.1, t.1.2.1), f s(t.1.1, t.1.2.2), f s(t.1.2.1, t.1.2.2))) :=\n      by fun_prop\n    have heq : C t = (fun f : Sym2 V \u2192 Fin k =>\n        (f s(t.1.1, t.1.2.1), f s(t.1.1, t.1.2.2), f s(t.1.2.1, t.1.2.2))) \u207b\u00b9'\n        {p : Fin k \u00d7 Fin k \u00d7 Fin k | \u00ac (p.1 = p.2.1 \u2227 p.2.1 = p.2.2)} := rfl\n    rw [heq]\n    exact (isClosed_discrete _).preimage hcont\n  have hne : (\u22c2 t : T, C t).Nonempty := by\n    by_contra hcon\n    rw [Set.not_nonempty_iff_eq_empty] at hcon\n    obtain \u27e8u, hu\u27e9 := (isCompact_univ (X := Sym2 V \u2192 Fin k)).elim_finite_subfamily_closed\n      C hclosed (by rw [Set.univ_inter, hcon])\n    let S : Finset V := u.biUnion (fun t => {t.1.1, t.1.2.1, t.1.2.2})\n    obtain \u27e8f, hf\u27e9 := h S\n    have hmem : f \u2208 \u22c2 t \u2208 u, C t := by\n      refine Set.mem_iInter\u2082.2 (fun t ht => ?_)\n      have h1 : t.1.1 \u2208 S := Finset.mem_biUnion.2 \u27e8t, ht, by simp\u27e9\n      have h2 : t.1.2.1 \u2208 S := Finset.mem_biUnion.2 \u27e8t, ht, by simp\u27e9\n      have h3 : t.1.2.2 \u2208 S := Finset.mem_biUnion.2 \u27e8t, ht, by simp\u27e9\n      exact hf _ h1 _ h2 _ h3 t.2.1 t.2.2.1 t.2.2.2\n    have hmem2 : f \u2208 (Set.univ : Set (Sym2 V \u2192 Fin k)) \u2229 \u22c2 t \u2208 u, C t := \u27e8trivial, hmem\u27e9\n    rw [hu] at hmem2\n    exact hmem2.elim\n  obtain \u27e8f, hf\u27e9 := hne\n  refine \u27e8f, ?_\u27e9\n  intro a _ b _ c _ hab hac hbc\n  exact (Set.mem_iInter.1 hf \u27e8(a, b, c), \u27e8hab, hac, hbc\u27e9\u27e9)\n\ntheorem finObsT27 {V : Type} (G : SimpleGraph V) (k : \u2115) :\n    \u00ac IsCUTF G \u2192 \u2203 S : Finset V, \u2200 f : Sym2 V \u2192 Fin k, \u00ac GoodOn G k (S : Set V) f := by\n  classical\n  intro hw\n  by_contra hcon\n  push_neg at hcon\n  obtain \u27e8f, hf\u27e9 := compactT26 G k (fun S => (hcon S).imp (fun g hg => hg))\n  refine hw \u27e8fun n => if hn : n < k then\n      SimpleGraph.fromEdgeSet {e | e \u2208 G.edgeSet \u2227 f e = \u27e8n, hn\u27e9} else \u22a5, ?_, ?_\u27e9\n  \u00b7 intro n\n    by_cases hn : n < k\n    \u00b7 simp only [dif_pos hn]\n      intro t ht\n      obtain \u27e8hcl, hcard\u27e9 := ht\n      obtain \u27e8a, b, c, hab, hac, hbc, hteq\u27e9 := Finset.card_eq_three.mp hcard\n      have ha : a \u2208 t := by rw [hteq]; simp\n      have hb : b \u2208 t := by rw [hteq]; simp\n      have hc : c \u2208 t := by rw [hteq]; simp\n      have e1 := hcl ha hb hab\n      have e2 := hcl ha hc hac\n      have e3 := hcl hb hc hbc\n      rw [SimpleGraph.fromEdgeSet_adj] at e1 e2 e3\n      exact hf a (Set.mem_univ a) b (Set.mem_univ b) c (Set.mem_univ c)\n        e1.1.1 e2.1.1 e3.1.1 \u27e8by rw [e1.1.2, e2.1.2], by rw [e2.1.2, e3.1.2]\u27e9\n    \u00b7 simp only [dif_neg hn]\n      exact SimpleGraph.cliqueFree_bot (by norm_num)\n  \u00b7 ext a b\n    rw [SimpleGraph.iSup_adj]\n    constructor\n    \u00b7 intro hab\n      refine \u27e8(f s(a, b)).1, ?_\u27e9\n      simp only [dif_pos (f s(a, b)).2]\n      rw [SimpleGraph.fromEdgeSet_adj]\n      exact \u27e8\u27e8hab, by simp\u27e9, G.ne_of_adj hab\u27e9\n    \u00b7 rintro \u27e8n, hn\u27e9\n      by_cases hk : n < k\n      \u00b7 rw [dif_pos hk, SimpleGraph.fromEdgeSet_adj] at hn\n        exact hn.1.1\n      \u00b7 rw [dif_neg hk] at hn\n        exact absurd hn (by simp)",
+  "hypotheses": [
+   "{V : Type}",
+   "(G : SimpleGraph V)",
+   "(hw : \u00ac IsCUTF G)"
+  ],
+  "conclusion": "\u2203 W : Set V, W.Countable \u2227 \u2200 k : \u2115, \u2203 S : Finset V, (S : Set V) \u2286 W \u2227 \u2200 f : Sym2 V \u2192 Fin k, \u00ac GoodOn G k (S : Set V) f",
+  "proof": "by\n  classical\n  choose S hS using fun k => finObsT27 G k hw\n  refine \u27e8\u22c3 k : \u2115, (S k : Set V), Set.countable_iUnion (fun k => (S k).countable_toSet), ?_\u27e9\n  intro k\n  exact \u27e8S k, Set.subset_iUnion (fun k => ((S k : Finset V) : Set V)) k, hS k\u27e9"
+ },
+ "formal_status": "KERNEL_CHECKED",
+ "events": [],
+ "axioms": [
+  "Classical.choice",
+  "Quot.sound",
+  "propext"
+ ],
+ "attempts": [
+  {
+   "tactic": "(supplied proof)",
+   "status": "VERIFIED",
+   "seconds": 59.5,
+   "errors": [],
+   "exitCode": 0,
+   "resource_limit": null
+  }
+ ],
+ "budget_history": [
+  {
+   "tier_seconds": 120.0,
+   "outcome": "KERNEL_CHECKED"
+  }
+ ],
+ "kernel_result": {
+  "status": "VERIFIED",
+  "file": "oracle/frontier_formalizer/cable/theorems/msl_erdos595-countable-core-T28.lean",
+  "backend": "wsl",
+  "project": "/root/erdosfire-bench/proofs",
+  "needsMathlib": true,
+  "exitCode": 0,
+  "seconds": 46.5,
+  "declarations": [
+   {
+    "declaration": "compactT26",
+    "clean": true,
+    "axioms": [
+     "propext",
+     "Classical.choice",
+     "Quot.sound"
+    ]
+   },
+   {
+    "declaration": "finObsT27",
+    "clean": true,
+    "axioms": [
+     "propext",
+     "Classical.choice",
+     "Quot.sound"
+    ]
+   },
+   {
+    "declaration": "msl_erdos595_countable_core_T28",
+    "clean": true,
+    "axioms": [
+     "propext",
+     "Classical.choice",
+     "Quot.sound"
+    ]
+   }
+  ],
+  "errors": []
+ },
+ "lean_result_block": "LEAN_RESULT erdos595-countable-core-T28\n  FORMAL_STATUS KERNEL_CHECKED\n  FILE oracle/frontier_formalizer/cable/theorems/msl_erdos595-countable-core-T28.lean\n  THEOREMS msl_erdos595_countable_core_T28\n  BACKEND wsl\n  AXIOMS Classical.choice, Quot.sound, propext\n  TACTIC (supplied proof)\n  BUDGET 120s:KERNEL_CHECKED\n  FAILURE NONE",
+ "timestamp": "2026-09-06T00:44:38Z"
+}

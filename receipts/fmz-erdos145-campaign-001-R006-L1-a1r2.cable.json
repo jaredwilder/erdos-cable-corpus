@@ -1,0 +1,62 @@
+{
+ "schema": "oracle.msl.cable.v1",
+ "id": "fmz-erdos145-campaign-001-R006-L1-a1r2",
+ "spec": {
+  "id": "fmz-erdos145-campaign-001-R006-L1-a1r2",
+  "imports": "none",
+  "definitions": "-- M\u00f6bius function by exact trial factorization.\n-- muAux m d: assuming no prime < d divides m with multiplicity issues\n-- (guaranteed because we test d*d | m before dividing).\ndef muAux (m d : Nat) : Int :=\n  if d * d > m then\n    if m = 1 then 1 else -(1 : Int)\n  else if m % (d * d) = 0 then 0\n  else if m % d = 0 then -(muAux (m / d) (d + 1))\n  else muAux m (d + 1)\n\ndef mu (n : Nat) : Int := muAux n 2\n\n-- The exact M\u00f6bius-sum reduction N(X) = \u03a3_{d\u2264D} \u03bc(d) \u230aX/d\u00b2\u230b is not what L1 states;\n-- L1 states \u03a3 \u03bc(d)\u230aX/d\u00b2\u230b with the summand \u230aX/d\u00b2\u230b. We implement exactly that.\ndef floorTerm (X d : Nat) : Int := ((X / (d * d)) : Nat)\n\ndef S (X D : Nat) : Int :=\n  (List.range (D + 1)).foldl\n    (fun acc d => acc + mu d * floorTerm X d) 0\n\ndef checkN : Bool := S 10000000 3162 = 6079271",
+  "conclusion": "checkN = true",
+  "proof": "by decide"
+ },
+ "formal_status": "KERNEL_FAILED",
+ "events": [
+  "((supplied proof)) RAW[tmp7hwntro5.lean:6:4: error: fail to show termination for]",
+  "((supplied proof)) RAW[tmp7hwntro5.lean:25:74: error: maximum recursion depth has been reached]"
+ ],
+ "axioms": [
+  "sorryAx"
+ ],
+ "attempts": [
+  {
+   "tactic": "(supplied proof)",
+   "status": "UNVERIFIED",
+   "seconds": 65.5,
+   "errors": [
+    "tmp7hwntro5.lean:6:4: error: fail to show termination for",
+    "tmp7hwntro5.lean:25:74: error: maximum recursion depth has been reached"
+   ],
+   "exitCode": 1,
+   "resource_limit": "maximum recursion depth"
+  }
+ ],
+ "budget_history": [
+  {
+   "tier_seconds": 900.0,
+   "outcome": "UNDECIDED_RESOURCE[maximum recursion depth]"
+  }
+ ],
+ "kernel_result": {
+  "status": "UNVERIFIED",
+  "file": "oracle/frontier_formalizer/cable/theorems/msl_fmz-erdos145-campaign-001-R006-L1-a1r2.lean",
+  "backend": "windows",
+  "project": "C:\\Users\\jared\\Local Sites\\woocommerce-enterprise\\oracle\\math\\EG411Formal",
+  "needsMathlib": false,
+  "exitCode": 1,
+  "seconds": 65.5,
+  "declarations": [
+   {
+    "declaration": "msl_fmz_erdos145_campaign_001_R006_L1_a1r2",
+    "clean": false,
+    "axioms": [
+     "sorryAx"
+    ]
+   }
+  ],
+  "errors": [
+   "tmp7hwntro5.lean:6:4: error: fail to show termination for",
+   "tmp7hwntro5.lean:25:74: error: maximum recursion depth has been reached"
+  ]
+ },
+ "lean_result_block": "LEAN_RESULT fmz-erdos145-campaign-001-R006-L1-a1r2\n  FORMAL_STATUS KERNEL_FAILED\n  FILE oracle/frontier_formalizer/cable/theorems/msl_fmz-erdos145-campaign-001-R006-L1-a1r2.lean\n  THEOREMS msl_fmz_erdos145_campaign_001_R006_L1_a1r2\n  BACKEND windows\n  AXIOMS sorryAx\n  TACTIC (supplied proof)\n  BUDGET 900s:UNDECIDED_RESOURCE[maximum recursion depth]\n  FAILURE ((supplied proof)) RAW[tmp7hwntro5.lean:6:4: error: fail to show termination for]; ((supplied proof)) RAW[tmp7hwntro5.lean:25:74: error: maximum recursion depth has been reached]\n  LAW KERNEL_FAILED does not refute the claim \u2014 the FAILURE line names what actually broke\n  LAW BUDGET_EXHAUSTED is an UNDECIDED question, not a failed proof \u2014 the machine stopped, the mathematics did not answer",
+ "timestamp": "2026-09-02T01:29:44Z"
+}
