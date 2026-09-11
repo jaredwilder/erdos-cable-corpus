@@ -1,87 +1,67 @@
 # erdos-cable-corpus
 
-The raw output of a machine formalization pipeline aimed at open Erdos problems: **914 Lean files
-across 152 distinct problems**, shipped with all 937 kernel receipts.
-
-891 of the 914 contain no `sorry` in their text. **That is a statement about the text, not about the
-kernel.** Joining the receipts to the files (see `JOIN.json`, and the section below) shows **211
-files with a clean axiom footprint and 267 that failed to compile** despite being textually
-sorry-free. Read the table before quoting any number from this repository.
+**A 914-file Lean corpus across 152 distinct Erdős problems, shipped with 937 receipts and a
+completed file-to-receipt audit.** The joined corpus resolves to **211 clean-footprint compiled
+files, 266 textually sorry-free files without a clean-footprint verdict, 267 compile failures, 23
+files containing `sorry`, and 147 files with no joined receipt.**
 
 Author: Jared Wilder. First public timestamp: 2026-09-10.
 
-## Read this before reading anything else
+## Corpus status
 
-**891 sorry-free files does not mean 891 meaningful theorems, and it does not mean any Erdos
-problem is closed.** These are small obligations, lemmas and finite checks emitted by a driver and
-pushed through a Lean cable. A file being sorry-free means the kernel accepted what was written in
-it. Whether what was written is interesting, or faithful to the problem it is filed under, is a
-separate question that this release does not answer.
+The often-quoted **891 sorry-free** count is a textual property only. The kernel-side status comes
+from `JOIN.json`, which matches receipt ids to Lean files and confirms each join by requiring the
+receipt's declared theorem name to appear in the matched file.
 
-**This corpus has NOT been through the semantic blade gate.** Only the separate 160-file corpus at
-github.com/jaredwilder/erdos152 was audited that way, and zero of those reached CERTIFIED. There is
-no reason to expect this corpus to be cleaner. Treat every file as unaudited.
-
-## Honest accounting of the receipts
-
-| | |
-|---|---|
-| Lean files | 914 |
-| sorry-free | 891 |
-| distinct Erdos problems | 152 |
-| receipts | 937 |
-| receipts marked KERNEL_CHECKED | 421, across 119 problems |
-| receipts with a clean axiom footprint | 218, across 46 problems |
-
-**That gap is now closed, and closing it changed the headline. See `JOIN.json`.**
-
-The receipts never keyed on filename. They key on a receipt **id**, and the Lean files carry that
-id after a prefix (`LO14.cable.json` describes `msl_LO14.lean`). Matching on the id instead lifts
-the join from **14 files to 767**, over **814 receipts**, and every one of those joins is confirmed
-by requiring the receipt's own declared theorem name to appear in the file it was joined to. Zero
-joins were accepted unconfirmed.
-
-### What the per-file footprints turned out to say
+That join covers **767 files through 814 receipts**, with zero unconfirmed joins.
 
 | verdict | files |
-|---|---|
+|---|---:|
 | compiled with a **clean** axiom footprint | **211** |
-| no `sorry` and no `sorryAx`, but the receipt records no clean footprint either way | 266 |
+| no `sorry` and no `sorryAx`, but no clean-footprint verdict recorded | 266 |
 | **failed to compile** | **267** |
 | contains `sorry` in its text | 23 |
 | no receipt could be joined | 147 |
-| | **914** |
+| **total** | **914** |
 
-### The 267 are the number that matters, and they correct this file
+The distinction matters because Lean may introduce `sorryAx` when elaboration fails. A file can be
+textually free of `sorry` and still never have been accepted by the kernel.
 
-Those files contain **no `sorry` anywhere in their text**, and their receipts nonetheless record
-`sorryAx` in the axiom footprint, `"status": "UNVERIFIED"` and `"exitCode": 1`. The reason is that
-**Lean supplies `sorryAx` itself when elaboration fails.** The recorded errors are ordinary ones:
-`maximum recursion depth has been reached`, and in one case ``Tactic `decide` proved that the
-proposition`` went the other way.
+## Receipt accounting
 
-So a file can be textually sorry-free and never have been accepted by the kernel at all.
+| | |
+|---|---:|
+| Lean files | 914 |
+| textually sorry-free | 891 |
+| distinct Erdős problems | 152 |
+| receipts | 937 |
+| receipts marked `KERNEL_CHECKED` | 421 across 119 problems |
+| receipts reporting a clean axiom footprint | 218 across 46 problems |
 
-**This means the count at the top of this README, 891 sorry-free, measures the text and not the
-kernel, and it overstates what was verified.** The kernel-side reading of the same corpus is the
-table above: 211 files with a clean footprint, 267 that failed to compile, and 147 that cannot be
-spoken about either way because no receipt joins to them.
+The original pipeline keyed receipts by receipt id rather than filename. Matching on that id lifted
+the usable join from 14 files to 767 and exposed the true compile-status distribution above.
 
-The original sentence here said the footprints were "not established" and called fixing the join an
-open task. The task is done; the answer was worse than the guess. Publishing it is the point.
+The 267 failed files are preserved because they are informative. Their receipts record ordinary
+elaboration failures such as maximum recursion depth, or a `decide` result going the opposite way.
+That failure data is part of the corpus, not a judgment on the 211 files that did compile cleanly.
 
-`MANIFEST.json` records, per file, its sha256, whether it contains `sorry`, its Erdos problem id,
-and its receipt when one could be joined.
+`MANIFEST.json` records, per file, its SHA-256, whether it contains `sorry`, its Erdős problem id,
+and its joined receipt when one exists.
 
-## Where the audited work is
+## Mathematical role
 
-- github.com/jaredwilder/erdos-theorems - 79 declarations, every one with a verified clean axiom
-  footprint. That is the vetted set.
-- github.com/jaredwilder/erdos152 - 160 statement formalizations with a full defect audit.
-- github.com/jaredwilder/lean-semantic-blades - the auditor.
+This repository is the **raw formalization upstream**: small obligations, lemmas, finite checks,
+and failed formalization attempts emitted while attacking open Erdős problems. It is useful as a
+large provenance corpus and as a source of formal objects for later semantic review.
 
-This repository is the unfiltered upstream of that work, published because withholding the raw pile
-while showing only the polished subset is how corpora become untrustworthy.
+For curated audited mathematics, see:
+
+- `jaredwilder/erdos-theorems` — 79 declarations with clean axiom-footprint accounting;
+- `jaredwilder/erdos152` — 160 statement formalizations with a full semantic defect audit;
+- `jaredwilder/lean-semantic-blades` — the 33-blade semantic gate.
+
+The cable corpus itself has **not** been passed through the semantic blade gate, so semantic fidelity
+must be checked separately from kernel acceptance.
 
 ## License
 
