@@ -1,0 +1,28 @@
+ORACLE THEOREMOS 0.9.0 FINAL RECOVERY VERIFICATION
+
+RELEASE CLASS: FAILED FRONTIER GATE — VALID THEOREMOS CHECKPOINT
+
+Cumulative tests: 185/185 passed across 6 independently rooted shards.
+Test files covered exactly once: 38
+Runtime code digest: 7d13a4c45189f0c2e325e2631050b7ac7ac4f7bace843e67ebcea9766d3ee768
+Frontier-100 exact bindings: 100/100
+Frontier-100 source hash matches: 100/100
+Theorem IR objects: 100/100
+Source substitutions: 0
+Preflight errors: 0
+Qualified Lean ecosystem available: False
+Strict frontier closures: 0
+Immutable frontier events: 200 (valid=True)
+Answer-hidden solved qualification corpus: 43 cases prepared; not executed without Lean.
+
+Exact archive semantic replay: PASS
+Source ZIP byte-identical rebuild: PASS
+Wheel byte-identical rebuild: PASS
+Clean standalone CLI: PASS
+Clean cumulative CLI: PASS
+Exact erdos_251 binding from clean wheel: PASS
+Typed missing-ecosystem refusal: PASS
+Target/helper/import mutation guards: PASS
+Offline SHA-bound ecosystem import rail: PASS (unit-qualified; real archive not present here)
+
+This checkpoint does not claim a frontier theorem. The release gate remains red until an exact sampled theorem receives clean Lean kernel authority and fresh independent replay.
