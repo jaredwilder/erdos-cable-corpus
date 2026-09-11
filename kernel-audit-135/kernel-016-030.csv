@@ -1,0 +1,29 @@
+id,formal_status,conclusion,proof,axioms,needs_mathlib,backend,exit_code,seconds,lean_file,receipt_path,errors,scope_class
+fmz-erdos1108-campaign-001-R001-L1,KERNEL_CHECKED,checkL1 = true,by decide,,False,windows,0,16.4,oracle/frontier_formalizer/cable/theorems/msl_fmz-erdos1108-campaign-001-R001-L1.lean,cable-kernel-receipts/fmz-erdos1108-campaign-001-R001-L1.cable.json,,FINITE_OR_DEFINITIONAL
+fmz-erdos1113-campaign-001-R001-L1,KERNEL_CHECKED,verifier₁ ([] : List Nat) = false ∧ verifier₂ ([] : List Nat) = false ∧ ¬ issuesNonemptyCertificate verifier₁ ∧ ¬ issuesNonemptyCertificate verifier₂,"by
+  constructor
+  · rfl
+  constructor
+  · rfl
+  constructor
+  · intro h
+    rcases h with ⟨input, hne, hok⟩
+    simp [verifier₁] at hok
+  · intro h
+    rcases h with ⟨input, hne, hok⟩
+    simp [verifier₂] at hok",propext,True,wsl,0,29.1,oracle/frontier_formalizer/cable/theorems/msl_fmz-erdos1113-campaign-001-R001-L1.lean,cable-kernel-receipts/fmz-erdos1113-campaign-001-R001-L1.cable.json,,FINITE_OR_DEFINITIONAL
+fmz-erdos1137-campaign-001-R001-L1,KERNEL_CHECKED,check_L1 L1_inventory = true,by decide,,False,windows,0,2.5,oracle/frontier_formalizer/cable/theorems/msl_fmz-erdos1137-campaign-001-R001-L1.lean,cable-kernel-receipts/fmz-erdos1137-campaign-001-R001-L1.cable.json,,FINITE_OR_DEFINITIONAL
+fmz-erdos1139-campaign-001-R002-L1,KERNEL_CHECKED,((1 : ℚ) / 3 + (1 : ℚ) / 6 = (1 : ℚ) / 2) ∧ ((1 : ℚ) / 2 < (1 : ℚ)),by norm_num,Classical.choice; Quot.sound; propext,True,wsl,0,3.2,oracle/frontier_formalizer/cable/theorems/msl_fmz-erdos1139-campaign-001-R002-L1.lean,cable-kernel-receipts/fmz-erdos1139-campaign-001-R002-L1.cable.json,,FINITE_OR_DEFINITIONAL
+fmz-erdos1192-campaign-001-R007-L1,KERNEL_CHECKED,checkAll = true,by decide,,False,windows,0,20.8,oracle/frontier_formalizer/cable/theorems/msl_fmz-erdos1192-campaign-001-R007-L1.lean,cable-kernel-receipts/fmz-erdos1192-campaign-001-R007-L1.cable.json,,FINITE_OR_DEFINITIONAL
+fmz-erdos1192-campaign-001-R008-L1,KERNEL_CHECKED,check_scope = true,by decide,,False,windows,0,2.1,oracle/frontier_formalizer/cable/theorems/msl_fmz-erdos1192-campaign-001-R008-L1.lean,cable-kernel-receipts/fmz-erdos1192-campaign-001-R008-L1.cable.json,,FINITE_OR_DEFINITIONAL
+fmz-erdos1199-campaign-001-R003-L1,KERNEL_CHECKED,rational_comparison,"by
+  intro a b c d hb hd
+  exact (div_lt_div_iff₀ hb hd)",Classical.choice; Quot.sound; propext,True,wsl,0,74.1,oracle/frontier_formalizer/cable/theorems/msl_fmz-erdos1199-campaign-001-R003-L1.lean,cable-kernel-receipts/fmz-erdos1199-campaign-001-R003-L1.cable.json,,FINITE_OR_DEFINITIONAL
+fmz-erdos1201-campaign-001-R001-L1,KERNEL_CHECKED,R001L1.checkNoVerifier = true,by decide,propext,False,windows,0,11.2,oracle/frontier_formalizer/cable/theorems/msl_fmz-erdos1201-campaign-001-R001-L1.lean,cable-kernel-receipts/fmz-erdos1201-campaign-001-R001-L1.cable.json,,FINITE_OR_DEFINITIONAL
+fmz-erdos1203-campaign-001-R002-L1,KERNEL_CHECKED,checkBattery = true,by decide,,False,windows,0,2.1,oracle/frontier_formalizer/cable/theorems/msl_fmz-erdos1203-campaign-001-R002-L1.lean,cable-kernel-receipts/fmz-erdos1203-campaign-001-R002-L1.cable.json,,FINITE_OR_DEFINITIONAL
+fmz-erdos1203-campaign-001-R006-L1,KERNEL_CHECKED,check_L1 = true,by decide,,False,windows,0,2.2,oracle/frontier_formalizer/cable/theorems/msl_fmz-erdos1203-campaign-001-R006-L1.lean,cable-kernel-receipts/fmz-erdos1203-campaign-001-R006-L1.cable.json,,FINITE_OR_DEFINITIONAL
+fmz-erdos1203-campaign-001-R008-L1,KERNEL_CHECKED,checkRange 20 = true,by decide,,False,windows,0,2.1,oracle/frontier_formalizer/cable/theorems/msl_fmz-erdos1203-campaign-001-R008-L1.lean,cable-kernel-receipts/fmz-erdos1203-campaign-001-R008-L1.cable.json,,FINITE_OR_DEFINITIONAL
+fmz-erdos153-campaign-001-R001-L1,KERNEL_CHECKED,checkLemma1 = true,by decide,,False,windows,0,2.5,oracle/frontier_formalizer/cable/theorems/msl_fmz-erdos153-campaign-001-R001-L1.lean,cable-kernel-receipts/fmz-erdos153-campaign-001-R001-L1.cable.json,,FINITE_OR_DEFINITIONAL
+fmz-erdos155-campaign-001-R004-L1,KERNEL_CHECKED,check 4 2 = true,by decide,propext,False,windows,0,2.6,oracle/frontier_formalizer/cable/theorems/msl_fmz-erdos155-campaign-001-R004-L1.lean,cable-kernel-receipts/fmz-erdos155-campaign-001-R004-L1.cable.json,,FINITE_OR_DEFINITIONAL
+fmz-erdos17-campaign-001-R001-L1,KERNEL_CHECKED,checkReduction = true,by decide,,False,windows,0,2.6,oracle/frontier_formalizer/cable/theorems/msl_fmz-erdos17-campaign-001-R001-L1.lean,cable-kernel-receipts/fmz-erdos17-campaign-001-R001-L1.cable.json,,FINITE_OR_DEFINITIONAL
+fmz-erdos17-campaign-001-R002-L1,KERNEL_CHECKED,verifierSigns = true,by decide,,False,windows,0,13.4,oracle/frontier_formalizer/cable/theorems/msl_fmz-erdos17-campaign-001-R002-L1.lean,cable-kernel-receipts/fmz-erdos17-campaign-001-R002-L1.cable.json,,FINITE_OR_DEFINITIONAL
