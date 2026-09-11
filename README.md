@@ -1,31 +1,33 @@
-# erdos-cable-corpus
+# Lean corpus across 152 Erdős problems
 
-**A 914-file Lean corpus across 152 distinct Erdős problems, shipped with 937 receipts and a
-completed file-to-receipt audit.** The joined corpus resolves to **211 clean-footprint compiled
-files, 266 textually sorry-free files without a clean-footprint verdict, 267 compile failures, 23
-files containing `sorry`, and 147 files with no joined receipt.**
+A public corpus of **914 Lean files across 152 distinct Erdős problems**, with **937 verification receipts** and a completed file-to-receipt audit. The audit separates what compiled cleanly from what merely looked complete in text.
+
+Current status:
+
+- **211** files compiled with a clean axiom footprint;
+- **266** are textually free of `sorry` but have no clean-footprint verdict recorded;
+- **267** failed to compile;
+- **23** contain `sorry` in the source;
+- **147** have no joined verification receipt.
 
 Author: Jared Wilder. First public timestamp: 2026-09-10.
 
-## Corpus status
+## Why the distinction matters
 
-The often-quoted **891 sorry-free** count is a textual property only. The kernel-side status comes
-from `JOIN.json`, which matches receipt ids to Lean files and confirms each join by requiring the
-receipt's declared theorem name to appear in the matched file.
+The often-quoted **891 sorry-free** count is only a textual property. It does not tell you whether Lean accepted the file or which axioms the resulting theorem depends on.
 
-That join covers **767 files through 814 receipts**, with zero unconfirmed joins.
+`JOIN.json` matches verification receipts to Lean files by receipt id and confirms each match by requiring the declared theorem name to appear in the file. That process joins **767 files through 814 receipts**, with zero unconfirmed joins.
 
-| verdict | files |
+| status | files |
 |---|---:|
 | compiled with a **clean** axiom footprint | **211** |
-| no `sorry` and no `sorryAx`, but no clean-footprint verdict recorded | 266 |
-| **failed to compile** | **267** |
+| no `sorry` / `sorryAx`, but no clean-footprint verdict recorded | 266 |
+| failed to compile | **267** |
 | contains `sorry` in its text | 23 |
-| no receipt could be joined | 147 |
+| no joined receipt | 147 |
 | **total** | **914** |
 
-The distinction matters because Lean may introduce `sorryAx` when elaboration fails. A file can be
-textually free of `sorry` and still never have been accepted by the kernel.
+A file can contain no literal `sorry` and still fail elaboration; in some cases Lean then introduces `sorryAx`. That is why the compile/axiom audit is the meaningful status layer.
 
 ## Receipt accounting
 
@@ -38,30 +40,23 @@ textually free of `sorry` and still never have been accepted by the kernel.
 | receipts marked `KERNEL_CHECKED` | 421 across 119 problems |
 | receipts reporting a clean axiom footprint | 218 across 46 problems |
 
-The original pipeline keyed receipts by receipt id rather than filename. Matching on that id lifted
-the usable join from 14 files to 767 and exposed the true compile-status distribution above.
+The original verification records were keyed by receipt id rather than filename. Reconstructing that mapping increased the usable join from 14 files to 767 and exposed the compile-status distribution above.
 
-The 267 failed files are preserved because they are informative. Their receipts record ordinary
-elaboration failures such as maximum recursion depth, or a `decide` result going the opposite way.
-That failure data is part of the corpus, not a judgment on the 211 files that did compile cleanly.
+The **267 failed files remain in the corpus** because their failures are useful data about formalization attempts: recursion limits, elaboration errors, type mismatches, or finite decisions evaluating the opposite way from the proposed statement.
 
-`MANIFEST.json` records, per file, its SHA-256, whether it contains `sorry`, its Erdős problem id,
-and its joined receipt when one exists.
+`MANIFEST.json` records each file's SHA-256, Erdős problem id, presence of `sorry`, and joined receipt when one exists.
 
 ## Mathematical role
 
-This repository is the **raw formalization upstream**: small obligations, lemmas, finite checks,
-and failed formalization attempts emitted while attacking open Erdős problems. It is useful as a
-large provenance corpus and as a source of formal objects for later semantic review.
+This is a raw formalization corpus: small obligations, lemmas, finite checks, and unsuccessful formalization attempts produced while working on open Erdős problems. It is useful for provenance, formalization research, and extracting statements for later review.
 
-For curated audited mathematics, see:
+For more curated layers, see:
 
 - `jaredwilder/erdos-theorems` — 79 declarations with clean axiom-footprint accounting;
-- `jaredwilder/erdos152` — 160 statement formalizations with a full semantic defect audit;
-- `jaredwilder/lean-semantic-blades` — the 33-blade semantic gate.
+- `jaredwilder/erdos152` — 160 statement formalizations with a semantic audit;
+- `jaredwilder/lean-semantic-blades` — 33 semantic checks for source fidelity.
 
-The cable corpus itself has **not** been passed through the semantic blade gate, so semantic fidelity
-must be checked separately from kernel acceptance.
+The 914-file corpus has not itself been through that semantic comparison, so source fidelity is a separate question from successful Lean compilation.
 
 ## License
 
