@@ -1,0 +1,36 @@
+id,formal_status,conclusion,proof,axioms,needs_mathlib,backend,exit_code,seconds,lean_file,receipt_path,errors,scope_class
+fmz-erdos17-campaign-001-R004-L1,KERNEL_CHECKED,check_L1_ground = true,by decide,,True,wsl,0,3.3,oracle/frontier_formalizer/cable/theorems/msl_fmz-erdos17-campaign-001-R004-L1.lean,cable-kernel-receipts/fmz-erdos17-campaign-001-R004-L1.cable.json,,FINITE_OR_DEFINITIONAL
+fmz-erdos170-campaign-001-R002-CL1,KERNEL_CHECKED,check_cl1 = true,by decide,,False,windows,0,2.3,oracle/frontier_formalizer/cable/theorems/msl_fmz-erdos170-campaign-001-R002-CL1.lean,cable-kernel-receipts/fmz-erdos170-campaign-001-R002-CL1.cable.json,,FINITE_OR_DEFINITIONAL
+fmz-erdos172-campaign-001-R003-L1,KERNEL_CHECKED,check_L1 = true,by decide,propext,False,windows,0,2.3,oracle/frontier_formalizer/cable/theorems/msl_fmz-erdos172-campaign-001-R003-L1.lean,cable-kernel-receipts/fmz-erdos172-campaign-001-R003-L1.cable.json,,FINITE_OR_DEFINITIONAL
+fmz-erdos196-campaign-001-R007-L1,KERNEL_CHECKED,check_L1 = true,by decide,,False,windows,0,2.3,oracle/frontier_formalizer/cable/theorems/msl_fmz-erdos196-campaign-001-R007-L1.lean,cable-kernel-receipts/fmz-erdos196-campaign-001-R007-L1.cable.json,,FINITE_OR_DEFINITIONAL
+fmz-erdos212-campaign-001-R012-L1,KERNEL_CHECKED,"verifierPass r012_residual = false ∧ ∀ (cfg : ResidualSign), cfg = ResidualSign.unresolved → verifierPass cfg = false","by
+  refine ⟨?_, ?_⟩
+  · simp [verifierPass, r012_residual]
+  · intro cfg h
+    subst h
+    rfl",propext,False,windows,0,2.1,oracle/frontier_formalizer/cable/theorems/msl_fmz-erdos212-campaign-001-R012-L1.lean,cable-kernel-receipts/fmz-erdos212-campaign-001-R012-L1.cable.json,,FULL_QUANTIFIED
+fmz-erdos218-campaign-001-R001-L1,KERNEL_CHECKED,L1Holds = true,by decide,,False,windows,0,2.1,oracle/frontier_formalizer/cable/theorems/msl_fmz-erdos218-campaign-001-R001-L1.lean,cable-kernel-receipts/fmz-erdos218-campaign-001-R001-L1.cable.json,,FINITE_OR_DEFINITIONAL
+fmz-erdos234-campaign-001-R003-L1,KERNEL_CHECKED,checkL1 = true,by decide,,False,windows,0,2.3,oracle/frontier_formalizer/cable/theorems/msl_fmz-erdos234-campaign-001-R003-L1.lean,cable-kernel-receipts/fmz-erdos234-campaign-001-R003-L1.cable.json,,FINITE_OR_DEFINITIONAL
+fmz-erdos236-campaign-001-R002-L1,KERNEL_CHECKED,checkLemma 50 = true,by decide,Classical.choice; Quot.sound; propext,True,wsl,0,4.5,oracle/frontier_formalizer/cable/theorems/msl_fmz-erdos236-campaign-001-R002-L1.lean,cable-kernel-receipts/fmz-erdos236-campaign-001-R002-L1.cable.json,,FINITE_OR_DEFINITIONAL
+fmz-erdos243-campaign-001-R002-L1,KERNEL_CHECKED,checkL1 = true,by decide,,False,windows,0,2.2,oracle/frontier_formalizer/cable/theorems/msl_fmz-erdos243-campaign-001-R002-L1.lean,cable-kernel-receipts/fmz-erdos243-campaign-001-R002-L1.cable.json,,FINITE_OR_DEFINITIONAL
+fmz-erdos243-campaign-001-R003-L1,KERNEL_CHECKED,checkAll block2 = true ∧ checkAll block3 = true ∧ block2.length = 7 ∧ block3.length = 6,by decide,,False,windows,0,2.4,oracle/frontier_formalizer/cable/theorems/msl_fmz-erdos243-campaign-001-R003-L1.lean,cable-kernel-receipts/fmz-erdos243-campaign-001-R003-L1.cable.json,,FINITE_OR_DEFINITIONAL
+fmz-erdos247-campaign-001-R002-CERT,KERNEL_CHECKED,checkCert = true,by decide,,False,windows,0,8.2,oracle/frontier_formalizer/cable/theorems/msl_fmz-erdos247-campaign-001-R002-CERT.lean,cable-kernel-receipts/fmz-erdos247-campaign-001-R002-CERT.cable.json,,FINITE_OR_DEFINITIONAL
+fmz-erdos247-campaign-001-R003-L1,KERNEL_CHECKED,Real.sqrt (2 : ℝ) < (141 : ℝ) / 99,"by
+  have hs : 0 ≤ Real.sqrt (2 : ℝ) := Real.sqrt_nonneg _
+  have hs2 : (Real.sqrt (2 : ℝ)) ^ 2 = 2 := by
+    rw [Real.sq_sqrt]
+    norm_num
+  have hq : 0 < (141 : ℝ) / 99 := by
+    norm_num
+  have hsq : (Real.sqrt (2 : ℝ)) ^ 2 < ((141 : ℝ) / 99) ^ 2 := by
+    rw [hs2]
+    norm_num
+  nlinarith",Classical.choice; Quot.sound; propext,True,wsl,0,6.2,oracle/frontier_formalizer/cable/theorems/msl_fmz-erdos247-campaign-001-R003-L1.lean,cable-kernel-receipts/fmz-erdos247-campaign-001-R003-L1.cable.json,,FINITE_OR_DEFINITIONAL
+fmz-erdos247-campaign-001-R006-L1,KERNEL_CHECKED,checkBound = true,by decide,,False,windows,0,11.7,oracle/frontier_formalizer/cable/theorems/msl_fmz-erdos247-campaign-001-R006-L1.lean,cable-kernel-receipts/fmz-erdos247-campaign-001-R006-L1.cable.json,,FINITE_OR_DEFINITIONAL
+fmz-erdos25-campaign-001-R003-L1,KERNEL_CHECKED,"∀ (reduction residual : Option Bool), reduction = none ∧ residual = none → failClosedGate reduction residual = GateResult.abortNoCert ∧ failClosedGate reduction residual = failClosedGate reduction residual","by
+  intro reduction residual h
+  obtain ⟨hr, hs⟩ := h
+  subst reduction
+  subst residual
+  exact ⟨rfl, rfl⟩",,True,wsl,0,3.5,oracle/frontier_formalizer/cable/theorems/msl_fmz-erdos25-campaign-001-R003-L1.lean,cable-kernel-receipts/fmz-erdos25-campaign-001-R003-L1.cable.json,,FULL_QUANTIFIED
+fmz-erdos260-campaign-001-R003-L1,KERNEL_CHECKED,check = true,by decide,propext,False,windows,0,31.0,oracle/frontier_formalizer/cable/theorems/msl_fmz-erdos260-campaign-001-R003-L1.lean,cable-kernel-receipts/fmz-erdos260-campaign-001-R003-L1.cable.json,,FINITE_OR_DEFINITIONAL
